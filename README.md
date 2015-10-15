@@ -1,2 +1,2 @@
-# jss_endogeneity
-Paper Draft - R Package "Endogeneity" - Journal of Statistical Sofware
+# REndo 
+R Package implementing state of the art methods to controll for endogeneity 
