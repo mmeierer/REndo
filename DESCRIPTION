@@ -1,0 +1,10 @@
+Package: REndo
+Type: Package
+Title: Fitting Linear Models with 1 Endogenous Regressor using Latent Instrumental Variables
+Version: 1.0
+Date: 2015-10-09
+Author: Markus Meierer
+Maintainer: Markus Meierer <markus.meierer@uzh.ch>
+Description: Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach presented in Ebbes,P., Wedel,M., Boeckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental variables are needed. The important assumption of the model is that the latent variables are discrete with at least two groups with different means and the structural error is normally distributed.
+Imports: optimx, mvtnorm, methods
+License: GPL-3
