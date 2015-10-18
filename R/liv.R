@@ -8,6 +8,7 @@
 #
 # Arguments
 #'@param formula var1 ~ var2     var1: vector or matrix containing the dependent variable. var2: a vector with the endogenous variable.
+#'@param data - optional data.frame or list containing the variables in the model.
 #'@param  param - a vector of initial values for the parameters of the model to be supplied to the optimization algorithm.
 #'The first parameter is the intercept, then the coefficient of the endogenous variable followed by the means of the two groups of the latent IV,
 #'then the next three parameters are for the variance-covariance matrix. The last parameter is the probability for group 1.
@@ -39,17 +40,13 @@
 #' 3:365--392.
 #make availble to the package users
 #'@export
-liv <- function(formula, param){
-
-  if( ncol(get_all_vars(formula)) != 2 )
-    stop("A wrong number of parameters were passed in the formula")
-
-  y <- get_all_vars(formula)[1]
-  P <- as.matrix(get_all_vars(formula)[2])
-
-  b <- optimx::optimx( par=param,fn=logL, y=y,P=P,
-               method="BFGS",hessian=T,
-               control=list(trace=0))
+liv <- function(formula, param, data=NULL){
+  
+  mf<-model.frame(formula = formula, data = data)
+  
+  b <- optimx::optimx( par=param,fn=logL, y=mf[,1],P=mf[,2],
+                       method="BFGS",hessian=T,
+                       control=list(trace=0))
 
   obj <- new("liv")
   obj@formula <- formula

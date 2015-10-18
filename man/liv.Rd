@@ -4,7 +4,7 @@
 \alias{liv}
 \title{Fitting Linear Models with 1 Endogenous Regressor using Latent Instrumental Variables}
 \usage{
-liv(formula, param)
+liv(formula, param, data = NULL)
 }
 \arguments{
 \item{formula}{var1 ~ var2     var1: vector or matrix containing the dependent variable. var2: a vector with the endogenous variable.}
@@ -12,6 +12,8 @@ liv(formula, param)
 \item{param}{- a vector of initial values for the parameters of the model to be supplied to the optimization algorithm.
 The first parameter is the intercept, then the coefficient of the endogenous variable followed by the means of the two groups of the latent IV,
 then the next three parameters are for the variance-covariance matrix. The last parameter is the probability for group 1.}
+
+\item{data}{- optional data.frame or list containing the variables in the model.}
 }
 \value{
 It returns the optimal values of the parameters as computed by maximum likelihood using BFGS algorithm. To obtain the
