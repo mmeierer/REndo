@@ -9,8 +9,9 @@
 #' @slot sigma
 #' @slot prob_G1
 #' @slot se_probG1
+#' @slot init.values
 #' @slot value
-#' @slot convergence
+#' @slot convcode
 #' @slot hessian
 
 #' @name liv-class
@@ -38,8 +39,9 @@ setClass(
     sigma = "matrix",
     prob_G1 = "numeric",
     se_probG1 = "numeric",
+    init.values = "numeric",
     value = "numeric",
-    convergence = "integer",
+    convcode = "integer",
     hessian = "matrix"
 
   ),
@@ -51,9 +53,9 @@ setClass(
                    se_means = NA_real_,
                    sigma = matrix(NA),
                    prob_G1 = NA_real_,
-                   se_probG1 = NA_real_,
+                   init.values = NA_real_
                    value = NA_real_,
-                   convergence = NA_integer_,
+                   convcode = NA_integer_,
                    hessian = matrix(NA)
   )
 )
@@ -73,7 +75,23 @@ coef.liv <- function(object, ...)
 #'@export
 summary.liv <- function(object, ...)
 {
-  str(object)
+    z <- object
+    est <- z@coefficients  # estimates value
+    se <- z@se_coefficients  # standard errors
+    names.coef <- all.vars(z@formula[[3]])
+
+    coef.table <- cbind(est,se)
+    colnames(coef.table) <- c("Estimate","Std. Error")
+    rownames(coef.table) <- c("Intercept",names.coef)
+
+    cat("\nCoefficients:\n")
+    printCoefmat(coef.table) # print the coefficient and std errors
+
+    cat("\nInitial Parameter Values:\n", z@init.values)  # print initial param values
+    cat("\n")
+    cat("\nThe Value of the log likelihood function:\n", z@value)  # print logLik values
+    cat("\n")
+    cat("\nConvergence Code:\n", z@convcode)  # print comvergence code
 }
 
 

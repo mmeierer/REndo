@@ -1,13 +1,14 @@
-#'@title  Fitting Linear Models with 1 Endogenous Regressor using Latent Instrumental Variables
+#'@title  Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables
 #
 # Description
 #'@description  Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
-#'presented in Ebbes,P., Wedel,M., Boeckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental
+#'presented in Ebbes,P., Wedel,M.,  B\"{o}ckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental
 #'variables are needed. The important assumption of the model is that the latent variables are discrete with at least two groups with different means and
 #'the structural error is normally distributed.
 #
 # Arguments
-#'@param formula var1 ~ var2     var1: vector or matrix containing the dependent variable. var2: a vector with the endogenous variable.
+#'@paramformula an object of type 'formula': a symbolic description of the model to be fitted. Example var1 \~ var2, where var1 is a vector
+#' containing the dependent variable, while var2 is a vector containing the endogenous variable.
 #'@param data - optional data.frame or list containing the variables in the model.
 #'@param  param - a vector of initial values for the parameters of the model to be supplied to the optimization algorithm.
 #'The first parameter is the intercept, then the coefficient of the endogenous variable followed by the means of the two groups of the latent IV,
@@ -35,15 +36,32 @@
 #'@keywords latent
 #'@keywords instruments
 #'@author The implementation of the model formula by Raluca Gui based on the paper of Ebbes et al. (2005).
-#'@references   Ebbes, P., Wedel,M., Boeckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and testing for regressor-error
-#'(in)dependence when no instrumental variables are available: With new evidence for the effect of education on income'. Quantitative Marketing and Economics,
+#'@references   Ebbes, P., Wedel,M., B\"{o}ckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
+#'(in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'. Quantitative Marketing and Economics,
 #' 3:365--392.
 #make availble to the package users
 #'@export
-liv <- function(formula, param, data=NULL){
+liv <- function(formula, param=NULL, data=NULL){
   
   mf<-model.frame(formula = formula, data = data)
   
+  # if user parameters are not defined, provide initial param. values
+  # coefficients are the OLS coefficients
+  # the two group means = mean(P)
+  # next three parameters = 1
+  # prob_G1 = 0.5
+
+  if (is.null(param)) {
+
+    param1 <- coefficients(lm(y~P))[1]
+    param2 <- coefficients(lm(y~P))[2]
+    param3 <- mean(P)
+    param4 <- mean(P)
+    param5 <- param6 <- param7 <- 1
+    param8 <- 0.5
+    param <- as.double(c(param1,param2,param3,param4,param5,param6,param7,param8))
+  }
+
   b <- optimx::optimx( par=param,fn=logL, y=mf[,1],P=mf[,2],
                        method="BFGS",hessian=T,
                        control=list(trace=0))
@@ -59,17 +77,23 @@ liv <- function(formula, param, data=NULL){
   obj@sigma <- matrix(c(b$p5^2,b$p5*b$p6,b$p5*b$p6,b$p6^2+b$p7^2),2,2)
 
   obj@prob_G1 <- exp(b$p8)     # probability of group 1
+ # check for the probability to be less than 1 - if not, give warning, change initial parameter values
+  if (obj@prob_G1>=1) warning("Probability of Group 1 greater than 0. Check initial parameter values")
 
   obj@value <- b$value          # the value of the likelihood function corresponding to param
-  obj@convergence <- as.integer(b$convcode)    # message whether if converged
+  obj@convcode <- as.integer(b$convcode)    # message whether if converged
 
   hess <- attr(b,"details")[,"nhatend"]         # hessian matrix
-  std_par <- sqrt(diag(solve(do.call(rbind,hess))))
+  std_par <- suppressWarnings(sqrt(diag(solve(do.call(rbind,hess)))))
   obj@hessian <- hess[[1]]
 
 
   obj@se_coefficients <- std_par[1:2]
+ if (obj@se_coefficients[1] =="NaN") warning("Coefficients standard errors unable to be computed. Check initial parameter values")
+
   obj@se_means <- std_par[3:4]
+  if (obj@se_means[1] =="NaN") warning("Group means standard errors unable to be computed. Check initial parameter values")
+
   obj@se_probG1 <- std_par[8]
 
   return(obj)
