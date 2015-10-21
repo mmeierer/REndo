@@ -42,6 +42,10 @@
 #make availble to the package users
 #'@export
 liv <- function(formula, param=NULL, data=NULL){
+
+if( ncol(get_all_vars(formula)) != 2 )
+  stop("A wrong number of parameters were passed in the formula. No more than one regressor is admitted.")
+
   
   mf<-model.frame(formula = formula, data = data)
   
