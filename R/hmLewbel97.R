@@ -1,5 +1,5 @@
 
-hmlewbel <- function(y~X1+X2+P,IIV=c("g","gp","gy","yp","p2","y2"),EIV){
+hmlewbel <- function(formula = formula ,IIV=c("g","gp","gy","yp","p2","y2"),EIV){
 
 # check to see if any external instruments were provided
 if (missing(EIV)) {
@@ -8,6 +8,8 @@ if (missing(EIV)) {
   EIV <- as.matrix(EIV)
 }
    
+mf <- model.frame(formula = formula, data = data)
+
 # X should contain an intercept in the first column
 X <- as.matrix(X)
   
