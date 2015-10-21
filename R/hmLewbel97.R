@@ -1,5 +1,5 @@
 
-hmlewbel <- function(formula = formula ,IIV=c("g","gp","gy","yp","p2","y2"),EIV){
+hmlewbel <- function(formula = formula ,IIV=c("g","gp","gy","yp","p2","y2"),EIV, data=NULL){
 
 # check to see if any external instruments were provided
 if (missing(EIV)) {
