@@ -53,7 +53,7 @@ setClass(
                    se_means = NA_real_,
                    sigma = matrix(NA),
                    prob_G1 = NA_real_,
-                   init.values = NA_real_
+                   init.values = NA_real_,
                    value = NA_real_,
                    convcode = NA_integer_,
                    hessian = matrix(NA)
