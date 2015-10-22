@@ -57,10 +57,10 @@ if( ncol(get_all_vars(formula)) != 2 )
 
   if (is.null(param)) {
 
-    param1 <- coefficients(lm(y~P))[1]
-    param2 <- coefficients(lm(y~P))[2]
-    param3 <- mean(P)
-    param4 <- mean(P)
+    param1 <- coefficients(lm(mf[,1]~mf[,2]))[1]
+    param2 <- coefficients(lm(mf[,1]~mf[,2]))[2]
+    param3 <- mean(mf[,2])
+    param4 <- mean(mf[,2])
     param5 <- param6 <- param7 <- 1
     param8 <- 0.5
     param <- as.double(c(param1,param2,param3,param4,param5,param6,param7,param8))
