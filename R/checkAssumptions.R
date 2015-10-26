@@ -11,7 +11,7 @@ checkAssumptions <- function(formula,IIV,EIV=NULL, data=NULL)
  # X <- mf[,c(-1,-ncol(mf))]
   # check if model error is symetrically distributed
   
-  e1 <- lm(mf[,1] ~ mf[,c(-1,-ncol(mf))] + mf[,-ncol(mf)])$residuals
+  e1 <- lm(mf[,1] ~ mf[,c(-1,-ncol(mf))] + mf[,ncol(mf)])$residuals
   
   if (abs(e1071::skewness(e1)) > 0.10 & IIV == "y2")  
     warning(gettextf("Model error not symetrically distributed"), domain = NA)
@@ -19,9 +19,9 @@ checkAssumptions <- function(formula,IIV,EIV=NULL, data=NULL)
 
 # check assumption E(qp) !=0
 # save residuals of P regressed on 1 and X
-  p1 <- lm(mf[,-ncol(mf)] ~ mf[,c(-1,-ncol(mf))])$residuals
+  p1 <- lm(mf[,ncol(mf)] ~ mf[,c(-1,-ncol(mf))])$residuals
 
- IV <- InternalIV(formula,IIV)
+ IV <- internalIV(formula,IIV)
 
  IVS <- cbind(mf[,c(-1,-ncol(mf))],IV)
 # compute the mean of the product btw residuals and Instruments
