@@ -7,7 +7,7 @@
 #'the structural error is normally distributed.
 #
 # Arguments
-#'@paramformula an object of type 'formula': a symbolic description of the model to be fitted. Example var1 \~ var2, where var1 is a vector
+#'@param formula an object of type 'formula': a symbolic description of the model to be fitted. Example var1 \~ var2, where var1 is a vector
 #' containing the dependent variable, while var2 is a vector containing the endogenous variable.
 #'@param data - optional data.frame or list containing the variables in the model.
 #'@param  param - a vector of initial values for the parameters of the model to be supplied to the optimization algorithm.
