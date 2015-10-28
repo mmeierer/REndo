@@ -7,14 +7,14 @@
 internalIV(formula, IIV = c("g", "gp", "gy", "yp", "p2", "y2"), data = NULL)
 }
 \arguments{
-\item{formula}{- an object of type 'formula': a symbolic description of the model to be fitted. Example \code{var1 ~ var2 + var3}, where \code{var1} is a vector
+\item{formula}{an object of type 'formula': a symbolic description of the model to be fitted. Example \code{var1 ~ var2 + var3}, where \code{var1} is a vector
 containing the dependent variable, while \code{var2, var3}, etc are vectors containing the regressors. The endogenous variable should be the last regressor
 in the formula.}
 
-\item{IIV}{- the internal instrumental variable to be constructed. It can take six values, \code{"g","gp","gy","yp","p2"or"y2"}. See the "Details" section
+\item{IIV}{the internal instrumental variable to be constructed. It can take six values, \code{"g","gp","gy","yp","p2"or"y2"}. See the "Details" section
 of \code{\link{hmlewbel}} for a description of the internal instruments.}
 
-\item{data}{-  optional data.frame or list containing the variables in the model.}
+\item{data}{optional data.frame or list containing the variables in the model.}
 }
 \description{
 Function constructing the internal instrumental variables proposed by Lewbel(1997).

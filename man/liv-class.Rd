@@ -26,9 +26,11 @@ This class is used to store and further analyze the results of the liv function
 
 \item{\code{se_probG1}}{}
 
+\item{\code{init.values}}{}
+
 \item{\code{value}}{}
 
-\item{\code{convergence}}{}
+\item{\code{convcode}}{}
 
 \item{\code{hessian}}{}
 }}
