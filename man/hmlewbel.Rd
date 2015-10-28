@@ -71,7 +71,7 @@ in equation \code{1} under the assumptions exposed in Lewbel(1997).
 \examples{
 ##load data Data_hmlewbel
 data(Data_hmlewbel)
-hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")  )
+hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")
 }
 \author{
 The implementation of the model formula by Raluca Gui based on the paper of Lewbel (1997).

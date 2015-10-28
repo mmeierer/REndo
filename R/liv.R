@@ -49,7 +49,7 @@
 # ## call with initial parameter values given by the user
 # l1 <- liv(y1 ~ P1, c(1.7,0.84,7,8,1,1,1,0.2))
 # summary(l1)
-#make availble to the package users
+# make availble to the package users
 #'@export
 liv <- function(formula, param=NULL, data=NULL){
   
