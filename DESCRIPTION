@@ -3,11 +3,9 @@ Type: Package
 Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables
 Version: 1.0
 Date: 2015-10-09
-Author: Raluca Gui, Markus Meierer
+Author: Raluca Gui,
+        Markus Meierer
 Maintainer: Raluca Gui <raluca.gui@business.uzh.ch>
-Description: Fits linear models with endogenous regressor using the latent instrumental variable approaches
-such as latent instrumental variables, Lewbel's higher moments appproach, multilevel GMM and joint estimation using Gaussian copula.
-These are statistical techniques to address the endogeneity problem where no external instrumental variables
-are needed. 
-Imports: optimx, mvtnorm, methods
+Description: Fits linear models with endogenous regressor using the latent instrumental variable approaches such as latent instrumental variables, Lewbel's higher moments approach, multilevel GMM and joint estimation using Gaussian copula.These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed. 
+Imports: optimx, mvtnorm, AER, e1071, RcppEigen,methods
 License: GPL-3
