@@ -23,16 +23,16 @@ standard errors bootsptrapping is needed, using the boots() function from the sa
 \item{means}{returns the value of the parameters for the means of the two categories/groups of the latent instrumental variable.}
 \item{sigma}{returns the variance-covariance matrix sigma, where on the main diagonal are the variances of the structural error and that of
 the endogenous regressor and the off-diagonal terms are equal to the covariance between the errors.}
-\item{probabilityG1}{returns the probability of group 1. Since the model assumes that the latent instrumental variable has two groups,
-\code{1-probabilityG1} gives the probability of group 2.}
+\item{prob_G1}{returns the probability of group 1. Since the model assumes that the latent instrumental variable has two groups,
+\code{1-prob_G1} gives the probability of group 2.}
 \item{value}{the value of the log-likelihood function corresponding to param.}
-\item{convergence}{An integer code, the same as the output returned by optim. 0 indicates successful completion. A possible error code is 1 which dicates that the iteration
+\item{convcode}{An integer code, the same as the output returned by optim. 0 indicates successful completion. A possible error code is 1 which dicates that the iteration
 limit maxit had been reached.}
 \item{hessian}{A symmetric matrix giving an estimate of the Hessian at the solution found.}
 }
 \description{
 Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
-presented in Ebbes,P., Wedel,M.,  B\'{o}ckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental
+presented in Ebbes,P., Wedel,M.,  B\"{o}ckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental
 variables are needed. The important assumption of the model is that the latent variables are discrete with at least two groups with different means and
 the structural error is normally distributed.
 }

@@ -51,22 +51,27 @@ are unobserved. The endogeneity problem arises from the correlation of \eqn{P_{t
 since \eqn{E(\epsilon \nu)\neq 0}{E(epsilon_t * nu_t) > 0}.
 The requirement for the structural and measurement error is to have mean zero, but no restriction is imposed on their distribution.
 
-Let \eqn{\bar{S}} be the sample mean of a variable \eqn{S_{t}}{S_t} and \eqn{G_{t}=G(W_{t})}{G_t = G(W_t)} for any given function \eqn{G}{G_t} that
+Let \eqn{\bar{S}}{mean(S)} be the sample mean of a variable \eqn{S_{t}}{S_t} and \eqn{G_{t}=G(W_{t})}{G_t = G(W_t)} for any given function \eqn{G}{G} that
 has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with 2SLS to obtain consistent estimates:
-\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}{q1 = G_t - G&#772}
-\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b) }{q2 = (G_t - G&#772)(P_t -P&#772)}
-\deqn{ q_{3t}=(G_{t} - \bar{G})(Y_{t}-\bar{Y}) \hspace{0.3cm} (3c)}{q3 = (G_t - G&#772)(Y_t -Y&#772)}
-\deqn{ q_{4t}=(Y_{t} - \bar{Y})(P_{t}-\bar{P}) \hspace{0.3cm} (3d)}{q4 = (Y_t - Y&#772)(P_t -P&#772)}
-\deqn{ q_{5t}=(P_{t}-\bar{P})^{2} \hspace{1.5 cm} (3e) }{q5 = (P_t - P&#772)^2}
-\deqn{ q_{6t}=(Y_{t} - \bar{Y})^{2}\hspace{1.5 cm} (3f)}{q6 = (Y_t - Y&#772)^2}
+\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}{q1 = G_t - mean(G)}
+\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b) }{q2 = (G_t - mean(G))(P_t -mean(P))}
+\deqn{ q_{3t}=(G_{t} - \bar{G})(Y_{t}-\bar{Y}) \hspace{0.3cm} (3c)}{q3 = (G_t - mean(G))(Y_t - mean(Y))}
+\deqn{ q_{4t}=(Y_{t} - \bar{Y})(P_{t}-\bar{P}) \hspace{0.3cm} (3d)}{q4 = (Y_t - mean(Y))(P_t - mean(P))}
+\deqn{ q_{5t}=(P_{t}-\bar{P})^{2} \hspace{1.5 cm} (3e) }{q5 = (P_t - mean(P))^2}
+\deqn{ q_{6t}=(Y_{t} - \bar{Y})^{2}\hspace{1.5 cm} (3f)}{q6 = (Y_t - mean(Y))^2}
 
 Instruments in equations \code{3e} and \code{3f} can be used only when the measurement and the structural errors are symmetrically distributed.
 Otherwise, the use of the instruments does not require any distributional assumptions for the errors. Given that the regressors \eqn{G(W) = W}
 are included as instruments, \eqn{G(W)} should not be linear in \eqn{W} in equation \code{3a}.
 
-Let small letter denote deviation from the sample mean: \eqn{s_{i} = S_{i}-\bar{S}}{s_i=S_i -S&#772}. Then, using as instruments the variables presented in
+Let small letter denote deviation from the sample mean: \eqn{s_{i} = S_{i}-\bar{S}}{s_i = S_i - mean(S)}. Then, using as instruments the variables presented in
 equations \code{3} together with \code{1} and \eqn{W_{t}}{W_t}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
 in equation \code{1} under the assumptions exposed in Lewbel(1997).
+}
+\examples{
+##load data Data_hmlewbel
+data(Data_hmlewbel)
+hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")  )
 }
 \author{
 The implementation of the model formula by Raluca Gui based on the paper of Lewbel (1997).
