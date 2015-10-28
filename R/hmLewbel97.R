@@ -62,7 +62,7 @@
 #'@examples 
 #'##load data Data_hmlewbel
 #'data(Data_hmlewbel)
-#'hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")  )
+#'hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")  
 #'
 #'@keywords endogenous
 #'@keywords latent
