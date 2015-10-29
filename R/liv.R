@@ -1,5 +1,5 @@
 #'@title  Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables
-#
+#'@aliases liv
 # Description
 #'@description  Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
 #'presented in Ebbes,P., Wedel,M.,  B\"{o}ckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental

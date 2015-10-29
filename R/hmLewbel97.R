@@ -60,18 +60,24 @@
 #'\item{x}{a list with elements "regressors", "instruments", "projected", containing the model matrices from the respective components.
 #' "projected" is the matrix of regressors projected on the image of the instruments.}
 #'@examples 
-#'##load data Data_hmlewbel
+#'#load data Data_hmlewbel
 #'data(Data_hmlewbel)
+#'
+#'# call hmlewbel with internal instrument yp = (Y - mean(Y))(P - mean(P))
 #'hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")  
 #'
+#'# build an additional instrument - p2 = (P - mean(P))^2 - using the internalIV() function 
+#'eiv <- internalIV(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "p2")
+#'
+#'# use the additional variable as external instrument in hmlewbel()
+#'hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp", EIV=eiv) 
 #'@keywords endogenous
 #'@keywords latent
 #'@keywords instruments
 #'@author The implementation of the model formula by Raluca Gui based on the paper of Lewbel (1997).
 #'@references  Lewbel, A. (1997). Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 #' with An Application to Patents and R&D. \emph{Econometrica}, \bold{65(5)}, 1201-1213.
-
-#\code{\link[AER]{ivreg}}, \code{\link{liv}}
+#'@seealso \code{\link{internalIV}},\code{\link[AER]{ivreg}}, \code{\link{liv}}
 # make availble to the package users
 #'@export
 

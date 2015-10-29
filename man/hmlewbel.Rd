@@ -71,7 +71,12 @@ in equation \code{1} under the assumptions exposed in Lewbel(1997).
 \examples{
 ##load data Data_hmlewbel
 data(Data_hmlewbel)
+## call hmlewbel with internal instrument yp = (Y - mean(Y))(P - mean(P))
 hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")
+## build an additional instrument - p2 = (P - mean(P))^2 - using the internalIV() function
+eiv <- internalIV((Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "p2")
+## use the additional variable as external instrument in hmlewbel()
+hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp", EIV=eiv)
 }
 \author{
 The implementation of the model formula by Raluca Gui based on the paper of Lewbel (1997).
@@ -79,6 +84,9 @@ The implementation of the model formula by Raluca Gui based on the paper of Lewb
 \references{
 Lewbel, A. (1997). Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 with An Application to Patents and R&D. \emph{Econometrica}, \bold{65(5)}, 1201-1213.
+}
+\seealso{
+\code{\link{internalIV}},\code{\link[AER]{ivreg}}, \code{\link{liv}}
 }
 \keyword{endogenous}
 \keyword{instruments}
