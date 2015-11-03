@@ -62,15 +62,19 @@
 #'@examples 
 #'#load data Data_hmlewbel
 #'data(Data_hmlewbel)
+#'y <- Data_hmlewbel$y1 
+#'X1 <-  Data_hmlewbel$X1
+#'X2 <- Data_hmlewbel$X2
+#'P <- Data_hmlewbel$P1
 #'
 #'# call hmlewbel with internal instrument yp = (Y - mean(Y))(P - mean(P))
-#'hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")  
+#'hmlewbel(y ~ X1 + X2 + P, IIV = "yp")  
 #'
 #'# build an additional instrument - p2 = (P - mean(P))^2 - using the internalIV() function 
-#'eiv <- internalIV(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "p2")
+#'eiv <- internalIV(y ~ X1 + X2 + P, IIV = "p2")
 #'
 #'# use the additional variable as external instrument in hmlewbel()
-#'hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp", EIV=eiv) 
+#'hmlewbel(y ~ X1 + X2 + P, IIV = "yp", EIV=eiv) 
 #'@keywords endogenous
 #'@keywords latent
 #'@keywords instruments
@@ -95,15 +99,15 @@ hmlewbel <- function(formula, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, d
   
   mf <- model.frame(formula = formula, data = data)
   m <- attr(mf, "terms") 
- 
-
   
   X <- model.matrix(m,mf)[,c(-1,-ncol(mf))] # all vars except the first and the last
   colnames(X) <- paste(names(mf[c(-1,-ncol(mf))]))
+  
   # The endogenous variable, for this version of the package only 1 endog. var supported
   # The endogenous variable to be the last one provided in the formula
   P <- as.matrix(mf[,ncol(mf)])
   colnames(P) <- paste(names(mf[ncol(mf)]))
+  
   y <- as.matrix(mf[,1])
   colnames(y) <- paste(names(mf[1]))
   
@@ -124,6 +128,7 @@ hmlewbel <- function(formula, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, d
   # hmlewbel should return an object of class "ivreg"
   
   res <- AER::ivreg(y ~ X + P|X + IV, x=TRUE )
+  res$x <- X
   res$call <- match.call()
   class(res) <- c("ivreg")
   return(res)
