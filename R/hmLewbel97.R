@@ -88,20 +88,24 @@ hmlewbel <- function(formula, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, d
   
 #   warning("Attention! Be sure to provide the endogenous variable as the last regressor in the formula")
 
-  
   # check to see if any external instruments were provided
   if (!is.null(EIV)) {
         EIV <- as.matrix(EIV)
     }
   
   mf <- model.frame(formula = formula, data = data)
-   
-  X <- as.matrix(mf[,c(-1,-ncol(mf))])  # all vars except the first and the last
+  m <- attr(mf, "terms") 
+ 
+
   
+  X <- model.matrix(m,mf)[,c(-1,-ncol(mf))] # all vars except the first and the last
+  colnames(X) <- paste(names(mf[c(-1,-ncol(mf))]))
   # The endogenous variable, for this version of the package only 1 endog. var supported
   # The endogenous variable to be the last one provided in the formula
-  P <- mf[,ncol(mf)]
-  y <- mf[,1]
+  P <- as.matrix(mf[,ncol(mf)])
+  colnames(P) <- paste(names(mf[ncol(mf)]))
+  y <- as.matrix(mf[,1])
+  colnames(y) <- paste(names(mf[1]))
   
   # computes the internal IVs proposed by Lewbel 97 - g, gp, gy, yp, y2, p2, depending on 
   # the values provided by the user in IIV
@@ -118,8 +122,10 @@ hmlewbel <- function(formula, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, d
   
   # uses ivreg function from \pkg{AER} for users to be able to use afterwards the package ivpack 
   # hmlewbel should return an object of class "ivreg"
-  res <- AER::ivreg(y ~ X + P|X  + IV, x=TRUE )
   
+  res <- AER::ivreg(y ~ X + P|X + IV, x=TRUE )
+  res$call <- match.call()
+  class(res) <- c("ivreg")
   return(res)
-  
+    
 }
