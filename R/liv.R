@@ -52,8 +52,17 @@
 # make availble to the package users
 #'@export
 liv <- function(formula, param=NULL, data=NULL){
+<<<<<<< HEAD
+
+
+ if( ncol(get_all_vars(formula)) != 2 )
+    stop("A wrong number of parameters were passed in the formula. No exogenous variables are admitted.")
+
+  mf<-model.frame(formula = formula, data = data)
+=======
   
   mf <- model.frame(formula = formula, data = data)
+>>>>>>> rendoWork
   
   # if user parameters are not defined, provide initial param. values
   # coefficients are the OLS coefficients
@@ -65,11 +74,19 @@ liv <- function(formula, param=NULL, data=NULL){
   P <- mf[,ncol(mf)]
   
   if (is.null(param)) {
+<<<<<<< HEAD
+
+    param1 <- coefficients(lm(mf[,1]~mf[,2]))[1]
+    param2 <- coefficients(lm(mf[,1]~mf[,2]))[2]
+    param3 <- mean(mf[,2])
+    param4 <- mean(mf[,2])
+=======
     
     param1 <- coefficients(lm(mf[,1]~mf[,2]))[1]
     param2 <- coefficients(lm(mf[,1]~mf[,2]))[2]
     param3 <- mean(mf[,2])
     param4 <- mean(mf[,2]) + sd(mf[,2])
+>>>>>>> rendoWork
     param5 <- param6 <- param7 <- 1
     param8 <- 0.5
     param <- as.double(c(param1,param2,param3,param4,param5,param6,param7,param8))
