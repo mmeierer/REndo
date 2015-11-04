@@ -3,6 +3,7 @@
 S3method(coef,liv)
 S3method(print,liv)
 S3method(summary,liv)
+export(hmlewbel)
 export(liv)
 exportClasses(liv)
 importFrom(methods,setClass)
