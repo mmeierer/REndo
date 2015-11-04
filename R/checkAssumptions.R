@@ -4,22 +4,17 @@
 #'@keywords lewbel 
 checkAssumptions <- function(formula,IIV,EIV=NULL, data=NULL)
 {
-<<<<<<< HEAD
-  mf <- model.frame(formula = formula, data = data)
-=======
+
   mf <- as.matrix(model.frame(formula = formula, data = data))
->>>>>>> rendoWork
+
   
  # y <- mf[,1]
-#  P <- mf[,ncol(mf)]
+ #  P <- mf[,ncol(mf)]
  # X <- mf[,c(-1,-ncol(mf))]
-  # check if model error is symetrically distributed
+ # check if model error is symetrically distributed
   
-<<<<<<< HEAD
-  e1 <- fastLm(mf[,1] ~ mf[,c(-1,-ncol(mf))] + mf[,ncol(mf)])$residuals
-=======
   e1 <- RcppEigen::fastLm(mf[,1] ~ mf[,c(-1,-ncol(mf))] + mf[,ncol(mf)])$residuals
->>>>>>> rendoWork
+
   
   if (abs(e1071::skewness(e1)) > 0.10 & IIV == "y2")  
     warning(gettextf("Model error not symetrically distributed"), domain = NA)
@@ -27,11 +22,9 @@ checkAssumptions <- function(formula,IIV,EIV=NULL, data=NULL)
 
 # check assumption E(qp) !=0
 # save residuals of P regressed on 1 and X
-<<<<<<< HEAD
-  p1 <- fastLm(mf[,ncol(mf)] ~ mf[,c(-1,-ncol(mf))])$residuals
-=======
+
   p1 <- RcppEigen::fastLm(mf[,ncol(mf)] ~ mf[,c(-1,-ncol(mf))])$residuals
->>>>>>> rendoWork
+
 
  IV <- internalIV(formula,IIV)
 
