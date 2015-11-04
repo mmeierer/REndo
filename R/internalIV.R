@@ -1,4 +1,5 @@
 #'@title Constructs internal instrumental variables from available data
+#'@aliases internalIV
 #'@description Function constructing the internal instrumental variables proposed by Lewbel(1997).
 #' The function can be used to construct additional instruments to be supplied to hmlewbel() as additional instruments
 #' in "EIV" argument.

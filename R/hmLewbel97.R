@@ -60,18 +60,29 @@
 #'\item{x}{a list with elements "regressors", "instruments", "projected", containing the model matrices from the respective components.
 #' "projected" is the matrix of regressors projected on the image of the instruments.}
 #'@examples 
-#'##load data Data_hmlewbel
+#'#load data Data_hmlewbel
 #'data(Data_hmlewbel)
-#'hmlewbel(Data_hmlewbel$y1 ~ Data_hmlewbel$X1 +  Data_hmlewbel$X2 + Data_hmlewbel$P1, IIV = "yp")  
+#'y <- Data_hmlewbel$y1 
+#'X1 <-  Data_hmlewbel$X1
+#'X2 <- Data_hmlewbel$X2
+#'P <- Data_hmlewbel$P1
 #'
+#'# call hmlewbel with internal instrument yp = (Y - mean(Y))(P - mean(P))
+#'hmlewbel(y ~ X1 + X2 + P, IIV = "yp")  
+#'
+#'# build an additional instrument - p2 = (P - mean(P))^2 - using the internalIV() function 
+#'eiv <- internalIV(y ~ X1 + X2 + P, IIV = "p2")
+#'
+#'# use the additional variable as external instrument in hmlewbel()
+#'h <- hmlewbel(y ~ X1 + X2 + P, IIV = "yp", EIV=eiv) 
+#'summary(h)
 #'@keywords endogenous
 #'@keywords latent
 #'@keywords instruments
 #'@author The implementation of the model formula by Raluca Gui based on the paper of Lewbel (1997).
 #'@references  Lewbel, A. (1997). Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 #' with An Application to Patents and R&D. \emph{Econometrica}, \bold{65(5)}, 1201-1213.
-
-#\code{\link[AER]{ivreg}}, \code{\link{liv}}
+#'@seealso \code{\link{internalIV}},\code{\link[AER]{ivreg}}, \code{\link{liv}}
 # make availble to the package users
 #'@export
 
@@ -82,20 +93,24 @@ hmlewbel <- function(formula, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, d
   
 #   warning("Attention! Be sure to provide the endogenous variable as the last regressor in the formula")
 
-  
   # check to see if any external instruments were provided
   if (!is.null(EIV)) {
         EIV <- as.matrix(EIV)
     }
   
   mf <- model.frame(formula = formula, data = data)
-   
-  X <- as.matrix(mf[,c(-1,-ncol(mf))])  # all vars except the first and the last
+  m <- attr(mf, "terms") 
+  
+  X <- model.matrix(m,mf)[,c(-1,-ncol(mf))] # all vars except the first and the last
+ colnames(X) <- paste(names(mf[c(-1,-ncol(mf))]))
   
   # The endogenous variable, for this version of the package only 1 endog. var supported
   # The endogenous variable to be the last one provided in the formula
-  P <- mf[,ncol(mf)]
-  y <- mf[,1]
+  P <- as.matrix(mf[,ncol(mf)])
+  colnames(P) <- paste(names(mf[ncol(mf)]))
+  
+  y <- as.matrix(mf[,1])
+  colnames(y) <- names(mf[1])
   
   # computes the internal IVs proposed by Lewbel 97 - g, gp, gy, yp, y2, p2, depending on 
   # the values provided by the user in IIV
@@ -112,8 +127,16 @@ hmlewbel <- function(formula, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, d
   
   # uses ivreg function from \pkg{AER} for users to be able to use afterwards the package ivpack 
   # hmlewbel should return an object of class "ivreg"
-  res <- AER::ivreg(y ~ X + P|X  + IV, x=TRUE )
   
+ regs <-  unlist(as.character(formula)[3])  # get the formula for the regressors "X+P1" 
+ dep <- as.character(formula)[2]  # get the dependent variable name as character
+ iv <- as.character("X+IV")  # make a character "X+IV"
+ f <- as.formula(paste(dep, paste(regs,iv,sep="|"), sep = " ~ "))  # put everything in a formula "y ~ X+P1 | X+IV"
+ 
+ res <- AER::ivreg(f, x=TRUE )
+  
+  res$call <- match.call()
+  class(res) <- c("ivreg")
   return(res)
-  
+    
 }

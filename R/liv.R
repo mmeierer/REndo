@@ -1,5 +1,5 @@
 #'@title  Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables
-#
+#'@aliases liv
 # Description
 #'@description  Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
 #'presented in Ebbes,P., Wedel,M.,  B\"{o}ckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental
@@ -41,23 +41,19 @@
 #'\emph{Quantitative Marketing and Economics},
 #' \bold{3}:365--392.
 #' @examples
-#' ## load data
+#' # load data
 #  load(Endo_LIV)
-# ## call without any initial parameter values 
+# # call without any initial parameter values 
 # l  <- liv(y1 ~ P1)
 # summary(l)
-# ## call with initial parameter values given by the user
+# # call with initial parameter values given by the user
 # l1 <- liv(y1 ~ P1, c(1.7,0.84,7,8,1,1,1,0.2))
 # summary(l1)
 # make availble to the package users
 #'@export
 liv <- function(formula, param=NULL, data=NULL){
   
-  
-  if( ncol(get_all_vars(formula)) != 2 )
-    stop("A wrong number of parameters were passed in the formula. No exogenous variables are admitted.")
-  
-  mf<-model.frame(formula = formula, data = data)
+  mf <- model.frame(formula = formula, data = data)
   
   # if user parameters are not defined, provide initial param. values
   # coefficients are the OLS coefficients
@@ -73,7 +69,7 @@ liv <- function(formula, param=NULL, data=NULL){
     param1 <- coefficients(lm(mf[,1]~mf[,2]))[1]
     param2 <- coefficients(lm(mf[,1]~mf[,2]))[2]
     param3 <- mean(mf[,2])
-    param4 <- mean(mf[,2])
+    param4 <- mean(mf[,2]) + sd(mf[,2])
     param5 <- param6 <- param7 <- 1
     param8 <- 0.5
     param <- as.double(c(param1,param2,param3,param4,param5,param6,param7,param8))
