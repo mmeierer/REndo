@@ -45,6 +45,7 @@
 #' data(Data_liv)
 #' y1 <- Data_liv$y1
 #' P1 <- Data_liv$P1
+<<<<<<< Updated upstream
 # function call without any initial parameter values 
 #' l  <- liv(y1 ~ P1)
 #' summary(l)
@@ -59,8 +60,7 @@ liv <- function(formula, param=NULL, data=NULL){
     stop("A wrong number of parameters were passed in the formula. No exogenous variables are admitted.")
 
   mf<-model.frame(formula = formula, data = data)
-
-  
+ 
   # if user parameters are not defined, provide initial param. values
   # coefficients are the OLS coefficients
   # the two group means = mean(P)

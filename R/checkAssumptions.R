@@ -7,7 +7,7 @@ checkAssumptions <- function(formula,IIV,EIV=NULL, data=NULL)
 
   mf <- as.matrix(model.frame(formula = formula, data = data))
 
-  
+ 
  # y <- mf[,1]
  #  P <- mf[,ncol(mf)]
  # X <- mf[,c(-1,-ncol(mf))]
@@ -15,7 +15,7 @@ checkAssumptions <- function(formula,IIV,EIV=NULL, data=NULL)
   
   e1 <- RcppEigen::fastLm(mf[,1] ~ mf[,c(-1,-ncol(mf))] + mf[,ncol(mf)])$residuals
 
-  
+ 
   if (abs(e1071::skewness(e1)) > 0.10 & IIV == "y2")  
     warning(gettextf("Model error not symetrically distributed"), domain = NA)
  
@@ -24,7 +24,6 @@ checkAssumptions <- function(formula,IIV,EIV=NULL, data=NULL)
 # save residuals of P regressed on 1 and X
 
   p1 <- RcppEigen::fastLm(mf[,ncol(mf)] ~ mf[,c(-1,-ncol(mf))])$residuals
-
 
  IV <- internalIV(formula,IIV)
 
