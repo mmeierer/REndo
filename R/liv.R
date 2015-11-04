@@ -42,27 +42,24 @@
 #' \bold{3}:365--392.
 #' @examples
 #' # load data
-#  load(Endo_LIV)
-# # call without any initial parameter values 
-# l  <- liv(y1 ~ P1)
-# summary(l)
-# # call with initial parameter values given by the user
-# l1 <- liv(y1 ~ P1, c(1.7,0.84,7,8,1,1,1,0.2))
-# summary(l1)
+#' data(Data_liv)
+#' y1 <- Data_liv$y1
+#' P1 <- Data_liv$P1
+# function call without any initial parameter values 
+#' l  <- liv(y1 ~ P1)
+#' summary(l)
+#' # function call with initial parameter values given by the user
+#' l1 <- liv(y1 ~ P1, c(1.7,0.84,7,8,1,1,1,0.2))
+#' summary(l1)
 # make availble to the package users
 #'@export
 liv <- function(formula, param=NULL, data=NULL){
-<<<<<<< HEAD
-
 
  if( ncol(get_all_vars(formula)) != 2 )
     stop("A wrong number of parameters were passed in the formula. No exogenous variables are admitted.")
 
   mf<-model.frame(formula = formula, data = data)
-=======
-  
-  mf <- model.frame(formula = formula, data = data)
->>>>>>> rendoWork
+
   
   # if user parameters are not defined, provide initial param. values
   # coefficients are the OLS coefficients
@@ -74,19 +71,11 @@ liv <- function(formula, param=NULL, data=NULL){
   P <- mf[,ncol(mf)]
   
   if (is.null(param)) {
-<<<<<<< HEAD
 
     param1 <- coefficients(lm(mf[,1]~mf[,2]))[1]
     param2 <- coefficients(lm(mf[,1]~mf[,2]))[2]
     param3 <- mean(mf[,2])
-    param4 <- mean(mf[,2])
-=======
-    
-    param1 <- coefficients(lm(mf[,1]~mf[,2]))[1]
-    param2 <- coefficients(lm(mf[,1]~mf[,2]))[2]
-    param3 <- mean(mf[,2])
     param4 <- mean(mf[,2]) + sd(mf[,2])
->>>>>>> rendoWork
     param5 <- param6 <- param7 <- 1
     param8 <- 0.5
     param <- as.double(c(param1,param2,param3,param4,param5,param6,param7,param8))
