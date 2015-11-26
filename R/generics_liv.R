@@ -3,15 +3,15 @@
 #' This class is used to store and further analyze the results of the liv function
 #' @slot formula
 #' @slot coefficients
-#' @slot se_coefficients
-#' @slot group_means
-#' @slot se_means
+#' @slot seCoefficients
+#' @slot groupMeans
+#' @slot seMeans
 #' @slot sigma
-#' @slot prob_G1
-#' @slot se_probG1
-#' @slot init.values
+#' @slot probG1
+#' @slot seProbG1
+#' @slot initValues
 #' @slot value
-#' @slot convcode
+#' @slot convCode
 #' @slot hessian
 
 #' @name liv-class
@@ -33,29 +33,29 @@ setClass(
   slots = c(
     formula = "formula",
     coefficients = "numeric",
-    se_coefficients = "numeric",
-    group_means = "numeric",
-    se_means = "numeric",
+    seCoefficients = "numeric",
+    groupMeans = "numeric",
+    seMeans = "numeric",
     sigma = "matrix",
-    prob_G1 = "numeric",
-    se_probG1 = "numeric",
-    init.values = "numeric",
+    probG1 = "numeric",
+    seProbG1 = "numeric",
+    initValues = "numeric",
     value = "numeric",
-    convcode = "integer",
+    convCode = "integer",
     hessian = "matrix"
 
   ),
 
   prototype = list(formula = NA,
                    coefficients = NA_real_,
-                   se_coefficients = NA_real_,
-                   group_means = NA_real_,
-                   se_means = NA_real_,
+                   seCoefficients = NA_real_,
+                   groupMeans = NA_real_,
+                   seMeans = NA_real_,
                    sigma = matrix(NA),
-                   prob_G1 = NA_real_,
-                   init.values = NA_real_,
+                   probG1 = NA_real_,
+                   initValues = NA_real_,
                    value = NA_real_,
-                   convcode = NA_integer_,
+                   convCode = NA_integer_,
                    hessian = matrix(NA)
   )
 )
@@ -77,7 +77,7 @@ summary.liv <- function(object, ...)
 {
     z <- object
     est <- z@coefficients  # estimates value
-    se <- z@se_coefficients  # standard errors
+    se <- z@seCoefficients  # standard errors
     names.coef <- all.vars(z@formula[[3]])
 
     coef.table <- cbind(est,se)
@@ -87,11 +87,11 @@ summary.liv <- function(object, ...)
     cat("\nCoefficients:\n")
     printCoefmat(coef.table) # print the coefficient and std errors
 
-    cat("\nInitial Parameter Values:\n", z@init.values)  # print initial param values
+    cat("\nInitial Parameter Values:\n", z@initValues)  # print initial param values
     cat("\n")
     cat("\nThe Value of the log likelihood function:\n", z@value)  # print logLik values
     cat("\n")
-    cat("\nConvergence Code:\n", z@convcode)  # print comvergence code
+    cat("\nConvergence Code:\n", z@convCode)  # print comvergence code
 }
 
 
