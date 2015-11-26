@@ -11,7 +11,7 @@ liv(formula, param = NULL, data = NULL)
 containing the dependent variable, while \code{var2} is a vector containing the endogenous variable.}
 
 \item{param}{a vector of initial values for the parameters of the model to be supplied to the optimization algorithm.
-The first parameter is the intercept, then the coefficient of the endogenous variable followed by the means of the two groups of the latent IV,
+The first parameter is the intercept, then the coefficient of the endogenous variable followed by the means of the two groups of the latent IV (they need to be different, otherwise model is not identified),
 then the next three parameters are for the variance-covariance matrix. The last parameter is the probability for group 1.}
 
 \item{data}{optional data frame or list containing the variables in the model.}
@@ -23,8 +23,8 @@ standard errors bootsptrapping is needed, using the boots() function from the sa
 \item{means}{returns the value of the parameters for the means of the two categories/groups of the latent instrumental variable.}
 \item{sigma}{returns the variance-covariance matrix sigma, where on the main diagonal are the variances of the structural error and that of
 the endogenous regressor and the off-diagonal terms are equal to the covariance between the errors.}
-\item{prob_G1}{returns the probability of group 1. Since the model assumes that the latent instrumental variable has two groups,
-\code{1-prob_G1} gives the probability of group 2.}
+\item{probG1}{returns the probability of group 1. Since the model assumes that the latent instrumental variable has two groups,
+\code{1-probG1} gives the probability of group 2.}
 \item{value}{the value of the log-likelihood function corresponding to param.}
 \item{convcode}{An integer code, the same as the output returned by optim. 0 indicates successful completion. A possible error code is 1 which dicates that the iteration
 limit maxit had been reached.}
@@ -39,11 +39,21 @@ the structural error is normally distributed.
 \details{
 The method has been programmed such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
 even if the true number of the categories of the instrument is larger than two the LIV estimates are approximately consistent. Besides, overfitting in terms
-of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. For a model with additonal explanatory variables a Bayesian approach is needed, since
+of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
+for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
 in a frequentist approach identification issues appear. The optimization algorithm used is BFGS.
 }
 \examples{
-## load data
+# load data
+data(dataLIV)
+y <- dataLIV$y
+P <- dataLIV$P
+# function call without any initial parameter values
+l  <- liv(y ~ P)
+summary(l)
+# function call with initial parameter values given by the user
+l1 <- liv(y ~ P, c(2.9,-0.85,0,0.1,1,1,1,0.5))
+summary(l1)
 }
 \author{
 The implementation of the model formula by Raluca Gui based on the paper of Ebbes et al. (2005).

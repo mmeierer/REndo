@@ -4,29 +4,30 @@
 \alias{internalIV}
 \title{Constructs internal instrumental variables from available data}
 \usage{
-internalIV(formula, IIV = c("g", "gp", "gy", "yp", "p2", "y2"), data = NULL)
+internalIV(y, X, P, IIV = c("g", "gp", "gy", "yp", "p2", "y2"), data = NULL)
 }
 \arguments{
-\item{formula}{an object of type 'formula': a symbolic description of the model to be fitted. Example \code{var1 ~ var2 + var3}, where \code{var1} is a vector
-containing the dependent variable, while \code{var2, var3}, etc are vectors containing the regressors. The endogenous variable should be the last regressor
-in the formula.}
+\item{y}{the vector or matrix containing the dependent variable.}
+
+\item{X}{the data frame or matrix containing the exogenous regressors of the model.}
+
+\item{P}{the endogenous variables of the model as columns of a matrix or dataframe.}
 
 \item{IIV}{the internal instrumental variable to be constructed. It can take six values, \code{"g","gp","gy","yp","p2"or"y2"}. See the "Details" section
 of \code{\link{hmlewbel}} for a description of the internal instruments.}
 
-\item{data}{optional data.frame or list containing the variables in the model.}
+\item{data}{optional data frame or list containing the variables in the model.}
 }
 \description{
-Function constructing the internal instrumental variables proposed by Lewbel(1997).
-The function can be used to construct additional instruments to be supplied to hmlewbel() as additional instruments
-in "EIV" argument.
+The function can be used to construct additional instruments to be supplied to \code{\link{hmlewbel}} as additional instruments
+in the "EIV" argument.
 }
 \references{
 Lewbel, A. (1997). "Lewbel, A. (1997). 'Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 with An Application to Patents and R&D'. Econometrica, 65(5), 1201-1213."
 }
 \seealso{
-\code{link{hmlewbel}}
+\code{\link{hmlewbel}}
 }
 \keyword{endogeneity}
 \keyword{instruments}

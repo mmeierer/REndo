@@ -7,5 +7,5 @@ Author: Raluca Gui,
         Markus Meierer
 Maintainer: Raluca Gui <raluca.gui@business.uzh.ch>
 Description: Fits linear models with endogenous regressor using the latent instrumental variable approaches such as latent instrumental variables, Lewbel's higher moments approach, multilevel GMM and joint estimation using Gaussian copula.These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed. 
-Imports: optimx, mvtnorm, AER, e1071, RcppEigen,methods
+Imports: optimx, mvtnorm, AER,e1071,methods
 License: GPL-3

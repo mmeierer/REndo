@@ -4,7 +4,7 @@
 \alias{checkAssumptions}
 \title{Checks Assumptions for Constructing Internal Instruments}
 \usage{
-checkAssumptions(formula, IIV, EIV = NULL, data = NULL)
+checkAssumptions(y, X, P, IIV, EIV = NULL, data = NULL)
 }
 \description{
 The internal instruments are constructed as in Lewbel(1997). See \code{\link{hmlewbel}}.

@@ -7,8 +7,9 @@
 #' An important assumption for identification is that the endogenous variable has a skewed distribution.  
 #
 # Arguments
-#'@param formula  an object of type 'formula': a symbolic description of the model to be fitted. Example \code{var1 ~ var2}, where \code{var1} is a vector
-#'containing the dependent variable, while \code{var2} is a vector containing the endogenous variable.
+#'@param    y   the vector or matrix containing the dependent variable.
+#'@param    X   the data frame or matrix containing the exogenous regressors of the model.
+#'@param    P   the endogenous variables of the model as columns of a matrix or dataframe.   
 #'@param IIV  stands for "internal instrumental variable". It can take six values: \code{g,gp,gy,yp,p2} or \code{y2}. Tells the function 
 #'which internal instruments to be constructed from the data. See "Details" for further explanations.
 #'@param EIV  stands for "external instrumental variable". It is an optional argument that lets the user specify any external variable(s) to be used as instrument(s).
@@ -60,22 +61,21 @@
 #'\item{x}{a list with elements "regressors", "instruments", "projected", containing the model matrices from the respective components.
 #' "projected" is the matrix of regressors projected on the image of the instruments.}
 #'@examples 
-#'#load data Data_hmlewbel
-#'data(Data_hmlewbel)
-#'y <- Data_hmlewbel$y1 
-#'X1 <-  Data_hmlewbel$X1
-#'X2 <- Data_hmlewbel$X2
-#'P <- Data_hmlewbel$P1
+#'#load data 
+#'data(dataHMLewbel)
+#'y <- dataHMLewbel$y
+#'X <- cbind(dataHMLewbel$X1,dataHMLewbel$X2)
+#'P <- dataHMLewbel$P
 #'
 #'# call hmlewbel with internal instrument yp = (Y - mean(Y))(P - mean(P))
-#'hmlewbel(y ~ X1 + X2 + P, IIV = "yp")  
+#'hmlewbel(y,X,P, IIV = "yp")  
 #'
-#'# build an additional instrument - p2 = (P - mean(P))^2 - using the internalIV() function 
-#'eiv <- internalIV(y ~ X1 + X2 + P, IIV = "p2")
-#'
+#'# build an additional instrument p2 = (P - mean(P))^2  using the internalIV() function 
+#'eiv <- internalIV(y,X,P, IIV = "p2")
+#'\donttest{
 #'# use the additional variable as external instrument in hmlewbel()
-#'h <- hmlewbel(y ~ X1 + X2 + P, IIV = "yp", EIV=eiv) 
-#'summary(h)
+#'h <- hmlewbel(y,X,P, IIV = "yp", EIV=eiv) 
+#'summary(h)}
 #'@keywords endogenous
 #'@keywords latent
 #'@keywords instruments
@@ -87,53 +87,30 @@
 #'@export
 
 
-hmlewbel <- function(formula, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, data=NULL){
+hmlewbel <- function(y,X,P, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, data=NULL){
   
-  # in formula, the last variable should be the endogenous one!
-  
-#   warning("Attention! Be sure to provide the endogenous variable as the last regressor in the formula")
-
   # check to see if any external instruments were provided
   if (!is.null(EIV)) {
         EIV <- as.matrix(EIV)
     }
   
-  mf <- model.frame(formula = formula, data = data)
-  m <- attr(mf, "terms") 
-  
-  X <- model.matrix(m,mf)[,c(-1,-ncol(mf))] # all vars except the first and the last
- colnames(X) <- paste(names(mf[c(-1,-ncol(mf))]))
-  
-  # The endogenous variable, for this version of the package only 1 endog. var supported
-  # The endogenous variable to be the last one provided in the formula
-  P <- as.matrix(mf[,ncol(mf)])
-  colnames(P) <- paste(names(mf[ncol(mf)]))
-  
-  y <- as.matrix(mf[,1])
-  colnames(y) <- names(mf[1])
-  
-  # computes the internal IVs proposed by Lewbel 97 - g, gp, gy, yp, y2, p2, depending on 
-  # the values provided by the user in IIV
-  IV <- internalIV(formula,IIV, data)
+ # computes the internal IVs proposed by Lewbel 97 - g, gp, gy, yp, y2, p2, depending on 
+# the values provided by the user in IIV
+  IV <- internalIV(y,X,P,IIV, data)
   
   # check if external instruments were provided. If, yes, add them to the IIV
-  if (is.null(EIV)){IV <- IV} else {
-    IV <- cbind(IV,EIV)
+  if (is.null(EIV)){IV1 <- IV} else {
+    IV1 <- cbind(IV,EIV)
   }  
   
   # function that checks whether the model error is symmetrically distributed
   # if yes, then IIV6 can be used as instrument
-  checkAssumptions(formula,IIV,EIV, data)
+  # checkAssumptions(y,X,P,IIV,EIV, data)
   
   # uses ivreg function from \pkg{AER} for users to be able to use afterwards the package ivpack 
   # hmlewbel should return an object of class "ivreg"
   
- regs <-  unlist(as.character(formula)[3])  # get the formula for the regressors "X+P1" 
- dep <- as.character(formula)[2]  # get the dependent variable name as character
- iv <- as.character("X+IV")  # make a character "X+IV"
- f <- as.formula(paste(dep, paste(regs,iv,sep="|"), sep = " ~ "))  # put everything in a formula "y ~ X+P1 | X+IV"
- 
- res <- AER::ivreg(f, x=TRUE )
+ res <- AER::ivreg(y~.|X+IV1,data = data.frame(cbind(X,P)), x=TRUE )
   
   res$call <- match.call()
   class(res) <- c("ivreg")
