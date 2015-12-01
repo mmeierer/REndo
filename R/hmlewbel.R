@@ -9,8 +9,9 @@
 # Arguments
 #'@param    y   the vector or matrix containing the dependent variable.
 #'@param    X   the data frame or matrix containing the exogenous regressors of the model.
-#'@param    P   the endogenous variables of the model as columns of a matrix or dataframe.   
-#'@param IIV  stands for "internal instrumental variable". It can take six values: \code{g,gp,gy,yp,p2} or \code{y2}. Tells the function 
+#'@param    P   the endogenous variables of the model as columns of a matrix or dataframe.  
+#'@param    G   the functional form of G. It can take four values, \code{x2}, \code{x3},\code{lnx} or \code{1/x}. The last two forms are conditional on the values of the exogenous variables: greater than 1 or different from 0 respectively.
+#'@param    IIV  stands for "internal instrumental variable". It can take six values: \code{g,gp,gy,yp,p2} or \code{y2}. Tells the function 
 #'which internal instruments to be constructed from the data. See "Details" for further explanations.
 #'@param EIV  stands for "external instrumental variable". It is an optional argument that lets the user specify any external variable(s) to be used as instrument(s).
 #'@param data  optional data frame or list containing the variables in the model.
@@ -18,15 +19,15 @@
 
 #'@details 
 #'Consider the model below: 
-#'\deqn{ Y_{t} = \beta_{0}+ \gamma^{'} W_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }{Y_t = beta_0 + gamma' * W_t + alpha * P_t + epsilon_t}
+#'\deqn{ Y_{t} = \beta_{0}+ \gamma^{'} X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }{Y_t = beta_0 + gamma' * X_t + alpha * P_t + epsilon_t}
 #' \deqn{ P_{t} = Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}{P_t = Z_t + nu_t} 
 #' 
-#'The observed data consist of \eqn{Y_{t}}{Y_t}, \eqn{W_{t}}{W_t} and \eqn{P_{t}}{P_t}, while \eqn{Z_{t}}{Z_t}, \eqn{\epsilon_{t}}{epsilon_t}, and \eqn{\nu_{t}}{nu_t} 
+#'The observed data consist of \eqn{Y_{t}}{Y_t}, \eqn{X_{t}}{X_t} and \eqn{P_{t}}{P_t}, while \eqn{Z_{t}}{Z_t}, \eqn{\epsilon_{t}}{epsilon_t}, and \eqn{\nu_{t}}{nu_t} 
 #'are unobserved. The endogeneity problem arises from the correlation of \eqn{P_{t}}{P_t} with the structural error, \eqn{\epsilon_{t}}{epsilon_t}, 
 #'since \eqn{E(\epsilon \nu)\neq 0}{E(epsilon_t * nu_t) > 0}. 
 #'The requirement for the structural and measurement error is to have mean zero, but no restriction is imposed on their distribution. 
 #'
-#'Let \eqn{\bar{S}}{mean(S)} be the sample mean of a variable \eqn{S_{t}}{S_t} and \eqn{G_{t}=G(W_{t})}{G_t = G(W_t)} for any given function \eqn{G}{G} that 
+#'Let \eqn{\bar{S}}{mean(S)} be the sample mean of a variable \eqn{S_{t}}{S_t} and \eqn{G_{t}=G(X_{t})}{G_t = G(X_t)} for any given function \eqn{G}{G} that 
 #'has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with 2SLS to obtain consistent estimates:
 #' \deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}{q1 = G_t - mean(G)}
 #' \deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b) }{q2 = (G_t - mean(G))(P_t -mean(P))}
@@ -36,11 +37,11 @@
 #' \deqn{ q_{6t}=(Y_{t} - \bar{Y})^{2}\hspace{1.5 cm} (3f)}{q6 = (Y_t - mean(Y))^2}
 #' 
 #'Instruments in equations \code{3e} and \code{3f} can be used only when the measurement and the structural errors are symmetrically distributed.
-#'Otherwise, the use of the instruments does not require any distributional assumptions for the errors. Given that the regressors \eqn{G(W) = W} 
-#'are included as instruments, \eqn{G(W)} should not be linear in \eqn{W} in equation \code{3a}.
+#'Otherwise, the use of the instruments does not require any distributional assumptions for the errors. Given that the regressors \eqn{G(X) = X} 
+#'are included as instruments, \eqn{G(X)} should not be linear in \eqn{X} in equation \code{3a}.
 #'
 #'Let small letter denote deviation from the sample mean: \eqn{s_{i} = S_{i}-\bar{S}}{s_i = S_i - mean(S)}. Then, using as instruments the variables presented in
-#'equations \code{3} together with \code{1} and \eqn{W_{t}}{W_t}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
+#'equations \code{3} together with \code{1} and \eqn{X_{t}}{X_t}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
 #'in equation \code{1} under the assumptions exposed in Lewbel(1997).
 #'
 
@@ -60,22 +61,6 @@
 #'\item{contrasts}{the contrasts used foe categorical regressors.}
 #'\item{x}{a list with elements "regressors", "instruments", "projected", containing the model matrices from the respective components.
 #' "projected" is the matrix of regressors projected on the image of the instruments.}
-#'@examples 
-#'#load data 
-#'data(dataHMLewbel)
-#'y <- dataHMLewbel$y
-#'X <- cbind(dataHMLewbel$X1,dataHMLewbel$X2)
-#'P <- dataHMLewbel$P
-#'
-#'# call hmlewbel with internal instrument yp = (Y - mean(Y))(P - mean(P))
-#'hmlewbel(y,X,P, IIV = "yp")  
-#'
-#'# build an additional instrument p2 = (P - mean(P))^2  using the internalIV() function 
-#'eiv <- internalIV(y,X,P, IIV = "p2")
-#'\donttest{
-#'# use the additional variable as external instrument in hmlewbel()
-#'h <- hmlewbel(y,X,P, IIV = "yp", EIV=eiv) 
-#'summary(h)}
 #'@keywords endogenous
 #'@keywords latent
 #'@keywords instruments
@@ -83,11 +68,28 @@
 #'@references  Lewbel, A. (1997). Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 #' with An Application to Patents and R&D. \emph{Econometrica}, \bold{65(5)}, 1201-1213.
 #'@seealso \code{\link{internalIV}},\code{\link[AER]{ivreg}}, \code{\link{liv}}
+#'@examples 
+#'#load data 
+#'data(dataHMLewbel)
+#'y <- dataHMLewbel$y
+#'X <- cbind(dataHMLewbel$X1,dataHMLewbel$X2)
+#'colnames(X) <- c("X1","X2")
+#'P <- dataHMLewbel$P
+#'
+#'# call hmlewbel with internal instrument yp = (Y - mean(Y))(P - mean(P))
+#'hmlewbel(y,X,P, G = "x2", IIV = "yp")  
+#'
+#'# build an additional instrument p2 = (P - mean(P))^2  using the internalIV() function 
+#'eiv <- internalIV(y,X,P, G="x2", IIV = "p2")
+#'\donttest{
+#'# use the additional variable as external instrument in hmlewbel()
+#'h <- hmlewbel(y,X,P,G = "x2",IIV = "yp", EIV=eiv) 
+#'summary(h)}
 # make availble to the package users
 #'@export
 
 
-hmlewbel <- function(y,X,P, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, data=NULL){
+hmlewbel <- function(y,X,P, G = c("x2","x3","lnx","1/x"), IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, data=NULL){
   
   # check to see if any external instruments were provided
   if (!is.null(EIV)) {
@@ -96,7 +98,7 @@ hmlewbel <- function(y,X,P, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, dat
   
  # computes the internal IVs proposed by Lewbel 97 - g, gp, gy, yp, y2, p2, depending on 
 # the values provided by the user in IIV
-  IV <- internalIV(y,X,P,IIV, data)
+  IV <- internalIV(y,X,P,G,IIV, data)
   
   # check if external instruments were provided. If, yes, add them to the IIV
   if (is.null(EIV)){IV1 <- IV} else {
@@ -109,8 +111,8 @@ hmlewbel <- function(y,X,P, IIV = c("g","gp","gy","yp","p2","y2"), EIV=NULL, dat
   
   # uses ivreg function from \pkg{AER} for users to be able to use afterwards the package ivpack 
   # hmlewbel should return an object of class "ivreg"
-  
- res <- AER::ivreg(y~.|X+IV1,data = data.frame(cbind(X,P)), x=TRUE )
+  dataHM <- data.frame(cbind(X,P))
+  res <- AER::ivreg(y~.|X+IV1,dataHM, x=TRUE )
   
   res$call <- match.call()
   class(res) <- c("ivreg")
