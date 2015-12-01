@@ -7,33 +7,35 @@
 #'the structural error is normally distributed.
 #
 # Arguments
-#'@param formula  an object of type 'formula': a symbolic description of the model to be fitted. Example \code{var1 ~ var2}, where \code{var1} is a vector
+#'@param    formula  an object of type 'formula': a symbolic description of the model to be fitted. Example \code{var1 ~ var2}, where \code{var1} is a vector
 #' containing the dependent variable, while \code{var2} is a vector containing the endogenous variable.
-#'@param data  optional data frame or list containing the variables in the model.
-#'@param  param  a vector of initial values for the parameters of the model to be supplied to the optimization algorithm.
+#'@param    data  optional data frame or list containing the variables of the model.
+#'@param    param  a vector of initial values for the parameters of the model to be supplied to the optimization algorithm. In any model there are eight parameters.
 #'The first parameter is the intercept, then the coefficient of the endogenous variable followed by the means of the two groups of the latent IV (they need to be different, otherwise model is not identified),
-#'then the next three parameters are for the variance-covariance matrix. The last parameter is the probability for group 1.
-#
-#'@details The method has been programmed such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
-#'even if the true number of the categories of the instrument is larger than two the LIV estimates are approximately consistent. Besides, overfitting in terms
+#'then the next three parameters are for the variance-covariance matrix. The last parameter is the probability of being in group 1. When not provided, 
+#'initial paramameters values are set equal to the OLS coefficients, the two group means are set to be equal to \code{mean(P)} and \code{ mean(P) + sd(P)}, the
+#'variance-covariance matrix has all elements equal to 1 while \code{probG1} is set to equal 0.5.
+#'
+#'@details     The method has been programmed such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
+#'even if the true number of the categories of the instrument is larger than two, LIV estimates are approximately consistent. Besides, overfitting in terms
 #'of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
 #'for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
 #'in a frequentist approach identification issues appear. The optimization algorithm used is BFGS.
 #'
 #Return Value
-#'@return It returns the optimal values of the parameters as computed by maximum likelihood using BFGS algorithm. To obtain the
-#'standard errors bootsptrapping is needed, using the boots() function from the same package.
+#'@return    Returns the optimal values of the parameters as computed by maximum likelihood using BFGS algorithm. To obtain the
+#'standard errors bootsptrapping is needed, using the \code{\link{boots}} function from the same package.
 #'\item{coefficients}{returns the value of the parameters for the intercept and the endogenous regressor as computed with maximum likelihood.}
 #'\item{means}{returns the value of the parameters for the means of the two categories/groups of the latent instrumental variable.}
 #'\item{sigma}{returns the variance-covariance matrix sigma, where on the main diagonal are the variances of the structural error and that of
 #'the endogenous regressor and the off-diagonal terms are equal to the covariance between the errors.}
-#'\item{probG1}{returns the probability of group 1. Since the model assumes that the latent instrumental variable has two groups,
+#'\item{probG1}{returns the probability of being in group one. Since the model assumes that the latent instrumental variable has two groups,
 #'\code{1-probG1} gives the probability of group 2.}
-#'\item{value}{the value of the log-likelihood function corresponding to param.}
-#'\item{convcode}{An integer code, the same as the output returned by optim. 0 indicates successful completion. A possible error code is 1 which dicates that the iteration
+#'\item{value}{the value of the log-likelihood function corresponding to the optimal parameters.}
+#'\item{convcode}{an integer code, the same as the output returned by \code{optimx}. 0 indicates successful completion. A possible error code is 1 which indicates that the iteration
 #'limit maxit had been reached.}
-#'\item{hessian}{A symmetric matrix giving an estimate of the Hessian at the solution found.}
-#'@keywords endogenousdata:
+#'\item{hessian}{a symmetric matrix giving an estimate of the Hessian at the solution found.}
+#'@keywords endogenousdata
 #'@keywords latent
 #'@keywords instruments
 #'@author The implementation of the model formula by Raluca Gui based on the paper of Ebbes et al. (2005).
@@ -64,9 +66,9 @@ liv <- function(formula, param=NULL, data=NULL){
   
   # if user parameters are not defined, provide initial param. values
   # coefficients are the OLS coefficients
-  # the two group means = mean(P)
+  # the two group means = mean(P), and mean(P) + sd(P)
   # next three parameters = 1
-  # prob_G1 = 0.5
+  # probG1 = 0.5
   
   y <- mf[,1]
   P <- mf[,ncol(mf)]
@@ -110,10 +112,10 @@ liv <- function(formula, param=NULL, data=NULL){
   
   
   obj@seCoefficients <- std_par[1:2]
-  if (obj@seCoefficients[1] =="NaN") warning("Coefficients standard errors unable to be computed. Check initial parameter values")
+  if (obj@seCoefficients[1] =="NaN") warning("Coefficient's standard errors unable to be computed. Check initial parameter values")
   
   obj@seMeans <- std_par[3:4]
-  if (obj@seMeans[1] =="NaN") warning("Group means standard errors unable to be computed. Check initial parameter values")
+  if (obj@seMeans[1] =="NaN") warning("Group means' standard errors unable to be computed. Check initial parameter values")
   
   obj@seProbG1 <- std_par[8]
   
