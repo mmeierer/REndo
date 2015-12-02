@@ -1,4 +1,4 @@
-#'@title  Fitting Linear Models with one Endogenous Regressor using Lewbel's higher moments approach
+#'@title  Fitting Linear Models with Endogenous Regressors using Lewbel's Higher Moments Approach
 #'@aliases hmlewbel
 # Description
 #'@description  Fits linear models with one endogenous regressor using internal instruments built using the approach described in 
@@ -19,15 +19,15 @@
 
 #'@details 
 #'Consider the model below: 
-#'\deqn{ Y_{t} = \beta_{0}+ \gamma^{'} X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }{Y_t = beta_0 + gamma' * X_t + alpha * P_t + epsilon_t}
-#' \deqn{ P_{t} = Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}{P_t = Z_t + nu_t} 
+#'\deqn{ Y_{t} = \beta_{0}+ \gamma^{'}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }{Y_t = b0 + gamma' * X_t + alpha * P_t + eps_t}
+#' \deqn{ P_{t} = Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}{P_t = Z + nu_t} 
 #' 
-#'The observed data consist of \eqn{Y_{t}}{Y_t}, \eqn{X_{t}}{X_t} and \eqn{P_{t}}{P_t}, while \eqn{Z_{t}}{Z_t}, \eqn{\epsilon_{t}}{epsilon_t}, and \eqn{\nu_{t}}{nu_t} 
-#'are unobserved. The endogeneity problem arises from the correlation of \eqn{P_{t}}{P_t} with the structural error, \eqn{\epsilon_{t}}{epsilon_t}, 
-#'since \eqn{E(\epsilon \nu)\neq 0}{E(epsilon_t * nu_t) > 0}. 
+#'The observed data consist of \eqn{Y_{t}}{Y}, \eqn{X_{t}}{X} and \eqn{P_{t}}{P_t}, while \eqn{Z_{t}}{Z_t}, \eqn{\epsilon_{t}}{eps_t}, and \eqn{\nu_{t}}{nu_t} 
+#'are unobserved. The endogeneity problem arises from the correlation of \eqn{P_{t}}{P} with the structural error, \eqn{\epsilon_{t}}{eps_t}, 
+#'since \eqn{E(\epsilon \nu)\neq 0}{E(eps * nu) > 0}. 
 #'The requirement for the structural and measurement error is to have mean zero, but no restriction is imposed on their distribution. 
 #'
-#'Let \eqn{\bar{S}}{mean(S)} be the sample mean of a variable \eqn{S_{t}}{S_t} and \eqn{G_{t}=G(X_{t})}{G_t = G(X_t)} for any given function \eqn{G}{G} that 
+#'Let \eqn{\bar{S}}{mean(S)} be the sample mean of a variable \eqn{S_{t}}{S_t} and \eqn{G_{t} = G(X_{t})}{G = G(X)} for any given function \eqn{G}{G} that 
 #'has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with 2SLS to obtain consistent estimates:
 #' \deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}{q1 = G_t - mean(G)}
 #' \deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b) }{q2 = (G_t - mean(G))(P_t -mean(P))}
@@ -41,25 +41,25 @@
 #'are included as instruments, \eqn{G(X)} should not be linear in \eqn{X} in equation \code{3a}.
 #'
 #'Let small letter denote deviation from the sample mean: \eqn{s_{i} = S_{i}-\bar{S}}{s_i = S_i - mean(S)}. Then, using as instruments the variables presented in
-#'equations \code{3} together with \code{1} and \eqn{X_{t}}{X_t}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
+#'equations \code{3} together with \code{1} and \eqn{X_{t}}{X}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
 #'in equation \code{1} under the assumptions exposed in Lewbel(1997).
 #'
 
 #Return Value
-#'@return \code{hmlewbel} returns an object of class \code{ivreg}, with the following components:
-#'\item{coefficients}{parameters estimates.}
-#'\item{residulas}{a vector of residuals.}
-#'\item{fitted.values}{a vector of predicted means.}
-#'\item{n}{number of observations.}
-#'\item{df.residual}{residual degrees of freedom for the fitted model.}
-#'\item{cov.unscaled}{unscaled covariance matrix for coefficients.}
-#'\item{sigma}{residual standard error.}
-#'\item{call}{the original function call.}
-#'\item{formula}{the model formula.}
-#'\item{terms}{a list with elements "regressors" and "instruments" containing the terms objects for the respective components.}
-#'\item{levels}{levels of the categorical regressors.}
-#'\item{contrasts}{the contrasts used foe categorical regressors.}
-#'\item{x}{a list with elements "regressors", "instruments", "projected", containing the model matrices from the respective components.
+#'@return Returns an object of class \code{ivreg}, with the following components:
+#'\item{coefficients}{ parameters estimates.}
+#'\item{residulas}{ a vector of residuals.}
+#'\item{fitted.values}{ a vector of predicted means.}
+#'\item{n}{ number of observations.}
+#'\item{df.residual}{ residual degrees of freedom for the fitted model.}
+#'\item{cov.unscaled}{ unscaled covariance matrix for coefficients.}
+#'\item{sigma}{ residual standard error.}
+#'\item{call}{ the original function call.}
+#'\item{formula}{ the model formula.}
+#'\item{terms}{ a list with elements "regressors" and "instruments" containing the terms objects for the respective components.}
+#'\item{levels}{ levels of the categorical regressors.}
+#'\item{contrasts}{ the contrasts used foe categorical regressors.}
+#'\item{x}{ a list with elements "regressors", "instruments", "projected", containing the model matrices from the respective components.
 #' "projected" is the matrix of regressors projected on the image of the instruments.}
 #'@keywords endogenous
 #'@keywords latent
@@ -67,7 +67,7 @@
 #'@author The implementation of the model formula by Raluca Gui based on the paper of Lewbel (1997).
 #'@references  Lewbel, A. (1997). Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 #' with An Application to Patents and R&D. \emph{Econometrica}, \bold{65(5)}, 1201-1213.
-#'@seealso \code{\link{internalIV}},\code{\link[AER]{ivreg}}, \code{\link{liv}}
+#'@seealso \code{\link{internalIV}}, \code{\link[AER]{ivreg}}, \code{\link{liv}}
 #'@examples 
 #'#load data 
 #'data(dataHMLewbel)
@@ -81,10 +81,15 @@
 #'
 #'# build an additional instrument p2 = (P - mean(P))^2  using the internalIV() function 
 #'eiv <- internalIV(y,X,P, G="x2", IIV = "p2")
-#'\donttest{
+#'
 #'# use the additional variable as external instrument in hmlewbel()
 #'h <- hmlewbel(y,X,P,G = "x2",IIV = "yp", EIV=eiv) 
-#'summary(h)}
+#'h$coefficients
+#'
+#'# get the robust standard errors using robust.se() function from package ivpack
+#'# library(ivpack)
+#'# sder <- robust.se(h)
+#'
 # make availble to the package users
 #'@export
 
@@ -112,7 +117,7 @@ hmlewbel <- function(y,X,P, G = c("x2","x3","lnx","1/x"), IIV = c("g","gp","gy",
   # uses ivreg function from \pkg{AER} for users to be able to use afterwards the package ivpack 
   # hmlewbel should return an object of class "ivreg"
   dataHM <- data.frame(cbind(X,P))
-  res <- AER::ivreg(y~.|X+IV1,dataHM, x=TRUE )
+  res <- AER::ivreg(y ~.|X + IV1, data = dataHM, x=TRUE )
   
   res$call <- match.call()
   class(res) <- c("ivreg")

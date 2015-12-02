@@ -16,15 +16,33 @@
 #'initial paramameters values are set equal to the OLS coefficients, the two group means are set to be equal to \code{mean(P)} and \code{ mean(P) + sd(P)}, the
 #'variance-covariance matrix has all elements equal to 1 while \code{probG1} is set to equal 0.5.
 #'
-#'@details     The method has been programmed such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
-#'even if the true number of the categories of the instrument is larger than two, LIV estimates are approximately consistent. Besides, overfitting in terms
-#'of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
-#'for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
-#'in a frequentist approach identification issues appear. The optimization algorithm used is BFGS.
+#'@details     Let's consider the model:
+#' \deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}{Y_t = b0 + a * P_t + eps_t}
+#' \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}{P_t = pi * Z_t + nu_t}
+#' where \code{t = 1,..,T} indexes either time or cross-sectional units, \eqn{Y_{t}}{Y_t} is the dependent variable, \eqn{P_{t}}{P_t} is a \code{k x 1} continuous, endogenous regressor, 
+#' \eqn{\epsilon_{t}} is a structural error term with mean zero and \eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}{E(eps^2) = sigma_eps^2}, \eqn{\alpha}{a} and \eqn{\beta}{b0}
+#' are model parameters. \eqn{Z_{t}}{Z_t} is a \code{l x 1} vector of instruments, and \eqn{\nu_{t}}{nu} is a random error with mean zero and \eqn{E(\nu^{2}) = \sigma^{2}_{\nu}}{E(nu^2) = sigma_nu^2}. 
+#' The endogeneity problem arises from the correlation of \code{P} and \eqn{\epsilon_{t}}{eps} through \eqn{E(\epsilon\nu) = \sigma_{\epsilon\nu}}{E(eps * nu) = sigma_0^2}.
+#' 
+#' LIV  considers \eqn{Z_{t}^{'}}{Z_t} to be a latent, discrete, exogenous variable with an unknown number of groups \code{m} and \eqn{\pi}{pi} is a vector of group means. 
+#' It is assumed that \code{Z} is independent of the error terms \eqn{\epsilon}{eps} and \eqn{\nu}{nu} and that it has at least two groups with different means. 
+#' The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}{Sigma}: 
+#' \deqn{\Sigma = \left(
+#' \begin{array}{ccc}
+#' \sigma_{\epsilon}^{2} & \sigma_{\epsilon\nu}\\
+#' \sigma_{\epsilon\nu} & \sigma_{\nu}^{2}
+#' \end{array}\right)}{Sigma = (sigma_eps^2,       sigma_0^2 ; sigma_0^2,       sigma_nu^2)}
+#' The identification of the model lies in the assumption of the non-normality of \eqn{P_{t}}{P}, the discreteness of the unobserved instruments and the existence of
+#' at least two groups with different means. 
+#' 
+#' The method has been programmed such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
+#' even if the true number of the categories of the instrument is larger than two, LIV estimates are approximately consistent. Besides, overfitting in terms
+#' of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
+#' for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
+#' in a frequentist approach identification issues appear. The optimization algorithm used is BFGS.
 #'
 #Return Value
-#'@return    Returns the optimal values of the parameters as computed by maximum likelihood using BFGS algorithm. To obtain the
-#'standard errors bootsptrapping is needed, using the \code{\link{boots}} function from the same package.
+#'@return    Returns the optimal values of the parameters as computed by maximum likelihood using BFGS algorithm. 
 #'\item{coefficients}{returns the value of the parameters for the intercept and the endogenous regressor as computed with maximum likelihood.}
 #'\item{means}{returns the value of the parameters for the means of the two categories/groups of the latent instrumental variable.}
 #'\item{sigma}{returns the variance-covariance matrix sigma, where on the main diagonal are the variances of the structural error and that of
