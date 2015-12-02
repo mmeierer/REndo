@@ -10,25 +10,26 @@ liv(formula, param = NULL, data = NULL)
 \item{formula}{an object of type 'formula': a symbolic description of the model to be fitted. Example \code{var1 ~ var2}, where \code{var1} is a vector
 containing the dependent variable, while \code{var2} is a vector containing the endogenous variable.}
 
-\item{param}{a vector of initial values for the parameters of the model to be supplied to the optimization algorithm.
+\item{param}{a vector of initial values for the parameters of the model to be supplied to the optimization algorithm. In any model there are eight parameters.
 The first parameter is the intercept, then the coefficient of the endogenous variable followed by the means of the two groups of the latent IV (they need to be different, otherwise model is not identified),
-then the next three parameters are for the variance-covariance matrix. The last parameter is the probability for group 1.}
+then the next three parameters are for the variance-covariance matrix. The last parameter is the probability of being in group 1. When not provided,
+initial paramameters values are set equal to the OLS coefficients, the two group means are set to be equal to \code{mean(P)} and \code{ mean(P) + sd(P)}, the
+variance-covariance matrix has all elements equal to 1 while \code{probG1} is set to equal 0.5.}
 
-\item{data}{optional data frame or list containing the variables in the model.}
+\item{data}{optional data frame or list containing the variables of the model.}
 }
 \value{
-It returns the optimal values of the parameters as computed by maximum likelihood using BFGS algorithm. To obtain the
-standard errors bootsptrapping is needed, using the boots() function from the same package.
+Returns the optimal values of the parameters as computed by maximum likelihood using BFGS algorithm.
 \item{coefficients}{returns the value of the parameters for the intercept and the endogenous regressor as computed with maximum likelihood.}
 \item{means}{returns the value of the parameters for the means of the two categories/groups of the latent instrumental variable.}
 \item{sigma}{returns the variance-covariance matrix sigma, where on the main diagonal are the variances of the structural error and that of
 the endogenous regressor and the off-diagonal terms are equal to the covariance between the errors.}
-\item{probG1}{returns the probability of group 1. Since the model assumes that the latent instrumental variable has two groups,
+\item{probG1}{returns the probability of being in group one. Since the model assumes that the latent instrumental variable has two groups,
 \code{1-probG1} gives the probability of group 2.}
-\item{value}{the value of the log-likelihood function corresponding to param.}
-\item{convcode}{An integer code, the same as the output returned by optim. 0 indicates successful completion. A possible error code is 1 which dicates that the iteration
+\item{value}{the value of the log-likelihood function corresponding to the optimal parameters.}
+\item{convcode}{an integer code, the same as the output returned by \code{optimx}. 0 indicates successful completion. A possible error code is 1 which indicates that the iteration
 limit maxit had been reached.}
-\item{hessian}{A symmetric matrix giving an estimate of the Hessian at the solution found.}
+\item{hessian}{a symmetric matrix giving an estimate of the Hessian at the solution found.}
 }
 \description{
 Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
@@ -37,8 +38,27 @@ variables are needed. The important assumption of the model is that the latent v
 the structural error is normally distributed.
 }
 \details{
+Let's consider the model:
+\deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}{Y_t = b0 + a * P_t + eps_t}
+\deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}{P_t = pi * Z_t + nu_t}
+where \code{t = 1,..,T} indexes either time or cross-sectional units, \eqn{Y_{t}}{Y_t} is the dependent variable, \eqn{P_{t}}{P_t} is a \code{k x 1} continuous, endogenous regressor,
+\eqn{\epsilon_{t}} is a structural error term with mean zero and \eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}{E(eps^2) = sigma_eps^2}, \eqn{\alpha}{a} and \eqn{\beta}{b0}
+are model parameters. \eqn{Z_{t}}{Z_t} is a \code{l x 1} vector of instruments, and \eqn{\nu_{t}}{nu} is a random error with mean zero and \eqn{E(\nu^{2}) = \sigma^{2}_{\nu}}{E(nu^2) = sigma_nu^2}.
+The endogeneity problem arises from the correlation of \code{P} and \eqn{\epsilon_{t}}{eps} through \eqn{E(\epsilon\nu) = \sigma_{\epsilon\nu}}{E(eps * nu) = sigma_0^2}.
+
+LIV  considers \eqn{Z_{t}^{'}}{Z_t} to be a latent, discrete, exogenous variable with an unknown number of groups \code{m} and \eqn{\pi}{pi} is a vector of group means.
+It is assumed that \code{Z} is independent of the error terms \eqn{\epsilon}{eps} and \eqn{\nu}{nu} and that it has at least two groups with different means.
+The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}{Sigma}:
+\deqn{\Sigma = \left(
+\begin{array}{ccc}
+\sigma_{\epsilon}^{2} & \sigma_{\epsilon\nu}\\
+\sigma_{\epsilon\nu} & \sigma_{\nu}^{2}
+\end{array}\right)}{Sigma = (sigma_eps^2,       sigma_0^2 ; sigma_0^2,       sigma_nu^2)}
+The identification of the model lies in the assumption of the non-normality of \eqn{P_{t}}{P}, the discreteness of the unobserved instruments and the existence of
+at least two groups with different means.
+
 The method has been programmed such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
-even if the true number of the categories of the instrument is larger than two the LIV estimates are approximately consistent. Besides, overfitting in terms
+even if the true number of the categories of the instrument is larger than two, LIV estimates are approximately consistent. Besides, overfitting in terms
 of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
 for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
 in a frequentist approach identification issues appear. The optimization algorithm used is BFGS.
@@ -64,7 +84,7 @@ Ebbes, P., Wedel,M., B\"{o}ckenholt, U., and Steerneman, A. G. M. (2005). 'Solvi
 \emph{Quantitative Marketing and Economics},
 \bold{3}:365--392.
 }
-\keyword{endogenousdata:}
+\keyword{endogenousdata}
 \keyword{instruments}
 \keyword{latent}
 

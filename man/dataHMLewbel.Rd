@@ -5,9 +5,9 @@
 Simulated Dataset
 }
 \description{
-A dataset enclosing a dependent variable,\code{y}, two exogenous regressors, \code{X1} and \code{X2} and one endogenous variable, \code{P}. The endogenous regressor has to have a non-normal distribution for identification. The model is: 
-\code{y = b0 + b1 * X1 + b2 * X2 + a1 * P + eps}
-True parameter values are \code{b0 = 2, b1 = 1.5, b2 = -3, a1 = -1}. See \code{\link{hmlewbel}}.
+A dataset enclosing a dependent variable, \code{y}, two exogenous regressors, \code{X1} and \code{X2} and one endogenous variable, \code{P}. The endogenous regressor has to have a non-normal distribution for identification. The model is: 
+\deqn{y = b0 + b1 * X1 + b2 * X2 + a1 * P + epsilon}
+True parameter values are \code{b0 = 2, b1 = 1.5, b2 = -3, a1 = -1}. 
 }
 \usage{data("dataHMLewbel")}
 \format{
@@ -21,3 +21,6 @@ True parameter values are \code{b0 = 2, b1 = 1.5, b2 = -3, a1 = -1}. See \code{\
 }
 
 \keyword{datasets}
+\seealso{
+\code{\link{hmlewbel}}
+}
