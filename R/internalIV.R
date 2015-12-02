@@ -1,4 +1,4 @@
-#'@title Constructs internal instrumental variables from available data
+#'@title Constructs Internal Instrumental Variables From Data
 #'@aliases internalIV
 #'@description The function can be used to construct additional instruments to be supplied to \code{\link{hmlewbel}} as additional instruments
 #' in the "EIV" argument.
@@ -10,7 +10,7 @@
 #' @param    IIV   the internal instrumental variable to be constructed. It can take six values, \code{"g","gp","gy","yp","p2"or"y2"}. See the "Details" section 
 #' of \code{\link{hmlewbel}} for a description of the internal instruments.
 #' @param    data  optional data frame or list containing the variables in the model.
-#' @return    Returns a vector/matrix constructed from the data whcih can be used as instrumental variable either in \code{link{hmlewbel}} or in any other function/algorithm making use
+#' @return    Returns a vector/matrix constructed from the data whcih can be used as instrumental variable either in \code{\link{hmlewbel}} or in any other function/algorithm making use
 #' of instruments.
 #' @references Lewbel, A. (1997). "Lewbel, A. (1997). 'Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 #' with An Application to Patents and R&D'. Econometrica, 65(5), 1201-1213."
