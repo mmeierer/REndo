@@ -48,15 +48,10 @@ copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL){
     }
    b <- optimx::optimx(par=param,fn=logLL,y=y, X=X, P=P,method="BFGS",control=list(trace=0))
    
-  # obj <- new("copulaEndo")
-  # obj@coefEndoVar  <- b[,k]
-  # obj@coefExoVar <- b[,1:(k-1)]
-  # obj@rho <- b[,k1-1]
-  # obj@sigma <- b[,k1]
-  # obj@value <- b$fevals
-  # obj@convcode <- b$convcode
-   
-    return(b)
+  res <- list(coefExoVar = b[,1:(k-1)], coefEndoVar = b[,k], rho = b[,k1-1], sigma = b[,k1], value = b$fevals, convCode <- b$convcode )
+  res$call <- match.call() 
+  class(res) <- c("copulaEndo")
+   return(res)
   
   }
 

@@ -92,5 +92,7 @@ sd.b <- apply(b,2,sd)
 sd.ps <- apply(ps,2,sd)
 
 res <- list(a.est = a.est, b.est = b.est, ps.est = ps.est, se.a=sd.a, se.b = sd.b, se.ps = sd.ps)
+res$call <- match.call()
+class(res) <- c("copulaEndo")
 return(res)
 }

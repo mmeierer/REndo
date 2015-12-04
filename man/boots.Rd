@@ -7,7 +7,7 @@
 boots(bot, y, X, P, param, intercept = NULL)
 }
 \arguments{
-\item{bot}{number of iterations}
+\item{bot}{number of bootstrap replicates.}
 
 \item{y}{the vector or matrix containing the dependent variable.}
 
@@ -15,7 +15,7 @@ boots(bot, y, X, P, param, intercept = NULL)
 
 \item{P}{the vector containing the continuous, non-normally distributed endogeneous variable.}
 
-\item{param}{initial values for the parameters to be optimized over.}
+\item{param}{initial values for the parameters to be optimized over. See \code{\link{copulaEndo}} for more details.}
 
 \item{intercept}{an optional parameter. The model is estimated by default with
 intercept. If no intercept is desired or the regressors matrix \code{X} contains already
@@ -25,10 +25,14 @@ a column of ones, intercept should be given the value "no".}
 Returns the standard errors of the estimates of the model using the copula method 1 described in Park and Gupta (2012). See Details section of \code{\link{copulaEndo}}.
 }
 \description{
-Performs bootstrapping to obtain the standard errors of the estimates of the coefficients obtained using the Gaussian copula method for endogeneity.
+Performs bootstrapping to obtain the standard errors of the estimates of the model with one continuous endogenous regressor estimated via maximum likelihood
+using the \code{\link{copulaEndo}} function.
 }
 \details{
 The function could be used only when there is a single endogenous regressor and method one is selected in \code{\link{copulaEndo}}.
 of the \code{copulaEndo} function is used for estimation.
+}
+\seealso{
+\code{\link{copulaEndo}}
 }
 
