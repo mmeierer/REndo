@@ -13,15 +13,15 @@
 #' \code{b} are the parameters of the exogenous variables, \code{a} is the parameter of the endogenous variable, \code{rho} is the parameter for the correlation between the error and the endogenous regressor, while 
 #' \code{sigma} is the standard deviation of the structural error.
 #'@param type  the type of the endogenous regressor/s. It can take two values, "continuous" or "discrete".
-#'@param method  the method used for estimating the model. It can take two values, "1" or "2", where "1" is the maximum likelihood approach described in Park and Gupta (2012),
-#'while "2" is the equivalent OLS approach described in the same paper. Method one can be applied only when there is just a single, continous endogenous variable. When there are more than one
+#'@param method  the method used for estimating the model. It can take two values, \code{1} or \code{2}, where \code{1} is the maximum likelihood approach described in Park and Gupta (2012),
+#'while \code{2} is the equivalent OLS approach described in the same paper. Method one can be applied only when there is just a single, continous endogenous variable. When there are more than one
 #'continuous endogenous regressors, or they are discrete, the second method is being applied by default.
 #'@param  intercept  optional parameter. The model is estimated by default with 
 #'intercept. If no intercept is desired or the regressors matrix \code{X} contains already
 #'a column of ones, intercept should be given the value "no".  
 
 #'@details The maximum likelihood estimation is performed by the "BFGS" algorithm. When there are two endogenous regressors, there is no need for initial parameters since the method applied is by default the augmented OLS, which
-#' can be specified by using method two - "method="2"".
+#' can be specified by using method two - "method=2.
 
 # Return Value
 #'@return  Depending on the method and the type of the variables, it returns the optimal values of the parameters and their standard errors in the case of the second method. 
@@ -36,13 +36,13 @@
 #'y <- dataCopC1[,1]
 #'X <- dataCopC1[,2:5]
 #'P <- dataCopC1[,5]
-#'c1 <- copulaEndo(y, X, P, type = "continuous", method = "1", intercept="no")
+#'c1 <- copulaEndo(y, X, P, type = "continuous", method = 1, intercept="no")
 #'c1
 #'# to obtain the standard errors use the boots() function
-#'# se.c1 <- boots(10, y, X, P, param = c(1,1,-2,-0.5,0.2,1), intercept= "no)
+#'# se.c1 <- boots(10, y, X, P, param = c(1,1,-2,-0.5,0.2,1), intercept= "no")
 #'
-#'# an alternative model can be obtained using "method ="2"".
-#'c12 <- copulaEndo(y, X, P, type = "continuous", method = "2")
+#'# an alternative model can be obtained using "method = 2".
+#'c12 <- copulaEndo(y, X, P, type = "continuous", method = 2)
 #'c1
 #'
 #'# load datset with 2 continuous, non-normally distributed endogeneous regressors.
@@ -67,34 +67,17 @@
 
 copulaEndo <- function(y,X,P,param=NULL,type=NULL,method=NULL, intercept = NULL){
   
-  #obj <- new("copulaEndo")
-  
-  if ("continuous" %in% c(type)){
-         if ("1" %in% method )
+   if ("continuous" %in% c(type)){
+         if (method == 1 )
         {
              print("Attention! The endogeneous regressor should be continuous and NOT normally distributed")
-              copulaCont1(y,X,P,param, intercept)
-             
-            # cC1 <- copulaCont1(y,X,P,param, intercept)
-            #  obj@coefEndoVar  <- cC1[,k]
-            #  obj@coefExoVar <- cC1[,1:(k-1)]
-            #  obj@rho <- cC1[,k1-1]
-            #  obj@sigma <- cC1[,k1]
-            #  obj@value <- cC1$fevals
-            #  obj@convCode <- cC1$convcode
-             
+              ret <- copulaCont1(y,X,P,param, intercept)
+           
          } else 
-             if ("2" %in% method) copulaMethod2(y,X,P, intercept) 
+             if (method == 2) ret <- copulaMethod2(y,X,P, intercept) 
   } else
    if ("discrete" %in% c(type)) {
-     copulaDiscrete(y,X,P,intercept)
-     # cD <- copulaDiscrete(y,X,P,intercept)
-    # obj@coefEndoVar  <- cD$a.est
-    # obj@coefExoVar <- cD$b.est
-    # obj@coefPStar <- cD$ps.est
-    # obj@seCoefficients <- c(cD$se.a,cD$se.b,cD$se.ps) 
-     
+     ret <- copulaDiscrete(y,X,P,intercept)
 }
- 
-#return(obj)
+return(ret)
 }

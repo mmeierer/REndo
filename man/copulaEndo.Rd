@@ -10,17 +10,19 @@ copulaEndo(y, X, P, param = NULL, type = NULL, method = NULL,
 \arguments{
 \item{y}{the vector or matrix containing the dependent variable.}
 
-\item{X}{the data frame or matrix containing the regressors of the model, both exogeneous and endogeneous. The last column/s should contain the endogenous variable/s.}
+\item{X}{the data frame or matrix containing the regressors of the model, both \emph{exogeneous and endogeneous}. The \emph{last column/s should contain the endogenous variable/s}.}
 
-\item{P}{the endogenous variables of the model as columns of a matrix, or as a vector if it is just one variable.}
+\item{P}{the matrix.vector containing the endogenous variables.}
 
-\item{param}{The vector of initial values for the parameters of the model to be supplied to the optimization algorithm. The parameters to be estimated are \code{theta = \{b,a,rho,sigma\}}, where
-\code{b} are the parameters of the exogenous variables and \code{a} is the parameter of the endogenous variable.}
+\item{param}{the vector of initial values for the parameters of the model to be supplied to the optimization algorithm. The parameters to be estimated are \code{theta = \{b,a,rho,sigma\}}, where
+\code{b} are the parameters of the exogenous variables, \code{a} is the parameter of the endogenous variable, \code{rho} is the parameter for the correlation between the error and the endogenous regressor, while
+\code{sigma} is the standard deviation of the structural error.}
 
 \item{type}{the type of the endogenous regressor/s. It can take two values, "continuous" or "discrete".}
 
-\item{method}{the method used for estimating the model. It can take two values, "1" or "2", where "1" is the maximum likelihood approach described in Park and Gupta (2012),
-while "2" is the equivalent OLS approach described in the same paper.}
+\item{method}{the method used for estimating the model. It can take two values, \code{1} or \code{2}, where \code{1} is the maximum likelihood approach described in Park and Gupta (2012),
+while \code{2} is the equivalent OLS approach described in the same paper. Method one can be applied only when there is just a single, continous endogenous variable. When there are more than one
+continuous endogenous regressors, or they are discrete, the second method is being applied by default.}
 
 \item{intercept}{optional parameter. The model is estimated by default with
 intercept. If no intercept is desired or the regressors matrix \code{X} contains already
@@ -37,7 +39,7 @@ that the endogeneous variables should NOT be normally distributed.
 }
 \details{
 The maximum likelihood estimation is performed by the "BFGS" algorithm. When there are two endogenous regressors, there is no need for initial parameters since the method applied is by default the augmented OLS, which
-can be specified by using method two - "method="2"".
+can be specified by using method two - "method=2.
 }
 \examples{
 #load dataset dataCopC1, where P is endogenous, continuous and not normally distributed
@@ -45,13 +47,13 @@ data(dataCopC1)
 y <- dataCopC1[,1]
 X <- dataCopC1[,2:5]
 P <- dataCopC1[,5]
-c1 <- copulaEndo(y, X, P, type = "continuous", method = "1", intercept="no")
+c1 <- copulaEndo(y, X, P, type = "continuous", method = 1, intercept="no")
 c1
 # to obtain the standard errors use the boots() function
-# se.c1 <- boots(10, y, X, P, param = c(1,1,-2,-0.5,0.2,1), intercept= "no)
+# se.c1 <- boots(10, y, X, P, param = c(1,1,-2,-0.5,0.2,1), intercept= "no")
 
-# an alternative model can be obtained using "method ="2"".
-c12 <- copulaEndo(y, X, P, type = "continuous", method = "2")
+# an alternative model can be obtained using "method = 2".
+c12 <- copulaEndo(y, X, P, type = "continuous", method = 2)
 c1
 
 # load datset with 2 continuous, non-normally distributed endogeneous regressors.
