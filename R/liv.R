@@ -20,7 +20,7 @@
 #' \deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}{Y_t = b0 + a * P_t + eps_t}
 #' \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}{P_t = pi * Z_t + nu_t}
 #' where \code{t = 1,..,T} indexes either time or cross-sectional units, \eqn{Y_{t}}{Y_t} is the dependent variable, \eqn{P_{t}}{P_t} is a \code{k x 1} continuous, endogenous regressor, 
-#' \eqn{\epsilon_{t}} is a structural error term with mean zero and \eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}{E(eps^2) = sigma_eps^2}, \eqn{\alpha}{a} and \eqn{\beta}{b0}
+#' \eqn{\epsilon_{t}}{epsilon_t} is a structural error term with mean zero and \eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}{E(eps^2) = sigma_eps^2}, \eqn{\alpha}{a} and \eqn{\beta}{b0}
 #' are model parameters. \eqn{Z_{t}}{Z_t} is a \code{l x 1} vector of instruments, and \eqn{\nu_{t}}{nu} is a random error with mean zero and \eqn{E(\nu^{2}) = \sigma^{2}_{\nu}}{E(nu^2) = sigma_nu^2}. 
 #' The endogeneity problem arises from the correlation of \code{P} and \eqn{\epsilon_{t}}{eps} through \eqn{E(\epsilon\nu) = \sigma_{\epsilon\nu}}{E(eps * nu) = sigma_0^2}.
 #' 
@@ -76,10 +76,10 @@
 #'@export
 liv <- function(formula, param=NULL, data=NULL){
 
- if( ncol(get_all_vars(formula)) != 2 )
+ if( ncol(stats::get_all_vars(formula)) != 2 )
     stop("A wrong number of parameters were passed in the formula. No exogenous variables are admitted.")
 
-  mf <- model.frame(formula = formula, data = data)
+  mf <- stats::model.frame(formula = formula, data = data)
 
   
   # if user parameters are not defined, provide initial param. values
@@ -93,10 +93,10 @@ liv <- function(formula, param=NULL, data=NULL){
   
   if (is.null(param)) {
 
-    param1 <- coefficients(lm(mf[,1]~mf[,2]))[1]
-    param2 <- coefficients(lm(mf[,1]~mf[,2]))[2]
+    param1 <- stats::coefficients(stats::lm(mf[,1]~mf[,2]))[1]
+    param2 <- stats::coefficients(stats::lm(mf[,1]~mf[,2]))[2]
     param3 <- mean(mf[,2])
-    param4 <- mean(mf[,2]) + sd(mf[,2])
+    param4 <- mean(mf[,2]) + stats::sd(mf[,2])
     param5 <- param6 <- param7 <- 1
     param8 <- 0.5
     param <- as.double(c(param1,param2,param3,param4,param5,param6,param7,param8))
@@ -106,10 +106,10 @@ liv <- function(formula, param=NULL, data=NULL){
                        method="BFGS",hessian=T,
                        control=list(trace=0))
   
-  obj <- new("liv")
+  obj <- methods::new("liv")
   obj@formula <- formula
   
-  slot(obj, "coefficients") <- c(b$p1, b$p2)      # coefficients
+  obj@coefficients <- c(b$p1, b$p2)      # coefficients
   
   obj@groupMeans <-  c(b$p3, b$p4)     # means of the 2 groups of the latent IV
   

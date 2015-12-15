@@ -13,10 +13,10 @@ True parameter values are \code{b0 = 2, b1 = 1.5, b2 = -3, a1 = -1}.
 \format{
   A data frame with 2500 observations on the following 4 variables.
   \describe{
-    \item{\code{y}}{  a numeric vector representing the dependent variable.}
-    \item{\code{X1}}{  a numeric vector, normally distributed and exogenous.}
-    \item{\code{X2}}{  a numeric vector, normally distributed and exogenous.}
-    \item{\code{P}}{  a numeric vector, representing an endogenous regressor.}
+    \item{\code{y}}{     a numeric vector representing the dependent variable.}
+    \item{\code{X1}}{    a numeric vector, normally distributed and exogenous.}
+    \item{\code{X2}}{    a numeric vector, normally distributed and exogenous.}
+    \item{\code{P}}{     a numeric vector, representing an endogenous regressor.}
   }
 }
 

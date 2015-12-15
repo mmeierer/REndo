@@ -1,11 +1,22 @@
 Package: REndo
 Type: Package
-Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables
+Title: Fitting Linear Models with Endogenous Regressors when No External
+    Instruments are Available
 Version: 1.0
-Date: 2015-10-09
+Date: 2015-12-01
 Author: Raluca Gui,
-        Markus Meierer
+    Markus Meierer,
+    Rene Algesheimer
 Maintainer: Raluca Gui <raluca.gui@business.uzh.ch>
-Description: Fits linear models with endogenous regressor using the latent instrumental variable approaches such as latent instrumental variables, Lewbel's higher moments approach, multilevel GMM and joint estimation using Gaussian copula.These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed. 
-Imports: optimx, mvtnorm, AER,e1071,methods
+Description: Fits linear models with endogenous regressors using Internal
+    Instrumental Variables (IIV) methods. These are statistical techniques to
+    correct for endogeneity when no strong, valid external instrumental variables
+    are available. The first version of the package offers two methods, the Latent
+    Instrumental Variables (Ebbes et al., 2005) and Lewbel's higher moments approach
+    (Lewbel, 1997). In a second version of the package, two other methods will be
+    added, joint estimation using copulas (Park and Gupta, 2012) and multilevel GMM
+    (Kim and Frees, 2007).
+Imports:
+    stats,optimx,mvtnorm,AER,e1071,utils,methods
 License: GPL-3
+RoxygenNote: 5.0.1

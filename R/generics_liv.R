@@ -1,18 +1,18 @@
 #' liv S4 Object
 #'
 #' This class is used to store and further analyze the results of the liv function
-#' @slot formula
-#' @slot coefficients
-#' @slot seCoefficients
-#' @slot groupMeans
-#' @slot seMeans
-#' @slot sigma
-#' @slot probG1
-#' @slot seProbG1
-#' @slot initValues
-#' @slot value
-#' @slot convCode
-#' @slot hessian
+#' @slot formula  returns an object of type 'formula' as used in the call of the function. Example \code{var1 ~ var2}. 
+#' @slot coefficients  model's coefficients
+#' @slot seCoefficients  the standard errors of the coefficients
+#' @slot groupMeans  the coefficients of the means of the two groups considered to build the latent IV.
+#' @slot seMeans  the standard errors of the groups means coefficients.
+#' @slot sigma  the coefficients of the variance -covariance matrix.
+#' @slot probG1  the coefficient of the probability of group 1.
+#' @slot seProbG1  the standard error of the coefcients of probability of group 1.
+#' @slot initValues  the initial parameter values.
+#' @slot value  the value of the log=likelihood function computed at the optimal parameter values.
+#' @slot convCode  the converge code.
+#' @slot hessian  the hessian matrix.
 
 #' @name liv-class
 #' @rdname liv-class
@@ -26,7 +26,7 @@
 setClass(
 
   #Class name
-  "liv",
+ "liv",
 
 
   #Slots / member vars
@@ -46,7 +46,7 @@ setClass(
 
   ),
 
-  prototype = list(formula = NA,
+  prototype = list(formula = y ~ x,
                    coefficients = NA_real_,
                    seCoefficients = NA_real_,
                    groupMeans = NA_real_,
@@ -85,7 +85,7 @@ summary.liv <- function(object, ...)
     rownames(coef.table) <- c("Intercept",names.coef)
 
     cat("\nCoefficients:\n")
-    printCoefmat(coef.table) # print the coefficient and std errors
+    stats::printCoefmat(coef.table) # print the coefficient and std errors
 
     cat("\nInitial Parameter Values:\n", z@initValues)  # print initial param values
     cat("\n")
@@ -101,8 +101,8 @@ summary.liv <- function(object, ...)
 #'@export
 print.liv <- function(x, ...)
 {
-  str(x)
-  # str(object)
+ utils::str(x)
+  
 }
 
 

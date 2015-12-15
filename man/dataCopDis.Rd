@@ -11,11 +11,11 @@ A dataset with an intercept, two exogenous regressors and one endogenous, discre
 \format{
   A data frame with 2500 observations on the following 5 variables.
   \describe{
-    \item{\code{y}}{a numeric vector representing the dependent variable.}
-    \item{\code{I}}{a numeric vector representing the intercept.}
-    \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
-    \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
-    \item{\code{P}}{a numeric vector, discrete and endogenous.}
+    \item{\code{y}}{    a numeric vector representing the dependent variable.}
+    \item{\code{I}}{    a numeric vector representing the intercept.}
+    \item{\code{X1}}{    a numeric vector, normally distributed and exogenous.}
+    \item{\code{X2}}{    a numeric vector, normally distributed and exogenous.}
+    \item{\code{P}}{    a numeric vector, discrete and endogenous.}
   }
 }
 

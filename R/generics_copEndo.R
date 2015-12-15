@@ -1,84 +1,39 @@
-#' liv S4 Object
-#'
-#' This class is used to store and further analyze the results of the liv function
-#' @slot formula
-#' @slot coefficients
-#' @slot seCoefficients
-#' @slot groupMeans
-#' @slot seMeans
-#' @slot sigma
-#' @slot probG1
-#' @slot seProbG1
-#' @slot initValues
-#' @slot value
-#' @slot convCode
-#' @slot hessian
 
-#' @name liv-class
-#' @rdname liv-class
-#' @exportClass liv
-#'
-#' @examples
-#' getSlots("liv")
-#'
-#' @importFrom methods setClass
-#' @export
 setClass(
-
   #Class name
-  "liv",
-
-
-  #Slots / member vars
-  slots = c(
-    formula = "formula",
-    coefficients = "numeric",
-    seCoefficients = "numeric",
-    groupMeans = "numeric",
-    seMeans = "numeric",
-    sigma = "matrix",
-    probG1 = "numeric",
-    seProbG1 = "numeric",
-    initValues = "numeric",
-    value = "numeric",
-    convCode = "integer",
-    hessian = "matrix"
-
-  ),
-
-  prototype = list(formula = NA,
-                   coefficients = NA_real_,
-                   seCoefficients = NA_real_,
-                   groupMeans = NA_real_,
-                   seMeans = NA_real_,
-                   sigma = matrix(NA),
-                   probG1 = NA_real_,
-                   initValues = NA_real_,
-                   value = NA_real_,
-                   convCode = NA_integer_,
-                   hessian = matrix(NA)
-  )
+  "copulaEndo"
 )
 
 
-#' S3 Method for LIV object for generic "coef"
-#'@param object an object of class "liv", usually, a result of a call to liv().
+#' S3 Method for copulaEndo object for generic "coef"
+#'@param object an object of class "copulaEndo", usually, a result of a call to copulaEndo().
 #'@param ... further arguments passed to or from other methods.
 #'@export
-coef.liv <- function(object, ...)
-  {print(object@coefficients)}
+
+coef.copulaEndo <- function(object, ...)
+  {
+   if ("discrete" %in% type){
+     print(object$a.est, object$b.est,object$ps.est,object$se.a,object$se.b,object$se.ps)
+   } else if (("continuous" %in% type) || (method == 1)){
+     
+     print(object$coefExoVar, object$coefEndoVar)
+   }
+    if (method == 2){
+      print(object$coefficients)
+    }
+}
 
 
-#' S3 Method for liv object for generic "summary"
-#'@param object an object of class "liv", usually, a result of a call to liv().
+#' S3 Method for copulaEndo object for generic "summary"
+#'@param object an object of class "copulaEndo", usually, a result of a call to copulaEndo().
 #'@param ... further arguments passed to or from other methods.
 #'@export
-summary.liv <- function(object, ...)
+summary.copulaEndo <- function(object, ...)
 {
     z <- object
-    est <- z@coefficients  # estimates value
-    se <- z@seCoefficients  # standard errors
-    names.coef <- all.vars(z@formula[[3]])
+    est <- z$coefficients  # estimates value
+    se <- z$seCoefficients  # standard errors
+    names.coef <- all.vars(z$formula[[3]])
 
     coef.table <- cbind(est,se)
     colnames(coef.table) <- c("Estimate","Std. Error")
@@ -95,14 +50,16 @@ summary.liv <- function(object, ...)
 }
 
 
-#' S3 Method for liv object for generic "print"
+#' S3 Method for copulaEndo object for generic "print"
 #'@param x an object of class "liv", usually, a result of a call to liv().
 #'@param ... further arguments passed to or from other methods.
 #'@export
-print.liv <- function(x, ...)
+print.copulaEndo <- function(obj, ...)
 {
-  str(x)
-  # str(object)
+    cat("Coefficients Exogenous Variables:", obj$coefExoVar, "\n")
+    cat("Coefficients Endogenous Variable(s):",obj$coefEndoVar, "\n")
+    cat("GPA:", obj$, "\n")
+  
 }
 
 
