@@ -23,7 +23,7 @@ copulaDiscrete <- function(y,X,P, intercept = NULL) {
 
 #  empirical cumulative distribution function
 	 getEcdf <- function(x){
-    H.p <- ecdf(x)
+    H.p <- stats::ecdf(x)
     H.p1 <- H.p(x)
     H.p0 <- H.p(x-1)
     H.p0 <- ifelse(H.p0==0,0.0000001,H.p0)
@@ -60,7 +60,7 @@ for (i in 1:sim){
   
   for (k in 1:dim(P1)[2]){
     
-    U.p[,k] <- runif(dim(P1)[1],min=pecdf[[k]]$H.p0,max=pecdf[[k]]$H.p1)
+    U.p[,k] <- stats::runif(dim(P1)[1],min=pecdf[[k]]$H.p0,max=pecdf[[k]]$H.p1)
     
   }
   
@@ -73,12 +73,12 @@ for (i in 1:sim){
   dataCopula <- X1
 
   if (!is.null(intercept)){  # no intercept 
-  meth.2 <- lm(y ~.-1,data=data.frame(dataCopula))
+  meth.2 <- stats::lm(y ~.-1,data=data.frame(dataCopula))
   a[i,] <- meth.2$coefficients[-c(1:(ncol(X)-ncol(P1)),(k2-ncol(P1)+1):k2)]  # coef of endogenous variables
   b[i,] <- meth.2$coefficients[1:(ncol(X)-ncol(P1))]  # coef of exogenous variables
   ps[i,] <- meth.2$coefficients[(k2-ncol(P1)+1):k2]  # pstar-s
   } else {
-    meth.2 <- lm(y ~.,data=data.frame(dataCopula))  # with intercept
+    meth.2 <- stats::lm(y ~.,data=data.frame(dataCopula))  # with intercept
     ps[i,] <- meth.2$coefficients[-c(1:(ncol(X)-ncol(P1)+1),(k2-ncol(P1)+1):k2)]
     b[i,] <- meth.2$coefficients[1:(ncol(X)-ncol(P1)+1)]
     a[i,] <- meth.2$coefficients[(k2-ncol(P1)+1):k2]
@@ -91,7 +91,7 @@ sd.a <- apply(a,2,sd)
 sd.b <- apply(b,2,sd)
 sd.ps <- apply(ps,2,sd)
 
-res <- list(a.est = a.est, b.est = b.est, ps.est = ps.est, se.a=sd.a, se.b = sd.b, se.ps = sd.ps)
+res <- list(a.est = a.est, b.est = b.est, ps.est = ps.est, se.a=sd.a, se.b = sd.b, se.ps = sd.ps, varType = type, method = method)
 res$call <- match.call()
 class(res) <- c("copulaEndo")
 return(res)

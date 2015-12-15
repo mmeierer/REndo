@@ -38,6 +38,30 @@ This is a statistical technique to address the endogeneity problem, where no ext
 that the endogeneous variables should NOT be normally distributed.
 }
 \details{
+Park and Gupta (2012) proposed a method that allows for the joint estimation of the endogenous regressor and the error term in the structural equation
+using copulas. As LIV, the model parameters are estimated using maximum likelihood. The underlying idea is that, using information contained in the observed
+data, one selects marginal distributions for the endogenous regressor and the structural error. Then, the copula model enables the construction of a
+flexible multivariate joint distribution allowing a wide range of correlations between the two marginals. For the error, \eqn{\epsilon_{t}}{epsilon_t},
+the marginal distribution is assumed to be normal, while the marginal distribution of the endogenous regressor, \eqn{P_{t}}{P_t} is obtained using the
+Epanechnikov kernel density estimator with the bandwidth equal to \deqn{b = 0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)}{b = 0.9 * T^(-1/5) *  min(s,IQR/1.34)}, where \eqn{IQR}
+is the inter-quartile range while \eqn{s} is the data sample standard deviation.
+Following Sklar's theorem (Sklar, 1959), where \eqn{H(P),G(\epsilon)}{H(P), G(epsilon)} are the marginal distributions of the endogenous regressors and of the structural error, respectively,
+there exists a copula function \eqn{C}{C} such that for all \eqn{p}{p} and \eqn{\epsilon}{epsilon}, the joint distribution function is:
+\deqn{
+F(p,\epsilon) = C(H(p),G(\epsilon)) = C(U_{p},U_{\epsilon})
+}{F(p, epsilon) = C(H(p).G(epsilon)) = C(U_p, U_epsilon) }
+where \eqn{U_{p} = H(p), U_{\epsilon} = G(\epsilon)}{U_p = H(p), U_epsilon = G(epsilon)} are uniform \eqn{(0,1)}{(0,1)} random variables.
+Then the joint density function is given by:
+\deqn{
+f(p,\epsilon) = c(U_{p},U_{\epsilon})h(p)g(\epsilon)
+}{f(p, epsilon) = c(U_p, U_epsion)h(p)g(epsilon)}
+where \deqn{c(U_{p},U_{\epsilon}) =\partial^{2}C/\partial{p}\partial\epsilon}{c(U_p, U_epsilon) = d^2(C)/d(p)d(epsilon)}.
+Using the Gaussian copula, the joint density function of \eqn{P_{t}}\eqn{P_t} and \eqn{\epsilon_{t}}{epsilon_t} is:
+
+\deqn{f(p_{t},\epsilon_{t}) =\frac{1}{(1-\rho^{2})^{1/2}}exp\left[\frac{-\rho^{2}(\Phi^{-1}(U_{p,t})^{2}+\Phi^{-1}(U_{\epsilon,t})^{2})}{2(1-\rho^{2})}+\frac{\rho\Phi^{-1}(U_{p,t})\Phi^{-1}(U_{\epsilon,t})}{(1-\rho^{2})}\right]\\
+ \cdot h(p)\cdot g(\epsilon_{t})}
+{f(p_t,epsilon_t) = 1/sqrt(1- rho^2)exp[(-rho^2)*(Phi^(-1)((U_p)^2) + Phi^(-1)(U_epsilon^2))/(2*(1-rho^2)) + rho * Phi^(-1)(U_p) * Phi^(-1)(U_epsilon)/(1-rho^2)]}
+Having the joint density function, the model's parameters \eqn{\Theta=\{\alpha,\beta,\sigma_{\epsilon},\rho \}} are obtained by maximising the log-likelihood function.
 The maximum likelihood estimation is performed by the "BFGS" algorithm. When there are two endogenous regressors, there is no need for initial parameters since the method applied is by default the augmented OLS, which
 can be specified by using method two - "method=2.
 }

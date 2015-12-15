@@ -12,7 +12,7 @@
 #'@keywords internal
 #'@keywords copula 
 
-copulaMethod2  <- function(y,X,P, intercept=NULL){
+copulaMethod2  <- function(y,X,P, intercept=NULL, type, method){
 
 k <- ncol(X) 
 P <- as.matrix(P)
@@ -24,8 +24,9 @@ X <- as.matrix(X)
 dataCopula <- data.frame(cbind(X, PS))
 
 if (!is.null(intercept)) {
-f.lm <- lm(y ~.-1, data=dataCopula)
-} else {f.lm <- lm(y ~., data=dataCopula)}
+f.lm <- stats::lm(y ~.-1, data=dataCopula)
+} else {f.lm <- stats::lm(y ~., data=dataCopula)}
 f.lm$call <- match.call()
-return(f.lm)
+res <- list(results = f.lm, varType = type, method = method)
+return(res)
 }

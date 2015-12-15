@@ -7,7 +7,7 @@ checkAssumptions <- function(y,X,P,IIV,EIV=NULL, data=NULL)
 
  # check if model error is symetrically distributed
   
-  e1 <- lm(y~., data= data.frame(cbind(X,P)))$residuals
+  e1 <- stats::lm(y~., data= data.frame(cbind(X,P)))$residuals
 
   
   if (abs(e1071::skewness(e1)) > 0.10 & IIV == "y2")  
@@ -17,7 +17,7 @@ checkAssumptions <- function(y,X,P,IIV,EIV=NULL, data=NULL)
 # check assumption E(qp) !=0
 # save residuals of P regressed on 1 and X
 
-  p1 <- lm(P~., data=data.frame(X))$residuals
+  p1 <- stats::lm(P~., data=data.frame(X))$residuals
 
  IV <- internalIV(y,X,P,IIV)
 

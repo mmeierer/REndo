@@ -20,7 +20,7 @@
 #'internal
 #'copula
 #'instrumental variables
-copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL){
+copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL, type, method){
 
     if (is.null(intercept)) {
       X <- cbind(rep(1,nrow(X)),X)
@@ -34,10 +34,10 @@ copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL){
     if (is.null(param)){
       datalm <- data.frame(X)
       if (!is.null(intercept)) {
-      l <- lm(y ~ .-1, data=datalm)
+      l <- stats::lm(y ~ .-1, data=datalm)
       } else
         {
-      l <- lm(y ~ ., data=datalm)
+      l <- stats::lm(y ~ ., data=datalm)
       }
       par1 <- rep(0,ncol(datalm))
       for (i in 1:(ncol(datalm))){
@@ -48,7 +48,7 @@ copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL){
     }
    b <- optimx::optimx(par=param,fn=logLL,y=y, X=X, P=P,method="BFGS",control=list(trace=0))
    
-  res <- list(coefExoVar = b[,1:(k-1)], coefEndoVar = b[,k], rho = b[,k1-1], sigma = b[,k1], value = b$fevals, convCode <- b$convcode )
+  res <- list(coefExoVar = b[,1:(k-1)], coefEndoVar = b[,k], rho = b[,k1-1], sigma = b[,k1], value = b$fevals, convCode = b$convcode, varType = type, method = method )
   res$call <- match.call() 
   class(res) <- c("copulaEndo")
    return(res)

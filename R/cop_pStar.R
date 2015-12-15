@@ -4,7 +4,7 @@
 #'@description  Computes the empirical distribution function of a variable and the inverse-normal distribution of ECDF.
 #
 # Arguments
-#'@param     P - the variable for which the inverse-normal distribution of its empirical distribution function is needed.
+#'@param      P  the variable for which the inverse-normal distribution of its empirical distribution function is needed.
 #
 # Return Value
 #'@return Returns the inverse-normal distribution of the empirical distribution function of variable P.
