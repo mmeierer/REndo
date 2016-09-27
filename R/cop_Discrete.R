@@ -6,7 +6,7 @@
 #'@param  y  the vector containing the dependent variable. 
 #'@param  X  the matrix containing the regressors, with the endogenous variables occupying the last columns.
 #'@param  P  the matrix containing the discrete endogeneous regressors.
-#
+#'@param  intercept  by deault the model is estimated adding an intercept. If no intercept is required, intercept should be set to FALSE.
 # Return Value
 #'@return  Returns an object of class "lm".
 #'@references Park, S. and Gupta, S., (2012), 'Handling Endogeneous Regressors by Joint Estimation Using Copulas', Marketing Science, 31(4), 567-86.
@@ -64,7 +64,7 @@ for (i in 1:sim){
     
   }
   
-  p.star <- apply(U.p, 2,qnorm)
+  p.star <- apply(U.p, 2,stats::qnorm)
   colnames(p.star) <- paste("PStar",1:ncol(P1),sep=".")
      
   X1 <- cbind(X,p.star)
@@ -87,12 +87,12 @@ for (i in 1:sim){
 a.est <- apply(a,2,mean)
 b.est <- apply(b, 2,mean)
 ps.est <- apply(ps,2,mean)
-sd.a <- apply(a,2,sd)
-sd.b <- apply(b,2,sd)
-sd.ps <- apply(ps,2,sd)
+sd.a <- apply(a,2,stats::sd)
+sd.b <- apply(b,2,stats::sd)
+sd.ps <- apply(ps,2,stats::sd)
 
-res <- list(a.est = a.est, b.est = b.est, ps.est = ps.est, se.a=sd.a, se.b = sd.b, se.ps = sd.ps, varType = type, method = method)
-res$call <- match.call()
+
+res <- list(a.est = a.est, b.est = b.est, ps.est = ps.est, se.a=sd.a, se.b = sd.b, se.ps = sd.ps, reg=X1)
 class(res) <- c("copulaEndo")
 return(res)
 }
