@@ -11,8 +11,7 @@
 #'@param    intercept  Optional parameter. The model is estimated by default with 
 #'intercept. If no intercept is desired or the regressors matrix \code{X} contains already
 #'a column of ones, intercept should be given the value "no".  
-#'@param    bot  Represents the number of bootstraps to be done in order to obtain the 
-#'standard errors of the coefficients. The default value is 10.      
+
 #
 # Return Value
 #'@return    Returns a list with the best set of parameters found. 
@@ -20,7 +19,7 @@
 #'internal
 #'copula
 #'instrumental variables
-copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL, type, method){
+copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL){
 
     if (is.null(intercept)) {
       X <- cbind(rep(1,nrow(X)),X)
@@ -48,8 +47,7 @@ copulaCont1 <- function(y,X,P, param = NULL, intercept = NULL, type, method){
     }
    b <- optimx::optimx(par=param,fn=logLL,y=y, X=X, P=P,method="BFGS",control=list(trace=0))
    
-  res <- list(coefExoVar = b[,1:(k-1)], coefEndoVar = b[,k], rho = b[,k1-1], sigma = b[,k1], value = b$fevals, convCode = b$convcode, varType = type, method = method )
-  res$call <- match.call() 
+  res <- list(coefExoVar = b[,1:(k-1)], coefEndoVar = b[,k], rho = b[,k1-1], sigma = b[,k1], value = b$fevals, convCode = b$convcode, reg=X )
   class(res) <- c("copulaEndo")
    return(res)
   

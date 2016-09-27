@@ -13,7 +13,7 @@
 #'@seealso \code{\link{copulaEndo}}
 copulaPStar <- function(P){
 	
-	H.p <- ecdf(P)
+	H.p <- stats::ecdf(P)
 
 	H.p <- H.p(P)
 
@@ -21,7 +21,7 @@ copulaPStar <- function(P){
 	H.p <- ifelse(H.p==1,0.9999999,H.p)
 
 	U.p <- H.p
-	p.star <- qnorm(U.p)
+	p.star <- stats::qnorm(U.p)
 	p.star <- ifelse(p.star==0,0.0000001,p.star)
 	return(p.star)
 	

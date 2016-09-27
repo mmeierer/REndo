@@ -12,7 +12,7 @@
 #'@keywords internal
 #'@keywords copula 
 
-copulaMethod2  <- function(y,X,P, intercept=NULL, type, method){
+copulaMethod2  <- function(y,X,P, intercept=NULL){
 
 k <- ncol(X) 
 P <- as.matrix(P)
@@ -22,11 +22,11 @@ colnames(PS) <- paste("PS", 1:ncol(P), sep=".")
 X <- as.matrix(X)
 #add the pStar variables to the set of regressors 
 dataCopula <- data.frame(cbind(X, PS))
-
+datCop <- as.matrix(cbind(X,PS))
 if (!is.null(intercept)) {
 f.lm <- stats::lm(y ~.-1, data=dataCopula)
 } else {f.lm <- stats::lm(y ~., data=dataCopula)}
 f.lm$call <- match.call()
-res <- list(results = f.lm, varType = type, method = method)
+res <- list(results = f.lm, reg=datCop)
 return(res)
 }

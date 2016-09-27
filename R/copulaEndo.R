@@ -71,7 +71,7 @@
 #'c1
 #'
 #'# load datset with 2 continuous, non-normally distributed endogeneous regressors.
-#'# with 2 endogeneous regressors, there is no need for initial parameters, since the method applied is by default the augmented OLS.
+#'# with 2 endogenous regressors the default method is the augmented OLS.
 #'#data(dataCopC2)
 #'#y <- dataCopC2[,1]
 #'#X <- dataCopC2[,2:6]
@@ -85,25 +85,26 @@
 #' y <- dataCopDis[,1]
 #' X <- dataCopDis[,2:5]
 #' P <- dataCopDis[,5]
-#' c3 <- copulaEndo(y, X, P, type = "discrete")
+#' c3 <- copulaEndo(y, X, P, type = "discrete", intercept=FALSE)
 #' c3
 #'@export
 
 
 copulaEndo <- function(y,X,P,param=NULL,type=NULL,method=NULL, intercept = NULL){
   
-   if ("continuous" %in% c(type)){
+   mcl <- match.call()  
+   if ("continuous" %in% mcl$type){
          if (method == 1 )
         {
              print("Attention! The endogeneous regressor should be continuous and NOT normally distributed")
-              ret <- copulaCont1(y,X,P,param, intercept, type, method)
+              ret <- copulaCont1(y,X,P,param, intercept)
            
          } else 
-             if (method == 2) 
-               ret <- copulaMethod2(y,X,P, intercept, type, method) 
+             if ("2" %in% mcl$method ) 
+               ret <- copulaMethod2(y,X,P, intercept) 
   } else
-   if ("discrete" %in% c(type)) {
-     ret <- copulaDiscrete(y,X,P,intercept, type, method)
+   if ("discrete" %in% mcl$type) {
+     ret <- copulaDiscrete(y,X,P, intercept)
 }
 return(ret)
 }

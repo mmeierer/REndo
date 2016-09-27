@@ -53,7 +53,7 @@ cop.sd[j,(ncol(X)+2)] <- matrix.out[ncol(X)+2,]
 
 sd.b <- rep(0, ncol(X)+2)
  for (i in 1:length(sd.b)){
-   sd.b[i] <- sd(cop.sd[,i])
+   sd.b[i] <- stats::sd(cop.sd[,i])
  }
  
 res.sd <- list(se.a = sd.b[1], se.betas = sd.b[2:ncol(X)], se.rho = sd.b[length(sd.b)-1], se.sigma = sd.b[length(sd.b)])
