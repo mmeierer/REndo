@@ -1,25 +1,43 @@
 #'@title Fitting Linear Models with Endogeneous Discrete Regressors using Internal Instrumental Variables
 # Description
-#'@description  Fits linear models with discrete, endogeneous regressors using the approach described in Park and Gupta (2012).
+#'@description  Fits linear models with discrete, endogeneous regressors using the approach described in Park and Gupta (2012). Due to the variablility 
+#'in pStar, a simulation was needed in order to obtain the coefficient estimates. Then, in order to get the Z-scores and p-values the sum of the Z method was used
+#'as described in  Zaykin, D V.(2011). "Optimally weighted Z-test is a powerful method for combining probabilities in meta-analysis". Journal of Evolutionary Biology, 24:1836-1841.
+
 #
 # Arguments
-#'@param  y  the vector containing the dependent variable. 
-#'@param  X  the matrix containing the regressors, with the endogenous variables occupying the last columns.
-#'@param  P  the matrix containing the discrete endogeneous regressors.
-#'@param  intercept  by deault the model is estimated adding an intercept. If no intercept is required, intercept should be set to FALSE.
+#'@param  formula  the model formula, e.g. \code{y ~ X1 + X2 + P}.
+#'@param  endoVar  a string with the name of the endogenous variable/s, in quotation marks.
+#'@param  intercept  an optional parameter. The model is estimated by default with 
+#'intercept. If no intercept is desired or the regressors matrix \code{X} contains already
+#'a column of ones, intercept should be given the value "FALSE", otherwise the value "TRUE".
+#'@param data a data frame or matrix containing the variables of the model.
+
+
+#
 # Return Value
 #'@return  Returns an object of class "lm".
 #'@references Park, S. and Gupta, S., (2012), 'Handling Endogeneous Regressors by Joint Estimation Using Copulas', Marketing Science, 31(4), 567-86.
 
 #'@keywords internal
 
-copulaDiscrete <- function(y,X,P, intercept = NULL) {
+copulaDiscrete <- function(formula, endoVar, intercept = NULL, data) {
 
+  mf <- model.frame(formula = formula, data = data)
+  y <- mf[,1]
+  regs <- unlist(strsplit(as.character(formula)[3], "\\(")) 
+  predictors <- unlist(strsplit(regs[1], " [+] "))
+
+  regressors <- mf[,2:dim(mf)[2]]
+  X <- regressors # both endogenous and exogenous
+  P <- as.matrix(X[,which(colnames(X) %in% endoVar)])
+  colnames(P) <- endoVar
+ 
  sim <- 250  
  k1 <- ncol(X)   
 # P is the endogeneous regressor
- P1 <- as.matrix(P)
- colnames(P1) <- colnames(X)[-c(1:(ncol(X)-ncol(P1)))]
+# P1 <- as.matrix(P)
+# colnames(P1) <- colnames(X)[-c(1:(ncol(X)-ncol(P1)))]
 
 #  empirical cumulative distribution function
 	 getEcdf <- function(x){
@@ -39,60 +57,71 @@ copulaDiscrete <- function(y,X,P, intercept = NULL) {
 
 # each element of pecdf had 3 levels - H.p, H.p0 and H.p1. 
 # Nr. of elements of pecdf = Nr. columns P1
- pecdf <- apply(P1,2,getEcdf)
+ pecdf <- apply(P,2,getEcdf)
 
-  a <- matrix(0,sim,ncol(P1))
-  sd.a <- matrix(0,sim,ncol(P1))
-  if (is.null(intercept)) {
-  b <- matrix(0,sim,ncol(X)-ncol(P1)+1)
-  sd.b <- matrix(0,sim,ncol(X)-ncol(P1)+1)
-  } else 
-  {
-    b <- matrix(0,sim,ncol(X)-ncol(P1))
-    sd.b <- matrix(0,sim,ncol(X)-ncol(P1))
-  }
-  ps <- matrix(0,sim,ncol(P1))
-  sd.ps <- matrix(0,sim,ncol(P1))
 
-  U.p <- matrix(NA, dim(P1)[1], dim(P1)[2])
+  U.p <- matrix(NA, dim(P)[1], dim(P)[2])
+  ifelse (intercept==TRUE, nc <- ncol(X) + ncol(P) +1, nc <- ncol(X) + ncol(P))
+  # create a list with nc elements (number of regressors + Pstar) , for each regressor save the confint for each lm out of sim simulations
+  conf.int <- rep(list(matrix(0,sim,2)), nc)
+
+  for (k in 1:dim(P)[2]){
   
-for (i in 1:sim){
+    U.p[,k] <- stats::runif(dim(P)[1],min=pecdf[[k]]$H.p0,max=pecdf[[k]]$H.p1)
+  }  
+  p.star <- apply(U.p, 2,qnorm)
+  colnames(p.star) <- paste("PStar",1:ncol(P),sep=".")
   
-  for (k in 1:dim(P1)[2]){
+  X1 <- cbind(X,p.star)
+  X1 <- as.matrix(X1)
+  k2 <- ncol(X1)
+  dataCopula <- X1
+  
+  
+  if (intercept==FALSE){  # no intercept 
+    meth.2 <- stats::lm(y ~.-1,data=data.frame(dataCopula))
+    bhat <-   stats::coef(summary(meth.2))[,1] # estimated coefficients
     
-    U.p[,k] <- stats::runif(dim(P1)[1],min=pecdf[[k]]$H.p0,max=pecdf[[k]]$H.p1)
-    
-  }
+  } else {
+    meth.2 <- stats::lm(y ~.,data=data.frame(dataCopula))  # with intercept
+    bhat <- stats::coef(summary(meth.2))[,1]   # estimated coefficients
+  } 
+  names(bhat) <- colnames(dataCopula)
   
-  p.star <- apply(U.p, 2,stats::qnorm)
-  colnames(p.star) <- paste("PStar",1:ncol(P1),sep=".")
+  
+  for (i in 1:sim){
+  for (k in 1:dim(P)[2]){
+    
+    U.p[,k] <- stats::runif(dim(P)[1],min=pecdf[[k]]$H.p0,max=pecdf[[k]]$H.p1)
+  }  
+  p.star <- apply(U.p, 2,qnorm)
+  colnames(p.star) <- paste("PStar",1:ncol(P),sep=".")
      
   X1 <- cbind(X,p.star)
   X1 <- as.matrix(X1)
   k2 <- ncol(X1)
   dataCopula <- X1
 
-  if (!is.null(intercept)){  # no intercept 
-  meth.2 <- stats::lm(y ~.-1,data=data.frame(dataCopula))
-  a[i,] <- meth.2$coefficients[-c(1:(ncol(X)-ncol(P1)),(k2-ncol(P1)+1):k2)]  # coef of endogenous variables
-  b[i,] <- meth.2$coefficients[1:(ncol(X)-ncol(P1))]  # coef of exogenous variables
-  ps[i,] <- meth.2$coefficients[(k2-ncol(P1)+1):k2]  # pstar-s
-  } else {
-    meth.2 <- stats::lm(y ~.,data=data.frame(dataCopula))  # with intercept
-    ps[i,] <- meth.2$coefficients[-c(1:(ncol(X)-ncol(P1)+1),(k2-ncol(P1)+1):k2)]
-    b[i,] <- meth.2$coefficients[1:(ncol(X)-ncol(P1)+1)]
-    a[i,] <- meth.2$coefficients[(k2-ncol(P1)+1):k2]
+  if (intercept==TRUE){  # intercept 
+  meth.2 <- stats::lm(y ~.,data=data.frame(dataCopula))
+  for (s in 1:nc) {
+           conf.int[[s]][i,] <- confint(meth.2, level=0.95)[s,]
+           }
+    } else {
+    meth.2 <- stats::lm(y ~.-1,data=data.frame(dataCopula))  # with intercept
+   for (s in 1:nc) {
+      conf.int[[s]][i,] <- confint(meth.2, level=0.95)[s,]
+      
+    }
   }
 }
-a.est <- apply(a,2,mean)
-b.est <- apply(b, 2,mean)
-ps.est <- apply(ps,2,mean)
-sd.a <- apply(a,2,stats::sd)
-sd.b <- apply(b,2,stats::sd)
-sd.ps <- apply(ps,2,stats::sd)
+
+CI <- matrix(0,nc,2)
+colnames(CI) <- c("Lower95%", "Upper95%")
+for (i in 1:nc)
+  CI[i,] <- apply(conf.int[[i]],2,mean)
 
 
-res <- list(a.est = a.est, b.est = b.est, ps.est = ps.est, se.a=sd.a, se.b = sd.b, se.ps = sd.ps, reg=X1)
-class(res) <- c("copulaEndo")
+res <- list(coefficients = meth.2$coefficients, CI=CI, reg = dataCopula, resid = meth.2$residuals, fitted.values=meth.2$fitted.values)
 return(res)
 }

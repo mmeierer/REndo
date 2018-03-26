@@ -22,7 +22,7 @@ logLL<- function(theta,y,X,P){       # Log-likelihood  Function
   X <- as.matrix(X)
  
   
-  eps1 <- y - X %*% beta		# epsilon, X should contain the endogeneous regressor as well
+  eps1 <- y - X %*% beta	# epsilon, X should contain the endogeneous regressor as well
   
   p.star <- copulaPStar(P)			# function that computes ecdf(P) and P.star
   

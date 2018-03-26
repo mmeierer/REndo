@@ -1,63 +1,86 @@
 #'@title Bootstrapping Standard Errors
-#'
+#'@aliases boots
 #'@description Performs bootstrapping to obtain the standard errors of the estimates of the model with one continuous endogenous regressor estimated via maximum likelihood
-#'using the \code{\link{copulaEndo}} function.
+#'using the \code{\link{copulaCorrection}} function.
 #
 # Arguments
 #'@param    bot  number of bootstrap replicates.
-#'@param    y  the vector or matrix containing the dependent variable. 
-#'@param    X  the data frame or matrix containing the regressors of the model, both exogeneous and endogeneous. The last column/s should contain the endogeneous variable/s.
-#'@param    P  the vector containing the continuous, non-normally distributed endogeneous variable.
-#'@param    param  initial values for the parameters to be optimized over. See \code{\link{copulaEndo}} for more details.  
+#'@param    formula  the model formula, e.g. \code{y ~ X1 + X2 + P}. 
+#'@param    endoVar  a string with the name of the endogenous variable/s, in quotation marks.
+#'@param    param  initial values for the parameters to be optimized over. See \code{\link{copulaCorrection}} for more details.  
 #'@param    intercept  an optional parameter. The model is estimated by default with 
-#'intercept. If no intercept is desired or the regressors matrix \code{X} contains already
-#'a column of ones, intercept should be given the value "no".  
+#'intercept. If no intercept is desired in model estimation, intercept should be given the value "FALSE", otherwise the value "TRUE".  
+#'@param    data a data frame or matrix containing the variables of the model.
 # Return Value
-#'@return Returns the standard errors of the estimates of the model using the copula method 1 described in Park and Gupta (2012). See Details section of \code{\link{copulaEndo}}.
-#'@details The function could be used only when there is a single endogenous regressor and method one is selected in \code{\link{copulaEndo}}.
-#'of the \code{copulaEndo} function is used for estimation.
-#'@seealso \code{\link{copulaEndo}}
-boots <- function(bot,y,X,P,param,intercept = NULL){
+#'@return Returns the standard errors of the estimates of the model using the copula method 1 described in Park and Gupta (2012). See Details section of \code{\link{copulaCorrection}}.
+#'@details The function could be used only when there is a single endogenous regressor and method one is selected in \code{\link{copulaCorrection}}.
+#'of the \code{copulaCorrection} function is used for estimation.
+#'@seealso \code{\link{copulaCorrection}}
+#'@export
+boots <- function(bot,formula, endoVar,param,intercept = NULL, data){
    
-  if (!is.null(intercept)) {
-    k <- ncol(X)
-  }
-  
-  if (is.null(intercept)) {
-    X <- cbind(rep(1,nrow(X)),X)
-    k <- ncol(X) 
-  }
-  
-  k1 <- k+2    # +2 = rho and sigma  
-  cop.sd <- matrix(,nrow=bot, ncol=k1)
+  mf <- model.frame(formula = formula, data = data)
+  y <- mf[,1]
+  regs <- unlist(strsplit(as.character(formula)[3], "\\(")) 
+  predictors <- unlist(strsplit(regs[1], " [+] "))
  
-  
-for (j in 1:bot) {
+  regressors <- mf[,2:dim(mf)[2]]
+  X <- regressors # both endogenous and exogenous
+  P <- as.matrix(X[,which(colnames(X) %in% endoVar)])
+  colnames(P) <- endoVar
+  if (intercept==TRUE) {
+    cop.sd <- matrix(,nrow=bot, ncol=ncol(X)+2+1)
+  } else {
+    cop.sd <- matrix(,nrow=bot, ncol=ncol(X)+2)
+  }
+   
+  for (j in (1:bot)) {
 
-boot.se <- sample(length(y), length(P), replace=TRUE) 
+  boot.se <- sample(length(y), length(P), replace=TRUE) 
 
-y <- y[boot.se]
-X <- X[boot.se, ]
-P <- as.matrix(P)
-P <- P[boot.se, ]
+  y <- y[boot.se]
+  X <- X[boot.se, ]
+  dataBoot <- cbind.data.frame(y=scale(y, scale=TRUE), scale(X, scale=TRUE))
  
-cop.opt <- copulaCont1(y,X,P,param, intercept="no")
+# I <- matrix(rep(1,nrow(X)),nrow(X),1)
+# colnames(I) <- c("I")
+# dataBoot <- cbind(I, dataBoot)    # add intercept I to matrix X
+
+cop.opt <- suppressWarnings(copulaCont1(formula,endoVar, param, intercept, data=dataBoot))
 # put results in a matrix
 # col 1- alfa, col2-n -beta, last 2 cols - rho and sigma
-matrix.out <- matrix(unlist(cop.opt), byrow=TRUE)  # 1 column matrix with the elements returned by optimx
+matrix.out <- matrix(unlist(cop.opt$coef_cop), byrow=TRUE)  # 1 column matrix with the elements returned by optimx
 
-cop.sd[j,1:ncol(X)] <- matrix.out[1:ncol(X),]
-cop.sd[j,(ncol(X)+1)] <- matrix.out[ncol(X)+1,]
-cop.sd[j,(ncol(X)+2)] <- matrix.out[ncol(X)+2,]
+
+cop.sd[j,1:cop.opt$k1] <- matrix.out[1:cop.opt$k1]
 }
 
-sd.b <- rep(0, ncol(X)+2)
+sd.b <- rep(0, cop.opt$k1)
  for (i in 1:length(sd.b)){
-   sd.b[i] <- stats::sd(cop.sd[,i])
+   sd.b[i] <- sd(cop.sd[,i])
  }
  
-res.sd <- list(se.a = sd.b[1], se.betas = sd.b[2:ncol(X)], se.rho = sd.b[length(sd.b)-1], se.sigma = sd.b[length(sd.b)])
-return(res.sd)
+#if (intercept==TRUE)
+#{ I <- matrix(rep(1,nrow(X)))
+#  colnames(I) <- c("I")
+#  X <- cbind(I,X)
+#}
+k <- cop.opt$k
+res.sd <- list(se.a = sd.b[k], se.betas = sd.b[1:(cop.opt$k-1)], se.rho = sd.b[length(sd.b)-1], se.sigma = sd.b[length(sd.b)], reg=as.matrix(X))
+
+coef.table <- res.sd$se.a
+coef.table <- append(coef.table, res.sd$se.betas)
+coef.table <- append(coef.table, res.sd$se.rho)
+coef.table <- append(coef.table, res.sd$se.sigma)
+coef.table <- matrix(coef.table,, ncol=1)
+if (intercept==TRUE){
+  r1 <- append(colnames(res.sd$reg),c("rho","sigma"))
+  rownames(coef.table)  <- append(c("Intecept"),r1)
+} else {
+  rownames(coef.table) <- append(colnames(res.sd$reg),c("rho","sigma"))
+}
+colnames(coef.table) <- c("Std.Error")
+return(coef.table)
 }
 
 
