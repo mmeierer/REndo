@@ -7,8 +7,7 @@
 checkAssumptions(y, X, P, IIV, EIV = NULL, data = NULL)
 }
 \description{
-The internal instruments are constructed as in Lewbel(1997). See \code{\link{hmlewbel}}.
+The internal instruments are constructed as in Lewbel(1997). See \code{\link{higherMomentsIV}}.
 }
 \keyword{internal}
 \keyword{lewbel}
-

@@ -4,51 +4,44 @@
 \alias{internalIV}
 \title{Constructs Internal Instrumental Variables From Data}
 \usage{
-internalIV(y, X, P, G = c("x2", "x3", "lnx", "1/x"), IIV = c("g", "gp",
-  "gy", "yp", "p2", "y2"), data = NULL)
+internalIV(formula, endoVar, G = NULL, IIV = c("g", "gp", "gy", "yp", "p2",
+  "y2"), data)
 }
 \arguments{
-\item{y}{the vector or matrix containing the dependent variable.}
+\item{formula}{the model formula, e.g. \code{y ~ X1 + X2 + P}.}
 
-\item{X}{the data frame or matrix containing the exogenous regressors of the model.}
-
-\item{P}{the endogenous variables of the model as columns of a matrix or dataframe.}
+\item{endoVar}{a string with the name/s of the endogenous variable/s.}
 
 \item{G}{the functional form of G. It can take four values, \code{x2}, \code{x3},\code{lnx} or \code{1/x}. 
 The last two forms are conditional on the values of the exogenous variables: greater than 0 or different from 0 respectively.}
 
 \item{IIV}{the internal instrumental variable to be constructed. It can take six values, \code{"g","gp","gy","yp","p2"or"y2"}. See the "Details" section 
-of \code{\link{hmlewbel}} for a description of the internal instruments.}
+of \code{\link{higherMomentsIV}} for a description of the internal instruments.}
 
-\item{data}{optional data frame or list containing the variables in the model.}
+\item{data}{a matric or data frame 0containing the variables in the model.}
 }
 \value{
-Returns a vector/matrix constructed from the data whcih can be used as instrumental variable either in \code{\link{hmlewbel}} or in any other function/algorithm making use
+Returns a vector/matrix constructed from the data whcih can be used as instrumental variable either in \code{\link{higherMomentsIV}} or in any other function/algorithm making use
 of instruments.
 }
 \description{
-The function can be used to construct additional instruments to be supplied to \code{\link{hmlewbel}} as additional instruments
+The function can be used to construct additional instruments to be supplied to \code{\link{higherMomentsIV}} as additional instruments
 in the "EIV" argument.
 }
 \examples{
-# load data
-data(dataHMLewbel)
-y <- dataHMLewbel$y
-X <- cbind(dataHMLewbel$X1,dataHMLewbel$X2)
-colnames(X) <- c("X1","X2")
-P <- dataHMLewbel$P
+data(dataHigherMoments)
 # build an instrument gp = (G - mean(G))(P - mean(P))  using the internalIV() function 
 # with G = "x3" meaning G(X) = X^3
-eiv <- internalIV(y,X,P, G ="x3", IIV = "gp")
+eiv <- internalIV(formula = y ~ X1 + X2 + P, endoVar = "P", G ="x3", IIV = "gp",
+      data = dataHigherMoments)
 }
 \references{
 Lewbel, A. (1997). "Lewbel, A. (1997). 'Constructing Instruments for Regressions with Measurement Error when No Additional Data Are Available,
 with An Application to Patents and R&D'. Econometrica, 65(5), 1201-1213."
 }
 \seealso{
-\code{\link{hmlewbel}}
+\code{\link{higherMomentsIV}}
 }
 \keyword{endogeneity}
 \keyword{instruments}
 \keyword{lewbel}
-

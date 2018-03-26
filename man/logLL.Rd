@@ -22,4 +22,3 @@ returns the value of the negative log-likelihood.
 Computes the log-likelihood function
 }
 \keyword{internal}
-

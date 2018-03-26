@@ -4,25 +4,28 @@
 \alias{copulaDiscrete}
 \title{Fitting Linear Models with Endogeneous Discrete Regressors using Internal Instrumental Variables}
 \usage{
-copulaDiscrete(y, X, P, intercept = NULL)
+copulaDiscrete(formula, endoVar, intercept = NULL, data)
 }
 \arguments{
-\item{y}{the vector containing the dependent variable.}
+\item{formula}{the model formula, e.g. \code{y ~ X1 + X2 + P}.}
 
-\item{X}{the matrix containing the regressors, with the endogenous variables occupying the last columns.}
+\item{endoVar}{a string with the name of the endogenous variable/s, in quotation marks.}
 
-\item{P}{the matrix containing the discrete endogeneous regressors.}
+\item{intercept}{an optional parameter. The model is estimated by default with 
+intercept. If no intercept is desired or the regressors matrix \code{X} contains already
+a column of ones, intercept should be given the value "FALSE", otherwise the value "TRUE".}
 
-\item{intercept}{by deault the model is estimated adding an intercept. If no intercept is required, intercept should be set to FALSE.}
+\item{data}{a data frame or matrix containing the variables of the model.}
 }
 \value{
 Returns an object of class "lm".
 }
 \description{
-Fits linear models with discrete, endogeneous regressors using the approach described in Park and Gupta (2012).
+Fits linear models with discrete, endogeneous regressors using the approach described in Park and Gupta (2012). Due to the variablility 
+in pStar, a simulation was needed in order to obtain the coefficient estimates. Then, in order to get the Z-scores and p-values the sum of the Z method was used
+as described in  Zaykin, D V.(2011). "Optimally weighted Z-test is a powerful method for combining probabilities in meta-analysis". Journal of Evolutionary Biology, 24:1836-1841.
 }
 \references{
 Park, S. and Gupta, S., (2012), 'Handling Endogeneous Regressors by Joint Estimation Using Copulas', Marketing Science, 31(4), 567-86.
 }
 \keyword{internal}
-

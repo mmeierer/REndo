@@ -4,14 +4,18 @@
 \alias{copulaMethod2}
 \title{Fitting Linear Models with Endogeneous Regressors using Gaussian Copula - Method 2}
 \usage{
-copulaMethod2(y, X, P, intercept = NULL)
+copulaMethod2(formula, endoVar, intercept = NULL, data)
 }
 \arguments{
-\item{y}{a vector or matrix containing the dependent variable.}
+\item{formula}{the model formula, e.g. \code{y ~ X1 + X2 + P}.}
 
-\item{X}{a data frame or matrix containing the regressors of the model, both exogeneous and endogeneous. The last column/s should contain the endogeneous variable/s.}
+\item{endoVar}{a string with the name of the endogenous variable/s, in quotation marks.}
 
-\item{P}{a matrix containing the endogeneous variables. They should be continuous and non-normally distributed.}
+\item{intercept}{an optional parameter. The model is estimated by default with 
+intercept. If no intercept is desired or the regressors matrix \code{X} contains already
+a column of ones, intercept should be given the value "FALSE", otherwise the value "TRUE".}
+
+\item{data}{a data frame or matrix containing the variables of the model.}
 }
 \value{
 Returns an object of class "lm".
@@ -20,5 +24,7 @@ Returns an object of class "lm".
 It fits linear models with several endogeneous regressors using Gaussian Copula proposed by Park and Gupta (2012).
 }
 \keyword{copula}
+\keyword{endogenous}
+\keyword{instrumental}
 \keyword{internal}
-
+\keyword{variables}

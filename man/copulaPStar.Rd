@@ -7,7 +7,7 @@
 copulaPStar(P)
 }
 \arguments{
-\item{P}{the variable for which the inverse-normal distribution of its empirical distribution function is needed.}
+\item{P}{- the variable for which the inverse-normal distribution of its empirical distribution function is needed.}
 }
 \value{
 Returns the inverse-normal distribution of the empirical distribution function of variable P.
@@ -16,8 +16,7 @@ Returns the inverse-normal distribution of the empirical distribution function o
 Computes the empirical distribution function of a variable and the inverse-normal distribution of ECDF.
 }
 \seealso{
-\code{\link{copulaEndo}}
+\code{\link{copulaCorrection}}
 }
 \keyword{copula}
 \keyword{endogeneity}
-
