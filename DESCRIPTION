@@ -1,22 +1,43 @@
 Package: REndo
 Type: Package
-Title: Fitting Linear Models with Endogenous Regressors when No External
-    Instruments are Available
-Version: 1.0
-Date: 2015-12-01
+Title: Fitting Linear Models with Endogenous Regressors using Latent
+    Instrumental Variables
+Version: 1.3
+Date: 2017-11-08
 Author: Raluca Gui,
     Markus Meierer,
     Rene Algesheimer
 Maintainer: Raluca Gui <raluca.gui@business.uzh.ch>
-Description: Fits linear models with endogenous regressors using Internal
-    Instrumental Variables (IIV) methods. These are statistical techniques to
-    correct for endogeneity when no strong, valid external instrumental variables
-    are available. The first version of the package offers two methods, the Latent
-    Instrumental Variables (Ebbes et al., 2005) and Lewbel's higher moments approach
-    (Lewbel, 1997). In a second version of the package, two other methods will be
-    added, joint estimation using copulas (Park and Gupta, 2012) and multilevel GMM
-    (Kim and Frees, 2007).
+Description: Fits linear models with endogenous regressor using latent
+    instrumental variable approaches. The methods included in the package
+    are Lewbel's (1997) <doi:10.2307/2171884> higher moments approach as well as Lewbel's (2012) <doi:10.1080/07350015.2012.643126>
+    heteroskedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718>joint estimation method
+    that uses Gaussian copula and Kim and Frees's (2007) <doi:10.1007/s11336-007-9008-1> multilevel generalized
+    method of moment approach that deals with endogeneity in a multilevel setting.
+    These are statistical techniques to address the endogeneity problem where no
+    external instrumental variables are needed.
+    This version: 
+       - includes an omitted variable test in the multilevel estimation. It is reported in the summary() function of the 
+         multilevelIV() function.
+       - resolves the error "Error in listIDs[, 1] : incorrect number of dimensions" when using the multilevelIV() function.
+       - a new simulated dataset is provided, dataMultilevelIV, on which to exemplify the multilevelIV() function.
 Imports:
-    stats,optimx,mvtnorm,AER,e1071,utils,methods
+    optimx,
+    mvtnorm,
+    AER,
+    e1071,
+    stats,
+    corpcor,
+    lme4,
+    gmm,
+    lmtest,
+    plyr,
+    sandwich,
+    compiler,
+    data.table,
+    Matrix
+Depends:
+    methods
 License: GPL-3
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
+
