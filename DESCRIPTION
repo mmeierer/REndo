@@ -1,7 +1,7 @@
-Package: REndo
+Package: REndo2
 Type: Package
 Title: Fitting Linear Models with Endogenous Regressors using Latent
-    Instrumental Variables
+        Instrumental Variables
 Version: 1.3
 Date: 2017-11-08
 Author: Raluca Gui,
@@ -21,23 +21,9 @@ Description: Fits linear models with endogenous regressor using latent
          multilevelIV() function.
        - resolves the error "Error in listIDs[, 1] : incorrect number of dimensions" when using the multilevelIV() function.
        - a new simulated dataset is provided, dataMultilevelIV, on which to exemplify the multilevelIV() function.
-Imports:
-    optimx,
-    mvtnorm,
-    AER,
-    e1071,
-    stats,
-    corpcor,
-    lme4,
-    gmm,
-    lmtest,
-    plyr,
-    sandwich,
-    compiler,
-    data.table,
-    Matrix
-Depends:
-    methods
+Imports: 
+Depends: R (>= 2.10), Formula (>= 1.2), optimx (>= 2013.8.7)
 License: GPL-3
 RoxygenNote: 6.0.1
-
+NeedsCompilation: no
+Packaged: 2017-11-08 14:27:47 UTC; raluca
