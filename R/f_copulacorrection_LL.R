@@ -1,38 +1,34 @@
 #' @importFrom stats pnorm qnorm dnorm
-copulaCorrection_LL<- function(theta,y,X,P){       # Log-likelihood  Function
+copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, m.data.endo){
 
-  k <- ncol(X)
-  k1 <- k+2                           # add 2 for sigma and rho
-  beta <- theta[1:k]		             # parameters
-  rho1      <-  theta[k+1]
-  sig.eps1  <-  theta[k+2]
+  # Extract params from optimx inputs --------------------------------------------------------
+  params.endo.exo <- params[setdiff(names(params), c("sigma", "rho"))]
+  sigma           <- params["sigma"]
+  rho             <- params["rho"]
 
-  X <- as.matrix(X)
+  # P.star -----------------------------------------------------------------------------------
+  p.star <- copulaPStar(data.endo = m.data.endo)
 
+  # epsilon, incl. endo regressor ------------------------------------------------------------
+  eps.1 <- vec.y - m.data.exo.endo %*% params.endo.exo
 
-  eps1 <- y - X %*% beta	# epsilon, X should contain the endogeneous regressor as well
-
-  p.star <- copulaPStar(P)			# function that computes ecdf(P) and P.star
-
+  # PPnorm -----------------------------------------------------------------------------------
   # residulas - epsilon should be normally distributed
+  ppnorm <- stats::pnorm(eps.1, mean=0, sd=sigma)
+  ppnorm[ppnorm >= 0.999998]   <- 0.999888
+  ppnorm[ppnorm <= 0.0001]     <- 0.0001
 
-  ppnorm <- suppressWarnings(stats::pnorm(eps1,mean=0,sd=sig.eps1))
+  # epsilon star -----------------------------------------------------------------------------
+  eps.star <- stats::qnorm(ppnorm)
 
-  ppnorm <- ifelse(ppnorm >=0.999998, 0.999888, ppnorm)
-  ppnorm1 <- ifelse(ppnorm <= 0.0001, 0.00001, ppnorm)
+  # l.eps ------------------------------------------------------------------------------------
+  l.eps <- sum(log(stats::dnorm(eps.1,mean=0,sd=sigma)))
+  # s
+  s <- sum((p.star^2 + eps.star^2)/(2*(1-rho^2)) - (rho*p.star*eps.star)/(1-rho^2))
+  # mm
+  mm <- (length(vec.y)/2)* log(1-rho^2)
+  # LL
+  log.LL <- -mm - s + l.eps
+  return(-1 * log.LL)
 
-  # epsilon star
-  e.star <- stats::qnorm(ppnorm1)
-
-  s <- sum((p.star^2 + e.star^2)/(2*(1-rho1^2)) - (rho1*p.star*e.star)/(1-rho1^2))
-
-
-  l.eps <- suppressWarnings(sum(log(stats::dnorm(eps1,mean=0,sd=sig.eps1))))
-
-  mm <- (length(y)/2)* suppressWarnings(log(1-rho1^2))
-  logll <- -mm - s + l.eps
-
-  ll <- -1* logll
-  return(ll)
 }
-

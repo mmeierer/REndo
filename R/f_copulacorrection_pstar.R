@@ -1,14 +1,21 @@
 #' @importFrom stats ecdf qnorm
-copulaPStar <- function(P){
-# ** ?? What if P has > 1 column (ie regressor)-ecdf per regressor or all together. Also considering the usage in method 2! ??
-  H.p <- stats::ecdf(P)
-  H.p <- H.p(P)
+copulaPStar <- function(data.endo){
 
-  H.p <- ifelse(H.p==0,0.0000001,H.p)
-  H.p <- ifelse(H.p==1,0.9999999,H.p)
+  # Helper function to generate the p.star values for each single
+  fct.single.col.pstar <- function(single.col.P){
+    H.p <- stats::ecdf(single.col.P)
+    U.p <- H.p(single.col.P)
 
-  U.p <- H.p
-  p.star <- stats::qnorm(U.p)
-  p.star <- ifelse(p.star==0,0.0000001,p.star)
+    U.p[U.p == 0] <- 0.0000001
+    U.p[U.p == 1] <- 0.9999999
+
+    p.star <- stats::qnorm(U.p)
+    p.star[p.star == 0] <- 0.0000001
+    return(p.star)
+  }
+
+  # Apply the P.star generating function on each column of the given data
+  p.star <- apply(X = data.endo, MARGIN = 2, FUN = fct.single.col.pstar)
+  colnames(p.star) <- paste("PStar", colnames(data.endo), sep=".")
   return(p.star)
 }

@@ -23,16 +23,20 @@ copulaCorrection_bootstrappingSE <- function(bot, y, X, P, intercept, param){
 
   for (j in (1:bot)) {
 
+    # *** PERCENTAGE 80%
+    # *** length(P) should be nrow()
     boot.se <- sample(length(y), length(P), replace=TRUE)
 
     y <- y[boot.se]
     X <- X[boot.se, ]
+    # *** Do together
     dataBoot <- cbind.data.frame(y=scale(y, scale=TRUE), scale(X, scale=TRUE))
 
     # I <- matrix(rep(1,nrow(X)),nrow(X),1)
     # colnames(I) <- c("I")
     # dataBoot <- cbind(I, dataBoot)    # add intercept I to matrix X
 
+    # **** New LL will be on GIT
     # cop.opt <- suppressWarnings(copulaCont1(formula,endoVar, param, intercept, data=dataBoot))
     cop.opt <- suppressWarnings(copulaCorrection_singleContinuous1(y=y, X=X, P=P, intercept=intercept, param=param))
     # put results in a matrix

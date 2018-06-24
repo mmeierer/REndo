@@ -6,9 +6,7 @@ residuals.rendo.copulacorrection.continuous1 <- function(object, ...){
 
 #' @export
 coef.rendo.copulacorrection.continuous1 <- function(object, ...){
-  params <- c(object$coefExoVar, object$coefEndoVar, object$rho, object$sigma)
-  names(params) <- rownames(object$seCoefficients)
-  return(params)
+  return(object$parameter.mean)
 }
 
 # Unsure
@@ -29,7 +27,7 @@ coef.rendo.copulacorrection.continuous1 <- function(object, ...){
 
 #' @export
 logLik.rendo.copulacorrection.continuous1 <- function(object,...){
-  return(object$logLik)
+  return(object$log.likelihood)
 }
 
 #' @export
@@ -42,18 +40,35 @@ print.rendo.copulacorrection.continuous1 <- function(x, ...){
 #' @importFrom stats pt
 #' @export
 summary.rendo.copulacorrection.continuous1 <- function(object, ...){
-  # Take from input
-  res <- object[c("call", "param", "seCoefficients", "logLik", "AIC", "BIC", "convCode")]
+  # Copy from input
+  res <- object[c("call", "parameter.mean", "log.likelihood", "AIC", "BIC", "conv.code")]
 
-  res$all.est.params <- coef(object)
-  # add z=score
-  res$z_val_table <- res$all.est.params/object$seCoefficients  # z-score endogenous variable
-  # add p-values
-  res$pval <- 2*stats::pt(q=(-abs(res$z_val_table)), df=(length(object$regressors[,1])-1))
+  # Coefficient table --------------------------------------------------------------------
+  all.est.params <- coef(object)
+  # z-score
+  z.val <- all.est.params/object$parameter.sd  # z-score endogenous variable
+  # p-values
+  p.val <- 2*stats::pt(q=(-abs(z.val)), df=NROW(object$regressors)-1) #(length(object$regressors[,1])-1))
+
+  res$coefficients <- cbind(all.est.params,
+                            object$parameter.sd,
+                            z.val,
+                            p.val)
+
+  rownames(res$coefficients) <- names(object$parameter.mean)
+  colnames(res$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
 
   class(res) <- "summary.rendo.copulacorrection.continuous1"
   return(res)
 }
+
+
+#' Read coefficients from summary function on copulaCorrectionContinuous1 output
+#' @export
+coef.summary.rendo.copulacorrection.continuous1 <- function(object, ...){
+  return(object$coefficients)
+}
+
 
 #' Print output from summary function on copulaCorrectionContinuous1 output
 #' @importFrom stats printCoefmat
@@ -61,22 +76,15 @@ summary.rendo.copulacorrection.continuous1 <- function(object, ...){
 print.summary.rendo.copulacorrection.continuous1 <- function(x, digits=5, signif.stars = getOption("show.signif.stars"),
                                                              ...){
 
-  coef.table <- cbind(x$all.est.params,
-                       x$seCoefficients,
-                       x$z_val_table,
-                       x$pval)
-  rownames(coef.table) <- rownames(x$seCoefficients)
-  colnames(coef.table) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
-
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 
   cat("Coefficients:\n")
-  stats::printCoefmat(coef.table, digits = digits, na.print = "NA", has.Pvalue = T, ...)
+  stats::printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T, ...)
   cat("\n")
-  names(x$param) <- rownames(x$seCoefficients)
-  cat("Initial parameter values:", round(x$param,3), "\n")
-  cat("The Value of the log likelihood function:", x$logLik,"\n")
+  # names(x$param) <- rownames(x$parameter.mean)
+  cat("Initial parameter values:", round(x$parameter.mean,3), "\n")
+  cat("The Value of the log likelihood function:", x$log.likelihood,"\n")
   cat("AIC:", x$AIC,", BIC:",x$BIC, "\n")
-  cat("Convergence Code: ", x$convCode, "\n")
+  cat("Convergence Code: ", x$conv.code, "\n")
   invisible(x)
 }

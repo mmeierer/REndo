@@ -17,7 +17,6 @@ print.rendo.copulacorrection.continuous2 <- function(x, ...){
 }
 
 
-
 #' Calculate summary statistics for result object from copulaCorrectionDiscrete
 #' @importFrom stats pt pf
 #' @export
@@ -28,16 +27,29 @@ summary.rendo.copulacorrection.continuous2 <- function(object, ...){
   ans$z_val_table <- object$coefficients/object$seCoefficients  # z-score endogenous variable
 
   # p-values (length -> nrow???)
-  ans$pval <- 2*stats::pt(q=(-abs(ans$z_val_table)), df=(length(object$regressors[,1])-1))
+  ans$p.val <- 2*stats::pt(q=(-abs(ans$z_val_table)), df=(length(object$regressors[,1])-1))
 
   # length(object$regressors[,1]) == nrow(object$regressors) ??
   # compute pvalue for Fstat
   ans$pval_fstats <- pf(length(object$regressors[,1]), as.numeric(object$lm_stats$fstat[2]),
                     as.numeric(object$lm_stats$fstat[3]), lower.tail=F)
 
+
+  ans$coefficients <- cbind(ans$coefficients, ans$seCoefficients, ans$z_val_table, ans$p.val)
+  rownames(ans$coefficients) <- names(object$coefficients)
+  colnames(ans$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
+
   class(ans) <- "summary.rendo.copulacorrection.continuous2"
   return(ans)
 }
+
+
+#' Extract coefficient table from summary output
+#' @export
+coef.summary.rendo.copulacorrection.continuous2 <- function(object, ...){
+  return(object$coefficients)
+}
+
 
 #' Print output from summary function on copulaCorrectionContinuous2 output
 #' @importFrom stats printCoefmat
@@ -47,11 +59,7 @@ print.summary.rendo.copulacorrection.continuous2 <- function(x, digits=5, signif
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"),
       "\n\n", sep = "")
 
-  coef.table <- cbind(x$coefficients, x$seCoefficients, x$z_val_table, x$pval)
-  rownames(coef.table) <- names(x$coefficients)
-  colnames(coef.table) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
-
-  printCoefmat(coef.table, digits = digits, na.print = "NA", has.Pvalue = T, ...)
+  printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T, ...)
 
   cat("\nResidual standard error: ",x$lm_stats$residSE, "on", x$lm_stats$df[2],"degrees of freedom \n")
   cat("Multiple R-squared:",x$lm_stats$r2, "Adjusted R-squared:", x$lm_stats$adjr2,"\n", sep = " ")

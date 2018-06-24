@@ -1,128 +1,92 @@
-#' @importFrom Formula as.Formula model.part
-#' @importFrom stats ecdf runif coef lm confint qnorm terms
+#' @importFrom Formula as.Formula
+#' @importFrom stats ecdf runif coef lm confint qnorm model.frame update
 #' @export
-copulaCorrectionDiscrete <- function(formula, data) {
+copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.simulations=250){
 
   cl <- match.call()
 
+  # Check user input ----------------------------------------------------------------------------------
+  # tbd
+
   # Extract data based on given formula ---------------------------------------------------------------
-  F.formula         <- Formula::as.Formula(formula)
-  df.y              <- Formula::model.part(object = F.formula, data = data, lhs=1, rhs = 0)
-  df.data.exo.endo  <- Formula::model.part(object = F.formula, data = data, lhs=0, rhs = c(1,2))
-  df.data.endo      <- Formula::model.part(object = F.formula, data = data, lhs=0, rhs = 2)
+  F.formula         <- as.Formula(formula)
+  # df.data.all       <- model.part(object = F.formula, data = data, lhs=NULL, rhs = NULL) #NULl for all
+  # df.data.exo.endo  <- model.part(object = F.formula, data = data, lhs=0, rhs = c(1,2))
+  df.data.endo      <- model.frame(object = F.formula, data = data, lhs=0, rhs = 2)
 
-  intercept <- as.logical(attr(x = terms(x = F.formula), which = "intercept"))
+  # Definition: P.star for discrete data --------------------------------------------------------------
+  fct.p.star.discrete <- function(single.col.endo){
 
-  # * Replace old stuff with new ------------------------------------------------------------------------
-  # mf <- model.frame(formula = formula, data = data)
-  # y <- mf[,1]
-  y <- df.y
-  # regs <- unlist(strsplit(as.character(formula)[3], "\\("))
-  # predictors <- unlist(strsplit(regs[1], " [+] "))
+    # Fit empirical CDF to data
+    H.p  <- stats::ecdf(single.col.endo)
 
-  # regressors <- mf[,2:dim(mf)[2]]
-  # X <- regressors # both endogenous and exogenous
-  X <- df.data.exo.endo
-  # P <- as.matrix(X[,which(colnames(X) %in% endoVar)])
-  P <- as.matrix(df.data.endo)
-  # colnames(P) <- endoVar
-  colnames(P) <- colnames(df.data.endo)
+    # Caluclate H.pX
+    H.p1 <- H.p(single.col.endo)
+    H.p0 <- H.p(single.col.endo-1)
+    H.p0[H.p0 == 0] <- 0.0000001
+    H.p0[H.p0 == 1] <- 0.9999999
+    H.p1[H.p1 == 0] <- 0.0000001
+    H.p1[H.p1 == 1] <- 0.9999999
 
+    # Calculate U.p
+    U.p <- stats::runif(n = NROW(single.col.endo), min=H.p0, max=H.p1)
 
-  # ** Only changes after here: fix dataCopula <- c(y, X) and set class of return ------------------------------
-
-  sim <- 250
-  k1 <- ncol(X)
-  # P is the endogeneous regressor
-  # P1 <- as.matrix(P)
-  # colnames(P1) <- colnames(X)[-c(1:(ncol(X)-ncol(P1)))]
-
-  #  empirical cumulative distribution function
-  getEcdf <- function(x){
-    H.p <- stats::ecdf(x)
-    H.p1 <- H.p(x)
-    H.p0 <- H.p(x-1)
-    H.p0 <- ifelse(H.p0==0,0.0000001,H.p0)
-    H.p0 <- ifelse(H.p0==1,0.9999999,H.p0)
-    H.p1 <- ifelse(H.p1==0,0.0000001,H.p1)
-    H.p1 <- ifelse(H.p1==1,0.9999999,H.p1)
-
-    gecdf <- list(H.p = H.p, H.p1=H.p1, H.p0 = H.p0)
-
-    return(gecdf)
+    # Calculate p.star
+    return(qnorm(U.p))
   }
 
 
-  # each element of pecdf had 3 levels - H.p, H.p0 and H.p1.
-  # Nr. of elements of pecdf = Nr. columns P1
-  pecdf <- apply(P,2,getEcdf)
+  # Definition: simulation to run ---------------------------------------------------------------------
+  # The following function is run for simulation and calculates p.star and then fits meth.2 (lm)
+  # The fitted linear model is returned which can then be further used
+
+  .run.simulation.copulacorrection.discrete <- function(){
+
+    # Calculate p.star for each endogenous regressor --------------------------------------------------
+    p.star <- apply(X=df.data.endo, MARGIN = 2, FUN = fct.p.star.discrete)
+    colnames(p.star) <- paste("PStar", colnames(df.data.endo), sep=".")
+
+    # Calculate meth.2 --------------------------------------------------------------------------------
+    # use all user input data (endo, exo) and p.star
+    df.data.copula <- cbind(data, p.star)
+    # use the formula first part for fitting lm and also include P.star
+    f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=1),
+                            paste0(".~.+", paste(colnames(p.star), collapse = "+")))
+
+    return(stats::lm(formula = f.lm.relevant, data = df.data.copula))
+
+  }#end sim function definition
+
+  # Single fit ---------------------------------------------------------------------------------------
+  single.estimate <- .run.simulation.copulacorrection.discrete()
 
 
-  U.p <- matrix(NA, dim(P)[1], dim(P)[2])
-  ifelse (intercept==TRUE, nc <- ncol(X) + ncol(P) +1, nc <- ncol(X) + ncol(P))
-  # create a list with nc elements (number of regressors + Pstar) , for each regressor save the confint for each lm out of sim simulations
-  conf.int <- rep(list(matrix(0,sim,2)), nc)
+  # Run simulation ------------------------------------------------------------------------------------
+  # Run .run.simulation.copulacorrection.discrete num.simulation times and extract the coefs and CI
+  # for each regressor (and intercept)
+  l.simulated.coefs.and.confints <-
+    lapply(X = seq(num.simulations), FUN = function(i){
+      meth.2.i <- .run.simulation.copulacorrection.discrete()
+      return(list(coef = coef(meth.2.i), confint = confint(meth.2.i, level = 0.95)))
+    })
 
-  for (k in 1:dim(P)[2]){
+  # Separate tables for coef and confints
+  simulated.coefs           <- sapply(l.simulated.coefs.and.confints, function(x) x[["coef"]])
+  simulated.confints.lower  <- sapply(l.simulated.coefs.and.confints, function(x) x[["confint"]][,1])
+  simulated.confints.higher <- sapply(l.simulated.coefs.and.confints, function(x) x[["confint"]][,2])
 
-    U.p[,k] <- stats::runif(dim(P)[1],min=pecdf[[k]]$H.p0,max=pecdf[[k]]$H.p1)
-  }
-  p.star <- apply(U.p, 2,qnorm)
-  colnames(p.star) <- paste("PStar",1:ncol(P), sep=".")
-
-  X1 <- cbind(X,p.star)
-  X1 <- as.matrix(X1)
-  k2 <- ncol(X1)
-  dataCopula <- cbind(y,X1)
-
-  if (intercept==FALSE){  # no intercept
-    meth.2 <- stats::lm(y ~.-1,data=data.frame(dataCopula))
-    bhat <-   stats::coef(summary(meth.2))[,1] # estimated coefficients
-
-  } else {
-    meth.2 <- stats::lm(y~.,data=data.frame(dataCopula))  # with intercept
-    bhat <- stats::coef(summary(meth.2))[,1]   # estimated coefficients
-  }
-  # names(bhat) <- colnames(dataCopula) # ** fails w/o intecept! ??
+  # Mean of coefs and confints ------------------------------------------------------------------------
+  coefs.mean          <- apply(simulated.coefs, 1, mean)
+  confint.mean        <- matrix(c(apply(simulated.confints.lower,  1, mean),
+                                  apply(simulated.confints.higher, 1, mean)),
+                                ncol=2, dimnames = dimnames(l.simulated.coefs.and.confints[[1]]$confint))
 
 
-  for (i in 1:sim){
-    for (k in 1:dim(P)[2]){
+  # Return ---------------------------------------------------------------------------------------------
+  l.res <- structure(list(call = cl, coefficients = coef(single.estimate), CI=confint.mean, #reg = df.data.copula, reg not neeced?
+                          resid = single.estimate$residuals, fitted.values=single.estimate$fitted.values),
+                     class= "rendo.copulacorrection.discrete")
 
-      U.p[,k] <- stats::runif(dim(P)[1],min=pecdf[[k]]$H.p0,max=pecdf[[k]]$H.p1)
-    }
-    p.star <- apply(U.p, 2,qnorm)
-    colnames(p.star) <- paste("PStar",1:ncol(P),sep=".")
-
-    X1 <- cbind(X,p.star)
-    X1 <- as.matrix(X1)
-    k2 <- ncol(X1)
-    dataCopula <- cbind(y, X1)
-
-    if (intercept==TRUE){  # intercept
-      meth.2 <- stats::lm(y ~.,data=data.frame(dataCopula))
-      for (s in 1:nc) {
-        conf.int[[s]][i,] <- confint(meth.2, level=0.95)[s,]
-      }
-    } else {
-      meth.2 <- stats::lm(y ~.-1,data=data.frame(dataCopula))  # with intercept
-      for (s in 1:nc) {
-        conf.int[[s]][i,] <- confint(meth.2, level=0.95)[s,]
-
-      }
-    }
-  }
-
-  CI <- matrix(0,nc,2)
-  colnames(CI) <- c("Lower95%", "Upper95%")
-  for (i in 1:nc)
-    CI[i,] <- apply(conf.int[[i]],2,mean)
-
-
-  res <- list(call = cl, coefficients = meth.2$coefficients, CI=CI, reg = dataCopula, resid = meth.2$residuals, fitted.values=meth.2$fitted.values)
-
-  # ** Set class of returned object for printing etc ------------------------------------------------
-  class(res) <- "rendo.copulacorrection.discrete"
-
-  return(res)
+  return(l.res)
 }
+

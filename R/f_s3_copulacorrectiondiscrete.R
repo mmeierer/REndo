@@ -20,15 +20,18 @@ print.rendo.copulacorrection.discrete <- function(x, ...){
 #' @export
 summary.rendo.copulacorrection.discrete <- function(object, ...){
 
-  coef.table           <- cbind(object$coefficients, object$CI)
-  rownames(coef.table) <- names(object$coefficients)
-  colnames(coef.table) <- c("Estimate","Low_95%CI","Up_95%CI")
+  coefficients           <- cbind(object$coefficients, object$CI)
+  colnames(coefficients) <- c("Estimate",colnames(object$CI))
 
-  ans <- list(call = object$call, coef.table = coef.table)
+  ans <- list(call = object$call, coefficients = coefficients)
   class(ans) <- "summary.rendo.copulacorrection.discrete"
   return(ans)
 }
 
+#' Extract coefficient table from summary
+coef.summary.rendo.copulacorrection.discrete <- function(object, ...){
+ return(object$coefficients)
+}
 
 #' Print output from summary function on copulaCorrectionDiscrete output
 #' @importFrom stats printCoefmat
@@ -37,6 +40,6 @@ print.summary.rendo.copulacorrection.discrete <- function(x, digits=5, #signif.s
                                                           ...){
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"),
       "\n\n", sep = "")
-  printCoefmat(x$coef.table, digits = digits, na.print = "NA", has.Pvalue = F, ...)
+  printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = F, ...)
   invisible(x)
 }

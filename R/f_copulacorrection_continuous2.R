@@ -1,62 +1,39 @@
-#' @importFrom Formula as.Formula model.part
-#' @importFrom stats lm coef terms
+#' @importFrom Formula as.Formula
+#' @importFrom stats lm coef model.frame update
 #' @export
 copulaCorrectionContinuous2  <- function(formula, data){
-
   cl <- match.call()
 
   # Extract data based on given formula ---------------------------------------------------------------
-  F.formula         <- Formula::as.Formula(formula)
-  df.y              <- Formula::model.part(object = F.formula, data = data, lhs=1, rhs = 0)
-  df.data.exo.endo  <- Formula::model.part(object = F.formula, data = data, lhs=0, rhs = c(1,2))
-  df.data.endo      <- Formula::model.part(object = F.formula, data = data, lhs=0, rhs = 2)
+  F.formula         <- as.Formula(formula)
+  df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
 
-  intercept <- as.logical(attr(x = terms(x = F.formula), which = "intercept"))
-
-  # * Replace old stuff with new ------------------------------------------------------------------------
+  # P.star --------------------------------------------------------------------------------------------
+  p.star            <- copulaPStar(data.endo = df.data.endo)
 
 
-  # mf <- model.frame(formula = formula, data = data)
-  # y <- mf[,1]
-  y <- df.y
-  # regs <- unlist(strsplit(as.character(formula)[3], "\\("))
-  # predictors <- unlist(strsplit(regs[1], " [+] "))
+  # Fit on copula data --------------------------------------------------------------------------------
 
-  # regressors <- mf[,2:dim(mf)[2]]
-  # X <- regressors # both endogenous and exogenous
-  X <- df.data.exo.endo
-  # P <- as.matrix(X[,which(colnames(X) %in% endoVar)])
-  # colnames(P) <- endoVar
-  P <- df.data.endo
-  # k <- ncol(X)
+  # For copula: all given by user + pstar
+  df.data.copula <- cbind(data, p.star)
 
-  # ** Only changes after here: fix dataCopula <- c(y, X), and setting return object right------------------------------
+  # for fitting lm, use the formula first part and also include P.star
+  f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=1),
+                          paste0(".~.+", paste(colnames(p.star), collapse = "+")))
 
-  # create pStar for all endogenous regressors provided in P
-  PS <- apply(P, 2, copulaPStar)
-  colnames(PS) <- paste("PS", 1:ncol(P), sep=".")
-  #X <- as.matrix(X)
-  #add the pStar variables to the set of regressors
-  dataCopula <- data.frame(cbind(y, X, PS))
-  datCop <- cbind(X,PS)
-  if (intercept==TRUE) {
-    f.lm <- stats::lm(y ~., dataCopula)
-  } else {f.lm <- stats::lm(y ~.-1, dataCopula)}
+  # Fit
+  res.lm <- lm(formula = f.lm.relevant, data = df.data.copula)
 
-  # ** Set return object for printing etc --------------------------------------------------------------
-  # f.lm$call <- match.call()
-  # res <- list(f=f.lm, reg=datCop, resid = f.lm$residuals, fitted.values = f.lm$fitted.values, stats = lm_stats)
-  f.lm.summary <- summary(f.lm)
-  lm_stats <- list(residSE = f.lm.summary$sigma,r2 = f.lm.summary$r.squared,adjr2 = f.lm.summary$adj.r.squared,fstat = f.lm.summary$fstatistic, df=f.lm.summary$df)
-  res <- list(call = cl,
-              coefficients = coef(f.lm),
-              seCoefficients = as.matrix(f.lm.summary$coefficients[,2]),
-              regressors = datCop,
-              residuals = as.matrix(as.numeric(f.lm$residuals)),
-              fitted.values = as.matrix(f.lm$fitted.values),
-              lm_stats = lm_stats)
 
-  class(res) <- "rendo.copulacorrection.continuous2"
-
-  return(res)
+  # Return --------------------------------------------------------------------------------------------
+  res.lm.summary <- summary(res.lm)
+  lm_stats       <- list(residSE = res.lm.summary$sigma,r2 = res.lm.summary$r.squared,adjr2 = res.lm.summary$adj.r.squared,
+                         fstat = res.lm.summary$fstatistic, df=res.lm.summary$df)
+  return(structure(list(call = cl, coefficients = coef(res.lm),
+                        seCoefficients = as.matrix(res.lm.summary$coefficients[,2]),
+                        regressors = df.data.copula,
+                        residuals = as.matrix(as.numeric(res.lm$residuals)),
+                        fitted.values = as.matrix(res.lm$fitted.values),
+                        lm_stats = lm_stats),
+              class = "rendo.copulacorrection.continuous2"))
 }
