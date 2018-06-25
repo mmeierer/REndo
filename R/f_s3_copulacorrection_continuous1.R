@@ -48,7 +48,7 @@ summary.rendo.copulacorrection.continuous1 <- function(object, ...){
   # z-score
   z.val <- all.est.params/object$parameter.sd  # z-score endogenous variable
   # p-values
-  p.val <- 2*stats::pt(q=(-abs(z.val)), df=NROW(object$regressors)-1) #(length(object$regressors[,1])-1))
+  p.val <- 2*pt(q=(-abs(z.val)), df=NROW(object$regressors)-1) #(length(object$regressors[,1])-1))
 
   res$coefficients <- cbind(all.est.params,
                             object$parameter.sd,
@@ -79,10 +79,10 @@ print.summary.rendo.copulacorrection.continuous1 <- function(x, digits=5, signif
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 
   cat("Coefficients:\n")
-  stats::printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T, ...)
+  stats::printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T,signif.stars = signif.stars,...)
   cat("\n")
   # names(x$param) <- rownames(x$parameter.mean)
-  cat("Initial parameter values:", round(x$parameter.mean,3), "\n")
+  cat("Initial parameter values:", round(x$initial.values,3), "\n")
   cat("The Value of the log likelihood function:", x$log.likelihood,"\n")
   cat("AIC:", x$AIC,", BIC:",x$BIC, "\n")
   cat("Convergence Code: ", x$conv.code, "\n")

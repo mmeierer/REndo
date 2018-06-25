@@ -67,6 +67,7 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
   names.params.exo.endo <- setdiff(names(parameter.mean), c("rho", "sigma"))
   # Basic content
   ans <- structure(list(call = cl,
+                        initial.values = start.params,
                         parameter.mean = parameter.mean, parameter.sd=parameter.sd,
                         log.likelihood = res.once.optimx[,"value"], conv.code = res.once.optimx[,"convcode"],
                         regressors = m.model.data.exo.endo), # **model or data??

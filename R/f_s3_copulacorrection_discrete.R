@@ -36,10 +36,10 @@ coef.summary.rendo.copulacorrection.discrete <- function(object, ...){
 #' Print output from summary function on copulaCorrectionDiscrete output
 #' @importFrom stats printCoefmat
 #' @export
-print.summary.rendo.copulacorrection.discrete <- function(x, digits=5, #signif.stars = getOption("show.signif.stars"),
+print.summary.rendo.copulacorrection.discrete <- function(x, digits=5, signif.stars = getOption("show.signif.stars"),
                                                           ...){
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"),
       "\n\n", sep = "")
-  printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = F, ...)
+  printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = F, signif.stars = signif.stars,...)
   invisible(x)
 }

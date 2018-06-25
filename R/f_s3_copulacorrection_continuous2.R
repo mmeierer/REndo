@@ -59,7 +59,7 @@ print.summary.rendo.copulacorrection.continuous2 <- function(x, digits=5, signif
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"),
       "\n\n", sep = "")
 
-  printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T, ...)
+  printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T, signif.stars = signif.stars,...)
 
   cat("\nResidual standard error: ",x$lm_stats$residSE, "on", x$lm_stats$df[2],"degrees of freedom \n")
   cat("Multiple R-squared:",x$lm_stats$r2, "Adjusted R-squared:", x$lm_stats$adjr2,"\n", sep = " ")
