@@ -41,7 +41,7 @@ print.rendo.copulacorrection.continuous1 <- function(x, ...){
 #' @export
 summary.rendo.copulacorrection.continuous1 <- function(object, ...){
   # Copy from input
-  res <- object[c("call", "parameter.mean", "log.likelihood", "AIC", "BIC", "conv.code")]
+  res <- object[c("call","initial.values", "parameter.mean", "log.likelihood", "AIC", "BIC", "conv.code")]
 
   # Coefficient table --------------------------------------------------------------------
   all.est.params <- coef(object)
@@ -82,7 +82,8 @@ print.summary.rendo.copulacorrection.continuous1 <- function(x, digits=5, signif
   stats::printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T,signif.stars = signif.stars,...)
   cat("\n")
   # names(x$param) <- rownames(x$parameter.mean)
-  cat("Initial parameter values:", round(x$initial.values,3), "\n")
+
+  cat("Initial parameter values:", paste(names(x$initial.values), sep = "=",round(x$initial.values,3)),"\n")
   cat("The Value of the log likelihood function:", x$log.likelihood,"\n")
   cat("AIC:", x$AIC,", BIC:",x$BIC, "\n")
   cat("Convergence Code: ", x$conv.code, "\n")

@@ -12,7 +12,7 @@ copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.s
   F.formula         <- as.Formula(formula)
   # df.data.all       <- model.part(object = F.formula, data = data, lhs=NULL, rhs = NULL) #NULl for all
   # df.data.exo.endo  <- model.part(object = F.formula, data = data, lhs=0, rhs = c(1,2))
-  df.data.endo      <- model.frame(object = F.formula, data = data, lhs=0, rhs = 2)
+  df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
 
   # Definition: P.star for discrete data --------------------------------------------------------------
   fct.p.star.discrete <- function(single.col.endo){
