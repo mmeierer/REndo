@@ -27,3 +27,4 @@ License: GPL-3
 RoxygenNote: 6.0.1
 NeedsCompilation: no
 Packaged: 2017-11-08 14:27:47 UTC; raluca
+Suggests: testthat

@@ -9,7 +9,7 @@ copulaCorrectionContinuous2  <- function(formula, data){
   df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
 
   # P.star --------------------------------------------------------------------------------------------
-  p.star            <- copulaPStar(data.endo = df.data.endo)
+  p.star            <- copulaCorrectionContinuous_pstar(data.endo = df.data.endo)
 
 
   # Fit on copula data --------------------------------------------------------------------------------

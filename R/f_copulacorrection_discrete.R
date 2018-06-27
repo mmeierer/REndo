@@ -14,27 +14,6 @@ copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.s
   # df.data.exo.endo  <- model.part(object = F.formula, data = data, lhs=0, rhs = c(1,2))
   df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
 
-  # Definition: P.star for discrete data --------------------------------------------------------------
-  fct.p.star.discrete <- function(single.col.endo){
-
-    # Fit empirical CDF to data
-    H.p  <- stats::ecdf(single.col.endo)
-
-    # Caluclate H.pX
-    H.p1 <- H.p(single.col.endo)
-    H.p0 <- H.p(single.col.endo-1)
-    H.p0[H.p0 == 0] <- 0.0000001
-    H.p0[H.p0 == 1] <- 0.9999999
-    H.p1[H.p1 == 0] <- 0.0000001
-    H.p1[H.p1 == 1] <- 0.9999999
-
-    # Calculate U.p
-    U.p <- stats::runif(n = NROW(single.col.endo), min=H.p0, max=H.p1)
-
-    # Calculate p.star
-    return(qnorm(U.p))
-  }
-
 
   # Definition: simulation to run ---------------------------------------------------------------------
   # The following function is run for simulation and calculates p.star and then fits meth.2 (lm)
@@ -43,17 +22,18 @@ copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.s
   .run.simulation.copulacorrection.discrete <- function(){
 
     # Calculate p.star for each endogenous regressor --------------------------------------------------
-    p.star <- apply(X=df.data.endo, MARGIN = 2, FUN = fct.p.star.discrete)
+    p.star <- copulaCorrectionDiscrete_pstar(df.data.endo=df.data.endo)
     colnames(p.star) <- paste("PStar", colnames(df.data.endo), sep=".")
 
     # Calculate meth.2 --------------------------------------------------------------------------------
     # use all user input data (endo, exo) and p.star
     df.data.copula <- cbind(data, p.star)
+    # *** main part
     # use the formula first part for fitting lm and also include P.star
     f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=1),
                             paste0(".~.+", paste(colnames(p.star), collapse = "+")))
 
-    return(stats::lm(formula = f.lm.relevant, data = df.data.copula))
+    return(lm(formula = f.lm.relevant, data = df.data.copula))
 
   }#end sim function definition
 
@@ -83,8 +63,10 @@ copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.s
 
 
   # Return ---------------------------------------------------------------------------------------------
-  l.res <- structure(list(call = cl, coefficients = coef(single.estimate), CI=confint.mean, #reg = df.data.copula, reg not neeced?
-                          resid = single.estimate$residuals, fitted.values=single.estimate$fitted.values),
+  l.res <- structure(list(call = cl, coefficients = coef(single.estimate),
+                          CI            = confint.mean, #reg = df.data.copula, reg not neeced?
+                          residuals     = single.estimate$residuals,
+                          fitted.values = single.estimate$fitted.values),
                      class= "rendo.copulacorrection.discrete")
 
   return(l.res)

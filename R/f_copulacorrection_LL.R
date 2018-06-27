@@ -1,13 +1,13 @@
 #' @importFrom stats pnorm qnorm dnorm
 copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, m.data.endo){
-
+# print(params)
   # Extract params from optimx inputs --------------------------------------------------------
   params.endo.exo <- params[setdiff(names(params), c("sigma", "rho"))]
   sigma           <- params["sigma"]
   rho             <- params["rho"]
 
   # P.star -----------------------------------------------------------------------------------
-  p.star <- copulaPStar(data.endo = m.data.endo)
+  p.star <- copulaCorrectionContinuous_pstar(data.endo = m.data.endo)
 
   # epsilon, incl. endo regressor ------------------------------------------------------------
   eps.1 <- vec.y - m.data.exo.endo %*% params.endo.exo

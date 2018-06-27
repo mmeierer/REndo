@@ -15,17 +15,19 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
   m.data.endo             <- as.matrix(model.frame(formula = F.formula, data = data, lhs=0, rhs = 2))
   # df.data.exo.endo         <-model.frame(formula = F.formula, data = data, lhs=0, rhs = c(1,2))
 
-
   # Create start parameters for optimx ----------------------------------------------------------------
 
   # Generate with lm if they are missing
+  # *** Give warning if used
   if(is.null(start.params))
     start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=1), data = data))
-    # f.start.params <- if(use.intercept){y~.}else{y~.+0}
-    # start.params <- coef(lm(formula = f.start.params, data = data.frame(y=vec.data.y, df.data.exo.endo)))
 
   # Add rho and sigma with 0.001 and 0.9998 as defaults
   start.params <- c(start.params, rho=0.001, sigma=0.9998)
+
+  # Optimx boundaries *****
+  # rho = (0,1)
+  # sigma = free
 
 
   # Bootstrap for SD of coefs--------------------------------------------------------------------------
@@ -33,8 +35,10 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
   # Definition: Helper function to call LL optimization for convenience
   fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, m.data.endo){
     return(optimx(par = optimx.start.params, fn = copulaCorrection_LL,
-                       vec.y=vec.data.y, m.data.exo.endo=m.model.data.exo.endo, m.data.endo=m.data.endo,
-                       method="BFGS", control=list(trace=0)))
+                    vec.y=vec.data.y, m.data.exo.endo=m.model.data.exo.endo, m.data.endo=m.data.endo,
+                    method="L-BFGS-B", control=list(trace=0),
+                  # Contrain rho in [0,1]
+                    lower = c(rho=0, rep(-Inf, length(start.params)-1))))
   }
 
   # Run once for coef estimates and start parameters for bootstrapping
@@ -43,10 +47,10 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
 
   # Could pre-define all bootstrap indices for minimal speed improvement
   # bootstrapping.indices <- matrix(sample(x=length(vec.data.y)))
-  # pb <- txtProgressBar(initial = 1, max = num.boots, style = 3)
+  pb <- txtProgressBar(initial = 1, max = num.boots, style = 3)
   res.boots <-
     sapply(seq(num.boots), USE.NAMES = TRUE, function(i){
-      # setTxtProgressBar(pb, i-1)
+      setTxtProgressBar(pb, i-1)
       indices                 <- sample(x = length(vec.data.y), size=length(vec.data.y)*0.8, replace = TRUE)
       i.y                     <- vec.data.y[indices]
       i.m.model.data.exo.endo <- m.model.data.exo.endo[indices, ,drop=FALSE]
@@ -55,12 +59,12 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
       return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y, m.model.data.exo.endo = i.m.model.data.exo.endo, m.data.endo = i.m.data.endo))[1,])
     })
 
-  # print(res.boots)
+  print(res.boots)
 
   # Calculate SD and mean of bootstrapped parameters
   # Rows = per parameter,  Columns = for each boots run
   parameter.sd   <- apply(res.boots, 1, sd)
-  parameter.mean <- apply(res.boots, 1, mean)
+  parameter.mean <- res.start.params
   names(parameter.mean) <- names(parameter.sd) <- names(start.params)
 
   # Return --------------------------------------------------------------------------------------------
@@ -76,7 +80,7 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
   ans$AIC <- (-2)*(ans$log.likelihood) + 2                 * length(parameter.mean)
   ans$BIC <- (-2)*(ans$log.likelihood) + NROW(vec.data.y)  * length(parameter.mean)
   ans$fitted.values <- as.numeric(parameter.mean[names.params.exo.endo]) * ans$regressors
-  ans$residuals     <- as.matrix(vec.data.y-ans$fitted.values)
+  ans$residuals     <- vec.data.y-ans$fitted.values
 
   return(ans)
 }

@@ -1,7 +1,19 @@
+
+#' @export
+fitted.values.rendo.copulacorrection.discrete <- function(object, ...){
+  return(object$fitted.values)
+}
+
 #' @export
 residuals.rendo.copulacorrection.discrete <- function(object, ...){
-  object$resid
+  return(object$residuals)
 }
+
+#' @export
+nobs.rendo.copulacorrection.discrete <- function(object, ...){
+  return(NROW(object$residuals))
+}
+
 
 #' @export
 coef.rendo.copulacorrection.discrete <- function(object, ...){

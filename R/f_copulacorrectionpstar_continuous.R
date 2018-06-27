@@ -1,8 +1,8 @@
 #' @importFrom stats ecdf qnorm
-copulaPStar <- function(data.endo){
+copulaCorrectionContinuous_pstar <- function(data.endo){
 
   # Helper function to generate the p.star values for each single
-  fct.single.col.pstar <- function(single.col.P){
+  fct.single.col.pstar.continuous <- function(single.col.P){
     H.p <- stats::ecdf(single.col.P)
     U.p <- H.p(single.col.P)
 
@@ -15,7 +15,7 @@ copulaPStar <- function(data.endo){
   }
 
   # Apply the P.star generating function on each column of the given data
-  p.star <- apply(X = data.endo, MARGIN = 2, FUN = fct.single.col.pstar)
+  p.star <- apply(X = data.endo, MARGIN = 2, FUN = fct.single.col.pstar.continuous)
   colnames(p.star) <- paste("PStar", colnames(data.endo), sep=".")
   return(p.star)
 }

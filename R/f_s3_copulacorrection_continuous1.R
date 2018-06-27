@@ -1,8 +1,17 @@
 #' @export
-residuals.rendo.copulacorrection.continuous1 <- function(object, ...){
-  object$residuals
+fitted.values.rendo.copulacorrection.continuous1 <- function(object, ...){
+  return(object$fitted.values)
 }
 
+#' @export
+residuals.rendo.copulacorrection.continuous1 <- function(object, ...){
+  return(object$residuals)
+}
+
+#' @export
+nobs.rendo.copulacorrection.continuous1 <- function(object, ...){
+  return(NROW(object$residuals))
+}
 
 #' @export
 coef.rendo.copulacorrection.continuous1 <- function(object, ...){
@@ -79,7 +88,7 @@ print.summary.rendo.copulacorrection.continuous1 <- function(x, digits=5, signif
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 
   cat("Coefficients:\n")
-  stats::printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T,signif.stars = signif.stars,...)
+  printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = T,signif.stars = signif.stars,...)
   cat("\n")
   # names(x$param) <- rownames(x$parameter.mean)
 

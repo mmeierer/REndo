@@ -6,7 +6,7 @@ print.rendo.heterrorsiv <- function(x, ...){
 
 #' @export
 nobs.rendo.heterrorsiv <- function(object,...){
-  return(object$nobs)
+  return(NROW(object$residuals))
 }
 
 #' @export

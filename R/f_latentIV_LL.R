@@ -25,6 +25,7 @@ latentIV_LL<- function(params, m.data.mvnorm){ # vec.data.resonse, m.data.endo){
 
   # Group 1 contribution -------------------------------------------------------
   pi1 <- params["pi1"]
+  if("b00" %in%names(params))
   b00 <- params["b00"]
 
   mu1 <- matrix(data = c(b00+a1*pi1, pi1), nrow=2, ncol=1)

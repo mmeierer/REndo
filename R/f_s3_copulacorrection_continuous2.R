@@ -1,8 +1,17 @@
 #' @export
+fitted.values.rendo.copulacorrection.continuous2 <- function(object, ...){
+  return(object$fitted.values)
+}
+
+#' @export
 residuals.rendo.copulacorrection.continuous2 <- function(object, ...){
   return(object$residuals)
 }
 
+#' @export
+nobs.rendo.copulacorrection.continuous2 <- function(object, ...){
+  return(NROW(object$residuals))
+}
 
 #' @export
 coef.rendo.copulacorrection.continuous2 <- function(object, ...){

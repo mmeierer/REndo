@@ -10,14 +10,15 @@ latentIV <- function(formula, start.params=c(), data){
 
   # Extract data ------------------------------------------------------------
   F.formula  <- as.Formula(formula)
+  vec.data.y         <- model.frame(formula = F.formula,data = data, lhs=1, rhs=0)[,1]
   vec.data.endo      <- model.frame(F.formula, data = data, lhs=0, rhs=1)[, 1]
   m.model.all        <-cbind( # response (y) + model of data (incl intercept)
-                          model.frame(formula = F.formula,data = data, lhs=1, rhs=0)[,1],
-                          model.matrix(object = F.formula, data = data,lhs=0, rhs=1))
+                          vec.data.y,
+                          model.matrix(object = update(F.formula, .~.-1), data = data,lhs=0, rhs=1))
 
 
-  # print(head(m.model.all))
-  # print(head(vec.data.endo))
+  print(head(m.model.all))
+  print(head(vec.data.endo))
 
   # Initial start.params if not provided ------------------------------------
   if(is.null(start.params)){
@@ -35,12 +36,17 @@ latentIV <- function(formula, start.params=c(), data){
 
   print(start.params)
 
+  # ** optimx bounds
+  # ** print only estimated parameters from formula (and change names)
+  # pi1 and pi2 € (0,1)
+
+
   # Optimize LL -------------------------------------------------------------
   res.optimx <- optimx(par = start.params, fn=latentIV_LL, m.data.mvnorm = m.model.all,
                        method = "BFGS", hessian = T, control = list(trace=0))
 
-  # Warnings
-  # if (obj@probG1 > 1) warning("Probability of Group 1 greater than 0. Check initial parameter values")
+  # Warnings *** do
+  # *** Print summary: incl group means... regular show: only parameters
   # if (obj@seMeans[1] =="NaN") warning("Group means' standard errors unable to be computed. Check initial parameter values")
   # if (obj@seCoefficients[1] =="NaN") warning("Coefficient's standard errors unable to be computed. Check initial parameter values")
 
@@ -51,9 +57,10 @@ latentIV <- function(formula, start.params=c(), data){
   names(param.se)  <- colnames(coef(res.optimx))
   estimated.params <- coef(res.optimx)[1,]
 
+  fitted.values <- estimated.params[["b00"]]*1 + estimated.params[["a1"]]*vec.data.endo
+
   res <- structure(class = "rendo.ivlatent",
                    list(call = cl, formula = formula,
-                        nobs           = nrow(data),
                         initial.values = start.params,
                         coefficients   = estimated.params[c("b00", "a1")],
                         group.means    = estimated.params[c("pi1", "pi2")],
@@ -63,7 +70,9 @@ latentIV <- function(formula, start.params=c(), data){
                         prob.group1.se = param.se[["theta8"]],
                         log.likelihood = res.optimx$value,
                         conv.code      = res.optimx$convcode,
-                        hessian        = hessian))
+                        hessian        = hessian,
+                        fitted.values  = fitted.values,
+                        residuals      = vec.data.y - fitted.values))
 
   res$AIC <- (-2)*(-res$log.likelihood) + 2*length(start.params)
   res$BIC <- (-2)*(-res$log.likelihood) + nrow(data)*length(start.params)

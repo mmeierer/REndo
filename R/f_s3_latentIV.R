@@ -1,5 +1,13 @@
-# residuals <- function()
-# @export
+#' @export
+fitted.values.rendo.ivlatent <- function(object, ...){
+  return(object$fitted.values)
+}
+
+#' @export
+residuals.rendo.ivlatent <- function(object, ...){
+  return(object$residuals)
+}
+
 # show.rendo.ivlatent <- function(object){
 #   print(object)
 #   invisible(NULL)
@@ -13,7 +21,7 @@ print.rendo.ivlatent <- function(x, ...){
 
 #' @export
 nobs.rendo.ivlatent <- function(object, ...){
-  return(object$nobs)
+  return(NROW(object$residuals))
 }
 
 #' @export
@@ -30,16 +38,16 @@ coef.rendo.ivlatent <- function(object,...){
 summary.rendo.ivlatent <- function(object, ...){
   # Copy from input object
   res <- object[c("call", "initial.values", "log.likelihood", "AIC", "BIC", "conv.code")]
-  t.val <- object$coefficients/(object$coefficients.se/sqrt(nobs(object)))
-  p.val <- 2*pt(q=(-abs(t.val)), df = nobs(object)-1)
+  z.val <- object$coefficients/(object$coefficients.se)
+  p.val <- 2*pt(q=(-abs(z.val)), df = nobs(object)-1)
 
   res$coefficients <- cbind(object$coefficients,
                             object$coefficients.se,
-                            t.val,
+                            z.val,
                             p.val)
 
   rownames(res$coefficients) <- names(object$coefficients)
-  colnames(res$coefficients) <- c("Estimate","Std. Error", "t-value", "Pr(>|z|)")
+  colnames(res$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
 
   class(res) <- "summary.rendo.ivlatent"
   return(res)
