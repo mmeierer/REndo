@@ -1,6 +1,7 @@
 #' @importFrom optimx optimx
 #' @importFrom stats lm coef confint sd model.matrix model.frame
-#' @importFrom Formula as.Formula
+#' @importFrom Formula as.Formula model.part
+#' @importFrom utils txtProgressBar setTxtProgressBar
 #' @export
 copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=10, data){
 
@@ -25,32 +26,26 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
   # Add rho and sigma with 0.001 and 0.9998 as defaults
   start.params <- c(start.params, rho=0.001, sigma=0.9998)
 
-  # Optimx boundaries *****
-  # rho = (0,1)
-  # sigma = free
-
-
   # Bootstrap for SD of coefs--------------------------------------------------------------------------
 
   # Definition: Helper function to call LL optimization for convenience
   fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, m.data.endo){
+    # Bounds for rho (0,1): LL returns Inf if outside as NelderMead cannot deal with bounds
     return(optimx(par = optimx.start.params, fn = copulaCorrection_LL,
-                    vec.y=vec.data.y, m.data.exo.endo=m.model.data.exo.endo, m.data.endo=m.data.endo,
-                    method="L-BFGS-B", control=list(trace=0),
-                  # Contrain rho in [0,1]
-                    lower = c(rho=0, rep(-Inf, length(start.params)-1))))
+                    method="Nelder-Mead", control=list(trace=0),
+                    vec.y=vec.data.y, m.data.exo.endo=m.model.data.exo.endo, m.data.endo=m.data.endo))
   }
 
-  # Run once for coef estimates and start parameters for bootstrapping
+  # Run once for coef estimates -----------------------------------------------------------------------
   res.once.optimx  <- fct.optimize.LL(optimx.start.params = start.params, vec.data.y = vec.data.y, m.model.data.exo.endo = m.model.data.exo.endo, m.data.endo = m.data.endo)
-  res.start.params <- coef(res.once.optimx)[1,] #extract parameters
 
+  # Bootstrapping -------------------------------------------------------------------------------------
   # Could pre-define all bootstrap indices for minimal speed improvement
   # bootstrapping.indices <- matrix(sample(x=length(vec.data.y)))
-  pb <- txtProgressBar(initial = 1, max = num.boots, style = 3)
+  pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
   res.boots <-
     sapply(seq(num.boots), USE.NAMES = TRUE, function(i){
-      setTxtProgressBar(pb, i-1)
+      setTxtProgressBar(pb, i)
       indices                 <- sample(x = length(vec.data.y), size=length(vec.data.y)*0.8, replace = TRUE)
       i.y                     <- vec.data.y[indices]
       i.m.model.data.exo.endo <- m.model.data.exo.endo[indices, ,drop=FALSE]
@@ -59,28 +54,30 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
       return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y, m.model.data.exo.endo = i.m.model.data.exo.endo, m.data.endo = i.m.data.endo))[1,])
     })
 
-  print(res.boots)
-
-  # Calculate SD and mean of bootstrapped parameters
-  # Rows = per parameter,  Columns = for each boots run
-  parameter.sd   <- apply(res.boots, 1, sd)
-  parameter.mean <- res.start.params
-  names(parameter.mean) <- names(parameter.sd) <- names(start.params)
-
+print(res.boots)
   # Return --------------------------------------------------------------------------------------------
-  names.params.exo.endo <- setdiff(names(parameter.mean), c("rho", "sigma"))
+  # Parameter and sd
+  # Boots results: Rows = per parameter,  Columns = for each boots run
+  parameter.sd          <- apply(res.boots, 1, sd)   # SD of bootstrapped parameters
+  coefficients          <- coef(res.once.optimx)[1,] # extract parameters from single fit
+  names(coefficients)   <- names(parameter.sd) <- names(start.params)
+
+  names.params.exo.endo <- setdiff(names(coefficients), c("rho", "sigma"))
   # Basic content
-  ans <- structure(list(call = cl,
+  ans <- structure(list(call           = cl,
+                        formula        = formula,
                         initial.values = start.params,
-                        parameter.mean = parameter.mean, parameter.sd=parameter.sd,
-                        log.likelihood = res.once.optimx[,"value"], conv.code = res.once.optimx[,"convcode"],
-                        regressors = m.model.data.exo.endo), # **model or data??
+                        coefficients   = coefficients,
+                        parameter.sd   = parameter.sd,
+                        res.optimx     = res.once.optimx,
+                        log.likelihood = res.once.optimx[,"value"],
+                        conv.code      = res.once.optimx[,"convcode"],
+                        regressors     = m.model.data.exo.endo), # ****model or data??
                    class="rendo.copulacorrection.continuous1")
   # Add more
-  ans$AIC <- (-2)*(ans$log.likelihood) + 2                 * length(parameter.mean)
-  ans$BIC <- (-2)*(ans$log.likelihood) + NROW(vec.data.y)  * length(parameter.mean)
-  ans$fitted.values <- as.numeric(parameter.mean[names.params.exo.endo]) * ans$regressors
-  ans$residuals     <- vec.data.y-ans$fitted.values
+  ans$fitted        <- as.vector(coefficients[names.params.exo.endo] %*% t(ans$regressors))
+  names(ans$fitted) <- rownames(m.model.data.exo.endo)
+  ans$residuals     <- vec.data.y-ans$fitted
 
   return(ans)
 }

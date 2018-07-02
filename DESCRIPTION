@@ -22,7 +22,7 @@ Description: Fits linear models with endogenous regressor using latent
        - resolves the error "Error in listIDs[, 1] : incorrect number of dimensions" when using the multilevelIV() function.
        - a new simulated dataset is provided, dataMultilevelIV, on which to exemplify the multilevelIV() function.
 Imports: 
-Depends: R (>= 2.10), Formula (>= 1.2), optimx (>= 2013.8.7), mvtnorm(>= 1.0-8), ivlewbel (>= 1.1)
+Depends: R (>= 2.10), Formula (>= 1.2), optimx (>= 2013.8.7), mvtnorm(>= 1.0-8), AER (>= 1.2-5)
 License: GPL-3
 RoxygenNote: 6.0.1
 NeedsCompilation: no

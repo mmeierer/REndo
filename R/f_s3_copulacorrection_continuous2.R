@@ -1,22 +1,50 @@
 #' @export
-fitted.values.rendo.copulacorrection.continuous2 <- function(object, ...){
-  return(object$fitted.values)
+#' @importFrom stats logLik
+logLik.rendo.copulacorrection.continuous2<- function(object, ...){
+  return(logLik(object$fitted.lm, ...))
+}
+
+#' @export
+#' @importFrom stats fitted
+fitted.rendo.copulacorrection.continuous2 <- function(object, ...){
+  return(fitted(object$fitted.lm, ...))
 }
 
 #' @export
 residuals.rendo.copulacorrection.continuous2 <- function(object, ...){
-  return(object$residuals)
+  return(residuals(object$fitted.lm, ...))
 }
 
 #' @export
+#' @importFrom stats nobs
 nobs.rendo.copulacorrection.continuous2 <- function(object, ...){
-  return(NROW(object$residuals))
+  return(nobs(object$fitted.lm, ...))
 }
 
 #' @export
 coef.rendo.copulacorrection.continuous2 <- function(object, ...){
   return(object$coefficients)
 }
+
+#' @export
+#' @importFrom stats confint
+confint.rendo.copulacorrection.continuous2 <- function(object, parm, level = 0.95, ...) {
+  return(confint(object$fitted.lm, parm = parm, level = level, ...))
+}
+
+
+#' @export
+#' @importFrom stats formula
+formula.rendo.copulacorrection.continuous2 <- function(x, ...){
+  return(formula(x$fitted.lm, ...))
+}
+
+#' @export
+#' @importFrom stats vcov
+vcov.rendo.copulacorrection.continuous2 <- function(object, ...){
+  return(vcov(object$fitted.lm, ...))
+}
+
 
 #' When result is not saved or result is just typed, call summary anyways
 #' @export

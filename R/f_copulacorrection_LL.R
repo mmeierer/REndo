@@ -6,6 +6,10 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, m.data.endo){
   sigma           <- params["sigma"]
   rho             <- params["rho"]
 
+  # Bounds for rho: [0,1]. Return Inf as NelderMead cannot handle bounds
+  if(rho < 0 || rho > 1)
+    return(Inf)
+
   # P.star -----------------------------------------------------------------------------------
   p.star <- copulaCorrectionContinuous_pstar(data.endo = m.data.endo)
 

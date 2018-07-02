@@ -1,8 +1,7 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats ecdf runif coef lm confint qnorm model.frame update
+#' @importFrom stats ecdf runif coef lm confint qnorm model.frame update formula reformulate
 #' @export
-copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.simulations=250){
-
+copulaCorrectionDiscrete <- function(formula, data, num.simulations=250){
   cl <- match.call()
 
   # Check user input ----------------------------------------------------------------------------------
@@ -10,8 +9,6 @@ copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.s
 
   # Extract data based on given formula ---------------------------------------------------------------
   F.formula         <- as.Formula(formula)
-  # df.data.all       <- model.part(object = F.formula, data = data, lhs=NULL, rhs = NULL) #NULl for all
-  # df.data.exo.endo  <- model.part(object = F.formula, data = data, lhs=0, rhs = c(1,2))
   df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
 
 
@@ -31,7 +28,7 @@ copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.s
     # *** main part
     # use the formula first part for fitting lm and also include P.star
     f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=1),
-                            paste0(".~.+", paste(colnames(p.star), collapse = "+")))
+                            reformulate(termlabels = colnames(p.star)))
 
     return(lm(formula = f.lm.relevant, data = df.data.copula))
 
@@ -56,18 +53,18 @@ copulaCorrectionDiscrete <- function(formula, use.intercept = FALSE, data, num.s
   simulated.confints.higher <- sapply(l.simulated.coefs.and.confints, function(x) x[["confint"]][,2])
 
   # Mean of coefs and confints ------------------------------------------------------------------------
-  coefs.mean          <- apply(simulated.coefs, 1, mean)
+  # coefs.mean          <- apply(simulated.coefs, 1, mean)
   confint.mean        <- matrix(c(apply(simulated.confints.lower,  1, mean),
                                   apply(simulated.confints.higher, 1, mean)),
                                 ncol=2, dimnames = dimnames(l.simulated.coefs.and.confints[[1]]$confint))
 
 
   # Return ---------------------------------------------------------------------------------------------
-  l.res <- structure(list(call = cl, coefficients = coef(single.estimate),
-                          CI            = confint.mean, #reg = df.data.copula, reg not neeced?
-                          residuals     = single.estimate$residuals,
-                          fitted.values = single.estimate$fitted.values),
-                     class= "rendo.copulacorrection.discrete")
+  l.res <- structure(class= "rendo.copulacorrection.discrete",
+                    list(call           = cl,
+                          CI            = confint.mean, #reg = df.data.copula, reg not needed?
+                          coefficients  = coef(single.estimate),
+                          fitted.lm     = single.estimate))
 
   return(l.res)
 }

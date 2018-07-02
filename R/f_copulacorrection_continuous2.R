@@ -32,8 +32,7 @@ copulaCorrectionContinuous2  <- function(formula, data){
   return(structure(list(call = cl, coefficients = coef(res.lm),
                         seCoefficients = as.matrix(res.lm.summary$coefficients[,2]),
                         regressors = df.data.copula,
-                        residuals = as.matrix(as.numeric(res.lm$residuals)),
-                        fitted.values = as.matrix(res.lm$fitted.values),
-                        lm_stats = lm_stats),
+                        lm_stats   = lm_stats,
+                        fitted.lm  = res.lm),
               class = "rendo.copulacorrection.continuous2"))
 }

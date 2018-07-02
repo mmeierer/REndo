@@ -1,8 +1,24 @@
 #' @importFrom mvtnorm dmvnorm
-latentIV_LL<- function(params, m.data.mvnorm){ # vec.data.resonse, m.data.endo){
+latentIV_LL<- function(params, m.data.mvnorm, use.intercept){ # vec.data.resonse, m.data.endo){
 
-  # Data for dmvnorm quantiles -------------------------------------------------
-  # m.data.mvnorm <- cbind(vec.data.resonse, m.data.endo) # single matrix needed
+  # Extract main model coefficients --------------------------------------------
+  # Number of coefs depends on if there is an intercept or not.
+  # Set b00 to 0 if there is no intercept
+  if(use.intercept){
+    # With intercept (2 coefs from lm)
+    b00     <- params["b00"]
+    a1      <- params["a1"]
+  }else{
+    # No intercept (only 1 coef in lm)
+    b00     <- 0
+    a1      <- params["a1"]
+  }
+
+  # Bounds group probability: [0,1]
+  pt <- params["theta8"]
+  if(pt < 0 || pt>1)
+    return(Inf)
+
 
   # Sigma ----------------------------------------------------------------------
   m.sigma.tmp <- matrix(c(params["theta5"], 0,
@@ -11,7 +27,6 @@ latentIV_LL<- function(params, m.data.mvnorm){ # vec.data.resonse, m.data.endo){
   m.sigma     <- m.sigma.tmp %*% t(m.sigma.tmp)
 
   # Varcov matrix reduced form -------------------------------------------------
-  a1      <- params["a1"]
   s2e     <- m.sigma[1,1]
   s2v     <- m.sigma[2,2]
   sev     <- m.sigma[1,2]
@@ -25,8 +40,6 @@ latentIV_LL<- function(params, m.data.mvnorm){ # vec.data.resonse, m.data.endo){
 
   # Group 1 contribution -------------------------------------------------------
   pi1 <- params["pi1"]
-  if("b00" %in%names(params))
-  b00 <- params["b00"]
 
   mu1 <- matrix(data = c(b00+a1*pi1, pi1), nrow=2, ncol=1)
 

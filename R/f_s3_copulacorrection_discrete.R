@@ -1,25 +1,43 @@
 
 #' @export
-fitted.values.rendo.copulacorrection.discrete <- function(object, ...){
-  return(object$fitted.values)
+#' @importFrom stats fitted
+fitted.rendo.copulacorrection.discrete <- function(object, ...){
+  return(fitted(object$fitted.lm, ...))
 }
 
 #' @export
 residuals.rendo.copulacorrection.discrete <- function(object, ...){
-  return(object$residuals)
+  return(residuals(object$fitted.lm, ...))
 }
 
 #' @export
+#' @importFrom stats nobs
 nobs.rendo.copulacorrection.discrete <- function(object, ...){
-  return(NROW(object$residuals))
+  return(nobs(object$fitted.lm, ...))
 }
-
 
 #' @export
 coef.rendo.copulacorrection.discrete <- function(object, ...){
   return(object$coefficients)
 }
 
+#' @export
+#' @importFrom stats confint
+confint.rendo.copulacorrection.discrete <- function(object, parm, level = 0.95, ...) {
+  return(confint(object$fitted.lm, parm = parm, level = level, ...))
+}
+
+
+#' @export
+#' @importFrom stats logLik
+logLik.rendo.copulacorrection.discrete <- function(object, ...){
+  return(logLik(object$fitted.lm, ...))
+}
+
+#' @export
+formula.rendo.copulacorrection.discrete <- function(x, ...){
+  return(formula(x$fitted.lm, ...))
+}
 
 #' @export
 print.rendo.copulacorrection.discrete <- function(x, ...){
@@ -27,6 +45,11 @@ print.rendo.copulacorrection.discrete <- function(x, ...){
   invisible(x)
 }
 
+#' @export
+#' @importFrom stats vcov
+vcov.rendo.copulacorrection.discrete <- function(object, ...){
+  return(vcov(object$fitted.lm, ...))
+}
 
 #' Calculate summary statistics for result object from copulaCorrectionDiscrete
 #' @export
@@ -41,9 +64,11 @@ summary.rendo.copulacorrection.discrete <- function(object, ...){
 }
 
 #' Extract coefficient table from summary
+#' @export
 coef.summary.rendo.copulacorrection.discrete <- function(object, ...){
  return(object$coefficients)
 }
+
 
 #' Print output from summary function on copulaCorrectionDiscrete output
 #' @importFrom stats printCoefmat
