@@ -24,7 +24,8 @@ Description: Fits linear models with endogenous regressor using latent
 Imports: 
 Depends: R (>= 2.10), Formula (>= 1.2), optimx (>= 2013.8.7), mvtnorm(>= 1.0-8), AER (>= 1.2-5)
 License: GPL-3
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 NeedsCompilation: no
+Encoding: UTF-8
 Packaged: 2017-11-08 14:27:47 UTC; raluca
 Suggests: testthat

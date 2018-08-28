@@ -34,12 +34,6 @@ confint.rendo.copulacorrection.continuous2 <- function(object, parm, level = 0.9
 
 
 #' @export
-#' @importFrom stats formula
-formula.rendo.copulacorrection.continuous2 <- function(x, ...){
-  return(formula(x$fitted.lm, ...))
-}
-
-#' @export
 #' @importFrom stats vcov
 vcov.rendo.copulacorrection.continuous2 <- function(object, ...){
   return(vcov(object$fitted.lm, ...))

@@ -34,10 +34,6 @@ logLik.rendo.copulacorrection.discrete <- function(object, ...){
   return(logLik(object$fitted.lm, ...))
 }
 
-#' @export
-formula.rendo.copulacorrection.discrete <- function(x, ...){
-  return(formula(x$fitted.lm, ...))
-}
 
 #' @export
 print.rendo.copulacorrection.discrete <- function(x, ...){

@@ -11,11 +11,13 @@ nobs.rendo.heterrorsiv <- function(object,...){
 }
 
 #' @export
+#' @importFrom stats coef
 coef.rendo.heterrorsiv <- function(object, ...){
   return(object$coefficients)
 }
 
 #' @export
+#' @importFrom stats residuals
 residuals.rendo.heterrorsiv <- function(object, ...){
   return(residuals(object$res.ivreg))
 }
@@ -33,12 +35,6 @@ confint.rendo.heterrorsiv <- function(object, parm, level = 0.95, ...) {
 }
 
 #' @export
-#' @importFrom stats formula
-formula.rendo.heterrorsiv <- function(x,...){
-  return(formula(x$res.ivreg))
-}
-
-#' @export
 summary.rendo.heterrorsiv <- function(object, ...){
   ans <- object[c("call", "res.ivreg")]
   ans$coefficients <- coef(summary(object$res.ivreg))
@@ -48,8 +44,8 @@ summary.rendo.heterrorsiv <- function(object, ...){
 
 #' @export
 #' @importFrom stats vcov
-vcov.rendo.heterrorsiv <- function(x, ...){
-  return(vcov(x$res.ivreg))
+vcov.rendo.heterrorsiv <- function(object, ...){
+  return(vcov(object$res.ivreg))
 }
 
 

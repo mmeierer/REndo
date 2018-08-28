@@ -26,10 +26,6 @@ coef.rendo.copulacorrection.continuous1 <- function(object, ...){
   return(object$coefficients)
 }
 
-#' @export
-formula.rendo.copulacorrection.continuous1 <- function(x, ...){
-  return(x$formula)
-}
 
 #' @export
 print.rendo.copulacorrection.continuous1 <- function(x, ...){

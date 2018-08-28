@@ -11,7 +11,7 @@ latentIV <- function(formula, start.params=c(), data){
   # Extract data ------------------------------------------------------------
   F.formula  <- as.Formula(formula)
   df.data.y          <- model.frame(formula = F.formula,data = data, lhs=1, rhs=0) # separately needed for names of fitted values
-  vec.data.y         <- df.data.y[,1]
+  vec.data.y         <- df.data.y[,1] # ** change to model.response()
   vec.data.endo      <- model.frame(F.formula, data = data, lhs=0, rhs=1)[, 1]
   m.model.all        <- cbind( # response (y) + model of data (incl intercept)
                           vec.data.y,
@@ -39,7 +39,7 @@ latentIV <- function(formula, start.params=c(), data){
                       theta8 = 0.5)
   }
 
-  print(start.params)
+  # print(start.params)
 
 
   # Optimize LL -------------------------------------------------------------
@@ -48,7 +48,7 @@ latentIV <- function(formula, start.params=c(), data){
                        use.intercept = use.intercept,
                        method = "Nelder-Mead", hessian = T, control = list(trace=6))
 
-print(res.optimx)
+# print(res.optimx)
 
   # Return ------------------------------------------------------------------
   hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
@@ -70,7 +70,7 @@ print(res.optimx)
     fitted        <-                        estimated.params[[names.original.main.coefs[1]]]*vec.data.endo
   names(fitted) <- rownames(df.data.y)
 
-  res <- structure(class = "rendo.ivlatent",
+  res <- structure(class = "rendo.latentiv",
                    list(call           = cl,
                         formula        = formula,
                         initial.values = start.params,

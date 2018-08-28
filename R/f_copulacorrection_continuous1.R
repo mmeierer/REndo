@@ -54,7 +54,7 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
       return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y, m.model.data.exo.endo = i.m.model.data.exo.endo, m.data.endo = i.m.data.endo))[1,])
     })
 
-print(res.boots)
+
   # Return --------------------------------------------------------------------------------------------
   # Parameter and sd
   # Boots results: Rows = per parameter,  Columns = for each boots run
@@ -72,12 +72,12 @@ print(res.boots)
                         res.optimx     = res.once.optimx,
                         log.likelihood = res.once.optimx[,"value"],
                         conv.code      = res.once.optimx[,"convcode"],
-                        regressors     = m.model.data.exo.endo), # ****model or data??
+                        regressors     = m.model.data.exo.endo), # ****model.matrix or data??
                    class="rendo.copulacorrection.continuous1")
   # Add more
   ans$fitted        <- as.vector(coefficients[names.params.exo.endo] %*% t(ans$regressors))
   names(ans$fitted) <- rownames(m.model.data.exo.endo)
-  ans$residuals     <- vec.data.y-ans$fitted
+  ans$residuals     <- vec.data.y - ans$fitted
 
   return(ans)
 }

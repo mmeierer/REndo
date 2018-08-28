@@ -1,50 +1,46 @@
 #' @export
-fitted.rendo.ivlatent <- function(object, ...){
+fitted.rendo.latentiv <- function(object, ...){
   return(object$fitted)
 }
 
 #' @export
-residuals.rendo.ivlatent <- function(object, ...){
+residuals.rendo.latentiv <- function(object, ...){
   return(object$residuals)
 }
 
-# show.rendo.ivlatent <- function(object){
+# show.rendo.latentiv <- function(object){
 #   print(object)
 #   invisible(NULL)
 # }
 
 #' @export
-print.rendo.ivlatent <- function(x, ...){
+print.rendo.latentiv <- function(x, ...){
   # Print summary only for the 2 main coefficients
   print(summary(object = x, full=F))
   invisible(x)
 }
 
 #' @export
-nobs.rendo.ivlatent <- function(object, ...){
+nobs.rendo.latentiv <- function(object, ...){
   return(NROW(object$residuals))
 }
 
 #' @export
 #' @importFrom stats nobs
-logLik.rendo.ivlatent <- function(object, ...){
+logLik.rendo.latentiv <- function(object, ...){
   return(structure(object$log.likelihood, class="logLik",
                    nobs=nobs(object), df=length(coef(object$res.optimx))))
 }
 
 #' @export
-coef.rendo.ivlatent <- function(object,...){
+coef.rendo.latentiv <- function(object,...){
   return(object$coefficients)
 }
 
-#' @export
-formula.rendo.ivlatent <- function(x,...){
-  return(x$formula)
-}
 
 #' @export
 #' @importFrom stats nobs AIC BIC
-summary.rendo.ivlatent <- function(object, full=T,...){
+summary.rendo.latentiv <- function(object, full=T,...){
   # Copy from input object
   res <- object[c("call", "initial.values", "log.likelihood", "conv.code")]
 
@@ -75,19 +71,19 @@ summary.rendo.ivlatent <- function(object, full=T,...){
   res$KKT1 <- object$res.optimx[1, "kkt1"]
   res$KKT2 <- object$res.optimx[1, "kkt2"]
 
-  class(res) <- "summary.rendo.ivlatent"
+  class(res) <- "summary.rendo.latentiv"
   return(res)
 }
 
 #' @export
-coef.summary.rendo.ivlatent <- function(object, ...){
+coef.summary.rendo.latentiv <- function(object, ...){
   return(object$coefficients)
 }
 
 
 #' @export
 #' @importFrom stats printCoefmat
-print.summary.rendo.ivlatent <- function(x, digits=5, signif.stars = getOption("show.signif.stars"),
+print.summary.rendo.latentiv <- function(x, digits=5, signif.stars = getOption("show.signif.stars"),
                                          ...){
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 

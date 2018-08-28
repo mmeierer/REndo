@@ -29,7 +29,9 @@ copulaCorrectionContinuous2  <- function(formula, data){
   res.lm.summary <- summary(res.lm)
   lm_stats       <- list(residSE = res.lm.summary$sigma,r2 = res.lm.summary$r.squared,adjr2 = res.lm.summary$adj.r.squared,
                          fstat = res.lm.summary$fstatistic, df=res.lm.summary$df)
-  return(structure(list(call = cl, coefficients = coef(res.lm),
+  return(structure(list(call         = cl,
+                        formula      = formula,
+                        coefficients = coef(res.lm),
                         seCoefficients = as.matrix(res.lm.summary$coefficients[,2]),
                         regressors = df.data.copula,
                         lm_stats   = lm_stats,

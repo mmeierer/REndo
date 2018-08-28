@@ -17,27 +17,24 @@ hetErrorsIV <- function(formula, data){
     reformulate(response   = attr(terms(formula(F.formula, rhs=1, lhs=0)), "term.labels"),
                 termlabels = attr(terms(formula(F.formula, rhs=2, lhs=0)), "term.labels"),
                 intercept  = attr(terms(formula(F.formula, rhs=2, lhs=0)), "intercept"))
-print(F.residuals.intinstr)
 
   # Fit lm and obtain residuals
   intinstr.residuals <- residuals(lm(F.residuals.intinstr, data=data))
 
   # From RHS3
   df.data.exohetero <- model.frame(formula(F.formula, lhs=0, rhs=3), data = data)
-# print(head(df.data.exohetero))
 
   df.data.intinstr <- apply(X = df.data.exohetero, MARGIN = 2, FUN = function(single.exohetero){
     (single.exohetero - mean(single.exohetero)) * intinstr.residuals
     })
 
   colnames(df.data.intinstr) <- paste0("internal.instrument", seq(NCOL(df.data.intinstr)))
-# print(head(df.data.intinstr))
 
   # Instrumental variable regression ------------------------------------------------------------------
 
   # Add internal.instruments to data
   df.data.ivreg <- cbind(data, df.data.intinstr)
-# print(head(df.data.ivreg))
+
 
   # Build IVreg formula: LHS1 ~ RHS1 + RHS2 | RHS2 + instruments (+ RHS4, if present)
 
@@ -56,7 +53,7 @@ print(F.residuals.intinstr)
 
   # Add 2nd part to final formula
   F.ivreg <- as.Formula(F.ivreg, F.ivreg.2nd.part)
-print(F.ivreg)
+
   # Intercept from where?
 
   # Fit IVreg

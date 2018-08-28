@@ -62,9 +62,10 @@ copulaCorrectionDiscrete <- function(formula, data, num.simulations=250){
   # Return ---------------------------------------------------------------------------------------------
   l.res <- structure(class= "rendo.copulacorrection.discrete",
                     list(call           = cl,
-                          CI            = confint.mean, #reg = df.data.copula, reg not needed?
-                          coefficients  = coef(single.estimate),
-                          fitted.lm     = single.estimate))
+                         formula        = formula,
+                         CI            = confint.mean, #reg = df.data.copula, reg not needed?
+                         coefficients  = coef(single.estimate),
+                         fitted.lm     = single.estimate))
 
   return(l.res)
 }
