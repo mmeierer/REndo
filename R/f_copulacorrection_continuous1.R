@@ -21,11 +21,11 @@ copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=
   # Generate with lm if they are missing
   # *** Give warning if used
   if(is.null(start.params))
-    start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=1), data = data))
+    start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=2), data = data))
 
   # Add rho and sigma with 0.001 and 0.9998 as defaults
   start.params <- c(start.params, rho=0.001, sigma=0.9998)
-
+print(start.params)
   # Bootstrap for SD of coefs--------------------------------------------------------------------------
 
   # Definition: Helper function to call LL optimization for convenience

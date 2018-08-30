@@ -9,7 +9,7 @@ copulaCorrectionDiscrete <- function(formula, data, num.simulations=250){
 
   # Extract data based on given formula ---------------------------------------------------------------
   F.formula         <- as.Formula(formula)
-  df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
+  df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 1)
 
 
   # Definition: simulation to run ---------------------------------------------------------------------
@@ -25,10 +25,10 @@ copulaCorrectionDiscrete <- function(formula, data, num.simulations=250){
     # Calculate meth.2 --------------------------------------------------------------------------------
     # use all user input data (endo, exo) and p.star
     df.data.copula <- cbind(data, p.star)
-    # *** main part
-    # use the formula first part for fitting lm and also include P.star
-    f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=1),
-                            reformulate(termlabels = colnames(p.star)))
+
+    # use the formula second part for fitting lm and also include P.star
+    f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=2),
+                            reformulate(termlabels = c(".", colnames(p.star))))
 
     return(lm(formula = f.lm.relevant, data = df.data.copula))
 

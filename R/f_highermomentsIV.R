@@ -1,5 +1,4 @@
 # response ~ endogenous | all exogenous | which to build internal IV |EIV
-# ** Question: Are multiple G possible in higherMoments? If so, do they apply to the corresponding IIV?
 #' @importFrom Formula as.Formula
 #' @importFrom stats update.formula reformulate model.response
 #' @importFrom AER ivreg
@@ -7,6 +6,8 @@
 higherMomentsIV <- function(formula, data,
                             G=c(),     # c("x2", "x3", "lnx", "1/x")
                             IIV=c()){  #c("g","gp","gy","yp","p2","y2"))
+# **Only allow single G function**
+# fail raluca check: underlying assumptions not satisfied - stop()
 
   cl <- match.call()
 

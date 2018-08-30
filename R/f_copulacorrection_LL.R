@@ -27,6 +27,7 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, m.data.endo){
 
   # l.eps ------------------------------------------------------------------------------------
   l.eps <- sum(log(stats::dnorm(eps.1,mean=0,sd=sigma)))
+
   # s
   s <- sum((p.star^2 + eps.star^2)/(2*(1-rho^2)) - (rho*p.star*eps.star)/(1-rho^2))
   # mm
