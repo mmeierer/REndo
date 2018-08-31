@@ -6,7 +6,7 @@ copulaCorrectionContinuous2  <- function(formula, data){
 
   # Extract data based on given formula ---------------------------------------------------------------
   F.formula         <- as.Formula(formula)
-  df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 1)
+  df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
 
   # P.star --------------------------------------------------------------------------------------------
   p.star            <- copulaCorrectionContinuous_pstar(data.endo = df.data.endo)
@@ -18,7 +18,7 @@ copulaCorrectionContinuous2  <- function(formula, data){
   df.data.copula <- cbind(data, p.star)
 
   # for fitting lm, use the formula first part and also include P.star
-  f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=2),
+  f.lm.relevant <- update(formula(F.formula, lhs=1, rhs=1),
                           paste0(".~.+", paste(colnames(p.star), collapse = "+")))
 print(head(df.data.copula))
 print(f.lm.relevant)

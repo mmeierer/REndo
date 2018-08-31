@@ -5,26 +5,34 @@
 #' @export
 copulaCorrectionContinuous1  <- function(formula, start.params = c(), num.boots=10, data){
 
+  # Input checks --------------------------------------------------------------------------------------
+  # Max/Min Number of endogenous = 1
+  # Max/min number of main regressors
+  # All names in data
+  #
+
   cl <- match.call()
 
   # Extract data based on given formula ---------------------------------------------------------------
   F.formula               <- as.Formula(formula)
   vec.data.y              <- as.vector(model.part(object = F.formula, data = data, lhs=1, rhs = 0)[,1])
 
-  # *** Do they have intercepts or not?! (model.frame = w/o I/dummies, model.matrix =w/ I. Both do transformations)
   m.model.data.exo.endo   <- model.matrix(object = F.formula, data = data, lhs=0, rhs = c(1,2))
   m.data.endo             <- as.matrix(model.frame(formula = F.formula, data = data, lhs=0, rhs = 2))
-  # df.data.exo.endo         <-model.frame(formula = F.formula, data = data, lhs=0, rhs = c(1,2))
 
   # Create start parameters for optimx ----------------------------------------------------------------
 
   # Generate with lm if they are missing
   # *** Give warning if used
-  if(is.null(start.params))
-    start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=2), data = data))
+  if(is.null(start.params)){
+    start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=1), data = data))
+    str.brakets <- paste0("(", paste(names(start.params), "=", round(start.params,3), collapse = ", ", sep=""), ")")
+    warning("No start parameters were given. The linear model ",deparse(formula(F.formula, lhs=1, rhs=1))," was fitted and start parameters ",str.brakets," are used.", call. = F, immediate. = T)
+  }
+
 
   # Add rho and sigma with 0.001 and 0.9998 as defaults
-  start.params <- c(start.params, rho=0.001, sigma=0.9998)
+  start.params <- c(start.params, rho=0.1, sigma=1)
 print(start.params)
   # Bootstrap for SD of coefs--------------------------------------------------------------------------
 
@@ -53,7 +61,7 @@ print(start.params)
       # return as vector / first row (only 1 method used). As matrix it cannot be used again as input to optimx
       return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y, m.model.data.exo.endo = i.m.model.data.exo.endo, m.data.endo = i.m.data.endo))[1,])
     })
-
+  close(pb)
 
   # Return --------------------------------------------------------------------------------------------
   # Parameter and sd
