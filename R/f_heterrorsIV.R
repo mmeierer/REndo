@@ -24,6 +24,7 @@ hetErrorsIV <- function(formula, data){
   # From RHS3
   df.data.exohetero <- model.frame(formula(F.formula, lhs=0, rhs=3), data = data)
 
+  # **** MAKE MORE STABLE FOR SINGLE COLUMN
   df.data.intinstr <- apply(X = df.data.exohetero, MARGIN = 2, FUN = function(single.exohetero){
     (single.exohetero - mean(single.exohetero)) * intinstr.residuals
     })

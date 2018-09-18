@@ -35,6 +35,19 @@ confint.rendo.heterrorsiv <- function(object, parm, level = 0.95, ...) {
 }
 
 #' @export
+#' @importFrom stats case.names
+case.names.rendo.heterrorsiv <- function(object){
+  return(names(fitted(object$res.ivreg)))
+}
+
+#' @export
+#' @importFrom Formula as.Formula
+labels.rendo.heterrorsiv <- function(object, ...){
+  return(labels(terms(formula(as.Formula(object$res.ivreg), rhs=1, lhs=1))))
+}
+
+
+#' @export
 summary.rendo.heterrorsiv <- function(object, ...){
   ans <- object[c("call", "res.ivreg")]
   ans$sum          <- summary(object$res.ivreg)

@@ -14,16 +14,46 @@ nobs.rendo.copulacorrection.continuous1 <- function(object, ...){
   return(NROW(object$residuals))
 }
 
+
 #' @export
 #' @importFrom stats nobs
-logLik.rendo.copulacorrection.continuous1 <- function(object,...){
-  return(structure(object$log.likelihood,class = "logLik",
-                   nobs=nobs(object), df=length(coef(object$res.optimx))))
+logLik.rendo.copulacorrection.continuous1 <- function(object, ...){
+  return(structure(nall = nobs(object),
+                   object$log.likelihood,
+                   nobs=nobs(object),
+                   df=length(coef(object$res.optimx)) + 1,
+                   class="logLik"))
+}
+
+#' @export
+#' @importFrom stats case.names
+case.names.rendo.copulacorrection.continuous1 <- function(object){
+  return(names(residuals(object)))
+}
+
+#' @export
+labels.rendo.copulacorrection.continuous1 <- function(object){
+  # **Is this correct?
+  return(setdiff(names(coef(object)), "(Intercept)"))
+  # return(unique(labels(terms(object))))
 }
 
 #' @export
 coef.rendo.copulacorrection.continuous1 <- function(object, ...){
   return(object$coefficients)
+}
+
+
+#' @export
+#' @importFrom stats vcov
+#' @importFrom corpcor pseudoinverse
+vcov.rendo.copulacorrection.continuous1 <- function(object, ...){
+  if(any(!is.finite(object$hessian)))
+    stop("The vcov matrix cannot be calulated because the hessian contains non-finite values!", call. = FALSE)
+
+  m.vcov <- pseudoinverse(-object$hessian)
+  rownames(m.vcov) <- colnames(m.vcov) <- colnames(object$hessian)
+  return(m.vcov)
 }
 
 
@@ -62,6 +92,7 @@ summary.rendo.copulacorrection.continuous1 <- function(object, ...){
   class(res) <- "summary.rendo.copulacorrection.continuous1"
   return(res)
 }
+
 
 
 #' Read coefficients from summary function on copulaCorrectionContinuous1 output

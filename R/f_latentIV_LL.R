@@ -1,5 +1,5 @@
 #' @importFrom mvtnorm dmvnorm
-latentIV_LL<- function(params, m.data.mvnorm, use.intercept){ # vec.data.resonse, m.data.endo){
+latentIV_LL<- function(params, m.data.mvnorm, use.intercept){
 
   # Extract main model coefficients --------------------------------------------
   # Number of coefs depends on if there is an intercept or not.
@@ -15,9 +15,9 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept){ # vec.data.resonse
   }
 
   # Bounds group probability: [0,1]
-  pt <- params["theta8"]
-  if(pt < 0 || pt>1)
-    return(Inf)
+  # pt <- params["theta8"]
+  # if(pt < 0 || pt>1)
+  #   return(Inf)
 
 
   # Sigma ----------------------------------------------------------------------
@@ -31,7 +31,7 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept){ # vec.data.resonse
   s2v     <- m.sigma[2,2]
   sev     <- m.sigma[1,2]
 
-  varcov      <-  matrix(0,2,2)
+  varcov      <- matrix(0,2,2)
   varcov[1,1] <- a1*a1*s2v+2*a1*sev+s2e
   varcov[2,1] <- a1*s2v+sev
   varcov[1,2] <- varcov[2,1]

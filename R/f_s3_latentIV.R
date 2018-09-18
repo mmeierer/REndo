@@ -28,14 +28,43 @@ nobs.rendo.latentiv <- function(object, ...){
 #' @export
 #' @importFrom stats nobs
 logLik.rendo.latentiv <- function(object, ...){
-  return(structure(object$log.likelihood, class="logLik",
-                   nobs=nobs(object), df=length(coef(object$res.optimx))))
+  return(structure(nall = nobs(object),
+                   object$log.likelihood,
+                   nobs=nobs(object),
+                   df=length(coef(object$res.optimx)) + 1,
+                   class="logLik"))
 }
 
 #' @export
 coef.rendo.latentiv <- function(object,...){
   return(object$coefficients)
 }
+
+
+#' @export
+#' @importFrom stats case.names
+case.names.rendo.latentiv <- function(object){
+  return(names(residuals(object)))
+}
+
+#' @export
+labels.rendo.latentiv <- function(object, ...){
+  return(labels(terms(object$formula)))
+}
+
+
+#' @export
+#' @importFrom stats vcov
+#' @importFrom corpcor pseudoinverse
+vcov.rendo.latentiv <- function(object, ...){
+  if(any(!is.finite(object$hessian)))
+    stop("The vcov matrix cannot be calulated because the hessian contains non-finite values!", call. = FALSE)
+
+  m.vcov <- pseudoinverse(-object$hessian)
+  rownames(m.vcov) <- colnames(m.vcov) <- colnames(object$hessian)
+  return(m.vcov)
+}
+
 
 
 #' @export

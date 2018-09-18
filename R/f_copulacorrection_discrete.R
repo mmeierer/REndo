@@ -2,13 +2,18 @@
 #' @importFrom stats ecdf runif coef lm confint qnorm model.frame update formula reformulate
 #' @export
 copulaCorrectionDiscrete <- function(formula, data, num.simulations=250){
+
   cl <- match.call()
 
   # Check user input ----------------------------------------------------------------------------------
-  # tbd
+  check_err_msg(checkinput_copulacorrectiondiscrete_formula(formula=formula, data=data))
+  check_err_msg(checkinput_copulacorrectiondiscrete_data(data=data, formula=formula))
+  check_err_msg(checkinput_copulacorrectiondiscrete_numsimulations(num.simulations=num.simulations))
+
 
   # Extract data based on given formula ---------------------------------------------------------------
   F.formula         <- as.Formula(formula)
+  # Need endogenous data for calculating PStar
   df.data.endo      <- model.frame(formula = F.formula, data = data, lhs=0, rhs = 2)
 
 
@@ -60,8 +65,8 @@ copulaCorrectionDiscrete <- function(formula, data, num.simulations=250){
 
   # Return ---------------------------------------------------------------------------------------------
   l.res <- structure(class= "rendo.copulacorrection.discrete",
-                    list(call           = cl,
-                         formula        = formula,
+                    list(call          = cl,
+                         formula       = formula,
                          CI            = confint.mean, #reg = df.data.copula, reg not needed?
                          coefficients  = coef(single.estimate),
                          fitted.lm     = single.estimate))

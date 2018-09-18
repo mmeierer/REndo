@@ -1,0 +1,170 @@
+#' @importFrom Formula as.Formula
+checkinput_copulacorrection_formula <- function(formula){
+  err.msg <- .checkinputhelper_formula_basicstructure(formula=formula)
+  if(length(err.msg)>0)
+    return(err.msg)
+
+  F.formula <- as.Formula(formula)
+
+  # Check that formula has 2 RHS
+  if(length(F.formula)[2] < 2)
+    err.msg <- c(err.msg, "Please indicate the endogenous regressors in the formula in a second right-hand-side separaed by a single vertical bar (|). (ie: y~X+P|continuous(P)")
+  if(length(F.formula)[2] > 2)
+    err.msg <- c(err.msg, "Please indicate only the endogenous regressors in the formula by separating it with a single vertical bar (|). Multiple endogenous regressors can be specified additively. (ie: y~X1+P1+P2|continuous(P1)+continuous(P2)")
+  # Cannot proceed if not 2 RHS are available
+  if(length(err.msg)>0)
+    return(err.msg)
+
+  # Check that every RHS2 is in RHs
+  names.rhs1 <- all.vars(formula(F.formula, rhs=1, lhs=0))
+  names.rhs2 <- all.vars(formula(F.formula, rhs=2, lhs=0))
+
+  # Read out the special functions
+  names.vars.continuous <- formula_readout_special(F.formula = F.formula, name.special = "continuous", from.rhs=2)
+  names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",   from.rhs=2)
+
+  # Same regressor cannot be continuous and discrete at the same time
+  if(any(names.vars.continuous %in% names.vars.discrete))
+    err.msg <- c(err.msg, "Please specify each regressors only as either continuous or discrete but not both at the same time.")
+
+  # RHS2 not in RHS1
+  if(!all(names.rhs2 %in% names.rhs1))
+    err.msg <- c(err.msg, "Please specify every endogenous regressors also in the first right-hand side (main model) of the formula.")
+
+  # Check that any given
+  if(length(names.vars.discrete) == 0 & length(names.vars.continuous) ==0)
+    return("Please indicate for every endogenous regressor in the second right-hand side if it is either continuous or discrete by using the respective specification.")
+
+  if(any(gsub(c(names.vars.discrete, names.vars.continuous), pattern = " ", replacement = "") == "")) # Or is this simply NULL?
+    err.msg <- c(err.msg, "Please specify a regressor in each function in the second right-hand side of the formula.")
+
+  # Process specials for checks
+  F.terms.rhs2      <- terms(F.formula, rhs=2, lhs=0, specials = c("continuous", "discrete"))
+  num.specials.rhs1 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=1, specials = c("continuous", "discrete")), "specials"), length))
+  num.specials.rhs2 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=2, specials = c("continuous", "discrete")), "specials"), length))
+  num.specials.lhs  <- sum(sapply(attr(terms(F.formula, lhs=1, rhs=0, specials = c("continuous", "discrete")), "specials"), length))
+
+  # Check that no other/misspelled/not indicated function
+  if( length(labels(F.terms.rhs2)) != num.specials.rhs2)
+    err.msg <- c(err.msg, "Please indicate for every endogenous regressor in the second right-hand side if it is either continuous or discrete by using the respective specification.")
+
+  # Check that there are no special functions in the first RHS
+  if(num.specials.rhs1 > 0)
+    err.msg <- c(err.msg, "Please specify no endogenous regressor in the first righ-hand side of the formula.")
+
+  if(num.specials.lhs > 0)
+    err.msg <- c(err.msg, "Please specify no endogenous regressor in the left-hand side of the formula.")
+
+  # Check that not all RHS1 are endogenous
+  if(all(all.vars(formula(F.formula, rhs=1, lhs=0)) %in% c(names.vars.discrete, names.vars.continuous)))
+    err.msg <- c(err.msg, "Please do not specify all regressors as endogenous.")
+
+  # Check that the specials contains no transformations / functions (ie discrete(log(P))) and are specified additively
+  allowed.names.rhs2 <- c("~", "+", "discrete", "continuous", all.vars(formula(F.formula, rhs=1, lhs=0)))
+  if(length(setdiff(all.names(F.terms.rhs2),allowed.names.rhs2))>0)
+    err.msg <- c(err.msg, "Please specify endogenous regressor additively and without transformations.")
+
+  # Pluses (+) in the specials escape the previous check. Count the number of pluses to check
+  num.pluses <- sum(all.names(F.terms.rhs2) == "+")
+  if(num.pluses > length(labels(F.terms.rhs2)) - 1)
+    err.msg <- c(err.msg, "Please specify multiple endogenous regressors with commas instead of with pluses (ie. continuous(P1, P2) instead of continuous(P1+P2)).")
+
+  # Check if any special is empty
+  if(any(labels(F.terms.rhs2) %in% c("continuous()", "discrete()")))
+    err.msg <- c(err.msg, "Please specify a variable in every function call on the second right-hand side of the formula.")
+
+  # Check that every regressor is in the data is done in separate function
+
+  return(err.msg)
+}
+
+checkinput_copulacorrection_data <- function(data){
+  err.msg <- c()
+  if(missing(data))
+  return("Please provide a data parameter.")
+
+  if(is.null(data))
+    return("Please provide a data parameter.")
+
+  # Check right data type
+  if(!is.data.frame(data))
+    return("Please provide the data as a data.frame.")
+
+  if(ncol(data) < 1)
+    err.msg <- c(err.msg, "Please provide a data object containing columns.")
+  if(nrow(data) < 1)
+    err.msg <- c(err.msg, "Please provide a data object containing observations.")
+
+  return(err.msg)
+}
+
+#' @importFrom Formula as.Formula
+checkinput_copulacorrection_dataVSformula <- function(data, formula){
+  # here, the basic structure of data and formula are guaranteed to be correct
+  err.msg <- c()
+  F.formula <- as.Formula(formula)
+  # Do not need terms object to expand . (dot) because not yet allowed in formula input.
+
+  # Check that every regressor is in the data
+  if(!all(all.vars(F.formula) %in% colnames(data)))
+    err.msg <- c(err.msg, "Please provide a data object that contains all the formula's variables.")
+
+  # Only allow numeric (real & integer) values in the data
+  data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")
+  data.types <- data.types[all.vars(F.formula)]
+  if(any(!(data.types %in% "numeric")))
+    err.msg <- c(err.msg, "Please only provide numeric data for all regressors.")
+
+  err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data, forbidden.colname="PStar"))
+
+  return(err.msg)
+}
+
+
+checkinput_copulacorrection_singlecontinuous <- function(l.ellipsis, F.formula){
+  # For the single continuous case, further arguments can be given in the ellipsis:
+  #   start.params and num.boots
+
+  if(length(l.ellipsis) == 0)
+    return(c())
+
+  err.msg <- c()
+
+  if("num.boots" %in% names(l.ellipsis)){
+    err.msg <- c(err.msg, checkinputhelper_singlepositivewholenumeric(num.param=l.ellipsis[["num.boots"]],
+                                                                      parameter.name = "num.boots", min.num=2))
+
+    if(num.boots < 10)
+      warning("It is recommended to run more than 10 bootstrappings.", call. = F, immediate. = T)
+  }
+
+  if("start.params" %in% names(l.ellipsis))
+    err.msg <-c(err.msg, checkinputhelper_startparams(forbidden.names=c("rho", "sigma"),
+                                                      start.params=l.ellipsis[["start.params"]], formula=F.formula))
+
+  return(err.msg)
+}
+
+checkinput_copulacorrection_verbose <- function(verbose){
+  err.msg <- c()
+
+  # Cannot be real missing as has default value
+  # no if(missing(verbose))
+  #  no return("Please provide the parameter \'verbose\'")
+
+  if(is.null(verbose))
+    return("Please provide a single logical for \'verbose\'")
+
+  if(!is.vector(verbose, mode = "logical"))
+    err.msg <- c(err.msg, "Please provide a single logical for \'verbose\'")
+
+  if(length(verbose) != 1)
+    err.msg <- c(err.msg, "Please provide a single logical for \'verbose\'")
+
+  if(anyNA(verbose))
+    err.msg <- c(err.msg, "Please provide no NA(s) for \'verbose\'")
+
+  return(err.msg)
+}
+
+

@@ -30,10 +30,21 @@ confint.rendo.copulacorrection.discrete <- function(object, parm, level = 0.95, 
 
 #' @export
 #' @importFrom stats logLik
-logLik.rendo.copulacorrection.discrete <- function(object, ...){
-  return(logLik(object$fitted.lm, ...))
+logLik.rendo.copulacorrection.discrete <- function(object, REML = FALSE, ...){
+  return(logLik(object$fitted.lm, REML=REML, ...))
 }
 
+
+#' @export
+#' @importFrom stats case.names
+case.names.rendo.copulacorrection.discrete <- function(object, full = FALSE, ...){
+  return(case.names(object$fitted.lm, full=full, ...))
+}
+
+#' @export
+labels.rendo.copulacorrection.discrete <- function(object, ...){
+  return(labels(object$fitted.lm, ...))
+}
 
 #' @export
 print.rendo.copulacorrection.discrete <- function(x, ...){

@@ -1,7 +1,7 @@
 #' @export
 #' @importFrom stats logLik
-logLik.rendo.copulacorrection.continuous2<- function(object, ...){
-  return(logLik(object$fitted.lm, ...))
+logLik.rendo.copulacorrection.continuous2<- function(object, REML=FALSE, ...){
+  return(logLik(object$fitted.lm, REML=REML, ...))
 }
 
 #' @export
@@ -24,6 +24,17 @@ nobs.rendo.copulacorrection.continuous2 <- function(object, ...){
 #' @export
 coef.rendo.copulacorrection.continuous2 <- function(object, ...){
   return(object$coefficients)
+}
+
+#' @export
+#' @importFrom stats case.names
+case.names.rendo.copulacorrection.continuous2 <- function(object, full = FALSE, ...){
+  return(case.names(object$fitted.lm, full=full, ...))
+}
+
+#' @export
+labels.rendo.copulacorrection.continuous2 <- function(object, ...){
+  return(labels(object$fitted.lm, ...))
 }
 
 #' @export

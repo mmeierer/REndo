@@ -1,38 +1,40 @@
-# response ~ endogenous | all exogenous | which to build internal IV |EIV
 #' @importFrom Formula as.Formula
 #' @importFrom stats update.formula reformulate model.response
 #' @importFrom AER ivreg
 #' @export
 higherMomentsIV <- function(formula, data,
-                            G=c(),     # c("x2", "x3", "lnx", "1/x")
-                            IIV=c()){  #c("g","gp","gy","yp","p2","y2"))
-# **Only allow single G function**
-# fail raluca check: underlying assumptions not satisfied - stop()
+                            IIV=c(),  # c("g","gp","gy","yp","p2","y2"))
+                            g=c()){     # c("x2", "x3", "lnx", "1/x")
 
+# *** fail raluca check: underlying assumptions not satisfied - stop()
   cl <- match.call()
 
-  # Read out data ------------------------------------------------------------------------------------
-  # In:     response ~ endogenous | all exogenous | which to build internal IV | EIV
+  # Input checks -------------------------------------------------------------------------------------
+  check_err_msg(checkinput_highermomentsiv_g(g=g))
+  check_err_msg(checkinput_highermomentsiv_iiv(IIV=IIV))
+  # **** data.exo and data.endo (gp) have matching dimensions
 
+  # Read out data ------------------------------------------------------------------------------------
+  # In old:     response ~ endogenous | all exogenous | which to build internal IV | EIV
   F.formula    <- as.Formula(formula)
   mf           <- model.frame(formula = F.formula, data = data)
   vec.data.y   <- model.response(mf)
-  df.data.endo <- mf[, all.vars(formula(F.formula, lhs=0, rhs=1))]
-  df.data.exo  <- mf[, all.vars(formula(F.formula, lhs=0, rhs=2))]
+  df.data.endo <- mf[, all.vars(formula(F.formula, lhs=0, rhs=2))]
+  df.data.exo  <- mf[, all.vars(formula(F.formula, lhs=0, rhs=3))]
 
 
   # Calculate internal IVs ---------------------------------------------------------------------------
   # proposed by Lewbel 97 - g, gp, gy, yp, y2, p2
 
-  # ** Is this col-wise or mean(whole matrix)? Doing col-wise now
+  # ** Is this col-wise or mean(whole matrix)? Doing col-wise
   de.mean <- function(x){ if(NCOL(x) > 1)
                             return(apply(x, MARGIN = 2, FUN = function(x){x-mean(x)})) # matrix/data.frame/array
                             # sweep(x = x, MARGIN = 2, STATS = colMeans(x=df, na.rm = T), FUN = "-")
                           else
                             return(x-mean(x))} # vector
 
-  # Define actual functions for the given G
-  fct.g <- switch(G,
+  # Define actual functions for the given g
+  fct.g <- switch(g,
                   "x2"  = function(x){x^2},
                   "x3"  = function(x){x^3},
                   "lnx" = function(x){log(x)},
@@ -40,8 +42,8 @@ higherMomentsIV <- function(formula, data,
 
   # IIV calculations
   #   Do for every type of given IIV
-  names(IIV) <- IIV # Set names so that sapply colnames will be set and can use iiv in formula
-  df.data.IIV <- as.data.frame(sapply(IIV, USE.NAMES = T, simplify = F, function(iiv){
+  names(IIV) <- IIV # Set names so that lapply colnames will be set and can use iiv in formula
+  df.data.IIV <- as.data.frame(lapply(IIV, function(iiv){
                         sw.res <- switch(EXPR = iiv,
                                "g"  = de.mean(fct.g(df.data.exo)),                         # IIV1
                                "gp" = de.mean(fct.g(df.data.exo)) * de.mean(df.data.endo), # IIV2
@@ -53,11 +55,12 @@ higherMomentsIV <- function(formula, data,
 
 
   # Build formula for IVreg --------------------------------------------------------------------------
-  # In:     response ~ endogenous | all exogenous | which to build internal IV | EIV
-  # Needed: response ~ endogenous + exogenous | exogenous + interal IVs + external IVs
+  # In:         response ~ endogenous | all exogenous | which to build internal IV | EIV
+  # Needed:     response ~ endogenous + exogenous | exogenous + interal IVs + external IVs
 
   # resp ~ endogenous + exogenous
-  F.ivreg <- formula(F.formula, lhs = 1, rhs=c(1,2), collapse = T, update = T)
+  # F.ivreg <- formula(F.formula, lhs = 1, rhs=c(1,2), collapse = T, update = T)
+  F.ivreg <- formula(F.formula, lhs = 1, rhs = 1, collapse = T, update = T)
 
   # 2nd Part: ~ exogenous + interal IVs + external IVs
   # exogenous and external IVs (if present)
@@ -77,9 +80,9 @@ higherMomentsIV <- function(formula, data,
   # Put data together: user data + internal instruments
   df.data.ivreg <- cbind(data, df.data.IIV)
 
-  cat("Formula used for ivreg: ")
-  print(F.ivreg)
-  print(head(df.data.ivreg))
+  # cat("Formula used for ivreg: ")
+  # print(F.ivreg)
+  # print(head(df.data.ivreg))
 
   res.ivreg <- ivreg(formula = F.ivreg, data = df.data.ivreg)
 
