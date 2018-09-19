@@ -1,4 +1,4 @@
-copulaCorrection_optimizeLL <- function(data, formula, verbose, start.params=NULL, num.boots=10){
+copulaCorrection_optimizeLL <- function(data, formula, verbose, start.params=NULL, num.boots=10, ...){
 
   # Further checks required for the parameters in ... -------------------------------------------------
   l.ellipsis <- list(...)
@@ -14,7 +14,6 @@ copulaCorrection_optimizeLL <- function(data, formula, verbose, start.params=NUL
   }
 
   # Create start parameters for optimx ----------------------------------------------------------------
-
   if(is.null(start.params)){
     # Generate with lm if they are missing
     start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=1), data = data))
