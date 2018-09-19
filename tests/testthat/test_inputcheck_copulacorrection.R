@@ -1,7 +1,10 @@
 # TEST INPUT CHECKS ================================================================================================================================================================
 
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+data("dataCopC1")
 data("dataCopC2")
+data("dataCopDis")
+data("dataCopDisCont")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - Parameter formula")
@@ -138,15 +141,13 @@ test_that("Fail if special in LHS", {
 })
 
 
-#
-# ****TODO
-# test_that("Fail if formula variables are not in data", {
-#   # Fail if any regressors not in data (RHS1, RHS2, LHS1)
-#   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(y=1:10, X1=1:10, P1=1:10,  P2=1:10)), regexp = "The above errors were encountered!")
-#   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(y=1:10, X1=1:10, X2=1:10,  P1=1:10)), regexp = "The above errors were encountered!")
-#   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(y=1:10, X1=1:10, X2=1:10,  P2=1:10)), regexp = "The above errors were encountered!")
-#   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(X1=1:10,X2=1:10, P1=1:10,  P2=1:10)), regexp = "The above errors were encountered!")
-# })
+test_that("Fail if formula variables are not in data", {
+  # Fail if any regressors not in data (RHS1, RHS2, LHS1)
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(y=1:10, X1=1:10, P1=1:10,  P2=1:10)), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(y=1:10, X1=1:10, X2=1:10,  P1=1:10)), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(y=1:10, X1=1:10, X2=1:10,  P2=1:10)), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=data.frame(X1=1:10,X2=1:10, P1=1:10,  P2=1:10)), regexp = "The above errors were encountered!")
+})
 
 # data --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - Parameter data")
@@ -209,7 +210,106 @@ test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and
 
 # verbose --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - Parameter verbose")
+test.single.logical(function.to.test = copulaCorrection, parameter.name="verbose",
+                    formula=y~X1+X2+P1+P2|continuous(P1)+discrete(P2), function.std.data=dataCopC2)
 
 
 # num.boots --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - Parameter num.boots")
+# Single continuous
+# Failure tests
+test.positive.numeric.whole.number(function.to.test = copulaCorrection, parameter.name="num.boots",
+                                   formula=y~X1+X2+P|continuous(P), function.std.data=dataCopC1)
+# Start params required for silence
+# additional.args =list(verbose=F, start.params = c("(Intercept)"=1.983, X1=1.507, X2=-3.014, P1=-0.891)
+
+# Warning if num.boots given for any other case
+test_that("Warning if unneeded num.boots given", {
+  # >1 continuous
+  expect_warning(copulaCorrection(num.boots = 10, verbose=TRUE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopC2),all=TRUE, regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
+  # Mixed
+  expect_warning(copulaCorrection(num.boots = 10, verbose=TRUE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont), all=TRUE, regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
+  # Discrete
+  expect_warning(copulaCorrection(num.boots = 10, verbose=TRUE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis),all=TRUE,regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
+})
+
+# start.params ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+context("copulaCorrection - Parameter start.params")
+
+test_that("start.params is vector and all numeric", {
+  # Any parameter is character, logical, factor, matrix
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = as.character(1), X2 = -2, P = 0),
+                                           formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = as.factor(c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0)),
+                                           formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = as.logical(c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0)),
+                                           formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = as.matrix(c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0)),
+                                           formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = complex(1,4,2), X2 = -2, P = 0),
+                                           formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+})
+
+test_that("start.params is not NA",{
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = NA_integer_, X2 = -2, P = 0),    formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = NA_real_, X2 = -2, P = 0),       formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = NA_integer_, formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = NA_real_, formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+})
+
+test_that("start.params is NULL or missing but runs with warning", {
+  expect_warning(copulaCorrection(start.params =     , formula = y ~ X1 + X2 + P |P, data = dataCopC1, num.boots = 2, verbose=F))
+  expect_warning(copulaCorrection(start.params = NULL, formula = y ~ X1 + X2 + P |P, data = dataCopC1, num.boots = 2, verbose=F))
+})
+
+test_that("start.params is named correctly", {
+  # Unnamed vec given
+  expect_error(copulaCorrection(start.params = c(2, 1, -2,0),                                formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  # Partially named vec given
+  expect_error(copulaCorrection(start.params = c(2, X1 = 1, X2=-2,P=0),                      formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  # Wrong case
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, x1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  # Same param name twice
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X2 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  # Unrelated name
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X10 = 1, X2 = -2, P = 0),  formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  # Param missing (main, endo, intercept)
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, P = 0),            formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2),          formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = c(X1 = 1, X2 = -2, P = 0),                    formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  # Intercept spelling
+  expect_error(copulaCorrection(start.params = c("Intercept"=2, X1 = 1, X2 = -2, P = 0),     formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  expect_error(copulaCorrection(start.params = c("(intercept)"=2, X1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|P, data = dataCopC1))
+  # Intercept given but none required
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0),
+                                           formula = y ~ X1 + X2 + P -1 |P, data = dataCopC1))
+  # Additional, not required param given
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, X3 = 99, P = 0), formula = y ~ X1 + X2 + P |P, data = dataCopC1))
+})
+
+
+test_that("start.params contains no parameter rho or sigma", {
+  # Given additionally
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0, rho=1), formula = y ~ X1 + X2 + P |P, data = dataCopC1, verbose=F))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0, sigma=1), formula = y ~ X1 + X2 + P |P, data = dataCopC1, verbose=F))
+  # Given instead of other parameters
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, rho=1), formula = y ~ X1 + X2 + P |P, data = dataCopC1, verbose=F))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, sigma=1), formula = y ~ X1 + X2 + P |P, data = dataCopC1, verbose=F))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, sigma = -2, P=1), formula = y ~ X1 + X2 + P |P, data = dataCopC1, verbose=F))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, rho = -2, P=1), formula = y ~ X1 + X2 + P |P, data = dataCopC1, verbose=F))
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, sigma = -2, rho=1), formula = y ~ X1 + X2 + P |P, data = dataCopC1, verbose=F))
+})
+
+
+# ...  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+context("copulaCorrection - Parameter 3-dots")
+test_that("Warning if further unneded params are given", {
+  # 1 continuous
+  expect_warning(copulaCorrection(abc=123, verbose=TRUE,formula= y ~ X1+X2+P|continuous(P),data=dataCopC1),all=TRUE, regexp = "are ignored")
+  # >1 continuous
+  expect_warning(copulaCorrection(abc=123, verbose=TRUE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopC2),all=TRUE, regexp = "are ignored")
+  # Mixed
+  expect_warning(copulaCorrection(abc=123, verbose=TRUE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont), all=TRUE, regexp = "are ignored")
+  # Discrete
+  expect_warning(copulaCorrection(abc=123, verbose=TRUE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis),all=TRUE,regexp = "are ignored")
+})

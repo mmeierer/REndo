@@ -2,9 +2,9 @@ test.positive.numeric.whole.number <- function(function.to.test, parameter.name,
 
   std.args <- modifyList(alist(data=function.std.data, formula=formula), additional.args)
 
-  test_that(paste0(parameter.name, " has default value"),{
-    expect_is(eval(formals(function.to.test)[[parameter.name]]), c("numeric","integer"))
-  })
+  # test_that(paste0(parameter.name, " has default value"),{
+  #   expect_is(eval(formals(function.to.test)[[parameter.name]]), c("numeric","integer"))
+  # })
 
   test_that(paste0(parameter.name, " is single number"),{
     # Fail for non-numbers

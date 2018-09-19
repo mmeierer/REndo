@@ -73,6 +73,11 @@ checkinput_copulacorrection_formula <- function(formula){
   if(any(labels(F.terms.rhs2) %in% c("continuous()", "discrete()")))
     err.msg <- c(err.msg, "Please specify a variable in every function call on the second right-hand side of the formula.")
 
+  # Check that every endo regressor is also in the RHS1 exactly like this
+  # if(!all(c(names, names) %in% labels(terms(rhs=1))))
+  # "Please name every endogenous exactly as it is in the main model, incl. transformations (ie y~X+log(P)|continuous(log(P))).
+
+
   # Check that every regressor is in the data is done in separate function
 
   return(err.msg)
@@ -131,7 +136,8 @@ checkinput_copulacorrection_singlecontinuous <- function(l.ellipsis, F.formula){
   err.msg <- c()
 
   if("num.boots" %in% names(l.ellipsis)){
-    err.msg <- c(err.msg, checkinputhelper_singlepositivewholenumeric(num.param=l.ellipsis[["num.boots"]],
+    num.boots <- l.ellipsis[["num.boots"]]
+    err.msg <- c(err.msg, checkinputhelper_singlepositivewholenumeric(num.param=num.boots,
                                                                       parameter.name = "num.boots", min.num=2))
 
     if(num.boots < 10)
@@ -142,6 +148,7 @@ checkinput_copulacorrection_singlecontinuous <- function(l.ellipsis, F.formula){
     err.msg <-c(err.msg, checkinputhelper_startparams(forbidden.names=c("rho", "sigma"),
                                                       start.params=l.ellipsis[["start.params"]], formula=F.formula))
 
+  str(err.msg)
   return(err.msg)
 }
 
