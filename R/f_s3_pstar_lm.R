@@ -1,9 +1,9 @@
 #' @importFrom stats confint
 #' @export
-confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250, ...){
+confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250L, ...){
 
   # -----------------------------------------------------------------------------------------------------
-  # check_err_msg()
+  # check_err_msg() **TODO: Check or not?
 
   # Read out needed stuff -------------------------------------------------------------------------------
   # All if parm is missing (needed because parm is unknown in lapply)
@@ -32,18 +32,23 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
         # Be sure to call lm's confint per fit, otherwise Inf loop
         return(confint.lm(res.lm, parm = parm, level = level))
       })
+    single.lm.ci <- l.simulated.coefs.and.confints[[1]]
+
+    # If there are no results (ie all removed) cannot do calculations
+    if(nrow(single.lm.ci) == 0)
+      return(single.lm.ci)
 
     # Separate tables for confints
-    #   return depnds on number of parm given. if only 1, the results is not a matrix
+    #   return depends on number of parm given. if only 1, the results is not a matrix
     simulated.confints.lower  <- matrix(sapply(l.simulated.coefs.and.confints, function(x) x[,1]),
-                                        nrow=length(parm))
+                                        nrow=nrow(single.lm.ci))
     simulated.confints.higher <- matrix(sapply(l.simulated.coefs.and.confints, function(x) x[,2]),
-                                        nrow=length(parm))
+                                        nrow=nrow(single.lm.ci))
 
     # Mean of coefs and confints ------------------------------------------------------------------------
     confint.mean           <- cbind(rowMeans(simulated.confints.lower),
                                     rowMeans(simulated.confints.higher))
-    dimnames(confint.mean) <- dimnames(l.simulated.coefs.and.confints[[1]])
+    dimnames(confint.mean) <- dimnames(single.lm.ci)
 
     return(confint.mean)
   }else{
