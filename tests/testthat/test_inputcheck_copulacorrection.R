@@ -140,6 +140,13 @@ test_that("Fail if special in LHS", {
   expect_error(copulaCorrection(formula= continuous(y) ~ X1+X2+P1+P2|P1,data=dataCopC2), regexp = "The above errors were encountered!")
 })
 
+test_that("Fail if var is in specials", {
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2)+discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2)+continuous(P1),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2)+continuous(X1, P1),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2)+discrete(X1, P1),data=dataCopC2), regexp = "The above errors were encountered!")
+})
 
 test_that("Fail if formula variables are not in data", {
   # Fail if any regressors not in data (RHS1, RHS2, LHS1)
