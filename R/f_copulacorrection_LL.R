@@ -1,17 +1,18 @@
 #' @importFrom stats pnorm qnorm dnorm
-copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, m.data.endo){
+copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
 # print(params)
   # Extract params from optimx inputs --------------------------------------------------------
   params.endo.exo <- params[setdiff(names(params), c("sigma", "rho"))]
   sigma           <- params["sigma"]
   rho             <- params["rho"]
 
-  # Bounds for rho: [0,1]. Return Inf as NelderMead cannot handle bounds
+  # *** WHAT DO HERE? May crash hessian calculation. Choose gradient methods + bounds instead?
+  #   (Bounds for rho: [0,1]. Return Inf as NelderMead cannot handle bounds)
   if(rho < 0 || rho > 1)
     return(Inf)
 
   # P.star -----------------------------------------------------------------------------------
-  p.star <- copulaCorrectionContinuous_pstar(data.endo = m.data.endo)
+  p.star <- copulaCorrectionContinuous_pstar(vec.data.endo = vec.data.endo)
 
   # epsilon, incl. endo regressor ------------------------------------------------------------
   eps.1 <- vec.y - m.data.exo.endo %*% params.endo.exo

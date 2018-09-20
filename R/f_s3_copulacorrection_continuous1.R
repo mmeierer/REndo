@@ -1,6 +1,6 @@
 #' @export
 fitted.rendo.copulacorrection.continuous1 <- function(object, ...){
-  return(object$fitted)
+  return(object$fitted.values)
 }
 
 

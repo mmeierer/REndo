@@ -3,7 +3,7 @@
 #' @export
 copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   # Catch stuff ------------------------------------------------------------------------------------------------
-  cl <- match.call()
+  cl <- quote(match.call())
   l.ellipsis <- list(...)
 
   # Input checks -----------------------------------------------------------------------------------------------
@@ -27,12 +27,16 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   # Dispatch to either LL optimization or PStar+lm -------------------------------------------------------------
   if(optimizeLL){
     # Single continuous - copula method 1 (optimize LL)
-    res <- do.call(what = copulaCorrection_optimizeLL, args = c(list(data=data, formula=formula, verbose=verbose),
-                                                                l.ellipsis))
+    res <- do.call(what = copulaCorrection_optimizeLL,
+                   args = c(list(F.formula=F.formula, data=data,
+                                 name.var.continuous =names.vars.continuous,
+                                 verbose=verbose, cl=cl), # cl supplied to create return object
+                            l.ellipsis))
   }else{
     # All other cases use pstar data + lm
     res <- copulaCorrection_linearmodel(F.formula = F.formula, data = data,
-                                        verbose=verbose, cl=cl,
+                                        verbose=verbose,
+                                        cl=cl, # cl supplied to create return object
                                         names.vars.continuous = names.vars.continuous,
                                         names.vars.discrete   = names.vars.discrete)
   }

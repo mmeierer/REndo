@@ -2,10 +2,10 @@
 #' @export
 confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250, ...){
 
-  # -----
+  # -----------------------------------------------------------------------------------------------------
   # check_err_msg()
-  # Read out needed stuff --
 
+  # Read out needed stuff -------------------------------------------------------------------------------
   # All if parm is missing (needed because parm is unknown in lapply)
   if(missing(parm))
     parm <- names(coef(object))
@@ -13,7 +13,7 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
   names.vars.continuous <- object$names.vars.continuous
   names.vars.discrete   <- object$names.vars.discrete
 
-  # Determine case ------------------------------------------------------------------------------------
+  # Determine case --------------------------------------------------------------------------------------
   # Forward to lm's confint function for all except "discrete only" which needs simulation
   if(length(names.vars.discrete)>0 & length(names.vars.continuous) == 0){
 
@@ -24,8 +24,8 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
     # for each regressor (and intercept)
     l.simulated.coefs.and.confints <-
       lapply(X = seq(num.simulations), FUN = function(i){
-        res.lm <- copulaCorrection_linearmodel(F.formula = object$formula,
-                                               data = object$original.data,
+        res.lm <- copulaCorrection_linearmodel(F.formula             = object$formula,
+                                               data                  = object$original.data,
                                                names.vars.continuous = names.vars.continuous,
                                                names.vars.discrete   = names.vars.discrete,
                                                verbose = FALSE, cl=match.call())
@@ -41,8 +41,8 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
                                         nrow=length(parm))
 
     # Mean of coefs and confints ------------------------------------------------------------------------
-    confint.mean           <- cbind(rowMeans(simulated.confints.lower),  # c(apply(simulated.confints.lower,  1, mean),
-                                    rowMeans(simulated.confints.higher)) # apply(simulated.confints.higher, 1, mean)),
+    confint.mean           <- cbind(rowMeans(simulated.confints.lower),
+                                    rowMeans(simulated.confints.higher))
     dimnames(confint.mean) <- dimnames(l.simulated.coefs.and.confints[[1]])
 
     return(confint.mean)
