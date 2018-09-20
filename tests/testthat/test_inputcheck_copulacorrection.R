@@ -208,6 +208,12 @@ test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=1:10, P2=1:10, PStar.P1=1:10, PStar.P2=1:10)), regexp = "The above errors were encountered!")
 })
 
+
+test_that("Warn if binomial/dummy data passed in endo regressor", {
+  expect_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D),
+                                  data = cbind(dataCopDis, D = c(0,1))), regexp = "may not be binomial")
+})
+
 # verbose --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - Parameter verbose")
 test.single.logical(function.to.test = copulaCorrection, parameter.name="verbose",

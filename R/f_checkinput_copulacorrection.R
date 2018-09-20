@@ -175,3 +175,19 @@ checkinput_copulacorrection_verbose <- function(verbose){
 }
 
 
+checkinput_copulacorrection_warnbinomialendodata <- function(data, names.vars.continuous, names.vars.discrete){
+
+  # Warn if the data is binomial
+  fails <- c()
+
+  # Check for every endogenous regressor if its binomial/dummy
+  for(name in c(names.vars.discrete, names.vars.continuous))
+    if(length(unique(data[, name])) == 2)
+      fails <- c(fails, name)
+
+  if(length(fails)>0)
+    warning("Note that the endogenous regressor(s) ",paste(name, collapse=",")," may not be binomial!",
+              call. = FALSE, immediate. = TRUE)
+  # Nothing to return
+}
+

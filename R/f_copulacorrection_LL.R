@@ -19,7 +19,7 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
 
   # PPnorm -----------------------------------------------------------------------------------
   # residulas - epsilon should be normally distributed
-  ppnorm <- stats::pnorm(eps.1, mean=0, sd=sigma)
+  ppnorm <- pnorm(eps.1, mean=0, sd=sigma)
   ppnorm[ppnorm >= 0.999998]   <- 0.999888
   ppnorm[ppnorm <= 0.0001]     <- 0.0001
 
@@ -27,7 +27,7 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   eps.star <- stats::qnorm(ppnorm)
 
   # l.eps ------------------------------------------------------------------------------------
-  l.eps <- sum(log(stats::dnorm(eps.1,mean=0,sd=sigma)))
+  l.eps <- sum(log(dnorm(eps.1,mean=0,sd=sigma)))
 
   # s
   s <- sum((p.star^2 + eps.star^2)/(2*(1-rho^2)) - (rho*p.star*eps.star)/(1-rho^2))
