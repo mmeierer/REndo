@@ -84,7 +84,7 @@ check_err_msg <- function(err.msg){
 }
 
 #' @importFrom stats .MFclass
-.checkinputhelper_dataVSformula_basicstructure <- function(formula, data){
+.checkinputhelper_dataVSformula_basicstructure <- function(formula, data, num.only.cols=all.vars(formula)){
   # here, the basic structure of data and formula are guaranteed to be correct
   err.msg <- c()
   F.formula <- as.Formula(formula)
@@ -96,9 +96,10 @@ check_err_msg <- function(err.msg){
 
   # Only allow numeric (real & integer) values in the data
   data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")
-  data.types <- data.types[all.vars(F.formula)]
+  data.types <- data.types[num.only.cols]
   if(any(!(data.types %in% "numeric")))
-    err.msg <- c(err.msg, "Please only provide numeric data for all regressors.")
+    err.msg <- c(err.msg, paste0("Please only provide numeric data for regressors ",
+                                 paste(num.only.cols, collapse = ", "), "."))
 
   return(err.msg)
 }

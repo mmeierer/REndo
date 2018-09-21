@@ -87,9 +87,13 @@ checkinput_copulacorrection_data <- function(data){
 #' @importFrom Formula as.Formula
 checkinput_copulacorrection_dataVSformula <- function(data, formula){
   F.formula <- as.Formula(formula)
-  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data)
+  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,
+                                                            num.only.cols = all.vars(formula))
 
   err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data, forbidden.colname="PStar"))
+
+
+  # *** Only forbid non-numeric data in the endogenous regressors
 
   return(err.msg)
 }
