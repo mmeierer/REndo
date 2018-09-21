@@ -27,12 +27,12 @@ logLik.rendo.optim.LL <- function(object, ...){
 
 #' @export
 #' @importFrom stats case.names
-case.names.rendo.optim.LL <- function(object){
+case.names.rendo.optim.LL <- function(object, ...){
   return(names(residuals(object)))
 }
 
 #' @export
-labels.rendo.optim.LL <- function(object){
+labels.rendo.optim.LL <- function(object, ...){
   # **Is this correct?
   return(setdiff(names(coef(object)), "(Intercept)"))
   # return(unique(labels(terms(object))))
@@ -110,13 +110,13 @@ summary.rendo.optim.LL <- function(object, ...){
 
 
 
-#' Read coefficients from summary function on optim LL output
+# Read coefficients from summary function on optim LL output
 #' @export
 coef.summary.rendo.optim.LL <- function(object, ...){
   return(object$coefficients)
 }
 
-#' Read coefficients from summary function on optim LL output
+# Read coefficients from summary function on optim LL output
 #' @export
 vcov.summary.rendo.optim.LL <- function(object, ...){
   return(object$vcov)
@@ -124,7 +124,7 @@ vcov.summary.rendo.optim.LL <- function(object, ...){
 
 
 
-#' Print output from summary function on optim LL output
+# Print output from summary function on optim LL output
 #' @importFrom stats printCoefmat
 #' @export
 print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3L),

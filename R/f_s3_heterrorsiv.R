@@ -36,7 +36,7 @@ confint.rendo.heterrorsiv <- function(object, parm, level = 0.95, ...) {
 
 #' @export
 #' @importFrom stats case.names
-case.names.rendo.heterrorsiv <- function(object){
+case.names.rendo.heterrorsiv <- function(object, ...){
   return(names(fitted(object$res.ivreg)))
 }
 

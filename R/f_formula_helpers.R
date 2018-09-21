@@ -30,7 +30,7 @@ formula_readout_special <- function(F.formula, name.special, from.rhs=2){
 }
 
 
-#' Builds a formula consisiting of response ~ main model (RHS1) + data columns
+# Builds a formula consisiting of response ~ main model (RHS1) + data columns
 #' @importFrom stats reformulate update.formula
 formula_build_mainmodel_data <- function(F.formula, data){
   # intercept=T to not remove if there is one. Will not add one if there is none.

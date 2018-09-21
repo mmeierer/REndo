@@ -9,8 +9,8 @@ check_err_msg <- function(err.msg){
 
 
 
-#' Only checks the basic structure of the formula object:
-#' Missing, NULL, class, all regressors present in data, single LHS, LHS and RHS not mixed
+# Only checks the basic structure of the formula object:
+# Missing, NULL, class, all regressors present in data, single LHS, LHS and RHS not mixed
 #' @importFrom methods is
 #' @importFrom stats formula terms
 #' @importFrom Formula is.Formula as.Formula
@@ -83,6 +83,7 @@ check_err_msg <- function(err.msg){
   return(err.msg)
 }
 
+#' @importFrom stats .MFclass
 .checkinputhelper_dataVSformula_basicstructure <- function(formula, data){
   # here, the basic structure of data and formula are guaranteed to be correct
   err.msg <- c()

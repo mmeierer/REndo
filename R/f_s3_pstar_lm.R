@@ -1,4 +1,4 @@
-#' @importFrom stats confint
+#' @importFrom stats confint confint.lm
 #' @export
 confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250L, ...){
 

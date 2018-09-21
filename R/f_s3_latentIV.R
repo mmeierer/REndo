@@ -43,7 +43,7 @@ coef.rendo.latentiv <- function(object,...){
 
 #' @export
 #' @importFrom stats case.names
-case.names.rendo.latentiv <- function(object){
+case.names.rendo.latentiv <- function(object, ...){
   return(names(residuals(object)))
 }
 

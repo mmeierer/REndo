@@ -35,9 +35,6 @@ checkinput_copulacorrection_formula <- function(formula){
   if(length(names.vars.discrete) == 0 & length(names.vars.continuous) ==0)
     return("Please indicate for every endogenous regressor in the second right-hand side if it is either continuous or discrete by using the respective specification.")
 
-  if(any(gsub(c(names.vars.discrete, names.vars.continuous), pattern = " ", replacement = "") == "")) # Or is this simply NULL?
-    err.msg <- c(err.msg, "Please specify a regressor in each function in the second right-hand side of the formula.")
-
   # Process specials for checks
   F.terms.rhs2      <- terms(F.formula, rhs=2, lhs=0, specials = c("continuous", "discrete"))
   num.specials.rhs1 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=1, specials = c("continuous", "discrete")), "specials"), length))
