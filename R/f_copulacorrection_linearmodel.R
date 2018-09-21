@@ -5,11 +5,11 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
   if(verbose){
     message("Fitting linear model with additional PStar copula data for ", length(names.vars.continuous),
             " continuous and ", length(names.vars.discrete), " discrete endogenous regressors.")
-    # Warn if unnecessary parameters except for lm are given because user seemingly doesnt understand what he is doing
-    if(length(l.ellipsis)>0)
-      warning("Additional parameters given in the ... argument are ignored because they are not needed.",
-              call. = FALSE, immediate. = TRUE)
   }
+  # Warn if unnecessary parameters except for lm are given because user seemingly doesnt understand what he is doing
+  if(length(l.ellipsis)>0)
+    warning("Additional parameters given in the ... argument are ignored because they are not needed.",
+            call. = FALSE, immediate. = TRUE)
 
   # Generate PStar data ---------------------------------------------------------------------------------------
   l.pstar.data.continuous <- NULL #init so that they exists for cbind

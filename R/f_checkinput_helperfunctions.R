@@ -140,7 +140,7 @@ checkinputhelper_singlepositivewholenumeric <- function(num.param, parameter.nam
 
 
 
-checkinputhelper_startparams <- function(start.params, formula, forbidden.names){
+checkinputhelper_startparams <- function(start.params, F.formula, forbidden.names){
   err.msg <- c()
 
   # Do not check anything more as missing/NULL indicates that start.params should be generated with a linear model
@@ -160,7 +160,7 @@ checkinputhelper_startparams <- function(start.params, formula, forbidden.names)
     err.msg <- c(err.msg, "Please provide a named vector/list as \"start.params\".")
 
   # Required names are RHS1 + "(Intercept)" if the formula has one
-  f.rhs1 <- formula(as.Formula(formula), lhs=0, rhs=1)
+  f.rhs1 <- formula(F.formula, lhs=0, rhs=1)
   names.model <- all.vars(f.rhs1)
   if(attr(terms(f.rhs1), "intercept") == 1)
     names.model <- c(names.model, "(Intercept)")

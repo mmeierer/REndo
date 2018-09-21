@@ -42,9 +42,9 @@ test_that("start.params is not NA",{
   expect_error(latentIV(start.params = NA_real_,                               formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
 })
 
-test_that("start.params is NULL or missing but runs with warning", {
-  expect_warning(latentIV(start.params =     , formula = y ~ P, data = dataLatentIV), regexp = "No start parameters were given")
-  expect_warning(latentIV(start.params = NULL, formula = y ~ P, data = dataLatentIV), regexp = "No start parameters were given")
+test_that("start.params is NULL or missing but runs with message", {
+  expect_message(latentIV(start.params =     , formula = y ~ P, data = dataLatentIV), regexp = "No start parameters were given")
+  expect_message(latentIV(start.params = NULL, formula = y ~ P, data = dataLatentIV), regexp = "No start parameters were given")
 })
 
 test_that("start.params is named correctly", {

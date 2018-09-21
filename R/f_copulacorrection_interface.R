@@ -38,11 +38,12 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
                             l.ellipsis))
   }else{
     # All other cases use pstar data + lm
-    res <- copulaCorrection_linearmodel(F.formula = F.formula, data = data,
-                                        verbose=verbose,
-                                        cl=cl, # cl supplied to create return object
-                                        names.vars.continuous = names.vars.continuous,
-                                        names.vars.discrete   = names.vars.discrete)
+    res <- do.call(copulaCorrection_linearmodel,
+                   c(list(F.formula = F.formula, data = data,verbose=verbose,
+                          cl=cl, # cl supplied to create return object
+                          names.vars.continuous = names.vars.continuous,
+                          names.vars.discrete   = names.vars.discrete),
+                   l.ellipsis))
   }
 
   return(res)

@@ -97,32 +97,23 @@ checkinput_copulacorrection_dataVSformula <- function(data, formula){
   return(err.msg)
 }
 
+checkinput_copulacorrection_numboots <- function(num.boots){
+  err.msg <- checkinputhelper_singlepositivewholenumeric(num.param=num.boots,
+                                              parameter.name = "num.boots", min.num=2)
+  if(length(err.msg)>0)
+    return(err.msg)
 
-checkinput_copulacorrection_singlecontinuous <- function(l.ellipsis, F.formula){
-  # For the single continuous case, further arguments can be given in the ellipsis:
-  #   start.params and num.boots
-
-  if(length(l.ellipsis) == 0)
-    return(c())
-
-  err.msg <- c()
-
-  if("num.boots" %in% names(l.ellipsis)){
-    num.boots <- l.ellipsis[["num.boots"]]
-    err.msg <- c(err.msg, checkinputhelper_singlepositivewholenumeric(num.param=num.boots,
-                                                                      parameter.name = "num.boots", min.num=2))
-
-    if(num.boots < 10)
-      warning("It is recommended to run more than 10 bootstrappings.", call. = F, immediate. = T)
-  }
-
-  if("start.params" %in% names(l.ellipsis))
-    err.msg <-c(err.msg, checkinputhelper_startparams(forbidden.names=c("rho", "sigma"),
-                                                      start.params=l.ellipsis[["start.params"]], formula=F.formula))
-
-  str(err.msg)
-  return(err.msg)
+  if(num.boots < 10)
+    warning("It is recommended to run more than 10 bootstrappings.", call. = F, immediate. = T)
+  return(c())
 }
+
+
+checkinput_copulacorrection_startparams <- function(start.params, F.formula){
+  return(checkinputhelper_startparams(forbidden.names=c("rho", "sigma"),
+                                        start.params=start.params, F.formula=F.formula))
+}
+
 
 checkinput_copulacorrection_verbose <- function(verbose){
   err.msg <- c()

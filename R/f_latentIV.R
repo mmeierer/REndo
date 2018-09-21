@@ -38,8 +38,8 @@ latentIV <- function(formula, start.params=c(), data){
                       theta8 = 0.5)
 
     str.brakets <- paste0("(", paste(names(start.params), "=", round(start.params,3), collapse = ", ", sep=""), ")")
-    warning("No start parameters were given. The linear model ",deparse(formula(F.formula, lhs=1, rhs=1)),
-            " was fitted and start parameters c",str.brakets," are used.", call. = FALSE, immediate. = TRUE)
+    message("No start parameters were given. The linear model ",deparse(formula(F.formula, lhs=1, rhs=1)),
+            " was fitted and start parameters c",str.brakets," are used.")
 
   }else{
     # start.params provided which only contain params for dependent and independent vars
@@ -77,7 +77,8 @@ latentIV <- function(formula, start.params=c(), data){
   hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
   rownames(hessian) <- colnames(hessian) <- names(estimated.params)
   fct.se.warn.error <- function(e){
-                              warning("Hessian cannot be solved for the standard errors. All SEs set to NA.", call. = F)
+                              warning("Hessian cannot be solved for the standard errors. All SEs set to NA.",
+                                      call. = FALSE, immediate. = TRUE)
                               return(rep(NA_real_,length(estimated.params)))}
 
   param.se <- tryCatch(expr = sqrt(diag(solve(hessian))),

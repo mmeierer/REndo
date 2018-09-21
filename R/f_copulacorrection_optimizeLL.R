@@ -1,18 +1,21 @@
 copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, verbose,
                                         start.params=NULL, num.boots=10, cl, ...){
-
-  # Further checks required for the parameters in ... -------------------------------------------------
+  # Catch
   l.ellipsis <- list(...)
-  check_err_msg(checkinput_copulacorrection_singlecontinuous(l.ellipsis=l.ellipsis))
+  # Further checks required for the parameters in ... -------------------------------------------------
+  check_err_msg(checkinput_copulacorrection_numboots(num.boots=num.boots))
+  check_err_msg(checkinput_copulacorrection_startparams(start.params=start.params, F.formula=F.formula))
 
   # Tell what is done ---------------------------------------------------------------------------------
   if(verbose){
     # Tell what is done
     message("Optimizing LL for the single continuous endogenous regressor ",name.var.continuous,".")
-    if(any(!(names(l.ellipsis) %in% c("start.params", "num.boots"))))
-      warning("Additional parameters besides \'start.params\' and \'num.boots\' given in the ... argument are ignored.",
-              call. = FALSE, immediate. = TRUE)
   }
+
+  # Warn because user does not understand what he is doing
+  if(length(l.ellipsis)>0)
+    warning("Additional parameters besides \'start.params\' and \'num.boots\' given in the ... argument are ignored.",
+            call. = FALSE, immediate. = TRUE)
 
   # Read out needed data ------------------------------------------------------------------------------
   # Using model.part() directly does not work if there are transformations in the DV

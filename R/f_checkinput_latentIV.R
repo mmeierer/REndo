@@ -26,6 +26,6 @@ checkinput_latentIV_dataVSformula <- function(data, formula){
 
 
 checkinput_latentIV_startparams <- function(start.params, formula){
-  return(checkinputhelper_startparams(start.params=start.params, formula=formula,
+  return(checkinputhelper_startparams(start.params=start.params, F.formula=as.Formula(formula),
                                       forbidden.names=c("pi1", "pi2", "theta5", "theta6", "theta7", "theta8")))
 }
