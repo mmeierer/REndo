@@ -38,16 +38,10 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
 
   # Run linear model ------------------------------------------------------------------------------------------
   df.data.copula <- cbind(data, df.data.pstar)
-  lm.res <- lm(formula = F.lm, data = df.data.copula)
+  res.lm <- lm(formula = F.lm, data = df.data.copula)
 
   # Adapt return -----------------------------------------------------------------------------------------------
-  class(lm.res)                <- c("rendo.pstar.lm",class(lm.res))
-  lm.res$formula               <- F.formula
-  lm.res$call                  <- cl
-  lm.res$original.data         <- data
-  # add character(0) to surely create the entry in case that the names are NULL
-  lm.res$names.vars.continuous <- c(character(0), names.vars.continuous)
-  lm.res$names.vars.discrete   <- c(character(0), names.vars.discrete)
-
-  return(lm.res)
+  return(new_rendo_pstar_lm(res.lm=res.lm, F.formula=F.formula, cl=cl, data=data,
+                            names.vars.continuous = names.vars.continuous,
+                            names.vars.discrete   = names.vars.discrete))
 }
