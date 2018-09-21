@@ -61,36 +61,6 @@ check_err_msg <- function(err.msg){
 }
 
 #' @importFrom Formula as.Formula
-checkinputhelper_formula_2RHS <- function(formula, data){
-  err.msg <- .checkinputhelper_formula_basicstructure(formula = formula, data=data)
-  if(length(err.msg)>0)
-    return(err.msg)
-  F.formula <- as.Formula(formula)
-
-  # Check that formula has 2 RHS
-  if(length(F.formula)[2] < 2)
-    err.msg <- c(err.msg, "Please indicate the endogenous regressors in the formula by separating it with a single vertical bar (|). (ie: y~X+P|P)")
-  if(length(F.formula)[2] > 2)
-    err.msg <- c(err.msg, "Please indicate only the endogenous regressors in the formula by separating it with a single vertical bar (|). Multiple endogenous regressors can be specified additively. (ie: y~X1+P1+P2|P1+P2)")
-  # Cannot read out names if not 2 RHS are available
-  if(length(err.msg)>0)
-    return(err.msg)
-
-  # Read out names as is
-  name.lhs       <- all.vars(formula(F.formula, lhs=1, rhs=0))
-  name.rhs.model <- all.vars(formula(F.formula, lhs=0, rhs=1))
-  name.rhs.endo  <- all.vars(formula(F.formula, lhs=0, rhs=2))
-
-  # Not all endogenous are in main model regressors
-  if(!all(name.rhs.endo %in% name.rhs.model))
-    err.msg <- c(err.msg, "Please also specify all endogenous regressors also in the main model.")
-  if(all(name.rhs.model %in% name.rhs.endo))
-    err.msg <- c(err.msg, "Not all regressors can be endogenous.") # **?? really?
-
-  return(err.msg)
-}
-
-#' @importFrom Formula as.Formula
 checkinputhelper_formula_1RHS <- function(formula, data){
   err.msg <- .checkinputhelper_formula_basicstructure(formula=formula, data=data)
   if(length(err.msg)>0)
