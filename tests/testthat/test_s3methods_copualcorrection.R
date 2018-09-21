@@ -5,6 +5,7 @@
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataCopDis")
 data("dataCopC1")
+data("dataCopDisCont")
 
 # Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - S3 Methods / confint")
@@ -86,6 +87,12 @@ test_that("num.simulations has integer default value", {
   expect_is(eval(formals(REndo2:::confint.rendo.pstar.lm)[["num.simulations"]]), "integer")
 })
 
+
+test_that("Not discrete only returns normal lm confint", {
+  expect_silent(res.dis.cont <- copulaCorrection(formula=y~X1+X2+P1+P2|discrete(P1)+continuous(P2),
+                                                 data=dataCopDisCont, verbose = FALSE))
+  expect_identical(confint(res.dis.cont), confint.lm(res.dis.cont))
+})
 
 
 # C1 optim LL case --------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -236,6 +236,11 @@ test.positive.numeric.whole.number(function.to.test = copulaCorrection, paramete
 # Start params required for silence
 # additional.args =list(verbose=F, start.params = c("(Intercept)"=1.983, X1=1.507, X2=-3.014, P1=-0.891)
 
+test_that("Warning if num.boots < 10", {
+  # only for continuous 1
+  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopC1),all=FALSE, regexp = "It is recommended to run more than")
+})
+
 # Warning if num.boots given for any other case
 test_that("Warning if unneeded num.boots given", {
   # >1 continuous
