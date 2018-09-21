@@ -12,7 +12,7 @@ latentIV <- function(formula, start.params=c(), data){
   check_err_msg(checkinput_latentIV_startparams(start.params=start.params, formula=formula))
 
   # Extract data ------------------------------------------------------------
-  F.formula  <- as.Formula(formula)
+  F.formula          <- as.Formula(formula)
   mf.data.y          <- model.frame(formula = F.formula,data = data, lhs=1, rhs=0) # separately needed for names of fitted values
   vec.data.y         <- model.response(mf.data.y)
   vec.data.endo      <- model.matrix(object = update(F.formula, .~.-1), data = data, lhs=0, rhs=1) # model.frame(F.formula, data = data, lhs=0, rhs=1)[, 1]
@@ -64,7 +64,7 @@ latentIV <- function(formula, start.params=c(), data){
                        method = "L-BFGS-B",
                        lower = c(rep(-Inf,length(start.params)-1), 0),
                        upper = c(rep( Inf,length(start.params)-1), 1),
-                       hessian = T, control = list(trace=0))
+                       hessian = TRUE, control = list(trace=0))
 
 
   # Calculate Returns ------------------------------------------------------------------
@@ -76,14 +76,14 @@ latentIV <- function(formula, start.params=c(), data){
   # Hessian
   hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
   rownames(hessian) <- colnames(hessian) <- names(estimated.params)
-  fct.hessian.warn.error <- function(e){
+  fct.se.warn.error <- function(e){
                               warning("Hessian cannot be solved for the standard errors. All SEs set to NA.", call. = F)
-                              return(matrix(NA,ncol=ncol(hessian), nrow=nrow(hessian)))}
+                              return(rep(NA_real_,length(estimated.params)))}
 
   param.se <- tryCatch(expr = sqrt(diag(solve(hessian))),
-                       # Return same sized NAs matrix if failed to solve so can still read-out results
-                       warning = fct.hessian.warn.error,
-                       error   = fct.hessian.warn.error)
+                       # Return same NAs vector if failed to solve so can still read-out results
+                       warning = fct.se.warn.error,
+                       error   = fct.se.warn.error)
   names(param.se)         <- names(estimated.params)
 
   # Fitted and residuals
@@ -98,29 +98,26 @@ latentIV <- function(formula, start.params=c(), data){
   residuals        <- as.vector(vec.data.y - fitted)
   names(residuals) <- names(vec.data.y)
 
-
-  # Put together returns ------------------------------------------------------------------
-  res <- structure(class = "rendo.latentiv",
-                   list(call           = cl,
-                        formula        = formula,
-                        initial.values = start.params,
-                        coefficients   = estimated.params[names.original.main.coefs],
-                        group.means    = estimated.params[c("pi1", "pi2")],
-                        prob.group1    = estimated.params[["theta8"]],
-                        coefficients.se= param.se[names.original.main.coefs],
-                        group.means.se = param.se[c("pi1", "pi2")],
-                        prob.group1.se = param.se[["theta8"]],
-                        log.likelihood = res.optimx$value,
-                        conv.code      = res.optimx$convcode,
-                        res.optimx     = res.optimx,
-                        hessian        = hessian,
-                        fitted         = fitted,
-                        residuals      = residuals))
-
-  res$vcov.error <- matrix(c(estimated.params["theta5"]^2,
+  vcov.error      <- matrix(c(estimated.params["theta5"]^2,
                              estimated.params["theta5"]*estimated.params["theta6"],
                              estimated.params["theta5"]*estimated.params["theta6"],
                              estimated.params["theta6"]^2+estimated.params["theta7"]^2),
                            nrow=2, ncol=2)
+
+
+  # Put together returns ------------------------------------------------------------------
+  res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, start.params=start.params,
+                            estim.params=estimated.params, estim.params.se = param.se,
+                            names.main.coefs=names.original.main.coefs,
+                            res.optimx=res.optimx, log.likelihood=res.optimx$value,
+                            hessian=hessian, fitted.values=fitted,
+                            residuals=residuals, vcov.error=vcov.error)
+
+                   # list(coefficients   = estimated.params[names.original.main.coefs],
+                   #      group.means    = estimated.params[c("pi1", "pi2")],
+                   #      prob.group1    = estimated.params[["theta8"]],
+                   #      coefficients.se= param.se[names.original.main.coefs],
+                   #      group.means.se = param.se[c("pi1", "pi2")],
+                   #      prob.group1.se = param.se[["theta8"]]))
   return(res)
 }

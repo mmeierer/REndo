@@ -15,9 +15,10 @@ test_that("Hessian cannot be solved - produce warning + cannot do vcov", {
   # As of print the hessian contains no NAs but simply cannot be solved
   set.seed(0xcaffee)
   expect_warning(res.lat.warn <- latentIV(formula = y ~ K-1, data = cbind(dataLatentIV, K=rnorm(nrow(dataLatentIV))), start.params = c(K=1.23)),
-                 regexp = "cannot be solved for the")
-  # vcov cannot be calculated
-  expect_error(vcov(res.lat.warn), regexp = "non-finite values")
+                 regexp = "cannot be solved for the standard errors. All SEs set to NA.")
+  # can run summary just fine but SE are not available -> no zscore/pvals
+  expect_silent(sum.coef <- coef(summary(res.lat.warn)))
+  expect_true(all(is.na(sum.coef[, c(2,3,4)]))) # SE/zscore/pval all NA for all coefs
 })
 
 # start.params ---------------------------------------------------------------------------------------------------------------------------------------------------------------------

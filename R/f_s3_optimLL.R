@@ -63,7 +63,7 @@ print.rendo.optim.LL <- function(x, digits = max(3L, getOption("digits") - 3L), 
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 
   cat("Coefficients:\n")
-  print.default(format(coef(x), digits = digits), print.gap = 2L,
+  print.default(format(coef(x)[x$names.main.coefs], digits = digits), print.gap = 2L,
                 quote = FALSE)
 
   invisible(x)
@@ -74,21 +74,20 @@ print.rendo.optim.LL <- function(x, digits = max(3L, getOption("digits") - 3L), 
 #' @export
 summary.rendo.optim.LL <- function(object, ...){
   # Copy from input
-  res <- object[c("call","start.params", "log.likelihood")]
+  res <- object[c("call","start.params", "log.likelihood", "estim.params.se")]
 
   # Coefficient table --------------------------------------------------------------------
-  all.est.params <- coef(object)
+  all.est.params <- object$estim.params # get all coefs
   # z-score
-  z.val <- all.est.params/object$estim.params.sd  # z-score endogenous variable
+  z.val <- all.est.params/object$estim.params.se  # z-score endogenous variable
   # p-values
   # p.val <- 2*pt(q=(-abs(z.val)), df=NROW(object$regressors)-1)
   p.val <- 2*pt(q=(-abs(z.val)), df=NROW(fitted(object))-1)
 
   res$coefficients <- cbind(all.est.params,
-                            object$estim.params.sd,
+                            object$estim.params.se,
                             z.val,
                             p.val)
-
   rownames(res$coefficients) <- names(all.est.params)
   colnames(res$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
 
@@ -136,6 +135,9 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
   cat("Coefficients:\n")
   printCoefmat(x$coefficients, digits = digits, na.print = "NA", has.Pvalue = TRUE,
                signif.stars = signif.stars,...)
+  if(anyNA(x$estim.params.se))
+    cat("\nFor some parameters statistics could not be calculated because the SE is unavailable.\n")
+
   cat("\n")
 
   cat("Initial parameter values:", paste(names(x$start.params), sep = "=",round(x$start.params,3)),"\n")
