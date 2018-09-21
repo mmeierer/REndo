@@ -89,7 +89,8 @@ checkinput_copulacorrection_data <- function(data){
 
 #' @importFrom Formula as.Formula
 checkinput_copulacorrection_dataVSformula <- function(data, formula){
-  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=formula, data=data)
+  F.formula <- as.Formula(formula)
+  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data)
 
   err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data, forbidden.colname="PStar"))
 
