@@ -6,8 +6,9 @@ latentIV <- function(formula, start.params=c(), data){
   cl <- match.call()
 
   # Input checks ------------------------------------------------------------
-  check_err_msg(checkinput_latentIV_data(formula=formula, data=data))
-  check_err_msg(checkinput_latentIV_formula(formula=formula, data=data))
+  check_err_msg(checkinput_latentIV_data(data=data))
+  check_err_msg(checkinput_latentIV_formula(formula=formula))
+  check_err_msg(checkinput_latentIV_dataVSformula(formula=formula, data=data))
   check_err_msg(checkinput_latentIV_startparams(start.params=start.params, formula=formula))
 
   # Extract data ------------------------------------------------------------
@@ -55,7 +56,7 @@ latentIV <- function(formula, start.params=c(), data){
 
 
 
-  # Optimize LL -------------------------------------------------------------
+  # Optimize LL ------------------------------------------------------------------------
   # Bounds are defined in LL by returning Inf for theta8 outside [0,1]
   # **try catch
   res.optimx <- optimx(par = start.params, fn=latentIV_LL, m.data.mvnorm = m.data.mvnorm,

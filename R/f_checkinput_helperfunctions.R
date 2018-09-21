@@ -14,10 +14,8 @@ check_err_msg <- function(err.msg){
 #' @importFrom methods is
 #' @importFrom stats formula terms
 #' @importFrom Formula is.Formula as.Formula
-.checkinputhelper_formula_basicstructure <- function(formula){ #, data){
+.checkinputhelper_formula_basicstructure <- function(formula){
   err.msg <- c()
-  # if(missing(data) || is.null(data))
-  #   return("Please provide a valid data object as \'data\' parameter.")
 
   if(missing(formula))
     return("Please provide a valid formula object as \'formula\' parameter.")
@@ -60,30 +58,10 @@ check_err_msg <- function(err.msg){
   return(err.msg)
 }
 
-#' @importFrom Formula as.Formula
-checkinputhelper_formula_1RHS <- function(formula, data){
-  err.msg <- .checkinputhelper_formula_basicstructure(formula=formula, data=data)
-  if(length(err.msg)>0)
-    return(err.msg)
-
-  F.formula <- as.Formula(formula)
-  # Check that formula has only 1 RHS
-  if(length(F.formula)[2] !=1)
-    err.msg <- c(err.msg, "Please only provide only a single right-hand-side in the formula and do not use bars (|).")
 
 
-  return(err.msg)
-}
-
-
-
-
-
-checkinputhelper_data_basicstructure <- function(formula, data){
+.checkinputhelper_data_basicstructure <- function(data){
   err.msg <- c()
-
-  if(missing(formula) || is.null(formula) || !inherits(formula, "formula"))
-    return("Please provide a valid formula as \'formula\' parameter.")
 
   if(missing(data))
     return("Please provide a data parameter.")
@@ -100,16 +78,26 @@ checkinputhelper_data_basicstructure <- function(formula, data){
   if(nrow(data) < 1)
     err.msg <- c(err.msg, "Please provide a data object containing observations.")
 
-  # Check
+  # Checking if all columns as given in the formula are present in the dataVSformula methods
+
+  return(err.msg)
+}
+
+.checkinputhelper_dataVSformula_basicstructure <- function(formula, data){
+  # here, the basic structure of data and formula are guaranteed to be correct
+  err.msg <- c()
+  F.formula <- as.Formula(formula)
   # Do not need terms object to expand . (dot) because not yet allowed in formula input.
-  # all.vars only returns only names of 1st RHS but 2nd RHS are all in 1stRHS
+
+  # Check that every regressor is in the data
+  if(!all(all.vars(F.formula) %in% colnames(data)))
+    err.msg <- c(err.msg, "Please provide a data object that contains all the formula's variables.")
+
   # Only allow numeric (real & integer) values in the data
   data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")
-  data.types <- data.types[all.vars(formula)]
+  data.types <- data.types[all.vars(F.formula)]
   if(any(!(data.types %in% "numeric")))
-    err.msg <- c(err.msg, "For all regressors, only numeric data is currently supported.")
-
-  # Checking if all columns as given in the formula are present is done in the formula check
+    err.msg <- c(err.msg, "Please only provide numeric data for all regressors.")
 
   return(err.msg)
 }

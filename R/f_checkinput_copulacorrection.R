@@ -84,41 +84,12 @@ checkinput_copulacorrection_formula <- function(formula){
 }
 
 checkinput_copulacorrection_data <- function(data){
-  err.msg <- c()
-  if(missing(data))
-  return("Please provide a data parameter.")
-
-  if(is.null(data))
-    return("Please provide a data parameter.")
-
-  # Check right data type
-  if(!is.data.frame(data))
-    return("Please provide the data as a data.frame.")
-
-  if(ncol(data) < 1)
-    err.msg <- c(err.msg, "Please provide a data object containing columns.")
-  if(nrow(data) < 1)
-    err.msg <- c(err.msg, "Please provide a data object containing observations.")
-
-  return(err.msg)
+  return(.checkinputhelper_data_basicstructure(data=data))
 }
 
 #' @importFrom Formula as.Formula
 checkinput_copulacorrection_dataVSformula <- function(data, formula){
-  # here, the basic structure of data and formula are guaranteed to be correct
-  err.msg <- c()
-  F.formula <- as.Formula(formula)
-  # Do not need terms object to expand . (dot) because not yet allowed in formula input.
-
-  # Check that every regressor is in the data
-  if(!all(all.vars(F.formula) %in% colnames(data)))
-    err.msg <- c(err.msg, "Please provide a data object that contains all the formula's variables.")
-
-  # Only allow numeric (real & integer) values in the data
-  data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")
-  data.types <- data.types[all.vars(F.formula)]
-  if(any(!(data.types %in% "numeric")))
-    err.msg <- c(err.msg, "Please only provide numeric data for all regressors.")
+  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=formula, data=data)
 
   err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data, forbidden.colname="PStar"))
 

@@ -69,16 +69,9 @@ test.formula.latentIV <- function(dataLatentIV){
     expect_false(any(names(coef(res.no.intercept)) == "(Intercept)"))
   })
 
-
-  # test_that("Fail if formula variables are not in data", {
-  #   f.n <- all.vars(correct.formula)
-  #   # create df with columns named after formula vars
-  #   df.as.formula <- as.data.frame(matrix(seq(length(f.n)*10), ncol = length(f.n)))
-  #   colnames(df.as.formula) <- f.n
-  #
-  #   # Leave out 1 column
-  #   for(i in seq_along(f.n))
-  #     expect_error(latentIV(formula = correct.formula, data = df.as.formula[,-i]), regexp = "The above errors were encountered!")
-  # })
-
+  test_that("Fail if formula variables are not in data", {
+    # Fail if any regressors not in data (RHS1, RHS2, LHS1)
+    expect_error(latentIV(formula= y ~ P ,data=data.frame(y=1:10)), regexp = "The above errors were encountered!")
+    expect_error(latentIV(formula= y ~ P ,data=data.frame(P=1:10)), regexp = "The above errors were encountered!")
+  })
 }
