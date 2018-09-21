@@ -63,7 +63,7 @@ hetErrorsIV <- function(formula, data){
   # Return ------------------------------------------------------------------------------------------
   res <- structure(class="rendo.heterrorsiv",
                    list(call          = cl,
-                        formula       = formula,
+                        formula       = F.formula,
                         coefficients  = coef(res.ivreg),
                         res.ivreg     = res.ivreg))
                         # jtest         = as.matrix(unclass(l.res$j.test[[2]])),

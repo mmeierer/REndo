@@ -1,3 +1,5 @@
+#' @importFrom Formula as.Formula
+#' @importFrom stats lm coef model.frame update
 copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous, names.vars.discrete,
                                          verbose, cl, ...){
   l.ellipsis <- list(...)

@@ -1,3 +1,7 @@
+#' @importFrom optimx optimx
+#' @importFrom stats lm coef confint sd model.matrix model.frame
+#' @importFrom Formula as.Formula model.part
+#' @importFrom utils txtProgressBar setTxtProgressBar
 copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, verbose,
                                         start.params=NULL, num.boots=10, cl, ...){
   # Catch

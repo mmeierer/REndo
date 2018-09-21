@@ -46,7 +46,7 @@
     expect_type(res.form, "language")
     expect_s3_class(res.form, "formula")
     expect_s3_class(res.form, "Formula")
-    expect_equal(res.form, as.Formula(input.form))
+    expect_equal(res.form, Formula::as.Formula(input.form))
     res.attr <- attributes(res.form)
     expect_named(res.attr, c("class", ".Environment", "lhs", "rhs"))
     expect_equal(res.attr$.Environment, environment(input.form)) # not 100% sure about this one

@@ -4,6 +4,8 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
   .test.s3methods.basic.structure(res.model=res.model, input.form=input.form,
                                   function.std.data=function.std.data, full.coefs=full.coefs)
 
+  # These are self-written
+
   test_that("logLik", {
     expect_silent(res.loglik <- logLik(res.model))
     expect_s3_class(res.loglik, "logLik")

@@ -1,5 +1,6 @@
 library(testthat)
 library(REndo2)
+library(Formula)
 
 # source("/Users/patrik/StudentAssi/REndo/REndo2/tests/testthat/helper_test_formula_singleendo.R")
 # source("/Users/patrik/StudentAssi/REndo/REndo2/tests/testthat/helper_test_formula_multiendo.R")
