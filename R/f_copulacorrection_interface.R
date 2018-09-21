@@ -13,7 +13,6 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   check_err_msg(checkinput_copulacorrection_verbose(verbose=verbose))
 
 
-
   # Read out specials ------------------------------------------------------------------------------------------
   F.formula <- as.Formula(formula)
   names.vars.continuous <- formula_readout_special(F.formula = F.formula, name.special = "continuous", from.rhs=2)

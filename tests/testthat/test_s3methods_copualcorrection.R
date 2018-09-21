@@ -3,8 +3,8 @@
 # The tests are only required for the optim LL case and the discrete only case
 
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-data("dataCopC1")
 data("dataCopDis")
+data("dataCopC1")
 
 # Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - S3 Methods / confint")
@@ -86,3 +86,13 @@ test_that("num.simulations has integer default value", {
   expect_is(eval(formals(REndo2:::confint.rendo.pstar.lm)[["num.simulations"]]), "integer")
 })
 
+
+
+# C1 optim LL case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# Test all S3 methods
+c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
+expect_silent(res.c1 <- copulaCorrection(formula = c1.input.form,num.boots=2, data = dataCopC1, verbose=FALSE))
+
+test.s3methods.rendooptimLL(res.model=res.c1, input.form=c1.input.form, function.std.data=dataCopC1,
+                            req.df=7,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))

@@ -2,11 +2,12 @@
 % Please edit documentation in R/f_s3_optimLL.R
 \name{print.summary.rendo.optim.LL}
 \alias{print.summary.rendo.optim.LL}
-\title{Print output from summary function on copulaCorrectionContinuous1 output}
+\title{Print output from summary function on optim LL output}
 \usage{
-\method{print}{summary.rendo.optim.LL}(x, digits = 5,
+\method{print}{summary.rendo.optim.LL}(x, digits = max(3L,
+  getOption("digits") - 3L),
   signif.stars = getOption("show.signif.stars"), ...)
 }
 \description{
-Print output from summary function on copulaCorrectionContinuous1 output
+Print output from summary function on optim LL output
 }

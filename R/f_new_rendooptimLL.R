@@ -1,4 +1,4 @@
-# ** is vcov the same as vcov.error???
+#' @importFrom Formula as.Formula
 new_rendo_optim_LL <- function(call, F.formula, start.params, estim.params, estim.params.sd, names.main.coefs,
                                res.optimx, log.likelihood, hessian,
                                fitted.values, residuals, vcov.error) {
@@ -6,7 +6,7 @@ new_rendo_optim_LL <- function(call, F.formula, start.params, estim.params, esti
   return(structure(
             class = "rendo.optim.LL",
             list(call = call,
-                 F.formula = F.formula,
+                 formula = as.Formula(F.formula), #to be sure its a Formula
                  start.params = start.params,
                  estim.params = estim.params,
                  estim.params.sd = estim.params.sd,

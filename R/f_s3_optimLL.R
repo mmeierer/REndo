@@ -74,7 +74,7 @@ print.rendo.optim.LL <- function(x, digits = max(3L, getOption("digits") - 3L), 
 #' @export
 summary.rendo.optim.LL <- function(object, ...){
   # Copy from input
-  res <- object[c("call","start.params", "estim.params", "log.likelihood")]
+  res <- object[c("call","start.params", "log.likelihood")]
 
   # Coefficient table --------------------------------------------------------------------
   all.est.params <- coef(object)
@@ -92,6 +92,13 @@ summary.rendo.optim.LL <- function(object, ...){
   rownames(res$coefficients) <- names(all.est.params)
   colnames(res$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
 
+  # Return object ------------------------------------------------------------------------
+  # return NA_ placeholder if cannot calculate vcov
+  res$vcov <- tryCatch(vcov(object), error=function(e){
+                                      h <- object$hessian
+                                      h[,] <- NA_real_
+                                      return(h)})
+
   res$AIC  <- AIC(object)
   res$BIC  <- BIC(object)
   res$conv.code <- object$res.optimx$convcode
@@ -104,14 +111,21 @@ summary.rendo.optim.LL <- function(object, ...){
 
 
 
-#' Read coefficients from summary function on copulaCorrectionContinuous1 output
+#' Read coefficients from summary function on optim LL output
 #' @export
 coef.summary.rendo.optim.LL <- function(object, ...){
   return(object$coefficients)
 }
 
+#' Read coefficients from summary function on optim LL output
+#' @export
+vcov.summary.rendo.optim.LL <- function(object, ...){
+  return(object$vcov)
+}
 
-#' Print output from summary function on copulaCorrectionContinuous1 output
+
+
+#' Print output from summary function on optim LL output
 #' @importFrom stats printCoefmat
 #' @export
 print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3L),
