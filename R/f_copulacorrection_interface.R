@@ -15,8 +15,10 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
 
   # Read out specials ------------------------------------------------------------------------------------------
   F.formula <- as.Formula(formula)
-  names.vars.continuous <- formula_readout_special(F.formula = F.formula, name.special = "continuous", from.rhs=2)
-  names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",   from.rhs=2)
+  names.vars.continuous <- formula_readout_special(F.formula = F.formula, name.special = "continuous",
+                                                   from.rhs=2, params.as.chars.only=TRUE)
+  names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",
+                                                   from.rhs=2, params.as.chars.only=TRUE)
 
   # Warn if the data is binomial=only has to values=dummy
   checkinput_copulacorrection_warnbinomialendodata(data=data, names.vars.continuous=names.vars.continuous,

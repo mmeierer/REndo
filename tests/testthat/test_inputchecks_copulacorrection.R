@@ -9,6 +9,8 @@ data("dataCopDisCont")
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - Parameter formula")
 
+# *** TODO: Test if NA/NULL/MISSING/not formula....
+
 test_that("Fail if bad 2nd RHS", {
   # Fail for missing 2nd RHS
   expect_error(copulaCorrection(formula= y ~ X1 + X2 + P1+P2, data=dataCopC2), regexp = "The above errors were encountered!")

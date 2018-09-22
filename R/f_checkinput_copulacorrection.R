@@ -15,21 +15,22 @@ checkinput_copulacorrection_formula <- function(formula){
   if(length(err.msg)>0)
     return(err.msg)
 
-  # Check that every RHS2 is in RHs
+  # Check that every RHS2 is in RHS1
   names.rhs1 <- all.vars(formula(F.formula, rhs=1, lhs=0))
   names.rhs2 <- all.vars(formula(F.formula, rhs=2, lhs=0))
+  # RHS2 not in RHS1
+  if(!all(names.rhs2 %in% names.rhs1))
+    err.msg <- c(err.msg, "Please specify every endogenous regressors also in the first right-hand side (main model) of the formula.")
 
   # Read out the special functions
-  names.vars.continuous <- formula_readout_special(F.formula = F.formula, name.special = "continuous", from.rhs=2)
-  names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",   from.rhs=2)
+  names.vars.continuous <- formula_readout_special(F.formula = F.formula, name.special = "continuous",
+                                                   from.rhs=2, params.as.chars.only=TRUE)
+  names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",
+                                                   from.rhs=2, params.as.chars.only=TRUE)
 
   # Same regressor cannot be continuous and discrete at the same time
   if(any(names.vars.continuous %in% names.vars.discrete))
     err.msg <- c(err.msg, "Please specify each regressors only as either continuous or discrete but not both at the same time.")
-
-  # RHS2 not in RHS1
-  if(!all(names.rhs2 %in% names.rhs1))
-    err.msg <- c(err.msg, "Please specify every endogenous regressors also in the first right-hand side (main model) of the formula.")
 
   # Check that any given
   if(length(names.vars.discrete) == 0 & length(names.vars.continuous) ==0)

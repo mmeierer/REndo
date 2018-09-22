@@ -1,5 +1,30 @@
+# # remove as.character() from formula_readout_special and can reuse
+# IIV <- function(...){ return(match.call()[-1])}
+# as.list()
+# l.args <- lapply(as.list(IIV(g=x2, iiv=gy, X1, X2, P)), as.character)
+#
+#
+#
+# exo.names <- l.args[which(names(l.args) == "")]
+# g <- l.args[["g"]]
+# iiv <- l.args[["iiv"]]
+
+
+
+
+# params.as.chars.only=T returns a vector of chars with the parameter names in it.
+#                         Used to readout given param name
+#                         Example:  continuous(X1, X2)
+#                                   => c("X1", "X2")
+# params.as.chars.only=F returns a list of list. The inner list is named after the arg
+#                         and the element contains the actual input as char. Elements in sub-lists have
+#                         to be named so that they do not get matched to unintended args because of their
+#                         position (ie X2 to g)
+#                         Example:  IIV(g=x2, iiv=gp, X1, X2) + IIV()
+#                                   => list(list(g="x2",iiv="gp", X1="X1",X2="X2"), list(..),..)
 #' @importFrom stats terms
-formula_readout_special <- function(F.formula, name.special, from.rhs=2){
+formula_readout_special <- function(F.formula, name.special, from.rhs, params.as.chars.only = TRUE){
+
   F.terms   <- terms(formula(F.formula, lhs=0, rhs=from.rhs), specials = name.special)
 
   # Read out positions in formula
@@ -18,14 +43,30 @@ formula_readout_special <- function(F.formula, name.special, from.rhs=2){
   #   create function that is exectuted and simply returns the specified inputs as strings
 
   # create new function named after special which simply returns the input given
-  assign(x = paste0("fct.", name.special), value = function(...){ return(as.character(match.call()[-1]))})
+  assign(x = paste0("fct.", name.special), value = function(...){ return(match.call()[-1])})
 
   # Execute this function for each special by adding "fct." at the beginning and evaluating
   names.special  <- lapply(paste0("fct.",lang.special), FUN=function(str){
     eval(expr=parse(text=str))})
 
-  names.special        <- unique(unlist(names.special))
-  names(names.special) <- names.special
+  if(params.as.chars.only){
+    # Return vector with (unique) parameter names only
+    names.special <- lapply(names.special, function(call){as.character(as.list(call))})
+    names.special        <- unique(unlist(names.special))
+    names(names.special) <- names.special
+  }else{
+    # return list with names=args, entry = arg data
+    names.special <- lapply(names.special, as.list)
+    # Make elements (=arg name) in each sub-list chars.
+    names.special <- lapply(names.special, lapply, as.character)
+    # Name unnamed elements (=args) in sublists after the elements
+    names.special <- lapply(names.special, function(subl){
+                                            unnamed.ind <- which(names(subl)=="")
+                                            names(subl)[unnamed.ind] <- subl[unnamed.ind]
+                                            return(subl)})
+    # *** TODO: unique per list or not?? may mixup entries if regressors are named same as g/iiv
+  }
+
   return(names.special)
 }
 
