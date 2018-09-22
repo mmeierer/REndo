@@ -39,6 +39,32 @@ checkinput_highermomentsiv_formula <- function(formula=formula){
   if(all(names.rhs1 %in% names.rhs2))
     err.msg <- c(err.msg, "Please do not specify all regressors as endogenous.")
 
+
+
+  # Process special for checks
+  F.terms.rhs3      <- terms(F.formula, rhs=3, lhs=0, specials = "IIV")
+  num.specials.rhs1 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=1, specials = "IIV"), "specials"), length))
+  num.specials.rhs2 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=2, specials = "IIV"), "specials"), length))
+  num.specials.rhs3 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=3, specials = "IIV"), "specials"), length))
+  num.specials.lhs  <- sum(sapply(attr(terms(F.formula, lhs=1, rhs=0, specials = "IIV"), "specials"), length))
+
+  # Check that no other/misspelled/not indicated function
+  if( length(labels(F.terms.rhs3)) != num.specials.rhs3)
+    err.msg <- c(err.msg, "Please indicate how the IIV shall be constructed in the 3rd right-hand side of the formula")
+
+  # Check that there are no special functions in the first & second RHS
+  if(num.specials.rhs1 > 0)
+    err.msg <- c(err.msg, "Please specify no endogenous regressor in the 1st righ-hand side of the formula.")
+  if(num.specials.rhs2 > 0)
+    err.msg <- c(err.msg, "Please specify no endogenous regressor in the 2nd righ-hand side of the formula.")
+  if(num.specials.lhs > 0)
+    err.msg <- c(err.msg, "Please specify no endogenous regressor in the left-hand side of the formula.")
+
+  # Check if any special is empty or there is none
+  if(any(labels(F.terms.rhs3) == "IIV()") | num.specials.rhs3 == 0)
+    err.msg <- c(err.msg, "Please specify a variable in every function call on the third right-hand side of the formula.")
+
+
   # Read out the special functions
   # Check if any special is empty
 

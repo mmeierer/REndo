@@ -21,7 +21,7 @@ higherMomentsIV <- function(formula, data){
 
   # # Add data and formula to each argument
   # l.IIV.args <- lapply(l.IIV.args, modifyList, val=list(data=data, F.formula = F.formula))
-  str(l.IIV.args)
+  # str(l.IIV.args)
 
   # Execute the IIV function and pass in the read out arguments
   l.data.IIVs <- lapply(l.IIV.args, function(iiv.args){

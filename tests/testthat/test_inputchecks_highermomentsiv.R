@@ -60,7 +60,7 @@ test_that("Fail if no special function", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|x2+gp+X1, data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|X1+X2), regexp = "The above errors were encountered!")
   # Only for some
-  expect_error(higherMomentsIV(y~X1+X2+P|P|+IIV(g=x2, iiv=gp, X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV+IIV(g=x2, iiv=gp, X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
 
@@ -81,9 +81,9 @@ test_that("Fail if invalid g in IIV", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=gy, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
 
   # and warning for the others: "yp","p2","y2") + g
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=yp, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=p2, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=y2, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=yp, X1), data=dataHigherMoments), regexp = "ignored", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=p2, X1), data=dataHigherMoments), regexp = "ignored", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=y2, X1), data=dataHigherMoments), regexp = "ignored", all = TRUE)
 })
 
 test_that("Fail if invalid iiv in IIV", {
@@ -92,8 +92,6 @@ test_that("Fail if invalid iiv in IIV", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=gpp, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=p, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=y3, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
-  # quoted iiv
-  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv="gp", X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if multiple iiv in IIV", {
