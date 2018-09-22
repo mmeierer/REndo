@@ -2,12 +2,12 @@
 #' @importFrom stats update.formula reformulate model.response
 #' @importFrom AER ivreg
 #' @export
-higherMomentsIV <- function(formula, data,
-                            IIV=c(),  # c("g","gp","gy","yp","p2","y2"))
-                            g=c()){     # c("x2", "x3", "lnx", "1/x")
+higherMomentsIV <- function(formula, data)
+                            # IIV=c(),  # c("g","gp","gy","yp","p2","y2"))
+                            # g=c()){     # c("x2", "x3", "lnx", "1/x")
 
 # *** fail raluca check: underlying assumptions not satisfied - stop()
-  cl <- match.call()
+  cl <- quote(match.call())
 
   # Input checks -------------------------------------------------------------------------------------
   check_err_msg(checkinput_highermomentsiv_g(g=g))
