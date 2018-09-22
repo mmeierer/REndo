@@ -47,18 +47,21 @@ formula_readout_special <- function(F.formula, name.special, from.rhs, params.as
 
   # Execute this function for each special by adding "fct." at the beginning and evaluating
   names.special  <- lapply(paste0("fct.",lang.special), FUN=function(str){
-    eval(expr=parse(text=str))})
+                              eval(expr=parse(text=str))})
 
   if(params.as.chars.only){
     # Return vector with (unique) parameter names only
-    names.special <- lapply(names.special, function(call){as.character(as.list(call))})
+    names.special        <- lapply(names.special, function(call){as.character(as.list(call))})
     names.special        <- unique(unlist(names.special))
     names(names.special) <- names.special
   }else{
     # return list with names=args, entry = arg data
+    # here:list of language object
     names.special <- lapply(names.special, as.list)
-    # Make elements (=arg name) in each sub-list chars.
-    names.special <- lapply(names.special, lapply, as.character)
+    # here: nested list of arg-lists
+    names.special <- lapply(names.special, lapply, deparse) # make char representation
+    # replace the "", "NULL" as actuall NULLs
+    names.special <- lapply(names.special, lapply, function(char.arg){if(char.arg%in%c("NULL", "", "NA")) NULL else char.arg})
     # Name unnamed elements (=args) in sublists after the elements
     names.special <- lapply(names.special, function(subl){
                                             unnamed.ind <- which(names(subl)=="")

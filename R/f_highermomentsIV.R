@@ -18,12 +18,14 @@ higherMomentsIV <- function(formula, data){
   F.formula  <- as.Formula(formula)
   l.IIV.args <- formula_readout_special(F.formula = F.formula, name.special = "IIV",
                                         from.rhs=3, params.as.chars.only = FALSE)
-
-  # # Add data and formula to each argument
-  # l.IIV.args <- lapply(l.IIV.args, modifyList, val=list(data=data, F.formula = F.formula))
   # str(l.IIV.args)
 
-  # Execute the IIV function and pass in the read out arguments
+
+  # Execute the IIV function and pass in the read out arguments ----------------------------------------
+
+  # check first that iiv and g are not present more than once
+  check_err_msg(checkinput_highermomentsiv_docalllist(l.args = l.IIV.args))
+
   l.data.IIVs <- lapply(l.IIV.args, function(iiv.args){
                         # Add data and formula to the args here instead before to every sublist to avoid copy
                         do.call(what = higherMomentsIV_IIV,

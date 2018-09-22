@@ -1,7 +1,25 @@
+checkinput_highermomentsiv_docalllist <- function(l.args){
+
+  l.err.msg <- lapply(l.args, FUN = function(sublist){
+    err.msg <- c()
+    # Check that the list containing the parsed args and is used to do.call the IIV function is fine
+    if(sum(names(sublist) == "iiv") > 1)
+      err.msg <- c(err.msg, "Please  specify the parameter \'iiv\' in each IIV() only exactly once.")
+
+    if(sum(names(sublist) == "g") > 1)
+      err.msg <- c(err.msg, "Please  specify the parameter \'g\' in each IIV() only exactly once.")
+    return(err.msg)
+  })
+
+  return(unique(unlist(l.err.msg)))
+}
+
 checkinput_highermomentsiv_g <- function(g){
-  # g may be NULL/missing because its not needed for all IIVs
-  if(is.null(g))
-    return(c())
+  # g may be missing because its not needed for all IIVs
+
+  # Do separately as could be NA for which == fails
+  if(length(g) == 0 || nchar(g, keepNA = FALSE)==0)
+      return(c())
 
   err.msg <- checkinputhelper_charactervector(vec=g, parameter.name="g",
                                               allowed.inputs=c("x2", "x3", "lnx", "1/x"))
@@ -78,7 +96,7 @@ checkinput_highermomentsiv_iivVSg <- function(g, iiv){
   # need some g if iiv does something with
   if(any(iiv %in% c("g","gp","gy")))
     # g is required
-    if(is.null(g))
+    if(length(g)==0 || nchar(g, keepNA = FALSE)==0) #is.null(g) alone not enough because can be given, but length==0
       # but not given
       return(paste0("Please also specifiy the parameter \'g\' required for the given \'iiv\' parameter \'",
                                  iiv,"\'.", collapse=""))
@@ -87,7 +105,7 @@ checkinput_highermomentsiv_iivVSg <- function(g, iiv){
       return(c())
   else
     # No g required by iiv
-    if(!is.null(g)){
+    if(length(g) != 0 && nchar(g, keepNA = FALSE)>0){   #!is.null(g) alone not enough because can be given, but length==0
       # but g is still given
         warning("The given parameter \'",g,"\' for \'g\' is ignored because the specified \'iiv\' parameter \'",
                 iiv,"\' does not require it.", call. = FALSE, immediate. = TRUE)
