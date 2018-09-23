@@ -57,7 +57,9 @@ checkinput_highermomentsiv_formula <- function(formula=formula){
   if(all(names.rhs1 %in% names.rhs2))
     err.msg <- c(err.msg, "Please do not specify all regressors as endogenous.")
 
-
+  # Check that only sinle endogenous is given
+  if(length(names.rhs2) > 1)
+    err.msg <- c(err.msg, "Please specify only a single regressor as endogenous.")
 
   # Process special for checks
   F.terms.rhs3      <- terms(F.formula, rhs=3, lhs=0, specials = "IIV")
@@ -89,6 +91,24 @@ checkinput_highermomentsiv_formula <- function(formula=formula){
   return(err.msg)
 }
 
+checkinput_highermomentsiv_data <- function(data){
+  return(.checkinputhelper_data_basicstructure(data=data))
+}
+
+#' @importFrom Formula as.Formula
+checkinput_highermomentsiv_formulaVSdata <- function(formula, data){
+  F.formula <- as.Formula(formula)
+  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,rhs.rel.regr=c(1,2),
+                                                            num.only.cols = all.vars(formula(F.formula, rhs=c(1,2))))
+
+  # Check that no column is named IIV.NUMBER
+  if(any(grepl(pattern = "^IIV\\.[0-9]", x = colnames(data))))
+    err.msg <- c(err.msg, paste0("Please name no column in the data \'IIV.NUMERIC"))
+  #**?? Check that no column is named iivs or g to avoid confusion wh
+
+  return(err.msg)
+}
+
 checkinput_highermomentsiv_iivVSg <- function(g, iiv){
   # g from c("x2", "x3", "lnx", "1/x")
   # IIV from c("g","gp","gy","yp","p2","y2"))
@@ -115,10 +135,11 @@ checkinput_highermomentsiv_iivVSg <- function(g, iiv){
         return(c())
 }
 
-checkinput_highermomentsiv_iivregressors <- function(l.ellipsis, F.formula){
+checkinput_highermomentsiv_iivregressors <- function(l.ellipsis, F.formula, iiv){
   # The regressors are specified in the ... arg
   err.msg <- c()
-  if(length(l.ellipsis) == 0)
+  # All IIVs need exo data, except y2 and p2
+  if(length(l.ellipsis) == 0 && iiv != "y2" && iiv != "p2" && iiv != "yp")
     return("Please specify the exogenous regressors to build the internal instruments from in the IIV() function.")
 
   # Check that all regressors are in the RHS1 (main model)

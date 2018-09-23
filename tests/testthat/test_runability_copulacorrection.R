@@ -6,7 +6,6 @@
 # data("dataCopDis")
 # data("dataCopDisCont")
 
-# formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # context("copulaCorrection - single continuous")
 #
 # test_that("No output when verbose = F", {

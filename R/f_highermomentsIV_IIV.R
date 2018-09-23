@@ -7,7 +7,7 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
   check_err_msg(checkinput_highermomentsiv_g(g=g))
   check_err_msg(checkinput_highermomentsiv_iiv(iiv=iiv))
   check_err_msg(checkinput_highermomentsiv_iivVSg(g=g, iiv=iiv))
-  check_err_msg(checkinput_highermomentsiv_iivregressors(l.ellipsis=l.ellipsis, F.formula=F.formula))
+  check_err_msg(checkinput_highermomentsiv_iivregressors(l.ellipsis=l.ellipsis, F.formula=F.formula, iiv=iiv))
 
   # Read out needed data (regressors) ------------------------------------------------------------------------
 

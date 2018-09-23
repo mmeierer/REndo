@@ -11,8 +11,8 @@ higherMomentsIV <- function(formula, data){
 
   # Input checks -------------------------------------------------------------------------------------
   check_err_msg(checkinput_highermomentsiv_formula(formula=formula))
-  # check_err_msg(checkinput_highermomentsiv_data(data=data))
-  # check_err_msg(checkinput_highermomentsiv_formulaVSdata(formula=formula, data=data))
+  check_err_msg(checkinput_highermomentsiv_data(data=data))
+  check_err_msg(checkinput_highermomentsiv_formulaVSdata(formula=formula, data=data))
 
   # Read out the args from all IIV functions in the formula ------------------------------------------
   F.formula  <- as.Formula(formula)

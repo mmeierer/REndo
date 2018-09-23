@@ -21,7 +21,7 @@ checkinput_latentIV_data <- function(data){
 }
 
 checkinput_latentIV_dataVSformula <- function(data, formula){
-  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=formula, data=data,
+  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=formula, data=data, rhs.rel.regr=1,
                                                             num.only.cols = all.vars(formula))
 }
 
