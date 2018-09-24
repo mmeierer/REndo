@@ -43,8 +43,8 @@ checkinput_highermomentsiv_formula <- function(formula=formula){
 
   F.formula <- as.Formula(formula)
   # Check that formula has exactly 3 RHS (cannot proceed if not 3 RHS are available)
-  if(length(F.formula)[2] != 3)
-    return("Please specify the formula with exactly 3 parts on the right-hand side")
+  if(length(F.formula)[2] != 3 && length(F.formula)[2] != 4)
+    return("Please specify the formula with exactly 3 or 4 parts on the right-hand side")
 
   # Check that every RHS2 is in RHs
   names.rhs1 <- all.vars(formula(F.formula, rhs=1, lhs=0))
@@ -98,7 +98,9 @@ checkinput_highermomentsiv_data <- function(data){
 #' @importFrom Formula as.Formula
 checkinput_highermomentsiv_formulaVSdata <- function(formula, data){
   F.formula <- as.Formula(formula)
-  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,rhs.rel.regr=c(1,2),
+  relevant.cols.for.datacols <- if(length(F.formula)[[2]] == 4) c(1,2,4) else c(1,2)
+  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,
+                                                            rhs.rel.regr=relevant.cols.for.datacols,
                                                             num.only.cols = all.vars(formula(F.formula, rhs=c(1,2))))
 
   # Check that no column is named IIV.NUMBER
@@ -135,19 +137,30 @@ checkinput_highermomentsiv_iivVSg <- function(g, iiv){
         return(c())
 }
 
-checkinput_highermomentsiv_iivregressors <- function(l.ellipsis, F.formula, iiv){
+checkinput_highermomentsiv_iivregressors <- function(l.iivregressors, F.formula, iiv){
   # The regressors are specified in the ... arg
   err.msg <- c()
-  # All IIVs need exo data, except y2 and p2
-  if(length(l.ellipsis) == 0 && iiv != "y2" && iiv != "p2" && iiv != "yp")
+
+
+  # All IIVs need exo data, except y2, p2,yp
+  if(iiv %in% c("y2", "p2", "yp")){
+    # No exo regressors needed
+    if(length(l.iivregressors) != 0)
+      warning("The specified exogenous regressors are ignored because they are not needed to built the internal instruments.",
+              call. = FALSE, immediate. = TRUE)
+    return(c())
+  }
+  # Exo regressors needed
+
+  if(length(l.iivregressors) == 0)
     return("Please specify the exogenous regressors to build the internal instruments from in the IIV() function.")
 
   # Check that all regressors are in the RHS1 (main model)
-  if(!all(l.ellipsis %in% all.vars(formula(F.formula, lhs=0,rhs=1))))
+  if(!all(l.iivregressors %in% all.vars(formula(F.formula, lhs=0,rhs=1))))
     err.msg <- c(err.msg, "Please specifiy in IIV() only regressors that are also present in the first right-hand side (main model) of the formula.")
 
   # Check that no regressors is in the RHS2 (endo)
-  if(any(l.ellipsis %in% all.vars(formula(F.formula, lhs=0,rhs=2))))
+  if(any(l.iivregressors %in% all.vars(formula(F.formula, lhs=0,rhs=2))))
     err.msg <- c(err.msg, "Please specifiy only the exogenous but not the endogenous regressors in IIV().")
 
   # Formula has already been checked to have all regressors in data - therefore if it is in the formula it is also in the data

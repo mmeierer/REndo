@@ -1,21 +1,72 @@
+#' @importFrom stats model.response model.frame
+#' @importFrom Formula model.part
 higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
 
-  # Catch
-  l.ellipsis <- list(...)
+  # Catch ellispsis
+  l.iivregressors <- list(...)
 
   # Check inputs ---------------------------------------------------------------------------------------------
   check_err_msg(checkinput_highermomentsiv_g(g=g))
   check_err_msg(checkinput_highermomentsiv_iiv(iiv=iiv))
   check_err_msg(checkinput_highermomentsiv_iivVSg(g=g, iiv=iiv))
-  check_err_msg(checkinput_highermomentsiv_iivregressors(l.ellipsis=l.ellipsis, F.formula=F.formula, iiv=iiv))
+  check_err_msg(checkinput_highermomentsiv_iivregressors(l.iivregressors=l.iivregressors,
+                                                         F.formula=F.formula, iiv=iiv))
 
-  # Read out needed data (regressors) ------------------------------------------------------------------------
+  # discard given exogenous regressors if not needed
+  if(iiv %in% c("y2", "p2", "yp"))
+    l.iivregressors <- list()
+
+  # Read out needed data -------------------------------------------------------------------------------------
+  # To multiply: Read out as matrices as data.frames allow no element-wise mutliplication if dimensions do
+  #               not match. For iiv = gp, gy this may be the case when col(g)>1
+  names.exo.regs    <- unique(unlist(l.iivregressors))
+
+  mf                <- model.frame(F.formula, rhs=1, lhs=1, data=data)
+  vec.data.endo     <- model.part(F.formula, data=mf, rhs=2, lhs = 0, drop=TRUE)  # endo data from rhs 2 AS VECTOR
+  # The exogenous regressors are only the ones specified in the IIV() part, not all exogenous ones
+  #   Therefore read out the data by names. If none (NULL) results in zero-row data.frame
+  df.data.exo.iiv   <- mf[, names.exo.regs]
+  vec.data.y        <- model.response(mf)
 
   # Calculate internal IVs -----------------------------------------------------------------------------------
-  # g function
-  # iiv calculation
 
-  # Return IIV as single data.frame column
+  # De-mean helper function
+  # ** Is this col-wise or mean(whole matrix)? Doing col-wise
+  de.mean <- function(x){ if(NCOL(x) > 1)
+                            # >1 col (data.frame,...).
+                            # Use sweep contrary to apply because it again returns data.frame
+                            return(sweep(x = x, MARGIN = 2, STATS = colMeans(x=x, na.rm = T), FUN = "-"))
+                            # if(length(dim(x)) > 1)
+                            # return(apply(x, MARGIN = 2, FUN = function(x){x-mean(x)}))
+                          else
+                            # vector
+                            return(x-mean(x))}
 
-  return(data.frame("iiv" = 1:10))
+  # determine g function, if needed
+  if(!is.null(g))
+    fct.g <- switch(g,
+                    "x2"  = function(x){x^2},
+                    "x3"  = function(x){x^3},
+                    "lnx" = function(x){log(x)},
+                    "1/x" = function(x){1/x})
+
+  # IIV calculations
+  df.IIV <- data.frame(res.iiv =
+    switch(EXPR = iiv,
+           # to allow element-wise multiplication for data.frames.
+           #  The vector data HAS to be the first input
+           "g"  = de.mean(fct.g(df.data.exo.iiv)),                           # IIV1
+           "gp" = de.mean(fct.g(df.data.exo.iiv)) * de.mean(vec.data.endo),  # IIV2
+           "gy" = de.mean(fct.g(df.data.exo.iiv)) * de.mean(vec.data.y),     # IIV3
+           "yp" = de.mean(vec.data.y)             * de.mean(vec.data.endo),  # IIV4
+           "p2" = de.mean(vec.data.endo)^2,                                  # IIV5
+           "y2" = de.mean(vec.data.y)^2))                                    # IIV6
+
+  # Rename after iiv, g, and used exo regressors
+  col.names <- make.names(paste(paste("IIV", "iiv.is",iiv,"g.is",g,"regs.is",collapse = ".")
+                                ,names.exo.regs, sep = "."))
+  colnames(df.IIV) <- col.names
+
+  # Return IIV as data.frame
+  return(df.IIV)
 }

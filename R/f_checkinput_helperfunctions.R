@@ -209,7 +209,8 @@ checkinputhelper_charactervector <- function(vec, parameter.name, allowed.inputs
 
   if(length(allowed.inputs)>0)
     if(!all(vec %in% allowed.inputs))
-      err.msg <- c(err.msg, paste("Please provide only elements from c(",paste(allowed.inputs, collapse = ", "),") for \'",parameter.name,"\'.", sep = ""))
+      err.msg <- c(err.msg, paste("Please provide only elements from c(",paste(allowed.inputs, collapse = ", "),
+                                  ") for \'",parameter.name,"\'.", sep = ""))
 
   return(err.msg)
 }

@@ -39,9 +39,9 @@ test_that("Fail if bad 3rd RHS", {
   expect_error(higherMomentsIV(y~X1+X2+P|P+X2|IIV(g=x2, iiv=g, X1, X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
-test_that("Fail if >3 RHS",{
-  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, X1)|IIV(g=x2, iiv=g, X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
-  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, X1)| X2), regexp = "The above errors were encountered!")
+test_that("Fail if > 4RHS",{
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, X1)|IIV(g=x2, iiv=g, X2)|IIV(g=x3, iiv=g, X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, X1)| X2|X1), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if bad LHS", {
@@ -52,6 +52,8 @@ test_that("Fail if bad LHS", {
   # Fail for LHS in RHS and vice-versa
   expect_error(higherMomentsIV(y~y+X2+P|P|IIV(g=x2, iiv=g, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(X1~X1+X2+P|P|IIV(g=x2, iiv=g, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  # Special in LHS
+  expect_error(higherMomentsIV(y+IIV(g=x2, iiv=g, X1)~X1+X2+P|P|IIV(g=x2, iiv=g, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if formula contains dot (.)", {
@@ -66,6 +68,7 @@ test_that("Fail if no special function", {
   # Not at all
   expect_error(higherMomentsIV(y~X1+X2+P|P|x2+gp+X1, data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|X1+X2), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(), data=dataHigherMoments), regexp = "The above errors were encountered!")
   # Only for some
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV+IIV(g=x2, iiv=gp, X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
@@ -116,6 +119,9 @@ test_that("Fail if multiple iiv in IIV", {
 test_that("Fail if multiple g in IIV", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, g=x3, iiv=g, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, g=x3, iiv=g, X1)+IIV(iiv=gp, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=c(x2,x3), iiv=g, X1)+IIV(iiv=gp, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=c("x2","x3"), iiv=g, X1)+IIV(iiv=gp, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=list("x2","x3"), iiv=g, X1)+IIV(iiv=gp, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
 
@@ -130,11 +136,6 @@ test_that("Fail if invalid colname in IIV", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, X1, X3), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
-# **TODO after check is built in
-# test_that("Fail if non-matching dimensions for gp", {
-#   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=gp, X1,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
-#   expect_error(higherMomentsIV(y~X1+X2+P|P+X1|IIV(g=x2, iiv=gp, X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
-# })
 
 test_that("Fail if non existent special function", {
   # Misspelled
@@ -144,6 +145,8 @@ test_that("Fail if non existent special function", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, X1,X2)+brunz(), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
+
+# **TODO: Allow
 test_that("Fail if function inside special", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, log(X1)), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, log(X1+X2)), data=dataHigherMoments), regexp = "The above errors were encountered!")
@@ -159,6 +162,8 @@ test_that("Fail if special outside RHS3", {
   expect_error(higherMomentsIV(y~IIV(g=x2, iiv=g,X1)+X2+P|P|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(IIV(g=x2, iiv=yp,y)~X1+X2+P|P|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|IIV(g=x2, iiv=yp,P)|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  # In EIV
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=yp,P)|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
 # .g vs iiv ---------------------------------------------------------------------------------------------------------
@@ -184,33 +189,36 @@ test_that("Fail if missing g but IIV does require it", {
 
 test_that("Warning if g but IIV does not need it", {
   # warning for the others: "yp","p2","y2"
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=yp, X1), data=dataHigherMoments), regexp = "ignored", all = TRUE)
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=p2, X1), data=dataHigherMoments), regexp = "ignored", all = TRUE)
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=y2, X1), data=dataHigherMoments), regexp = "ignored", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=yp, X1, X2), data=dataHigherMoments), regexp = "ignored", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=p2, X1, X2), data=dataHigherMoments), regexp = "ignored", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=y2, X1, X2), data=dataHigherMoments), regexp = "ignored", all = TRUE)
+})
+
+test_that("Warning if exo regr but IIV does not need it", {
+  # warning for the others: "yp","p2","y2"
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=yp, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=p2, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built", all = TRUE)
 })
 
 test_that("Silent if no g and IIV does not need it", {
+  # Need to fit all in one because not enough IV for num regressors
   # Missing
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=yp, X1), data=dataHigherMoments))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=p2, X1), data=dataHigherMoments))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2, X1), data=dataHigherMoments))
+  expect_silent(higherMomentsIV(y~X1+P|P|IIV(iiv=yp)+IIV(iiv=yp)+IIV(iiv=y2), data=dataHigherMoments))
+  # expect_silent(higherMomentsIV(y~X1P|P|IIV(iiv=p2), data=dataHigherMoments))
+  # expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2), data=dataHigherMoments))
 
   # Open
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=,iiv=yp, X1), data=dataHigherMoments))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=,iiv=p2, X1), data=dataHigherMoments))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=,iiv=y2, X1), data=dataHigherMoments))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=,iiv=yp)+IIV(g=,iiv=p2)+IIV(g=,iiv=y2), data=dataHigherMoments))
 
   # NULL
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=NULL,iiv=yp, X1), data=dataHigherMoments))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=NULL,iiv=p2, X1), data=dataHigherMoments))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=NULL,iiv=y2, X1), data=dataHigherMoments))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=NULL,iiv=yp)+IIV(g=,iiv=p2)+IIV(g=,iiv=y2), data=dataHigherMoments))
 })
 
 
 
-# **TODO Silent without intercept
-# **TODO Fail if underlying assumptions violated
-# ??*** Data may not be named after iiv or g to avoid confusion when naming. could interfere with unique(list) in readout
+
+
 # data -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("higherMomentsIV - Parameter data")
 
@@ -228,6 +236,11 @@ test_that("Fail if not data.frame", {
 test_that("Fail if no rows or cols",{
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1), data= data.frame()), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1), data= data.frame(y=integer(), X1=numeric(), X2=numeric(), P=integer())), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if EIV not in data", {
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1)|EIV,data= dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1)|X1+eiv,data= dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if wrong data type in any of the formula parts", {
@@ -250,7 +263,7 @@ test_that("Fail if wrong data type in any of the formula parts", {
 
 test_that("Allow wrong data type in irrelevant columns", {
   # Allow wrong data types in unused columns
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g,X2)+IIV(iiv=p2)+IIV(iiv=y2)+IIV(iiv=gp,g=x2,X1),
                          data = cbind(dataHigherMoments,
                                       unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
 })
@@ -263,9 +276,13 @@ test_that("Fail if any column starts with \'IIV.\'",{
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),
                                 data = cbind(dataHigherMoments, IIV.1 = 1:10)),
                regexp = "The above errors were encountered!")
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2),
                                 data = cbind(dataHigherMoments, IIV.ABC = 1:10)))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2),
                                 data = cbind(dataHigherMoments, IIV..123 = 1:10)))
 })
 
+
+
+# **TODO Fail if underlying assumptions violated
+# ??*** Data may not be named after iiv or g to avoid confusion when naming. could interfere with unique(list) in readout
