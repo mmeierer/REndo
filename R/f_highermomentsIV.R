@@ -4,7 +4,7 @@
 #' @export
 higherMomentsIV <- function(formula, data){
 
-# *** fail raluca check: underlying assumptions not satisfied - stop()
+# *** TODO: fail raluca check: underlying assumptions not satisfied - stop()
   cl <- match.call()
 
   # Input checks -------------------------------------------------------------------------------------
@@ -32,23 +32,21 @@ higherMomentsIV <- function(formula, data){
   # Bind results in list together to single data.frame
   df.data.IIVs <- do.call(cbind, l.data.IIVs)
 
-
-  # **** TODO: data.exo and data.endo (gp) have matching dimensions
-
   # Build formula for IVreg --------------------------------------------------------------------------
   # In:         response ~ complete model | single endogenous | IIV()s (| EIV)
-  # Needed:     response ~ complete model | all exogenous in IIV()s + interal IVs (+ EIVs)
+  # Needed:     response ~ complete model | all exogenous from complete model + interal IVs (+ EIVs)
 
   # 1st part:
   # DV ~ complete model
   F.part.1 <- formula(F.formula, lhs = 1, rhs = 1)
 
   # 2nd part:
-  # ~ | all exogenous in IIV()s + IIVs + external IVs
+  # ~ | all exogenous from complete model + IIVs (+ external IVs)
 
-  # All exogenous: in IIV()s - get from IIVs args
-  flat.args      <- unlist(l.IIV.args)
-  labels.all.exo <- flat.args[!(names(flat.args) %in% c("g", "iiv"))]
+  # All exogenous: complete - endogenous
+  labels.all.exo <- setdiff(labels(terms(F.formula, rhs=1, lhs=0)),
+                            labels(terms(F.formula, rhs=2, lhs=0)))
+
   labels.iivs    <- colnames(df.data.IIVs)
   labels.ext.iv  <- if(length(F.formula)[[2]] == 4)
                         labels(terms(F.formula, lhs=0, rhs=4))
@@ -70,10 +68,12 @@ higherMomentsIV <- function(formula, data){
   # Put data together: user data + internal instruments
   df.data.ivreg <- cbind(data, df.data.IIVs)
 
+  # if(verbose){
   # print(head(df.data.ivreg))
-  # cat("Formula used for ivreg: ")
+  message("Formula used for ivreg: ", format(F.ivreg))
   # print(F.ivreg)
-    # message("Fitting ivreg() with formula ", formula(F.ivreg), ".")
+  # message("Fitting ivreg() with formula ", formula(F.ivreg), ".")
+  # }
 
   # return(list(Form = F.ivreg, data=df.data.ivreg))
 
