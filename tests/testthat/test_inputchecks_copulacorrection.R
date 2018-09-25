@@ -93,6 +93,7 @@ test_that("Fail if non existent special function", {
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|brunz(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
 })
 
+# **TODO remove
 test_that("Fail if function inside special", {
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1+P2),data=dataCopC2), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1*P2),data=dataCopC2), regexp = "The above errors were encountered!")
@@ -142,7 +143,7 @@ test_that("Fail if special in LHS", {
   expect_error(copulaCorrection(formula= continuous(y) ~ X1+X2+P1+P2|P1,data=dataCopC2), regexp = "The above errors were encountered!")
 })
 
-test_that("Fail if var is in specials", {
+test_that("Fail if var is in both specials", {
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2)+discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2)+continuous(P1),data=dataCopC2), regexp = "The above errors were encountered!")
@@ -177,30 +178,33 @@ test_that("Fail if no rows or cols",{
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1),data=data.frame(y=integer(), X1=numeric(), X2=numeric(), P1=integer(), P2=integer())), regexp = "The above errors were encountered!")
 })
 
-test_that("Fail if wrong data type in any of the formula parts", {
-  # Only allow numericals in all relevant columns
+
+
+
+test_that("Fail if wrong data type in endogenous formula part", {
+  # Only allow numericals in endogenous columns
   # Factor
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=factor(1:10), X1=1:10, X2=1:10, P1=1:10, P2=1:10)), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P1=1:10, P2=1:10)  ), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=factor(1:10), P2=1:10)  ), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=1:10, P2=factor(1:10))  ), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=factor(1:10), P2=1:10)  ), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=1:10, P2=factor(1:10))  ), regexp = "The above errors were encountered!")
   # Characters
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=   data.frame(y=as.character(1:10), X1=1:10, X2=1:10, P1=1:10, P2=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=   data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P1=1:10, P2=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=   data.frame(y=1:10, X1=1:10, X2=1:10, P1=as.character(1:10), P2=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=   data.frame(y=1:10, X1=1:10, X2=1:10, P1=1:10, P2=as.character(1:10), stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=   data.frame(y=1:10, X1=1:10, X2=1:10, P1=as.character(1:10), P2=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=   data.frame(y=1:10, X1=1:10, X2=1:10, P1=1:10, P2=as.character(1:10), stringsAsFactors=F)), regexp = "The above errors were encountered!")
 
   # Logicals (as indicate dichotomous variable (=factor))
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=as.logical(0:9), X1=1:10, X2=1:10, P1=1:10, P2=1:10)), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P1=1:10, P2=1:10)), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=as.logical(0:9), P2=1:10)), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=1:10, P2=as.logical(0:9))), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=as.logical(0:9), P2=1:10)), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data= data.frame(y=1:10, X1=1:10, X2=1:10, P1=1:10, P2=as.logical(0:9))), regexp = "The above errors were encountered!")
 })
 
-test_that("Allow wrong data type in irrelevant columns", {
-  expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),verbose=FALSE, data=
-                                   cbind(dataCopC2, unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
-})
+# test_that("Allow wrong data type in irrelevant columns", {
+#   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),verbose=FALSE, data=
+#                                    cbind(dataCopC2, unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
+# })
 
 test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and mixed models PStar.ENDO"), {
   # Discrete case
