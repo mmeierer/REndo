@@ -32,6 +32,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   m.model.data.exo.endo   <- model.matrix(object = F.formula, data = mf, lhs=0, rhs = 1)
   vec.data.endo           <- m.model.data.exo.endo[, name.var.continuous, drop=TRUE]
 
+
   # Create start parameters for optimx ----------------------------------------------------------------
   if(is.null(start.params)){
     # Generate with lm if they are missing
@@ -47,9 +48,10 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   }
 
   # Double check if start params and model matrix have the same names
-  coln.model.mat <- colnames(m.model.data.exo.endo)
-  stopifnot( setequal(names(start.params), coln.model.mat) == TRUE,
-             length(unique(start.params)) == length(unique(coln.model.mat)))
+  names.model.mat    <- colnames(m.model.data.exo.endo)
+  names.start.params <- names(start.params)
+  stopifnot( setequal(names.start.params, names.model.mat) == TRUE,
+             length(unique(names.start.params)) == length(unique(names.model.mat)))
 
 
   # Add rho and sigma with defaults

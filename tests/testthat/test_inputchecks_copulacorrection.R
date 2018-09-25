@@ -312,6 +312,20 @@ test_that("start.params is named correctly", {
 })
 
 
+test_that("start.params with non-numeric exo requires multiple per factor",{
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P),
+                                data=cbind(dataCopC1,color=factor(x = c("red", "green", "blue", "white", "yellow"))),
+                                start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
+                                                 color=1)),
+               regexp = "The above errors were encountered!")
+  # 1 dummy only -> still not only color!
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P),
+                                data=cbind(dataCopC1,color=factor(x = c("red", "green"))),
+                                start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
+                                                 color=1)),
+               regexp = "The above errors were encountered!")
+})
+
 test_that("start.params contains no parameter rho or sigma", {
   # Given additionally
   expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0, rho=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")

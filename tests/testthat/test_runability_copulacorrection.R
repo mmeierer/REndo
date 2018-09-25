@@ -13,10 +13,10 @@ test_that("Non-numerics can be used in exogenous data", {
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
                                  data=cbind(dataCopC1,color=factor(x = c("red", "green", "blue", "white", "yellow")))),
                                     regexp = "It is recommended to run more than", all = TRUE)
-  expect_silent(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
                                  data=cbind(dataCopC1,color=c("red", "green", "blue", "white", "yellow"))),
                                     regexp = "It is recommended to run more than", all = TRUE)
-  expect_silent(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
                                  data=cbind(dataCopC1,color=c(TRUE,FALSE))),
                                   regexp = "It is recommended to run more than", all = TRUE)
   # C2
@@ -42,6 +42,14 @@ test_that("Non-numerics can be used in exogenous data", {
                                  data=cbind(dataCopDisCont,color=c(TRUE,FALSE))))
 })
 
+
+test_that("Start params work with non-numeric", {
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                 data=cbind(dataCopC1,color=factor(x = c("red", "green", "blue", "white", "yellow"))),
+                                 start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
+                                                  colorgreen=-0.1, colorred=0, colorwhite=0, coloryellow=0)),
+                 regexp = "It is recommended to run more than", all = TRUE)
+})
 
 # test_that("Factors can be used in endogenous data as discrete", {
 #   # C1
