@@ -142,6 +142,29 @@ checkinputhelper_singlepositivewholenumeric <- function(num.param, parameter.nam
 }
 
 
+checkinputhelper_single_logical <- function(logical, param.name){
+  err.msg <- c()
+
+  # Cannot be real missing as has default value
+  # no if(missing(verbose))
+  #  no return("Please provide the parameter \'verbose\'")
+
+  if(is.null(logical))
+    return(paste0("Please provide a single logical for \'",param.name,"\'"))
+
+  if(!is.vector(logical, mode = "logical"))
+    err.msg <- c(err.msg, paste0("Please provide a single logical for \'",param.name,"\'"))
+
+  if(length(logical) != 1)
+    err.msg <- c(err.msg, paste0("Please provide a single logical for \'",param.name,"\'"))
+
+  if(anyNA(logical))
+    err.msg <- c(err.msg, paste0("Please provide no NA(s) for \'",param.name,"\'"))
+
+  return(err.msg)
+
+}
+
 
 checkinputhelper_startparams <- function(start.params, F.formula,
                                          forbidden.names, required.names){

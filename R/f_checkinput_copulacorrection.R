@@ -128,25 +128,7 @@ checkinput_copulacorrection_startparams <- function(start.params, F.formula, m.e
 
 
 checkinput_copulacorrection_verbose <- function(verbose){
-  err.msg <- c()
-
-  # Cannot be real missing as has default value
-  # no if(missing(verbose))
-  #  no return("Please provide the parameter \'verbose\'")
-
-  if(is.null(verbose))
-    return("Please provide a single logical for \'verbose\'")
-
-  if(!is.vector(verbose, mode = "logical"))
-    err.msg <- c(err.msg, "Please provide a single logical for \'verbose\'")
-
-  if(length(verbose) != 1)
-    err.msg <- c(err.msg, "Please provide a single logical for \'verbose\'")
-
-  if(anyNA(verbose))
-    err.msg <- c(err.msg, "Please provide no NA(s) for \'verbose\'")
-
-  return(err.msg)
+  return(checkinputhelper_single_logical(logical=verbose, param.name="verbose"))
 }
 
 

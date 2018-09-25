@@ -12,9 +12,11 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
   check_err_msg(checkinput_highermomentsiv_iivregressors(l.iivregressors=l.iivregressors,
                                                          F.formula=F.formula, iiv=iiv))
 
-  # discard given exogenous regressors if not needed
-  if(iiv %in% c("y2", "p2", "yp"))
+  # discard given exogenous regressors and g if not needed because otherwise description is wrong
+  if(iiv %in% c("y2", "p2", "yp")){
     l.iivregressors <- list()
+    g <- NULL
+  }
 
   # Read out needed data -------------------------------------------------------------------------------------
   # To multiply: Read out as matrices as data.frames allow no element-wise mutliplication if dimensions do
@@ -62,7 +64,8 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
            "p2" = de.mean(vec.data.endo)^2,                                  # IIV5
            "y2" = de.mean(vec.data.y)^2))                                    # IIV6
 
-  # Rename after IIV() # iiv, g, and used exo regressors
+  # Naming ------------------------------------------------------------------------------------------------
+  # Rename after IIV()
   #   Cannot make in single paste() cmd as double . are introduced for emtpy chars
   colnames.iiv <- paste0("IIV.is",iiv)
   colnames.iiv <- if(is.null(g))              colnames.iiv else paste0(colnames.iiv,".gis",g)
@@ -71,6 +74,15 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
   # Keep make.names for the case g=1/x and too be sure its always correct
   colnames(df.IIV) <- make.names(colnames.iiv)
 
-  # Return IIV as data.frame
-  return(df.IIV)
+  # Readable description
+  desc.iiv <- paste0("IIV(iiv=",iiv)
+  desc.iiv <- if(is.null(g))              desc.iiv else paste0(desc.iiv,",g=",g)
+  desc.iiv <- if(!length(names.exo.regs)) desc.iiv else paste0(desc.iiv,",",paste(names.exo.regs,collapse = ","))
+  desc.iiv <- paste0(desc.iiv,")")
+
+
+  # Return ------------------------------------------------------------------------------------------------
+  # Return list with readable description and IIV as data.frame
+
+  return(list(desc.IIV = desc.iiv, df.IIV = df.IIV))
 }

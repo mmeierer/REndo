@@ -36,6 +36,10 @@ checkinput_highermomentsiv_iiv <- function(iiv){
                                               allowed.inputs=c("g", "gp", "gy", "yp", "p2", "y2")))
 }
 
+checkinput_highermomentsiv_verbose <- function(verbose){
+  return(checkinputhelper_single_logical(logical=verbose, param.name="verbose"))
+}
+
 checkinput_highermomentsiv_formula <- function(formula=formula){
   err.msg <- .checkinputhelper_formula_basicstructure(formula=formula)
   if(length(err.msg)>0)

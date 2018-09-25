@@ -204,15 +204,18 @@ test_that("Warning if exo regr but IIV does not need it", {
 test_that("Silent if no g and IIV does not need it", {
   # Need to fit all in one because not enough IV for num regressors
   # Missing
-  expect_silent(higherMomentsIV(y~X1+P|P|IIV(iiv=yp)+IIV(iiv=yp)+IIV(iiv=y2), data=dataHigherMoments))
+  expect_silent(higherMomentsIV(y~X1+P|P|IIV(iiv=yp)+IIV(iiv=yp)+IIV(iiv=y2),
+                                data=dataHigherMoments, verbose = FALSE))
   # expect_silent(higherMomentsIV(y~X1P|P|IIV(iiv=p2), data=dataHigherMoments))
   # expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2), data=dataHigherMoments))
 
   # Open
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=,iiv=yp)+IIV(g=,iiv=p2)+IIV(g=,iiv=y2), data=dataHigherMoments))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=,iiv=yp)+IIV(g=,iiv=p2)+IIV(g=,iiv=y2),
+                                data=dataHigherMoments, verbose=FALSE))
 
   # NULL
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=NULL,iiv=yp)+IIV(g=,iiv=p2)+IIV(g=,iiv=y2), data=dataHigherMoments))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=NULL,iiv=yp)+IIV(g=,iiv=p2)+IIV(g=,iiv=y2),
+                                data=dataHigherMoments, verbose = FALSE))
 })
 
 
@@ -263,7 +266,7 @@ test_that("Fail if wrong data type in any of the formula parts", {
 
 test_that("Allow wrong data type in irrelevant columns", {
   # Allow wrong data types in unused columns
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g,X2)+IIV(iiv=p2)+IIV(iiv=y2)+IIV(iiv=gp,g=x2,X1),
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g,X2)+IIV(iiv=p2)+IIV(iiv=y2)+IIV(iiv=gp,g=x2,X1), verbose=FALSE,
                          data = cbind(dataHigherMoments,
                                       unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
 })
@@ -276,9 +279,9 @@ test_that("Fail if any column starts with \'IIV.\'",{
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),
                                 data = cbind(dataHigherMoments, IIV.1 = 1:10)),
                regexp = "The above errors were encountered!")
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2),
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), verbose = FALSE,
                                 data = cbind(dataHigherMoments, IIV.ABC = 1:10)))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2),
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), verbose = FALSE,
                                 data = cbind(dataHigherMoments, IIV..123 = 1:10)))
 })
 

@@ -10,33 +10,34 @@ higherMomentsIV <- function(formula, data, verbose=TRUE){
   # Input checks -------------------------------------------------------------------------------------
   check_err_msg(checkinput_highermomentsiv_formula(formula=formula))
   check_err_msg(checkinput_highermomentsiv_data(data=data))
-  # **TODO: Inputcheck verbose
   check_err_msg(checkinput_highermomentsiv_formulaVSdata(formula=formula, data=data))
+  check_err_msg(checkinput_highermomentsiv_verbose(verbose=verbose))
 
   # Read out the args from all IIV functions in the formula ------------------------------------------
   F.formula  <- as.Formula(formula)
   l.IIV.args <- formula_readout_special(F.formula = F.formula, name.special = "IIV",
-                                        from.rhs=3, params.as.chars.only = FALSE)
+                                        from.rhs = 3, params.as.chars.only = FALSE)
   # str(l.IIV.args)
 
-  # Tell what is done --------------------------------------------------------------------------------
-  # if(verbose){
-  #   message("Creating instrumental variables:")
-  # }
 
   # Execute the IIV function and pass in the read out arguments --------------------------------------
 
   # check first that iiv and g are not present more than once
   check_err_msg(checkinput_highermomentsiv_docalllist(l.args = l.IIV.args))
 
-  l.data.IIVs <- lapply(l.IIV.args, function(iiv.args){
+  l.res.IIVs <- lapply(l.IIV.args, function(iiv.args){
                         # Add data and formula to the args here instead before to every sublist to avoid copy
                         do.call(what = higherMomentsIV_IIV,
                                 args = c(alist(data=data, F.formula=F.formula),
                                          iiv.args))})
 
+  # Read out IV data
+  l.data.IIVs   <- lapply(l.res.IIVs, "[[","df.IIV")
+  vec.desc.IIVs <- unique(unlist(lapply(l.res.IIVs, "[[","desc.IIV")))
+
   # Bind results in list together to single data.frame
   df.data.IIVs <- do.call(cbind, l.data.IIVs)
+
 
   # Build formula for IVreg --------------------------------------------------------------------------
   # In:         response ~ complete model | single endogenous | IIV()s (| EIV)
@@ -70,14 +71,18 @@ higherMomentsIV <- function(formula, data, verbose=TRUE){
   # Add 1st and 2nd part to formula
   F.ivreg <- as.Formula(F.part.1, F.part.2)
 
+
   # Call ivreg ---------------------------------------------------------------------------------------
   # Put data together: user data + internal instruments
   df.data.ivreg <- cbind(data, df.data.IIVs)
 
   if(verbose){
-    print(head(df.data.ivreg))
-    message("The following internal instruments were built: ")
-    message("Fitting an instrumental variable regression with model ", format(F.ivreg), ".")
+    # print(head(df.data.ivreg))
+    desc.2nd.part <- paste0(c(labels.all.exo,vec.desc.IIVs,labels.ext.iv),collapse = " + ")
+    # Print the 2nd part of the formula "by hand" because the real formula is ugly (cannot use special chars)
+    message("The following internal instruments were built: ", paste0(vec.desc.IIVs, collapse = ", "),".")
+    message("Fitting an instrumental variable regression with model ",
+            format(formula(F.ivreg, lhs=1, rhs=1)), "|", desc.2nd.part,".")
   }
 
   res.ivreg <- ivreg(formula = F.ivreg, data = df.data.ivreg)
