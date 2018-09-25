@@ -2,7 +2,7 @@
 #' @importFrom stats update.formula reformulate model.response
 #' @importFrom AER ivreg
 #' @export
-higherMomentsIV <- function(formula, data){
+higherMomentsIV <- function(formula, data, verbose=TRUE){
 
 # *** TODO: fail raluca check: underlying assumptions not satisfied - stop()
   cl <- match.call()
@@ -10,6 +10,7 @@ higherMomentsIV <- function(formula, data){
   # Input checks -------------------------------------------------------------------------------------
   check_err_msg(checkinput_highermomentsiv_formula(formula=formula))
   check_err_msg(checkinput_highermomentsiv_data(data=data))
+  # **TODO: Inputcheck verbose
   check_err_msg(checkinput_highermomentsiv_formulaVSdata(formula=formula, data=data))
 
   # Read out the args from all IIV functions in the formula ------------------------------------------
@@ -18,7 +19,12 @@ higherMomentsIV <- function(formula, data){
                                         from.rhs=3, params.as.chars.only = FALSE)
   # str(l.IIV.args)
 
-  # Execute the IIV function and pass in the read out arguments ----------------------------------------
+  # Tell what is done --------------------------------------------------------------------------------
+  # if(verbose){
+  #   message("Creating instrumental variables:")
+  # }
+
+  # Execute the IIV function and pass in the read out arguments --------------------------------------
 
   # check first that iiv and g are not present more than once
   check_err_msg(checkinput_highermomentsiv_docalllist(l.args = l.IIV.args))
@@ -68,14 +74,11 @@ higherMomentsIV <- function(formula, data){
   # Put data together: user data + internal instruments
   df.data.ivreg <- cbind(data, df.data.IIVs)
 
-  # if(verbose){
-  # print(head(df.data.ivreg))
-  message("Formula used for ivreg: ", format(F.ivreg))
-  # print(F.ivreg)
-  # message("Fitting ivreg() with formula ", formula(F.ivreg), ".")
-  # }
-
-  # return(list(Form = F.ivreg, data=df.data.ivreg))
+  if(verbose){
+    print(head(df.data.ivreg))
+    message("The following internal instruments were built: ")
+    message("Fitting an instrumental variable regression with model ", format(F.ivreg), ".")
+  }
 
   res.ivreg <- ivreg(formula = F.ivreg, data = df.data.ivreg)
 

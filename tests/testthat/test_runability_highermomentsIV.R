@@ -77,6 +77,8 @@ test_that("Returns object of class ivreg and rendo.ivreg",{
   expect_equal(class(res.higher), c("rendo.ivreg", "ivreg"))
 })
 
+# ***TODO: check that IIVs columns are named correctly regardless of the order in which they were specified
+
 
 # **TODO:
 # test_that("Returns object with data named IIV.NU",{

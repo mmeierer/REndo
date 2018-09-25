@@ -32,15 +32,15 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
 
   # De-mean helper function
   # ** Is this col-wise or mean(whole matrix)? Doing col-wise
-  de.mean <- function(x){ if(NCOL(x) > 1)
+  de.mean <- function(x){ if(NCOL(x) > 1){
                             # >1 col (data.frame,...).
                             # Use sweep contrary to apply because it again returns data.frame
                             return(sweep(x = x, MARGIN = 2, STATS = colMeans(x=x, na.rm = T), FUN = "-"))
                             # if(length(dim(x)) > 1)
                             # return(apply(x, MARGIN = 2, FUN = function(x){x-mean(x)}))
-                          else
+                          }else{
                             # vector
-                            return(x-mean(x))}
+                            return(x-mean(x))}}
 
   # determine g function, if needed
   if(!is.null(g))
@@ -62,10 +62,14 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
            "p2" = de.mean(vec.data.endo)^2,                                  # IIV5
            "y2" = de.mean(vec.data.y)^2))                                    # IIV6
 
-  # Rename after iiv, g, and used exo regressors
-  col.names <- make.names(paste(paste("IIV", "iiv.is",iiv,"g.is",g,"regs.is",collapse = ".")
-                                ,names.exo.regs, sep = "."))
-  colnames(df.IIV) <- col.names
+  # Rename after IIV() # iiv, g, and used exo regressors
+  #   Cannot make in single paste() cmd as double . are introduced for emtpy chars
+  colnames.iiv <- paste0("IIV.is",iiv)
+  colnames.iiv <- if(is.null(g))              colnames.iiv else paste0(colnames.iiv,".gis",g)
+  colnames.iiv <- if(!length(names.exo.regs)) colnames.iiv else paste0(colnames.iiv,".regis",names.exo.regs)
+
+  # Keep make.names for the case g=1/x and too be sure its always correct
+  colnames(df.IIV) <- make.names(colnames.iiv)
 
   # Return IIV as data.frame
   return(df.IIV)
