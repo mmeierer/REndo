@@ -6,9 +6,11 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
                                         start.params=NULL, num.boots=10, cl, ...){
   # Catch
   l.ellipsis <- list(...)
-  # Further checks required for the parameters in ... -------------------------------------------------
+
+  # Further checks required for the parameters in copualCorrection's ... ------------------------------
   check_err_msg(checkinput_copulacorrection_numboots(num.boots=num.boots))
-  check_err_msg(checkinput_copulacorrection_startparams(start.params=start.params, F.formula=F.formula))
+  # start.params are only checked when the model.matrix has been fitted
+
 
   # Tell what is done ---------------------------------------------------------------------------------
   if(verbose){
@@ -21,6 +23,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
     warning("Additional parameters besides \'start.params\' and \'num.boots\' given in the ... argument are ignored.",
             call. = FALSE, immediate. = TRUE)
 
+
   # Read out needed data ------------------------------------------------------------------------------
   # Using model.part() directly does not work if there are transformations in the DV
   mf                      <- model.frame(formula = F.formula, data = data, rhs=1, lhs=1)
@@ -29,18 +32,28 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   m.model.data.exo.endo   <- model.matrix(object = F.formula, data = mf, lhs=0, rhs = 1)
   vec.data.endo           <- m.model.data.exo.endo[, name.var.continuous, drop=TRUE]
 
-
   # Create start parameters for optimx ----------------------------------------------------------------
   if(is.null(start.params)){
     # Generate with lm if they are missing
     start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=1), data = data))
     str.brakets  <- paste0("(", paste(names(start.params), "=", round(start.params,3), collapse = ", ", sep=""), ")")
     if(verbose)
-      message("No start parameters were given. The linear model ",deparse(formula(F.formula, lhs=1, rhs=1)),
+      message("No start parameters were given. The linear model ", deparse(formula(F.formula, lhs=1, rhs=1)),
               " was fitted and start parameters c",str.brakets," are used.")
+  }else{
+    # Check if start.params is named correctly. Can only be done here after model.matrix is known
+    check_err_msg(checkinput_copulacorrection_startparams(start.params=start.params, F.formula=F.formula,
+                                                          m.endo.exo = m.model.data.exo.endo))
   }
 
+  # Double check if start params and model matrix have the same names
+  coln.model.mat <- colnames(m.model.data.exo.endo)
+  stopifnot( setequal(names(start.params), coln.model.mat) == TRUE,
+             length(unique(start.params)) == length(unique(coln.model.mat)))
+
+
   # Add rho and sigma with defaults
+  #   Ordering as in matrix is done in LL
   start.params <- c(start.params, rho=0.0, sigma=1)
 
 

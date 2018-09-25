@@ -6,6 +6,10 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   sigma           <- params["sigma"]
   rho             <- params["rho"]
 
+  # Reorder start.params to fit matrix col order
+  params.endo.exo <- params.endo.exo[colnames(m.data.exo.endo)]
+
+
   # *** WHAT DO HERE? May crash hessian calculation. Choose gradient methods + bounds instead?
   #   (Bounds for rho: [0,1]. Return Inf as NelderMead cannot handle bounds)
   if(rho < 0 || rho > 1)

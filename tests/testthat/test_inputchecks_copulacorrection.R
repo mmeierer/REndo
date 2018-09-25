@@ -325,6 +325,8 @@ test_that("start.params contains no parameter rho or sigma", {
 })
 
 
+# *** TODO: Check that start.params work with dot in formula
+
 
 # ...  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("copulaCorrection - Parameter 3-dots")

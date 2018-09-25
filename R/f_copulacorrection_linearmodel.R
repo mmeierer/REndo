@@ -14,9 +14,10 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
             call. = FALSE, immediate. = TRUE)
 
   # Generate PStar data ---------------------------------------------------------------------------------------
-  l.pstar.data.continuous <- NULL #init so that they exists for cbind
+  l.pstar.data.continuous <- NULL # init so that they exists for cbind
   l.pstar.data.discrete   <- NULL
 
+  # MF is only used for the (numeric) endovars. The full data then is used again in lm()
   mf.data <- model.frame(F.formula, rhs=1, lhs=0, data=data)
 
   if(length(names.vars.continuous) > 0){

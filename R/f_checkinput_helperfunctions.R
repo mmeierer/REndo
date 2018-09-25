@@ -85,7 +85,7 @@ check_err_msg <- function(err.msg){
 
 #' @importFrom stats .MFclass
 .checkinputhelper_dataVSformula_basicstructure <- function(formula, data, rhs.rel.regr,
-                                                           num.only.cols=all.vars(formula)){
+                                                           num.only.cols){
   # here, the basic structure of data and formula are guaranteed to be correct
   err.msg <- c()
   F.formula <- as.Formula(formula)
@@ -95,11 +95,11 @@ check_err_msg <- function(err.msg){
   if(!all(all.vars(formula(F.formula, rhs=rhs.rel.regr)) %in% colnames(data)))
     err.msg <- c(err.msg, "Please provide a data object that contains all the formula's variables.")
 
-  # Only allow numeric (real & integer) values in the data
+  # Only allow numeric (real & integer) values in the specified columns
   data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")
   data.types <- data.types[num.only.cols]
   if(any(!(data.types %in% "numeric")))
-    err.msg <- c(err.msg, paste0("Please only provide numeric data for regressors ",
+    err.msg <- c(err.msg, paste0("Please only provide numeric data for the endogenous regressors ",
                                  paste(num.only.cols, collapse = ", "), "."))
 
   return(err.msg)
@@ -143,10 +143,11 @@ checkinputhelper_singlepositivewholenumeric <- function(num.param, parameter.nam
 
 
 
-checkinputhelper_startparams <- function(start.params, F.formula, forbidden.names){
+checkinputhelper_startparams <- function(start.params, F.formula,
+                                         forbidden.names, required.names){
   err.msg <- c()
 
-  # Do not check anything more as missing/NULL indicates that start.params should be generated with a linear model
+  # Do not check anything more as missing/NULL indicates that start.params should be generated automatically
   if(is.null(start.params))
     return(c())
 
@@ -162,22 +163,16 @@ checkinputhelper_startparams <- function(start.params, F.formula, forbidden.name
   if(is.null(names(start.params)))
     err.msg <- c(err.msg, "Please provide a named vector/list as \"start.params\".")
 
-  # Required names are RHS1 + "(Intercept)" if the formula has one
-  f.rhs1 <- formula(F.formula, lhs=0, rhs=1)
-  names.model <- all.vars(f.rhs1)
-  if(attr(terms(f.rhs1), "intercept") == 1)
-    names.model <- c(names.model, "(Intercept)")
-
   # same number of params as required by formula
-  if(length(start.params) != length(names.model))
-    err.msg <- c(err.msg, paste0("Please provide exactly ", length(names.model), " start parameters named ", paste(names.model, collapse = ", "), "."))
+  if(length(start.params) != length(required.names))
+    err.msg <- c(err.msg, paste0("Please provide exactly ", length(required.names), " start parameters named ", paste(required.names, collapse = ", "), "."))
 
   # check that every name is not only "" (ie some are unnamed)
   if(any(names(start.params) == ""))
     err.msg <- c(err.msg, "Please provide names for every parameter in \"start.params\".")
 
   # check that every required parameter is present as name
-  for(n in names.model)
+  for(n in required.names)
     if(!(n %in% names(start.params)))
       err.msg <- c(err.msg, paste0("Please provide the start parameter for ", n, "."))
 

@@ -86,15 +86,21 @@ checkinput_copulacorrection_data <- function(data){
 }
 
 #' @importFrom Formula as.Formula
-checkinput_copulacorrection_dataVSformula <- function(data, formula){
+checkinput_copulacorrection_dataVSformula <- function(data, formula, names.cols.endo){
   F.formula <- as.Formula(formula)
-  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data, rhs.rel.regr=c(1,2),
-                                                            num.only.cols = all.vars(formula))
+
+  names.vars.continuous <- formula_readout_special(F.formula = F.formula, name.special = "continuous",
+                                                   from.rhs=2, params.as.chars.only=TRUE)
+  names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",
+                                                   from.rhs=2, params.as.chars.only=TRUE)
+  names.cols.endo <- c(names.vars.discrete, names.vars.continuous)
+
+
+  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,
+                                                            rhs.rel.regr=c(1,2),
+                                                            num.only.cols = names.cols.endo)
 
   err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data, forbidden.colname="PStar"))
-
-
-  # *** Only forbid non-numeric data in the endogenous regressors
 
   return(err.msg)
 }
@@ -111,9 +117,13 @@ checkinput_copulacorrection_numboots <- function(num.boots){
 }
 
 
-checkinput_copulacorrection_startparams <- function(start.params, F.formula){
-  return(checkinputhelper_startparams(forbidden.names=c("rho", "sigma"),
-                                        start.params=start.params, F.formula=F.formula))
+checkinput_copulacorrection_startparams <- function(start.params, F.formula, m.endo.exo){
+  # The required names have to match the cols of model.matrix
+  #   exo data may contain non-numeric data that results in multiple specific names
+
+  return(checkinputhelper_startparams(start.params=start.params, F.formula=F.formula,
+                                      forbidden.names = c("rho", "sigma"),
+                                      required.names  = colnames(m.endo.exo)))
 }
 
 

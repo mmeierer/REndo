@@ -10,12 +10,15 @@ context("copulaCorrection - single continuous")
 test_that("Non-numerics can be used in exogenous data", {
   # factors + characters + logicals
   # C1
-  expect_silent(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE,
-                                 data=cbind(dataCopC1,color=factor(x = c("red", "green", "blue", "white", "yellow")))))
-  expect_silent(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE,
-                                 data=cbind(dataCopC1,color=c("red", "green", "blue", "white", "yellow"))))
-  expect_silent(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE,
-                                 data=cbind(dataCopC1,color=c(TRUE,FALSE))))
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                 data=cbind(dataCopC1,color=factor(x = c("red", "green", "blue", "white", "yellow")))),
+                                    regexp = "It is recommended to run more than", all = TRUE)
+  expect_silent(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                 data=cbind(dataCopC1,color=c("red", "green", "blue", "white", "yellow"))),
+                                    regexp = "It is recommended to run more than", all = TRUE)
+  expect_silent(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                 data=cbind(dataCopC1,color=c(TRUE,FALSE))),
+                                  regexp = "It is recommended to run more than", all = TRUE)
   # C2
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE,
                                  data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow")))))

@@ -27,6 +27,16 @@ checkinput_latentIV_dataVSformula <- function(data, formula){
 
 
 checkinput_latentIV_startparams <- function(start.params, formula){
-  return(checkinputhelper_startparams(start.params=start.params, F.formula=as.Formula(formula),
-                                      forbidden.names=c("pi1", "pi2", "theta5", "theta6", "theta7", "theta8")))
+
+  F.formula <- as.Formula(formula)
+# **TODO: What if transformations??
+  # Required names are RHS1 + "(Intercept)" if the formula has one
+  f.rhs1         <- formula(F.formula, lhs=0, rhs=1)
+  required.names <- all.vars(f.rhs1)
+  if(attr(terms(f.rhs1), "intercept") == 1)
+    required.names <- c(required.names, "(Intercept)")
+
+  return(checkinputhelper_startparams(start.params=start.params, F.formula=F.formula,
+                                      forbidden.names = c("pi1", "pi2", "theta5", "theta6", "theta7", "theta8"),
+                                      required.names  = required.names))
 }

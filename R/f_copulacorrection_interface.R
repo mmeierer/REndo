@@ -21,8 +21,10 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
                                                    from.rhs=2, params.as.chars.only=TRUE)
 
   # Warn if the data is binomial=only has to values=dummy
-  checkinput_copulacorrection_warnbinomialendodata(data=data, names.vars.continuous=names.vars.continuous,
+  checkinput_copulacorrection_warnbinomialendodata(data=data,
+                                                   names.vars.continuous=names.vars.continuous,
                                                    names.vars.discrete=names.vars.discrete)
+
 
   # Determine case
   if(length(names.vars.continuous) == 1 & length(names.vars.discrete) == 0)
