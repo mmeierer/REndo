@@ -78,6 +78,24 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_true(all(rownames(sum.coef) == names(coef(res.model))))
   })
 
-  # *** maybe print methods
+
+  test_that("Printing methods", {
+    # Just that they work and return their input
+
+    expect_output(res <- show(res.model))
+    expect_null(res)
+
+    expect_output(res <- print(res.model))
+    expect_identical(res, res.model)
+
+    # Summary
+    expect_silent(res.sum <- summary(res.model))
+
+    expect_output(res <- show(res.sum))
+    expect_null(res)
+
+    expect_output(res <- print(res.sum))
+    expect_equal(res, res.sum)
+  })
 
 }

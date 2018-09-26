@@ -58,6 +58,13 @@ vcov.rendo.optim.LL <- function(object, ...){
 }
 
 #' @export
+show.rendo.optim.LL <- function(object){
+  print(object)
+  # show() returns NULL invisibly
+  invisible()
+}
+
+#' @export
 print.rendo.optim.LL <- function(x, digits = max(3L, getOption("digits") - 3L), ...){
   # Short print similar to lm
   # Only print the main model coefs
@@ -164,8 +171,6 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
                 quote = FALSE)
   cat("(see help file for details)\n")
 
-
-
   cat("\n")
 
   cat("Initial parameter values:\n")
@@ -181,3 +186,9 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
   invisible(x)
 }
 
+#' @export
+show.summary.rendo.optim.LL <- function(object){
+  print(object)
+  # show() returns NULL invisibly
+  invisible()
+}
