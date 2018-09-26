@@ -35,6 +35,10 @@ test_that("Same results with start.params swapped", {
   expect_identical(coef(res.lat.1), coef(res.lat.2))
 })
 
+test_that("Fails graciously for bad start.params", {
+  expect_error(latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=9999), data = dataLatentIV, verbose=FALSE),
+               regexp = "Failed to optimize the log-likelihood function with error")
+})
 
 # test_that("Summary prints about SE unavailable", {
 #   expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=2), data = dataLatentIV),

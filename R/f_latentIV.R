@@ -1,11 +1,12 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats lm coef model.frame model.matrix sd update
+#' @importFrom stats lm coef model.frame model.matrix sd update setNames
 #' @importFrom optimx optimx
+#' @importFrom methods is
 #' @export
 latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   cl <- match.call()
 
-  # Input checks ------------------------------------------------------------
+  # Input checks ------------------------------------------------------------------------------
   check_err_msg(checkinput_latentIV_data(data=data))
   check_err_msg(checkinput_latentIV_formula(formula=formula))
   check_err_msg(checkinput_latentIV_dataVSformula(formula=formula, data=data))
@@ -55,6 +56,11 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   # Append support params to start params
   optimx.start.params  <- c(start.vals.main.model, start.vals.support.params)
 
+
+
+
+  # Optimize LL --------------------------------------------------------------------------------
+  # Print start params
   if(verbose){
     str.brakets <- paste0("(", paste(names(optimx.start.params), "=", round(optimx.start.params,3),
                                      collapse = ", ", sep=""), ")")
@@ -64,20 +70,34 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   optimx.name.endo.param <- make.names(name.endo.param)
   optimx.name.intercept  <- make.names(name.intercept)
 
+  # Constrain theta8 to [0,1]
+  lower.bounds <- setNames(rep(-Inf, length(optimx.start.params)), names(optimx.start.params))
+  upper.bounds <- setNames(rep( Inf, length(optimx.start.params)), names(optimx.start.params))
+  lower.bounds[names(lower.bounds) == "theta8"] <- 0
+  upper.bounds[names(upper.bounds) == "theta8"] <- 1
 
-  # Optimize LL --------------------------------------------------------------------------------
-  # Bounds are defined in LL by returning Inf for theta8 outside [0,1]
-  # **TODO: try catch
-  res.optimx <- optimx(par = optimx.start.params, fn=latentIV_LL,
-                       m.data.mvnorm = m.data.mvnorm,
-                       use.intercept = use.intercept,
-                       name.intercept  = name.intercept,
-                       name.endo.param = name.endo.param,
-                       method = "L-BFGS-B",
-                       # Constrain theta8 (last param!) to [0,1]
-                       lower = c(rep(-Inf,length(optimx.start.params)-1), 0),
-                       upper = c(rep( Inf,length(optimx.start.params)-1), 1),
-                       hessian = TRUE, control = list(trace=0))
+  # Fit LL with optimx
+  res.optimx <- tryCatch(expr =
+                           optimx(par = optimx.start.params, fn=latentIV_LL,
+                                  m.data.mvnorm = m.data.mvnorm,
+                                  use.intercept = use.intercept,
+                                  name.intercept  = name.intercept,
+                                  name.endo.param = name.endo.param,
+                                  method = "L-BFGS-B",
+                                  lower = lower.bounds,
+                                  upper = upper.bounds,
+                                  hessian = TRUE, control = list(trace=0)),
+                         warning = function(w){ return(w)},
+                         error   = function(e){ return(e)})
+
+  if(is(res.optimx, "error"))
+    stop("Failed to optimize the log-likelihood function with error \'", res.optimx$message,
+         "\'. Please revise your start parameter and data.", call. = FALSE)
+
+  if(is(res.optimx, "warning")){
+    warning("The optimization produces warnings: ", res.optimx$message, immediate. = TRUE, call. = FALSE)
+  }
+
 
   # Read out params ----------------------------------------------------------------------------
   # Ensure naming and ordering
