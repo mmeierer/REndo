@@ -51,6 +51,12 @@ test_that("Start params work with non-numeric", {
                  regexp = "It is recommended to run more than", all = TRUE)
 })
 
+test_that("Copula 1 fails gracefully for optimx crashes", {
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose=FALSE, data=dataCopC1,
+                                start.params = c("(Intercept)"=2, X1=1.5,X2=1, P=-100)),
+               regexp = "Failed to optimize the log-likelihood function with error")
+})
+
 # test_that("Factors can be used in endogenous data as discrete", {
 #   # C1
 #   # expect_silent(copulaCorrection(formula= y ~ X1+X2+color|continuous(color), verbose = FALSE,

@@ -61,11 +61,24 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
   # Definition: Optimization function -----------------------------------------------------------------
   fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo, hessian=F){
+
     # Bounds for rho (0,1): LL returns Inf if outside as NelderMead cannot deal with bounds
-    return(optimx(par = optimx.start.params, fn = copulaCorrection_LL,
-                  method="Nelder-Mead", control=list(trace=0),
-                  hessian = hessian,
-                  vec.y=vec.data.y, m.data.exo.endo=m.model.data.exo.endo, vec.data.endo=vec.data.endo))
+    res.optimx <- tryCatch(expr =
+                             optimx(par = optimx.start.params,
+                                    fn  = copulaCorrection_LL,
+                                    method  = "Nelder-Mead",
+                                    control = list(trace=0),
+                                    hessian = hessian,
+                                    vec.y   = vec.data.y,
+                                    m.data.exo.endo = m.model.data.exo.endo,
+                                    vec.data.endo   = vec.data.endo),
+                           error   = function(e){ return(e)})
+
+    if(is(res.optimx, "error"))
+      stop("Failed to optimize the log-likelihood function with error \'", res.optimx$message,
+           "\'. Please revise your start parameter and data.", call. = FALSE)
+
+    return(res.optimx)
   }
 
 
