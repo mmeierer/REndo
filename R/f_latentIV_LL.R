@@ -1,17 +1,18 @@
 #' @importFrom mvtnorm dmvnorm
-latentIV_LL<- function(params, m.data.mvnorm, use.intercept){
+latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
+                       name.intercept, name.endo.param){
 
   # Extract main model coefficients --------------------------------------------
   # Number of coefs depends on if there is an intercept or not.
   # Set b00 to 0 if there is no intercept
   if(use.intercept){
     # With intercept (2 coefs from lm)
-    b00     <- params["b00"]
-    a1      <- params["a1"]
+    b00     <- params[name.intercept]
+    a1      <- params[name.endo.param]
   }else{
     # No intercept (only 1 coef in lm)
     b00     <- 0
-    a1      <- params["a1"]
+    a1      <- params[name.endo.param]
   }
 
   # Bounds group probability: [0,1]

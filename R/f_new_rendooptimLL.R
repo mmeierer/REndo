@@ -3,7 +3,7 @@ new_rendo_optim_LL <- function(call, F.formula, start.params, estim.params, esti
                                res.optimx, log.likelihood, hessian,
                                fitted.values, residuals, vcov.error) {
 
-  names(start.params[names.main.coefs]) <- names.main.coefs
+  # start.params[names.main.coefs] <
 
   return(structure(
             class = "rendo.optim.LL",

@@ -12,117 +12,125 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   check_err_msg(checkinput_latentIV_startparams(start.params=start.params, formula=formula))
   check_err_msg(checkinput_latentIV_verbose(verbose=verbose))
 
-  # Extract data ------------------------------------------------------------
+  # Extract data ------------------------------------------------------------------------------
   F.formula          <- as.Formula(formula)
   mf.data.y          <- model.frame(formula = F.formula,data = data, lhs=1, rhs=0) # separately needed for names of fitted values
   vec.data.y         <- model.response(mf.data.y)
   vec.data.endo      <- model.matrix(object = update(F.formula, .~.-1), data = data, lhs=0, rhs=1) # model.frame(F.formula, data = data, lhs=0, rhs=1)[, 1]
   m.data.mvnorm      <- cbind(vec.data.y, vec.data.endo) # response (y) + data of model (excl intercept)
 
-  # Cannot use the names of coef(lm) as optimx will alter it and cannot use the original names to read out anymore.
-  # Therefore use generic b00 and a1.
-  # Only iff the given model includes an intercept, one more paramters is needed (b00)
-  use.intercept             <- as.logical(attr(terms(F.formula), "intercept"))
-  names.optimx.main.coefs   <- if(use.intercept) c("b00", "a1") else "a1" # Save in separate variable as needed later on
+  # Start parameter and names ------------------------------------------------------------------
+  # Iff the given model includes an intercept, one more paramters is needed (b00)
+  use.intercept      <- as.logical(attr(terms(F.formula), "intercept"))
+  name.intercept     <- "(Intercept)" # convenience, always set
 
-  # Initial start.params if not provided ------------------------------------
+  # Readout / generate start values for the main model params
   if(is.null(start.params)){
-    res.lm.start.param <- lm(F.formula, data)
-    # ***stop if lm fails / coef contains any NAs
-    names.original.main.coefs <- names(coef(res.lm.start.param))
-    main.coefs                <- coef(res.lm.start.param)
-    names(main.coefs)         <- names.optimx.main.coefs
-    start.params <- c(main.coefs,
-                      pi1 = mean(vec.data.endo),
-                      pi2 = mean(vec.data.endo) + sd(vec.data.endo),
-                      theta5 = 1, theta6 = 1, theta7 = 1,
-                      theta8 = 0.5)
-
-    str.brakets <- paste0("(", paste(names(start.params), "=", round(start.params,3), collapse = ", ", sep=""), ")")
+    # generate start vals from lm
     if(verbose)
       message("No start parameters were given. The linear model ",deparse(formula(F.formula, lhs=1, rhs=1)),
-              " was fitted and start parameters c",str.brakets," are used.")
-
+              " is fitted to derive them.")
+    res.lm.start.param    <- lm(F.formula, data)
+    if(anyNA(coef(res.lm.start.param)))
+      stop("The start parameters could not be derived by fitting a linear model.", call. = FALSE)
+    start.vals.main.model <-  coef(res.lm.start.param)
   }else{
-    # start.params provided which only contain params for independent vars
-    # Re-name for optimx but first save original names for renaming back later on
-    # ** TODO: is this (ie user input) always sorted right?
-    # Sort start.params with intercept first
-    start.params[]
-    names.original.main.coefs   <- names(start.params)
-    # **TODO: BUG: potentially forces wrong order! Also in c1
-    names(start.params)         <- names.optimx.main.coefs
-
-    # Add other params
-    start.params <- c(start.params,
-                      pi1 = mean(vec.data.endo),
-                      pi2 = mean(vec.data.endo) + sd(vec.data.endo),
-                      theta5 = 1, theta6 = 1, theta7 = 1,
-                      theta8 = 0.5)
+    # valid start.params given by user
+    start.vals.main.model <- start.params
   }
 
+  # read out names
+  name.endo.param  <- setdiff(names(start.vals.main.model), name.intercept)
+  names.main.model <- if(use.intercept) c(name.intercept, name.endo.param) else name.endo.param
+  # ensure sorting is (Intercept), ENDO
+  start.vals.main.model <- setNames(start.vals.main.model[names.main.model], names.main.model)
+
+  start.vals.support.params <- c(pi1 = mean(vec.data.endo),
+                                 pi2 = mean(vec.data.endo) + sd(vec.data.endo),
+                                 theta5 = 1, theta6 = 1, theta7 = 1,
+                                 theta8 = 0.5)
+  names.support.params      <- names(start.vals.support.params)
+
+  # Append support params to start params
+  optimx.start.params  <- c(start.vals.main.model, start.vals.support.params)
+
+  if(verbose){
+    str.brakets <- paste0("(", paste(names(optimx.start.params), "=", round(optimx.start.params,3),
+                                     collapse = ", ", sep=""), ")")
+    message("The start parameters c",str.brakets," are used for optimization.")
+  }
+
+  optimx.name.endo.param <- make.names(name.endo.param)
+  optimx.name.intercept  <- make.names(name.intercept)
 
 
-  # Optimize LL ------------------------------------------------------------------------
+  # Optimize LL --------------------------------------------------------------------------------
   # Bounds are defined in LL by returning Inf for theta8 outside [0,1]
   # **try catch
-  res.optimx <- optimx(par = start.params, fn=latentIV_LL, m.data.mvnorm = m.data.mvnorm,
+  res.optimx <- optimx(par = optimx.start.params, fn=latentIV_LL,
+                       m.data.mvnorm = m.data.mvnorm,
                        use.intercept = use.intercept,
+                       name.intercept  = name.intercept,
+                       name.endo.param = name.endo.param,
                        method = "L-BFGS-B",
-                       lower = c(rep(-Inf,length(start.params)-1), 0),
-                       upper = c(rep( Inf,length(start.params)-1), 1),
+                       # Constrain theta8 (last param!) to [0,1]
+                       lower = c(rep(-Inf,length(optimx.start.params)-1), 0),
+                       upper = c(rep( Inf,length(optimx.start.params)-1), 1),
                        hessian = TRUE, control = list(trace=0))
 
+  # Read out params ----------------------------------------------------------------------------
+  # Ensure naming and ordering
 
-  # Calculate Returns ------------------------------------------------------------------
-  # Params and SE
-  # Read out params and rename main coefficients to original parameter names
-  estimated.params         <- coef(res.optimx)[1,]
-  full.optimx.coef.names   <- c(names.optimx.main.coefs,   "pi1",  "pi2","theta5","theta6","theta7","theta8")
-  full.original.coef.names <- c(names.original.main.coefs, "pi1",  "pi2","theta5","theta6","theta7","theta8")
-  estimated.params         <- setNames(estimated.params[full.optimx.coef.names], full.original.coef.names)
-  start.params             <- setNames(start.params[full.optimx.coef.names],     full.original.coef.names)
+  # Read out params
+  optimx.estimated.params  <- coef(res.optimx)[1,]
+
+  # rename main coefficients to original parameter names
+  all.estimated.params   <- setNames(optimx.estimated.params[c(make.names(names.main.model),names.support.params)],
+                                     c(names.main.model, names.support.params))
+  estim.param.main.model <- all.estimated.params[names.main.model]
+  estim.param.support    <- all.estimated.params[names.support.params]
 
 
-  # Hessian
+  # Hessian and SE ------------------------------------------------------------------------------
   hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
-  rownames(hessian) <- colnames(hessian) <- names(estimated.params)
+  rownames(hessian) <- colnames(hessian) <- names(all.estimated.params)
   fct.se.warn.error <- function(e){
                               warning("Hessian cannot be solved for the standard errors. All SEs set to NA.",
                                       call. = FALSE, immediate. = TRUE)
-                              return(rep(NA_real_,length(estimated.params)))}
+                              return(rep(NA_real_,length(all.estimated.params)))}
 
-  param.se <- tryCatch(expr = sqrt(diag(solve(hessian))),
+  all.param.se <- tryCatch(expr = sqrt(diag(solve(hessian))),
                        # Return same NAs vector if failed to solve so can still read-out results
                        warning = fct.se.warn.error,
                        error   = fct.se.warn.error)
-  names(param.se)         <- names(estimated.params)
+  names(all.param.se)         <- names(all.estimated.params)
 
   # Fitted and residuals
   if(use.intercept)
-    fitted        <- estimated.params[[names.original.main.coefs[1]]]*1 +
-                        estimated.params[[names.original.main.coefs[2]]]*vec.data.endo
+    fitted        <- all.estimated.params[[name.intercept]]*1 +
+                        all.estimated.params[[name.endo.param]]*vec.data.endo
   else
-    fitted        <- estimated.params[[names.original.main.coefs[1]]]*vec.data.endo
+    fitted        <- all.estimated.params[[name.endo.param]]*vec.data.endo
   fitted          <- as.vector(fitted)
   names(fitted)   <- names(vec.data.y)
 
   residuals        <- as.vector(vec.data.y - fitted)
   names(residuals) <- names(vec.data.y)
 
-  vcov.error      <- matrix(c(estimated.params["theta5"]^2,
-                             estimated.params["theta5"]*estimated.params["theta6"],
-                             estimated.params["theta5"]*estimated.params["theta6"],
-                             estimated.params["theta6"]^2+estimated.params["theta7"]^2),
+  vcov.error      <- matrix(c(all.estimated.params["theta5"]^2,
+                              all.estimated.params["theta5"]   * all.estimated.params["theta6"],
+                              all.estimated.params["theta5"]   * all.estimated.params["theta6"],
+                              all.estimated.params["theta6"]^2 + all.estimated.params["theta7"]^2),
                            nrow=2, ncol=2)
 
 
   # Put together returns ------------------------------------------------------------------
-  res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, start.params=start.params,
-                            estim.params=estimated.params, estim.params.se = param.se,
-                            names.main.coefs=names.original.main.coefs,
-                            res.optimx=res.optimx, log.likelihood=res.optimx$value,
-                            hessian=hessian, fitted.values=fitted,
+  res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, start.params=optimx.start.params,
+                            estim.params     = all.estimated.params,
+                            estim.params.se  = all.param.se,
+                            names.main.coefs = names.main.model,
+                            res.optimx = res.optimx, log.likelihood=res.optimx$value,
+                            hessian = hessian, fitted.values=fitted,
                             residuals=residuals, vcov.error=vcov.error)
 
                    # list(coefficients   = estimated.params[names.original.main.coefs],

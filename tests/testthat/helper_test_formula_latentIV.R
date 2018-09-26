@@ -62,13 +62,6 @@ test.formula.latentIV <- function(dataLatentIV){
   #   # expect_equal(coef(summary(res.trans.rhs1)), coef(summary(correct.res))) # will vary greatly because of limited bootstrappings
   # })
 
-  test_that("Works without intercept", {
-    # Works
-    expect_silent(res.no.intercept <- latentIV(formula = y ~ P - 1, data = dataLatentIV, start.params = c(P=-0.118)))
-    # Does not fit intercept
-    expect_false(any(names(coef(res.no.intercept)) == "(Intercept)"))
-  })
-
   test_that("Fail if formula variables are not in data", {
     # Fail if any regressors not in data (RHS1, RHS2, LHS1)
     expect_error(latentIV(formula= y ~ P ,data=data.frame(y=1:10)), regexp = "The above errors were encountered!")
