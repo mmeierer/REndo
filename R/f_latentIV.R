@@ -87,16 +87,11 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
                                   lower = lower.bounds,
                                   upper = upper.bounds,
                                   hessian = TRUE, control = list(trace=0)),
-                         warning = function(w){ return(w)},
                          error   = function(e){ return(e)})
 
   if(is(res.optimx, "error"))
     stop("Failed to optimize the log-likelihood function with error \'", res.optimx$message,
          "\'. Please revise your start parameter and data.", call. = FALSE)
-
-  if(is(res.optimx, "warning")){
-    warning("The optimization produces warnings: ", res.optimx$message, immediate. = TRUE, call. = FALSE)
-  }
 
 
   # Read out params ----------------------------------------------------------------------------
