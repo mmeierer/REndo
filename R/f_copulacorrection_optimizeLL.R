@@ -128,7 +128,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   names(residuals)      <- rownames(m.model.data.exo.endo)
 
   # Return data as object -------------------------------------------------------------------------------------
-  return(new_rendo_optim_LL(call = cl, F.formula = F.formula, start.params = start.params,
+  return(new_rendo_optim_LL(call = cl, F.formula = F.formula, mf = mf,
+                            start.params = start.params,
                             estim.params = coefficients, estim.params.se = parameter.sd,
                             names.main.coefs = names.params.exo.endo, hessian = hessian,
                             res.optimx = res.real.data.optimx,

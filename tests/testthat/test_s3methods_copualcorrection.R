@@ -102,4 +102,4 @@ c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare agains
 expect_silent(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopC1, verbose=FALSE))
 
 test.s3methods.rendooptimLL(res.model=res.c1, input.form=c1.input.form, function.std.data=dataCopC1,
-                            req.df=7,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))
+                            req.df=6,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))

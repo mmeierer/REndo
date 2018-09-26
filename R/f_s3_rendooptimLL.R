@@ -31,12 +31,13 @@ case.names.rendo.optim.LL <- function(object, ...){
   return(names(residuals(object)))
 }
 
-# #' @export
-# labels.rendo.optim.LL <- function(object, ...){
-#   # **Is this correct?
-#   return(setdiff(names(coef(object)), "(Intercept)"))
-#   # return(unique(labels(terms(object))))
-# }
+
+#' @export
+labels.rendo.optim.LL <- function(object, ...){
+  # Because terms() is from model.frame, the labels do not include the specials
+  # (contraray to when using labels(terms(formula)))
+  return(labels(terms(object$mf)))
+}
 
 #' @export
 coef.rendo.optim.LL <- function(object, ...){

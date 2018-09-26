@@ -1,10 +1,8 @@
 test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data, req.df,
                                          full.coefs){
-
+  input.form <- Formula::as.Formula(input.form)
   .test.s3methods.basic.structure(res.model=res.model, input.form=input.form,
                                   function.std.data=function.std.data, full.coefs=full.coefs)
-
-  # These are self-written
 
   test_that("logLik", {
     expect_silent(res.loglik <- logLik(res.model))
@@ -21,9 +19,23 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_silent(res.BIC <- BIC(res.model))
 
     # Check value correct
-    # nparam <- length(full.coefs)+1
-    # expect_equal(as.numeric(res.AIC), 2 *               nparam - 2*as.numeric(logLik(res.model)))
-    # expect_equal(as.numeric(res.BIC), 2 * log(nobs(res.model)) - 2*as.numeric(logLik(res.model)))
+    nparam <- length(full.coefs)
+    # AIC: 2     *npar-2LL
+    # BIC: log(n)*npar-2LL
+    expect_equal(as.numeric(res.AIC), 2 *                  nparam - 2*as.numeric(logLik(res.model)))
+    expect_equal(as.numeric(res.BIC), log(nobs(res.model))*nparam - 2*as.numeric(logLik(res.model)))
+  })
+
+  test_that("terms", {
+    expect_silent(terms(res.model))
+  })
+
+  test_that("labels", {
+    expect_silent(res.labels <- labels(res.model))
+    expect_type(res.labels, "character")
+    message(res.labels)
+    expect_setequal(res.labels, intersect(labels(terms(input.form)),
+                                          names(coef(res.model))))
   })
 
   test_that("summary() object structure", {

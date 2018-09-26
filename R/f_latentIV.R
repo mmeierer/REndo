@@ -141,7 +141,8 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
 
 
   # Put together returns ------------------------------------------------------------------
-  res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, start.params=optimx.start.params,
+  res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
+                            start.params=optimx.start.params,
                             estim.params     = all.estimated.params,
                             estim.params.se  = all.param.se,
                             names.main.coefs = names.main.model,

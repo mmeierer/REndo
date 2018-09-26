@@ -61,11 +61,7 @@
     expect_length(res.cases, nrow(function.std.data))
   })
 
-  test_that("labels", {
-    expect_silent(res.labels <- labels(res.model))
-    expect_type(res.labels, "character")
-    expect_setequal(res.labels, no.intercept.coefs)
-  })
+
 
   test_that("vcov", {
     expect_silent(res.vcov <- vcov(res.model))
