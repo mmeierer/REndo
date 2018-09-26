@@ -44,8 +44,11 @@ latentIV <- function(formula, start.params=c(), data){
   }else{
     # start.params provided which only contain params for dependent and independent vars
     # Re-name for optimx but first save original names for renaming later on
+    # **TODO: is this (ie user input) always sorted right?
     names.original.main.coefs   <- names(start.params)
+    # **TODO: BUG: potentially forces wrong order! Also in c1
     names(start.params)         <- names.optimx.main.coefs
+
     # Add other params
     start.params <- c(start.params,
                       pi1 = mean(vec.data.endo),
@@ -70,8 +73,12 @@ latentIV <- function(formula, start.params=c(), data){
   # Calculate Returns ------------------------------------------------------------------
   # Params and SE
   # Read out params and rename main coefficients to original parameter names
-  estimated.params        <- coef(res.optimx)[1,]
-  names(estimated.params) <- c(names.original.main.coefs, "pi1",  "pi2","theta5","theta6","theta7","theta8")
+  estimated.params         <- coef(res.optimx)[1,]
+  full.optimx.coef.names   <- c(names.optimx.main.coefs,   "pi1",  "pi2","theta5","theta6","theta7","theta8")
+  full.original.coef.names <- c(names.original.main.coefs, "pi1",  "pi2","theta5","theta6","theta7","theta8")
+  estimated.params         <- setNames(estimated.params[full.optimx.coef.names], full.original.coef.names)
+  start.params             <- setNames(start.params[full.optimx.coef.names],     full.original.coef.names)
+
 
   # Hessian
   hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]

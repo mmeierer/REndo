@@ -17,8 +17,13 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
   })
 
   test_that("AIC/BIC", {
-    expect_silent(AIC(res.model))
-    expect_silent(BIC(res.model))
+    expect_silent(res.AIC <- AIC(res.model))
+    expect_silent(res.BIC <- BIC(res.model))
+
+    # Check value correct
+    # nparam <- length(full.coefs)+1
+    # expect_equal(as.numeric(res.AIC), 2 *               nparam - 2*as.numeric(logLik(res.model)))
+    # expect_equal(as.numeric(res.BIC), 2 * log(nobs(res.model)) - 2*as.numeric(logLik(res.model)))
   })
 
   test_that("summary() object structure", {
@@ -26,7 +31,9 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_is(res.sum, "summary.rendo.optim.LL")
     expect_true(is.list(res.sum))
     expect_named(res.sum, c("call", "start.params", "KKT1", "KKT2", "AIC", "BIC","conv.code",
-                            "log.likelihood", "coefficients", "vcov", "estim.params.se"), ignore.order = T)
+                            "log.likelihood", "coefficients", "vcov", "estim.params.se",
+                            "names.main.coefs"),
+                 ignore.order = T)
     expect_is(res.sum$call, "call")
     expect_is(res.sum$start.params, "numeric")
     expect_is(res.sum$KKT1, "logical")
