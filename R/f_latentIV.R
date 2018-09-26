@@ -2,7 +2,7 @@
 #' @importFrom stats lm coef model.frame model.matrix sd update
 #' @importFrom optimx optimx
 #' @export
-latentIV <- function(formula, start.params=c(), data){
+latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   cl <- match.call()
 
   # Input checks ------------------------------------------------------------
@@ -10,6 +10,7 @@ latentIV <- function(formula, start.params=c(), data){
   check_err_msg(checkinput_latentIV_formula(formula=formula))
   check_err_msg(checkinput_latentIV_dataVSformula(formula=formula, data=data))
   check_err_msg(checkinput_latentIV_startparams(start.params=start.params, formula=formula))
+  check_err_msg(checkinput_latentIV_verbose(verbose=verbose))
 
   # Extract data ------------------------------------------------------------
   F.formula          <- as.Formula(formula)
@@ -38,13 +39,16 @@ latentIV <- function(formula, start.params=c(), data){
                       theta8 = 0.5)
 
     str.brakets <- paste0("(", paste(names(start.params), "=", round(start.params,3), collapse = ", ", sep=""), ")")
-    message("No start parameters were given. The linear model ",deparse(formula(F.formula, lhs=1, rhs=1)),
-            " was fitted and start parameters c",str.brakets," are used.")
+    if(verbose)
+      message("No start parameters were given. The linear model ",deparse(formula(F.formula, lhs=1, rhs=1)),
+              " was fitted and start parameters c",str.brakets," are used.")
 
   }else{
-    # start.params provided which only contain params for dependent and independent vars
-    # Re-name for optimx but first save original names for renaming later on
-    # **TODO: is this (ie user input) always sorted right?
+    # start.params provided which only contain params for independent vars
+    # Re-name for optimx but first save original names for renaming back later on
+    # ** TODO: is this (ie user input) always sorted right?
+    # Sort start.params with intercept first
+    start.params[]
     names.original.main.coefs   <- names(start.params)
     # **TODO: BUG: potentially forces wrong order! Also in c1
     names(start.params)         <- names.optimx.main.coefs
