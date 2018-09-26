@@ -148,11 +148,13 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
   cat("\n")
 
   # Non main model coefs - only show the values, not the statistcs
-  cat("Further coefficients used during model fitting:\n")
+  cat("Further parameters estimated during model fitting:\n")
 
   names.non.main.coefs <- setdiff(rownames(x$coefficients), x$names.main.coefs)
   print.default(format(x$coefficients[names.non.main.coefs, "Estimate"], digits = digits), print.gap = 1L,
                 quote = FALSE)
+  cat("(see help file for details)\n")
+
   if(anyNA(x$estim.params.se))
     cat("\nFor some parameters the statistics could not be calculated because the SE is unavailable.\n")
 
