@@ -14,13 +14,14 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
 
   # Extract data ------------------------------------------------------------------------------
   F.formula          <- as.Formula(formula)
-  mf.data.y          <- model.frame(formula = F.formula,data = data, lhs=1, rhs=0) # separately needed for names of fitted values
-  vec.data.y         <- model.response(mf.data.y)
-  vec.data.endo      <- model.matrix(object = update(F.formula, .~.-1), data = data, lhs=0, rhs=1) # model.frame(F.formula, data = data, lhs=0, rhs=1)[, 1]
-  m.data.mvnorm      <- cbind(vec.data.y, vec.data.endo) # response (y) + data of model (excl intercept)
+  mf                 <- model.frame(formula = F.formula,data = data)
+  vec.data.y         <- model.response(mf)
+  vec.data.endo      <- model.part(object=F.formula, data = mf, lhs=0, rhs=1, drop = TRUE)
+  # response (y) + data of model (excl intercept)
+  m.data.mvnorm      <- cbind(vec.data.y, vec.data.endo)
 
   # Start parameter and names ------------------------------------------------------------------
-  # Iff the given model includes an intercept, one more paramters is needed (b00)
+  # Iff the given model includes an intercept, one more paramters is needed
   use.intercept      <- as.logical(attr(terms(F.formula), "intercept"))
   name.intercept     <- "(Intercept)" # convenience, always set
 
@@ -66,7 +67,7 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
 
   # Optimize LL --------------------------------------------------------------------------------
   # Bounds are defined in LL by returning Inf for theta8 outside [0,1]
-  # **try catch
+  # **TODO: try catch
   res.optimx <- optimx(par = optimx.start.params, fn=latentIV_LL,
                        m.data.mvnorm = m.data.mvnorm,
                        use.intercept = use.intercept,
