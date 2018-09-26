@@ -138,6 +138,10 @@ vcov.summary.rendo.optim.LL <- function(object, ...){
 print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3L),
                                          signif.stars = getOption("show.signif.stars"), ...){
 
+  # Max width to not exceed the fixed width of some prints (printCoef/call)
+  # max.width <- min(max(nchar(deparse(x$call))), 0.9 * getOption("width"))
+  max.width <- min(65, 0.9 * getOption("width"))
+
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 
   # Main model coefficients
@@ -145,6 +149,10 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
   printCoefmat(x$coefficients[x$names.main.coefs, ,drop=FALSE], digits = digits, na.print = "NA",
                has.Pvalue = TRUE, signif.stars = signif.stars,...)
 
+  if(anyNA(x$estim.params.se))
+    cat("\n",paste0(strwrap("For some parameters the statistics could not be calculated because the Std. Error is unavailable.",
+                            width = max.width),
+                    collapse = "\n"), "\n",sep = "")
   cat("\n")
 
   # Non main model coefs - only show the values, not the statistcs
@@ -155,24 +163,15 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
                 quote = FALSE)
   cat("(see help file for details)\n")
 
-  if(anyNA(x$estim.params.se))
-    cat("\nFor some parameters the statistics could not be calculated because the SE is unavailable.\n")
+
 
   cat("\n")
 
   cat("Initial parameter values:\n")
-  # Max width to not exceed deparsed call
-  # max.width <- min(max(nchar(deparse(x$call))), 0.9 * getOption("width"))
-  max.width <- min(65, 0.9 * getOption("width"))
   cat( paste0(strwrap( paste0(paste(names(x$start.params), sep = "=",round(x$start.params,digits = digits)),
                               collapse=" "),
                        width = max.width),
               collapse = "\n"))
-  # cat(paste0(paste(names(x$start.params), sep = "=",round(x$start.params,digits = digits)),
-  #            collapse=" "), fill = TRUE)
-  # cat(format(paste(names(x$start.params), sep = "=",round(x$start.params,digits = digits)),
-  #            width = 0.9 * getOption("width")),"\n\n")
-  # print.default(format(x$start.params, digits = digits), print.gap = 0L, quote = FALSE)
   cat("\n\n")
 
   cat("The value of the log-likelihood function:", x$log.likelihood,"\n")
