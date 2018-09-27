@@ -57,12 +57,6 @@ vcov.rendo.optim.LL <- function(object, ...){
   return(m.vcov)
 }
 
-#' @export
-show.rendo.optim.LL <- function(object){
-  print(object)
-  # show() returns NULL invisibly
-  invisible()
-}
 
 #' @export
 print.rendo.optim.LL <- function(x, digits = max(3L, getOption("digits") - 3L), ...){
@@ -106,7 +100,7 @@ summary.rendo.optim.LL <- function(object, ...){
 
   # Return object ------------------------------------------------------------------------
   # return NA_ placeholder if cannot calculate vcov
-  res$vcov <- tryCatch(vcov(object), error=function(e){
+  res$vcov <- tryCatch(vcov(object), error = function(e){
                                       h <- object$hessian
                                       h[,] <- NA_real_
                                       return(h)})
@@ -186,9 +180,3 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
   invisible(x)
 }
 
-#' @export
-show.summary.rendo.optim.LL <- function(object){
-  print(object)
-  # show() returns NULL invisibly
-  invisible()
-}
