@@ -50,23 +50,6 @@ test_that("Fail if formula contains dot (.)", {
   expect_error(latentIV(formula = y ~ ., data = dataLatentIV), regexp = "The above errors were encountered!")
 })
 
-# **** FIX LATENTIV
-# test_that("Transformations can be handled and are correct", {
-#   correct.res <- latentIV(formula = y ~ P, data = dataLatentIV)
-#   # Can handle transformations in LHS
-#   data.altered   <- dataLatentIV
-#   data.altered$y <- data.altered$y*2.5
-#   res.trans.lhs <- latentIV(formula = I(y/2.5) ~ P, data = data.altered)
-#   expect_equal(coef(res.trans.lhs), coef(correct.res), check.attributes=F)
-#   # expect_equal(coef(summary(res.trans.lhs)), coef(summary(correct.res))) # will vary greatly because of limited bootstrappings
-#
-#   # Can handle transformations in RHS1
-#   data.altered    <- dataLatentIV
-#   data.altered$X1 <- data.altered$P+111
-#   res.trans.rhs1  <- latentIV(formula = y ~ I(P-111), data = data.altered)
-#   expect_equal(coef(res.trans.rhs1), coef(correct.res), check.attributes=F)
-#   # expect_equal(coef(summary(res.trans.rhs1)), coef(summary(correct.res))) # will vary greatly because of limited bootstrappings
-# })
 
 test_that("Fail if formula variables are not in data", {
   # Fail if any regressors not in data (RHS1, RHS2, LHS1)

@@ -40,11 +40,47 @@ test_that("Fails graciously for bad start.params", {
                regexp = "Failed to optimize the log-likelihood function with error")
 })
 
-# test_that("Summary prints about SE unavailable", {
-#   expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=2), data = dataLatentIV),
-# regexp=)
-#   expect_
+test_that("Works with function in lhs", {
+  expect_silent(latentIV(formula = I(y/2)~P, data = dataLatentIV))
+})
+
+test_that("Works with all endo transformed", {
+  expect_silent(latentIV(formula = y~I(P/2), data = dataLatentIV))
+})
+
+
+test_that("Transformations are correct", {
+  expect_silent(correct.res <- latentIV(formula = y ~ P, data = dataLatentIV, verbose = FALSE))
+  # Can handle transformations in LHS
+  data.altered   <- dataLatentIV
+  data.altered$y <- exp(data.altered$y)
+  expect_silent(res.trans.lhs <- latentIV(formula = log(y) ~ P, data = data.altered, verbose = FALSE))
+  expect_equal(coef(res.trans.lhs), coef(correct.res))
+  expect_equal(coef(summary(res.trans.lhs)), coef(summary(correct.res)))
+
+  # Can handle transformations in RHS1
+  data.altered    <- dataLatentIV
+  data.altered$P <- exp(data.altered$P)
+  expect_silent(res.trans.rhs1  <- latentIV(formula = y ~ log(P), data = data.altered, verbose = FALSE))
+  expect_equal(coef(res.trans.rhs1), coef(correct.res), check.attributes=FALSE)
+  expect_equal(coef(summary(res.trans.rhs1)), coef(summary(correct.res)), check.attributes=FALSE)
+})
+
+
+test_that("Summary prints about SE unavailable", {
+  expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=2), verbose = FALSE,data = dataLatentIV),
+                 regexp = "Hessian cannot be solved for the standard errors")
+  expect_output(print(summary(res.latent)), all = F,
+                regexp = "For some parameters the statistics could not be calculated")
+  expect_true(anyNA(coef(summary(res.latent))))
+})
+
+
+# test_that("Stops if lm fails for start",{
+#   expect_error(latentIV(y~K, data=),
+#                regexp = "The start parameters could not be derived by fitting a linear model")
 # })
+
 
 
 test_that("Hessian cannot be solved - produce warning + cannot do vcov", {
@@ -52,7 +88,16 @@ test_that("Hessian cannot be solved - produce warning + cannot do vcov", {
   set.seed(0xcaffee)
   expect_warning(res.lat.warn <- latentIV(formula = y ~ K-1, data = cbind(dataLatentIV, K=rnorm(nrow(dataLatentIV))), start.params = c(K=1.23)),
                  regexp = "cannot be solved for the standard errors. All SEs set to NA.")
+  # This does not seem to work anymore. Set entry mannualy to NA
+  res.lat.warn$hessian[3,4] <- NA_real_
   # can run summary just fine but SE are not available -> no zscore/pvals
   expect_silent(sum.coef <- coef(summary(res.lat.warn)))
   expect_true(all(is.na(sum.coef[, c(2,3,4)]))) # SE/zscore/pval all NA for all coefs
+
+  # Summary vcov works but all NA
+  expect_true(all(is.na(vcov(summary(res.lat.warn)))))
+
+  # Cannot do vcov
+  expect_error(vcov(res.lat.warn), reges="The vcov matrix cannot be calculated because the")
+
 })
