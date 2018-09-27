@@ -15,7 +15,7 @@ checkinput_copulacorrection_formula <- function(formula){
   if(length(err.msg)>0)
     return(err.msg)
 
-  # Check that every RHS2 is in RHS1
+  # Check that every RHS2 (endo) is in RHS1(complete model)
   names.rhs1 <- all.vars(formula(F.formula, rhs=1, lhs=0))
   names.rhs2 <- all.vars(formula(F.formula, rhs=2, lhs=0))
   # RHS2 not in RHS1
@@ -27,6 +27,10 @@ checkinput_copulacorrection_formula <- function(formula){
                                                    from.rhs=2, params.as.chars.only=TRUE)
   names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",
                                                    from.rhs=2, params.as.chars.only=TRUE)
+
+  # Check that every endo regressor is also in the RHS1 exactly like this
+  if(!all(c(names.vars.continuous, names.vars.discrete) %in% labels(terms(F.formula, rhs=1, lhs=0))))
+    err.msg <- c(err.msg, "Please name every endogenous exactly as it is in the main model, incl. transformations (ie y~X+log(P)|continuous(log(P))).")
 
   # Same regressor cannot be continuous and discrete at the same time
   if(any(names.vars.continuous %in% names.vars.discrete))
@@ -42,14 +46,17 @@ checkinput_copulacorrection_formula <- function(formula){
   num.specials.rhs2 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=2, specials = c("continuous", "discrete")), "specials"), length))
   num.specials.lhs  <- sum(sapply(attr(terms(F.formula, lhs=1, rhs=0, specials = c("continuous", "discrete")), "specials"), length))
 
+  # Check if any special is empty
+  if(any(labels(F.terms.rhs2) %in% c("continuous()", "discrete()")))
+    err.msg <- c(err.msg, "Please specify a variable in every function call on the second right-hand side of the formula.")
+
   # Check that no other/misspelled/not indicated function
   if( length(labels(F.terms.rhs2)) != num.specials.rhs2)
     err.msg <- c(err.msg, "Please indicate for every endogenous regressor in the second right-hand side if it is either continuous or discrete by using the respective specification.")
 
-  # Check that there are no special functions in the first RHS
+  # Check that there are no special functions in the first RHS, LHS
   if(num.specials.rhs1 > 0)
     err.msg <- c(err.msg, "Please specify no endogenous regressor in the first righ-hand side of the formula.")
-
   if(num.specials.lhs > 0)
     err.msg <- c(err.msg, "Please specify no endogenous regressor in the left-hand side of the formula.")
 
@@ -58,22 +65,14 @@ checkinput_copulacorrection_formula <- function(formula){
     err.msg <- c(err.msg, "Please do not specify all regressors as endogenous.")
 
   # Check that the specials contains no transformations / functions (ie discrete(log(P))) and are specified additively
-  allowed.names.rhs2 <- c("~", "+", "discrete", "continuous", all.vars(formula(F.formula, rhs=1, lhs=0)))
-  if(length(setdiff(all.names(F.terms.rhs2),allowed.names.rhs2))>0)
-    err.msg <- c(err.msg, "Please specify endogenous regressor additively and without transformations.")
+  # allowed.names.rhs2 <- c("~", "+", "discrete", "continuous", all.vars(formula(F.formula, rhs=1, lhs=0)))
+  # if(length(setdiff(all.names(F.terms.rhs2),allowed.names.rhs2))>0)
+  #   err.msg <- c(err.msg, "Please specify endogenous regressor additively and without transformations.")
 
   # Pluses (+) in the specials escape the previous check. Count the number of pluses to check
-  num.pluses <- sum(all.names(F.terms.rhs2) == "+")
-  if(num.pluses > length(labels(F.terms.rhs2)) - 1)
-    err.msg <- c(err.msg, "Please specify multiple endogenous regressors with commas instead of with pluses (ie. continuous(P1, P2) instead of continuous(P1+P2)).")
-
-  # Check if any special is empty
-  if(any(labels(F.terms.rhs2) %in% c("continuous()", "discrete()")))
-    err.msg <- c(err.msg, "Please specify a variable in every function call on the second right-hand side of the formula.")
-
-  # Check that every endo regressor is also in the RHS1 exactly like this
-  # if(!all(c(names, names) %in% labels(terms(rhs=1))))
-  # "Please name every endogenous exactly as it is in the main model, incl. transformations (ie y~X+log(P)|continuous(log(P))).
+  # num.pluses <- sum(all.names(F.terms.rhs2) == "+")
+  # if(num.pluses > length(labels(F.terms.rhs2)) - 1)
+  #   err.msg <- c(err.msg, "Please specify multiple endogenous regressors with commas instead of with pluses (ie. continuous(P1, P2) instead of continuous(P1+P2)).")
 
 
   # Check that every regressor is in the data is done in separate function
@@ -94,6 +93,9 @@ checkinput_copulacorrection_dataVSformula <- function(data, formula, names.cols.
   names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",
                                                    from.rhs=2, params.as.chars.only=TRUE)
   names.cols.endo <- c(names.vars.discrete, names.vars.continuous)
+  # *** TODO: Which one here?
+
+  names.cols.endo <- all.vars(terms(F.formula, rhs=2, lhs=0))
 
 
   err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,

@@ -98,6 +98,7 @@ check_err_msg <- function(err.msg){
   # Only allow numeric (real & integer) values in the specified columns
   data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")
   data.types <- data.types[num.only.cols]
+
   if(any(!(data.types %in% "numeric")))
     err.msg <- c(err.msg, paste0("Please only provide numeric data for the endogenous regressors ",
                                  paste(num.only.cols, collapse = ", "), "."))

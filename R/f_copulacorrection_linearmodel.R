@@ -3,6 +3,7 @@
 copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous, names.vars.discrete,
                                          verbose, cl, ...){
   l.ellipsis <- list(...)
+
   # Tell what is done -----------------------------------------------------------------------------------------
   if(verbose){
     message("Fitting linear model with additional PStar copula data for ", length(names.vars.continuous),
@@ -20,6 +21,12 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
   # MF is only used for the (numeric) endovars. The full data then is used again in lm()
   mf.data <- model.frame(F.formula, rhs=1, lhs=0, data=data)
 
+  # Warn if the data is binomial=only has to values=dummy
+  #   can only be done after the data was transformed
+  checkinput_copulacorrection_warnbinomialendodata(data = mf.data,
+                                                   names.vars.continuous = names.vars.continuous,
+                                                   names.vars.discrete   = names.vars.discrete)
+
   if(length(names.vars.continuous) > 0){
     l.pstar.data.continuous <- lapply(names.vars.continuous, function(n){
       copulaCorrectionContinuous_pstar(vec.data.endo=mf.data[[n]]) })
@@ -31,14 +38,18 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
       copulaCorrectionDiscrete_pstar(vec.data.endo=mf.data[[n]])})
     names(l.pstar.data.discrete) <- paste0("PStar.", names.vars.discrete, sep="")
   }
+
   df.data.pstar <- do.call(cbind, c(l.pstar.data.continuous, l.pstar.data.discrete))
+  colnames(df.data.pstar) <- make.names(colnames(df.data.pstar))
 
   # Update formula to include PStar data ----------------------------------------------------------------------
   # use the formula RHS1 and also include P.star to fit lm
   F.lm  <- formula_build_mainmodel_data(F.formula = F.formula, data=df.data.pstar)
 
+
   # Run linear model ------------------------------------------------------------------------------------------
   df.data.copula <- cbind(data, df.data.pstar)
+
   res.lm <- lm(formula = F.lm, data = df.data.copula)
 
   # Adapt return -----------------------------------------------------------------------------------------------

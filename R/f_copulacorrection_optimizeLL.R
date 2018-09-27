@@ -32,11 +32,18 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   m.model.data.exo.endo   <- model.matrix(object = F.formula, data = mf, lhs=0, rhs = 1)
   vec.data.endo           <- m.model.data.exo.endo[, name.var.continuous, drop=TRUE]
 
+  # Warn if the data is binomial=only has to values=dummy
+  #   Cannot really check this before data is transformed
+  checkinput_copulacorrection_warnbinomialendodata(data = mf,
+                                                   names.vars.continuous = name.var.continuous,
+                                                   names.vars.discrete   = character(0L))
+
 
   # Create start parameters for optimx ----------------------------------------------------------------
   if(is.null(start.params)){
     # Generate with lm if they are missing
     start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=1), data = data))
+    # **TODO: Check if the lm fits !
     str.brakets  <- paste0("(", paste(names(start.params), "=", round(start.params,3), collapse = ", ", sep=""), ")")
     if(verbose)
       message("No start parameters were given. The linear model ", deparse(formula(F.formula, lhs=1, rhs=1)),
@@ -102,7 +109,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
       i.m.model.data.exo.endo <- m.model.data.exo.endo[indices, ,drop=FALSE]
       i.vec.data.endo         <- vec.data.endo[indices]
       # return as vector / first row (only 1 method used). As matrix it cannot be used again as input to optimx
-      return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y, m.model.data.exo.endo = i.m.model.data.exo.endo, vec.data.endo = i.vec.data.endo))[1,])
+      return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y,
+                                  m.model.data.exo.endo = i.m.model.data.exo.endo, vec.data.endo = i.vec.data.endo))[1,])
     })
 
   if(verbose)
