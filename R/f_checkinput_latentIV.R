@@ -32,11 +32,11 @@ checkinput_latentIV_verbose <- function(verbose){
 checkinput_latentIV_startparams <- function(start.params, formula){
 
   F.formula <- as.Formula(formula)
-# **TODO: What if transformations??
+
   # Required names are RHS1 + "(Intercept)" if the formula has one
-  f.rhs1         <- formula(F.formula, lhs=0, rhs=1)
-  required.names <- all.vars(f.rhs1)
-  if(attr(terms(f.rhs1), "intercept") == 1)
+  f.rhs1.terms      <- terms(F.formula, lhs=0, rhs=1)
+  required.names    <- labels(f.rhs1.terms)
+  if(attr(f.rhs1.terms, "intercept") == 1)
     required.names <- c(required.names, "(Intercept)")
 
   return(checkinputhelper_startparams(start.params=start.params, F.formula=F.formula,

@@ -29,6 +29,12 @@ test_that("Works with start.params given", {
   expect_silent(latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=-2), data = dataLatentIV, verbose=FALSE))
 })
 
+
+test_that("Works with start.params and transformations", {
+  expect_silent(latentIV(formula = y~I(P+1), start.params = c("(Intercept)"=1, "I(P + 1)"=-2), data = dataLatentIV, verbose=FALSE))
+})
+
+
 test_that("Same results with start.params swapped", {
   expect_silent(res.lat.1 <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=-2), data = dataLatentIV, verbose=FALSE))
   expect_silent(res.lat.2 <- latentIV(formula = y~P, start.params = c(P=-2, "(Intercept)"=1), data = dataLatentIV, verbose=FALSE))
@@ -41,11 +47,11 @@ test_that("Fails graciously for bad start.params", {
 })
 
 test_that("Works with function in lhs", {
-  expect_silent(latentIV(formula = I(y/2)~P, data = dataLatentIV))
+  expect_silent(latentIV(formula = I(y/2)~P, data = dataLatentIV, verbose = FALSE))
 })
 
 test_that("Works with all endo transformed", {
-  expect_silent(latentIV(formula = y~I(P/2), data = dataLatentIV))
+  expect_silent(latentIV(formula = y~I(P/2), data = dataLatentIV, verbose = FALSE))
 })
 
 
