@@ -62,8 +62,10 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
 
   # Add rho and sigma with defaults
-  #   Ordering as in matrix is done in LL
+  #   Same order as model.matrix/formula. This is done in LL again,
+  #   but do here to have consistent output (inputorder to optimx counts for this)
   start.params <- c(start.params, rho=0.0, sigma=1)
+  start.params <- start.params[c(names.model.mat, "rho", "sigma")]
 
 
   # Definition: Optimization function -----------------------------------------------------------------
@@ -118,6 +120,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
   # Calculate data --------------------------------------------------------------------------------------------
   # Prepare data to create a rendo LL optim object
+  # Ordering of coefs is same as input to optimx
 
   # Parameter and sd
   # Boots results: Rows = per parameter,  Columns = for each boots run

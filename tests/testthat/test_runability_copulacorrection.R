@@ -6,7 +6,7 @@ data("dataCopC2")
 data("dataCopDis")
 data("dataCopDisCont")
 
-context("copulaCorrection")
+context("copulaCorrection - Runability")
 
 test_that("Works with intercept", {
   # C1
@@ -173,6 +173,24 @@ test_that("Works with all endo transformed", {
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|discrete(exp(P2), I(P2/2)),   verbose = FALSE, data=dataCopDis))
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|continuous(exp(P2))+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont))
 })
+
+test_that("start.params works with transformation", {
+  expect_silent(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
+                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopC1, verbose=FALSE))
+})
+
+test_that("Correct for start.params swapped", {
+  set.seed(0xcaffee)
+  expect_silent(res.c1.1 <- copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
+                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopC1, verbose=FALSE))
+  set.seed(0xcaffee)
+  expect_silent(res.c1.2 <- copulaCorrection(start.params = c(X2 = -3,"I(P + 1)" = -1, "(Intercept)"=2, X1 = 1.5),
+                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopC1, verbose=FALSE))
+
+  # Equal, including param orderin
+  expect_equal(coef(res.c1.1), coef(res.c1.2))
+})
+
 
 
 test_that("Transformations are correct", {

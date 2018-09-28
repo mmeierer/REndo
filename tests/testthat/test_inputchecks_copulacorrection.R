@@ -358,6 +358,15 @@ test_that("start.params contains no parameter rho or sigma", {
 })
 
 
+test_that("start.params fails if transformation missing", {
+  # Not endo
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + exp(X2) + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + I(X2/2) + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  # in endo
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + X2 + exp(P) |continuous(exp(P)), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + X2 + I(P/2) |continuous(I(P/2)), data = dataCopC1), regexp = "The above errors were encountered!")
+})
+
 # *** TODO: Check that start.params work with dot in formula
 
 
