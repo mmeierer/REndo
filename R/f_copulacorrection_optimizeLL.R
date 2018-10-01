@@ -42,8 +42,11 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Create start parameters for optimx ----------------------------------------------------------------
   if(is.null(start.params)){
     # Generate with lm if they are missing
-    start.params <- coef(lm(formula = formula(F.formula, lhs=1, rhs=1), data = data))
-    # **TODO: Check if the lm fits !
+    res.lm.start.param <- lm(formula = formula(F.formula, lhs=1, rhs=1), data = data)
+    if(anyNA(coef(res.lm.start.param)))
+      stop("The start parameters could not be derived by fitting a linear model.", call. = FALSE)
+    start.params <- coef(res.lm.start.param)
+
     str.brakets  <- paste0("(", paste(names(start.params), "=", round(start.params,3), collapse = ", ", sep=""), ")")
     if(verbose)
       message("No start parameters were given. The linear model ", deparse(formula(F.formula, lhs=1, rhs=1)),
