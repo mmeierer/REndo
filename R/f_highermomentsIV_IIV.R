@@ -32,18 +32,6 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
 
   # Calculate internal IVs -----------------------------------------------------------------------------------
 
-  # De-mean helper function
-  # ** Is this col-wise or mean(whole matrix)? Doing col-wise
-  de.mean <- function(x){ if(NCOL(x) > 1){
-                            # >1 col (data.frame,...).
-                            # Use sweep contrary to apply because it again returns data.frame
-                            return(sweep(x = x, MARGIN = 2, STATS = colMeans(x=x, na.rm = T), FUN = "-"))
-                            # if(length(dim(x)) > 1)
-                            # return(apply(x, MARGIN = 2, FUN = function(x){x-mean(x)}))
-                          }else{
-                            # vector
-                            return(x-mean(x))}}
-
   # determine g function, if needed
   if(!is.null(g))
     fct.g <- switch(g,

@@ -146,8 +146,7 @@ test_that("Fail if non existent special function", {
 })
 
 
-# **TODO: Allow
-test_that("Fail if function inside special", {
+test_that("Fail if transformation inside special", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, log(X1)), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, log(X1+X2)), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=g, I(X1^2)), data=dataHigherMoments), regexp = "The above errors were encountered!")

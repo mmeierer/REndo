@@ -5,6 +5,7 @@
 higherMomentsIV <- function(formula, data, verbose=TRUE){
 
 # *** TODO: fail raluca check: underlying assumptions not satisfied - stop()
+# ***IIV() cannot be factors but not for the purely exogenous cannot
   cl <- match.call()
 
   # Input checks -------------------------------------------------------------------------------------
@@ -39,50 +40,20 @@ higherMomentsIV <- function(formula, data, verbose=TRUE){
   df.data.IIVs <- do.call(cbind, l.data.IIVs)
 
 
-  # Build formula for IVreg --------------------------------------------------------------------------
-  # In:         response ~ complete model | single endogenous | IIV()s (| EIV)
-  # Needed:     response ~ complete model | all exogenous from complete model + interal IVs (+ EIVs)
-
-  # 1st part:
-  # DV ~ complete model
-  F.part.1 <- formula(F.formula, lhs = 1, rhs = 1)
-
-  # 2nd part:
-  # ~ | all exogenous from complete model + IIVs (+ external IVs)
-
-  # All exogenous: complete - endogenous
-  labels.all.exo <- setdiff(labels(terms(F.formula, rhs=1, lhs=0)),
-                            labels(terms(F.formula, rhs=2, lhs=0)))
-
-  labels.iivs    <- colnames(df.data.IIVs)
-  labels.ext.iv  <- if(length(F.formula)[[2]] == 4)
-                        labels(terms(F.formula, lhs=0, rhs=4))
-                      else
-                        NULL # include external IVs only if present
-
-  # unique() reduces instruments to appear only exactly once
-  # As the instruments are built from colnames, this applies also to specifed IIV()s, even partial:
-  #   IIV(g=x2,iiv=g,X1,X2) + IIV(g=x2,iiv=g,X1, X2) is reduced to a single IIV(g=x2,iiv=g,X1, X2)
-  #   IIV(g=x2,iiv=g,X1,X3) + IIV(g=x2,iiv=g,X1, X2) is reduced to IIV(g=x2,iiv=g,X1, X2, X3)
-  F.part.2 <- reformulate(termlabels = unique(c(labels.all.exo, labels.iivs, labels.ext.iv)),
-                          response   = NULL,
-                          intercept  = TRUE)
-
-  # Add 1st and 2nd part to formula
-  F.ivreg <- as.Formula(F.part.1, F.part.2)
-
-
   # Call ivreg ---------------------------------------------------------------------------------------
+
+  # Get formula
+  l.F <- formula_build_ivreg(F.formula=F.formula, df.data.iv=df.data.IIVs, vec.desc.IVs = vec.desc.IIVs)
+  F.ivreg     <- l.F[["F.ivreg"]]
+  model.desc  <- l.F[["model.desc"]]
+
   # Put data together: user data + internal instruments
   df.data.ivreg <- cbind(data, df.data.IIVs)
 
   if(verbose){
     # print(head(df.data.ivreg))
-    desc.2nd.part <- paste0(c(labels.all.exo,vec.desc.IIVs,labels.ext.iv),collapse = " + ")
-    # Print the 2nd part of the formula "by hand" because the real formula is ugly (cannot use special chars)
     message("The following internal instruments were built: ", paste0(vec.desc.IIVs, collapse = ", "),".")
-    message("Fitting an instrumental variable regression with model ",
-            format(formula(F.ivreg, lhs=1, rhs=1)), "|", desc.2nd.part,".")
+    message("Fitting an instrumental variable regression with model ", model.desc,".")
   }
 
   res.ivreg <- ivreg(formula = F.ivreg, data = df.data.ivreg)

@@ -102,11 +102,11 @@ test_that("Every g works together with every ivv", {
     g   <- all.combs[i, "g"]
     if(any(iiv %in%  c("yp", "p2", "y2"))){
       # no g and no X required
-      f <- as.Formula(paste0("y~X1 + X2 + P | P | IIV(iiv=",iiv,")|X1+X2"))
+      f <- Formula::as.Formula(paste0("y~X1 + X2 + P | P | IIV(iiv=",iiv,")|X1+X2"))
       expect_silent(higherMomentsIV(f,data = dataHigherMoments, verbose = FALSE))
     }
     else{
-      f <- as.Formula(paste0("y~X1 + X2 + P | P | IIV(g=",g,",iiv=",iiv,",X1)|X1+X2"))
+      f <- Formula::as.Formula(paste0("y~X1 + X2 + P | P | IIV(g=",g,",iiv=",iiv,",X1)|X1+X2"))
       expect_silent(higherMomentsIV(f,data = dataHigherMoments, verbose = FALSE))
     }
   }

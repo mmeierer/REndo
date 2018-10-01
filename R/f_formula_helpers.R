@@ -84,3 +84,49 @@ formula_build_mainmodel_data <- function(F.formula, data){
                                  intercept = T))
   return(F.return)
 }
+
+
+
+# Builds a formula as input to ivreg
+# In:     response ~ complete model | single endogenous | instructions for IV (| EIV)
+# Out:    response ~ complete model | all exogenous from complete model + internal IVs from data (+ EIVs)
+formula_build_ivreg <- function(F.formula, df.data.iv, vec.desc.IVs){
+
+  # 1st part:
+  # DV ~ complete model
+  F.part.1 <- formula(F.formula, lhs = 1, rhs = 1)
+
+  # 2nd part:
+  # ~ | all exogenous from complete model + IIVs (+ external IVs)
+
+  # All exogenous: complete - endogenous
+  labels.all.exo <- setdiff(labels(terms(F.formula, rhs=1, lhs=0)),
+                            labels(terms(F.formula, rhs=2, lhs=0)))
+
+  labels.ivs     <- colnames(df.data.iv)
+  labels.ext.iv  <- if(length(F.formula)[[2]] == 4)
+    labels(terms(F.formula, lhs=0, rhs=4))
+  else
+    NULL # include external IVs only if present
+
+  # unique() reduces instruments to appear only exactly once
+  #
+  # For highermomentsIV's IIV data:
+  # As the instruments are built from colnames, this applies also to specifed IIV()s, even partial:
+  #   IIV(g=x2,iiv=g,X1,X2) + IIV(g=x2,iiv=g,X1, X2) is reduced to a single IIV(g=x2,iiv=g,X1, X2)
+  #   IIV(g=x2,iiv=g,X1,X3) + IIV(g=x2,iiv=g,X1, X2) is reduced to IIV(g=x2,iiv=g,X1, X2, X3)
+  F.part.2 <- reformulate(termlabels = unique(c(labels.all.exo, labels.ivs, labels.ext.iv)),
+                          response   = NULL,
+                          intercept  = TRUE)
+
+  # Add 1st and 2nd part to formula
+  F.ivreg <- as.Formula(F.part.1, F.part.2)
+
+  # Print the 2nd part of the formula "by hand" because the real formula is ugly (cannot use special chars)
+  desc.2nd.part <- paste0(c(labels.all.exo,vec.desc.IVs,labels.ext.iv),collapse = " + ")
+  model.desc <- paste0(format(formula(F.ivreg, lhs=1, rhs=1)), "|", desc.2nd.part)
+
+  # Return formula and pretty printed description (because of IVs)
+  return(list(F.ivreg=F.ivreg, model.desc = model.desc))
+
+}
