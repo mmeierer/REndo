@@ -103,9 +103,17 @@ checkinput_highermomentsiv_data <- function(data){
 checkinput_highermomentsiv_formulaVSdata <- function(formula, data){
   F.formula <- as.Formula(formula)
   relevant.cols.for.datacols <- if(length(F.formula)[[2]] == 4) c(1,2,4) else c(1,2)
+
+  # Num only: Endogenous + exogenous in the IIV()s
+  #   Have to use intersect() because params to IIVs (x2,gp,..) are recognized as vars
+  exo.cols.IIV  <- intersect(all.vars(terms(F.formula, lhs=0, rhs=1)),
+                             all.vars(terms(F.formula, lhs=0, rhs=3)))
+  num.only.cols <- union(all.vars(terms(F.formula, lhs=0, rhs=2)), # endo
+                         exo.cols.IIV)
+
   err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,
-                                                            rhs.rel.regr=relevant.cols.for.datacols,
-                                                            num.only.cols = all.vars(formula(F.formula, rhs=c(1,2))))
+                                                            rhs.rel.regr = relevant.cols.for.datacols,
+                                                            num.only.cols = num.only.cols)
 
   # Check that no column is named IIV.NUMBER
   if(any(grepl(pattern = "^IIV\\.[0-9]", x = colnames(data))))

@@ -16,6 +16,18 @@ test_that("Works with 3 IIVs",{
                                 data = dataHigherMoments, verbose = FALSE))
 })
 
+test_that("Works with non-numeric in exogenous not in IIV", {
+  # Factor/Chars/ Logicals (as indicate dichotomous variable (=factor))
+  # No exo used in IIV
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10), verbose=FALSE))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=F), verbose=FALSE))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10), verbose=FALSE))
+  # Other exo used in IIV
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10), verbose=FALSE))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=F), verbose=FALSE))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10), verbose=FALSE))
+})
+
 # test_that("Works with chars for g and iiv", {
 #   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g="x2", iiv=gp, X1)+IIV(iiv=y2), data = dataHigherMoments))
 #   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv="gp", X1)+IIV(iiv=y2), data = dataHigherMoments))

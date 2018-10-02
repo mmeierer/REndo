@@ -100,7 +100,7 @@ check_err_msg <- function(err.msg){
   data.types <- data.types[num.only.cols]
 
   if(any(!(data.types %in% "numeric")))
-    err.msg <- c(err.msg, paste0("Please only provide numeric data for the endogenous regressors ",
+    err.msg <- c(err.msg, paste0("Please only provide numeric data for the regressors ",
                                  paste(num.only.cols, collapse = ", "), "."))
 
   return(err.msg)
