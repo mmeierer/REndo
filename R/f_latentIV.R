@@ -15,7 +15,7 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
 
   # Extract data ------------------------------------------------------------------------------
   F.formula          <- as.Formula(formula)
-  mf                 <- model.frame(formula = F.formula,data = data)
+  mf                 <- model.frame(formula = F.formula, data = data)
   vec.data.y         <- model.response(mf)
   vec.data.endo      <- model.part(object=F.formula, data = mf, lhs=0, rhs=1, drop = TRUE)
   # response (y) + data of model (excl intercept)
@@ -78,15 +78,19 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
 
   # Fit LL with optimx
   res.optimx <- tryCatch(expr =
-                           optimx(par = optimx.start.params, fn=latentIV_LL,
+                           optimx(par = optimx.start.params,
+                                  fn=latentIV_LL,
                                   m.data.mvnorm = m.data.mvnorm,
                                   use.intercept = use.intercept,
                                   name.intercept  = name.intercept,
                                   name.endo.param = name.endo.param,
                                   method = "L-BFGS-B",
+                                  # method = "Nelder-Mead",
                                   lower = lower.bounds,
                                   upper = upper.bounds,
-                                  hessian = TRUE, control = list(trace=0)),
+                                  hessian = TRUE,
+                                  control = list(trace = 0,
+                                                 maxit = 5000)),
                          error   = function(e){ return(e)})
 
   if(is(res.optimx, "error"))
@@ -100,17 +104,22 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   # Read out params
   optimx.estimated.params  <- coef(res.optimx)[1,]
 
-  # rename main coefficients to original parameter names
+  # rename main coefficients in correct order to original parameter names
   all.estimated.params   <- setNames(optimx.estimated.params[c(make.names(names.main.model),names.support.params)],
                                      c(names.main.model, names.support.params))
   estim.param.main.model <- all.estimated.params[names.main.model]
   estim.param.support    <- all.estimated.params[names.support.params]
 
-
   # Hessian and SE ------------------------------------------------------------------------------
+  # Read out hessian.
+  # If optimx failed, single NA is returned as the hessian. Replace it with correctly-sized
+  #   matrix of NAs
   hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
+  if(length(hessian)==1 & all(is.na(hessian)))
+    hessian <- matrix(data = NA_real_, nrow = length(all.estimated.params), ncol = length(all.estimated.params))
+
   rownames(hessian) <- colnames(hessian) <- names(all.estimated.params)
-  fct.se.warn.error <- function(e){
+  fct.se.warn.error <- function(ew){
                               warning("Hessian cannot be solved for the standard errors. All SEs set to NA.",
                                       call. = FALSE, immediate. = TRUE)
                               return(rep(NA_real_,length(all.estimated.params)))}
