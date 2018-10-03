@@ -6,34 +6,46 @@ context("hetErrorsIV - Runability")
 data("dataHetIV")
 
 
-test_that("Works with intercept", {
-  expect_silent(hetErrorsIV(y~X1+X2+P|P|X1, data=dataHetIV, verbose=F))
-})
-
-test_that("Works without intercept", {
-  expect_silent(hetErrorsIV(y~X1+X2+P-1|P|X1, data=dataHetIV, verbose=F))
-})
+# test_that("Works with intercept", {
+#   expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=F))
+# })
+#
+# test_that("Works without intercept", {
+#   expect_silent(hetErrorsIV(y~X1+X2+P-1|P|IIV(X1), data=dataHetIV, verbose=F))
+# })
 
 
 test_that("Works with single exo", {
-  expect_silent(hetErrorsIV(y~X1+X2+P  |P|X1, data=dataHetIV, verbose=F))
-  expect_silent(hetErrorsIV(y~X1+X2+P-1|P|X1, data=dataHetIV, verbose=F))
+  expect_silent(hetErrorsIV(y~X1+X2+P  |P|IIV(X1), data=dataHetIV, verbose=F))
+  expect_silent(hetErrorsIV(y~X1+X2+P-1|P|IIV(X1), data=dataHetIV, verbose=F))
 })
 
 test_that("Works with two exo", {
-  expect_silent(hetErrorsIV(y~X1+X2+P  |P|X1+X2, data=dataHetIV, verbose=F))
-  expect_silent(hetErrorsIV(y~X1+X2+P-1|P|X1+X2, data=dataHetIV, verbose=F))
+  expect_silent(hetErrorsIV(y~X1+X2+P  |P|IIV(X1,X2), data=dataHetIV, verbose=F))
+  expect_silent(hetErrorsIV(y~X1+X2+P-1|P|IIV(X1,X2), data=dataHetIV, verbose=F))
+})
+
+test_that("Same result for swapped regs in IIVs", {
+  expect_silent(res.1 <- hetErrorsIV(y~X1+X2+P  |P|IIV(X1,X2), data=dataHetIV, verbose=F))
+  expect_silent(res.2 <- hetErrorsIV(y~X1+X2+P  |P|IIV(X2,X1), data=dataHetIV, verbose=F))
+  expect_equal(coef(summary(res.1)), coef(summary(res.2)))
+})
+
+test_that("Same result for separated IIVs",{
+  expect_silent(res.1 <- hetErrorsIV(y~X1+X2+P  |P|IIV(X1,X2), data=dataHetIV, verbose=F))
+  expect_silent(res.2 <- hetErrorsIV(y~X1+X2+P  |P|IIV(X1)+IIV(X2), data=dataHetIV, verbose=F))
+  expect_equal(coef(summary(res.1)), coef(summary(res.2)))
 })
 
 test_that("Works with external IV", {
-  expect_silent(hetErrorsIV(y~X1+X2+P  |P|X1 | X2, data=dataHetIV, verbose=F))
-  expect_silent(hetErrorsIV(y~X1   +P  |P|X1 | X2, data=dataHetIV, verbose=F))
+  expect_silent(hetErrorsIV(y~X1+X2+P  |P|IIV(X1) | X2, data=dataHetIV, verbose=F))
+  expect_silent(hetErrorsIV(y~X1   +P  |P|IIV(X1) | X2, data=dataHetIV, verbose=F))
 })
 
 test_that("Non-numerics can be used in exogenous data", {
-  expect_silent(hetErrorsIV(y~X1+X2+P+color |P|X1, verbose=F,
+  expect_silent(hetErrorsIV(y~X1+X2+P+color |P|IIV(X1), verbose=F,
                             data=cbind(dataHetIV, color=factor(x = c("red", "green", "blue", "white", "yellow")))))
-  expect_silent(hetErrorsIV(y~X1+X2+P+color-1 |P|X1, verbose=F,
+  expect_silent(hetErrorsIV(y~X1+X2+P+color-1 |P|IIV(X1), verbose=F,
                             data=cbind(dataHetIV, color=factor(x = c("red", "green", "blue", "white", "yellow")))))
 })
 

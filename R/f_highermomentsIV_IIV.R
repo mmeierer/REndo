@@ -27,7 +27,7 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
   vec.data.endo     <- model.part(F.formula, data=mf, rhs=2, lhs = 0, drop=TRUE)  # endo data from rhs 2 AS VECTOR
   # The exogenous regressors are only the ones specified in the IIV() part, not all exogenous ones
   #   Therefore read out the data by names. If none (NULL) results in zero-row data.frame
-  df.data.exo.iiv   <- mf[, names.exo.regs]
+  df.data.exo.iiv   <- mf[, names.exo.regs, drop=FALSE]
   vec.data.y        <- model.response(mf)
 
   # Calculate internal IVs -----------------------------------------------------------------------------------

@@ -4,42 +4,60 @@
 #' @export
 hetErrorsIV <- function(formula, data, verbose=TRUE){
 
-  y~X1+X2+P|P|X1|EIV
   cl <- match.call()
 
   formula.rhs.endo <- 2
-  formula.rhs.exo  <- 3
+  formula.rhs.iiv  <- 3
   formula.rhs.eiv  <- 4
 
+  # Input checks ----------------------------------------------------------------------------------------------------
+
+
+  # Read out the args from all IIV functions in the formula ---------------------------------------------------------
   F.formula <- Formula::as.Formula(formula)
+  names.exo.IIV <- formula_readout_special(F.formula = F.formula, name.special = "IIV",
+                                            from.rhs = 3, params.as.chars.only = TRUE)
 
   # For each exogen. hetero. variables, derive the instruments:
   #   residuals * [x-mean(x)] where residuals from
-  #     lm(endo P ~ all exogenous(:=RHS2)) and x are the single exo.het.vars
+  #     lm(endo P ~ all exogenous) and x are the single exo.het.vars
 
   # Calculate residuals for internal instruments --------------------------------------------------------------------
 
   F.residuals <-
     reformulate(response   = attr(terms(formula(F.formula, rhs=formula.rhs.endo, lhs=0)), "term.labels"),
-                termlabels = attr(terms(formula(F.formula, rhs=formula.rhs.exo,  lhs=0)), "term.labels"),
-                intercept  = attr(terms(formula(F.formula, rhs=formula.rhs.exo,  lhs=0)), "intercept"))
+                # all exo regs: complete model - endogenous reg
+                termlabels = setdiff(labels(terms(F.formula, lhs=0, rhs=1)),
+                                     labels(terms(F.formula, lhs=0, rhs=2))),
+                intercept  = TRUE)
+                # termlabels = names.exo.IIV)
+                # termlabels = attr(terms(formula(F.formula, rhs=formula.rhs.exo,  lhs=0)), "term.labels"),
+                # intercept  = attr(terms(formula(F.formula, rhs=formula.rhs.exo,  lhs=0)), "intercept"))
 
   # Fit lm and obtain residuals
-  internal.instr.residuals <- residuals(lm(F.residuals, data=data))
+  res.lm.resid <- lm(F.residuals, data=data)
+  if(anyNA(coef(res.lm.resid)))
+    stop("The residuals of the linear model to build the internal instruments could not be derived.", call. = FALSE)
+
+  internal.instr.residuals <- residuals(res.lm.resid)
+
+  if(verbose)
+    message("Residuals were derived by fitting ",format(F.residuals),".")
 
 
   # Calculate internal instruments -----------------------------------------------------------------------------------
-  df.data.exohetero <- model.frame(F.formula, lhs=0, rhs=formula.rhs.exo, data = data)
+  df.data.exohetero <- model.frame(F.formula, lhs=0, rhs=1, data = data)[, names.exo.IIV, drop=FALSE]
 
-  # For every exo heter regressor (column): demean * resid
-  df.data.internal.instr <- as.data.frame(
-    apply(df.data.exohetero, MARGIN = 2, FUN = function(col){
-                    (col - mean(col)) * internal.instr.residuals }))
+  # For every IIV() regressor (column): demean * resid
+
+  # df.data.internal.instr.2 <- de.mean(df.data.exohetero) * internal.instr.residuals
+  df.data.internal.instr <- as.data.frame(apply(df.data.exohetero, MARGIN = 2, FUN = function(col){
+                                                          (col - mean(col)) * internal.instr.residuals }))
 
   # Naming stuff
-  labels.het.exo <- labels(terms(F.formula, lhs = 0, rhs = formula.rhs.exo))
-  vec.desc.hetii.s <- paste0("HETIV(",labels.het.exo , ")")
-  colnames(df.data.internal.instr) <- make.names(paste0("HET.internal.instruments.", labels.het.exo))
+  # labels.het.exo   <- labels(terms(F.formula, lhs = 0, rhs = formula.rhs.exo))
+  vec.desc.hetii.s <- paste0("IIV(",names.exo.IIV , ")")
+  colnames(df.data.internal.instr) <- make.names(paste0("HET.internal.instruments.", names.exo.IIV))
 
   # IV assumption check ----------------------------------------------------------------------------------------------
   # The covariance between the squared residuals and the instruments should be different from 0.

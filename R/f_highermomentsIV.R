@@ -5,7 +5,6 @@
 higherMomentsIV <- function(formula, data, verbose=TRUE){
 
 # *** TODO: fail raluca check: underlying assumptions not satisfied - stop()
-# ***IIV() cannot be factors but not for the purely exogenous cannot
   cl <- match.call()
 
   # Input checks -------------------------------------------------------------------------------------
