@@ -1,3 +1,25 @@
+
+checkinput_highermomentsiv_formula <- function(formula=formula){
+  return(checkinputhelper_formula_IIVs(formula=formula))
+}
+
+checkinput_highermomentsiv_data <- function(data){
+  return(.checkinputhelper_data_basicstructure(data=data))
+}
+
+checkinput_highermomentsiv_formulaVSdata <- function(formula, data){
+  return(checkinputhelper_dataVSformula_IIV(formula=formula, data=data))
+}
+
+checkinput_highermomentsiv_verbose <- function(verbose){
+  return(checkinputhelper_single_logical(logical=verbose, param.name="verbose"))
+}
+
+checkinput_highermomentsiv_iiv <- function(iiv){
+  return(checkinputhelper_charactervector(vec=iiv, parameter.name="iiv",
+                                          allowed.inputs=c("g", "gp", "gy", "yp", "p2", "y2")))
+}
+
 checkinput_highermomentsiv_docalllist <- function(l.args){
 
   l.err.msg <- lapply(l.args, FUN = function(sublist){
@@ -31,98 +53,6 @@ checkinput_highermomentsiv_g <- function(g){
   return(err.msg)
 }
 
-checkinput_highermomentsiv_iiv <- function(iiv){
-  return(checkinputhelper_charactervector(vec=iiv, parameter.name="iiv",
-                                              allowed.inputs=c("g", "gp", "gy", "yp", "p2", "y2")))
-}
-
-checkinput_highermomentsiv_verbose <- function(verbose){
-  return(checkinputhelper_single_logical(logical=verbose, param.name="verbose"))
-}
-
-checkinput_highermomentsiv_formula <- function(formula=formula){
-  err.msg <- .checkinputhelper_formula_basicstructure(formula=formula)
-  if(length(err.msg)>0)
-    return(err.msg)
-
-  F.formula <- as.Formula(formula)
-  # Check that formula has exactly 3 RHS (cannot proceed if not 3 RHS are available)
-  if(length(F.formula)[2] != 3 && length(F.formula)[2] != 4)
-    return("Please specify the formula with exactly 3 or 4 parts on the right-hand side")
-
-  # Check that every RHS2 is in RHs
-  names.rhs1 <- all.vars(formula(F.formula, rhs=1, lhs=0))
-  names.rhs2 <- all.vars(formula(F.formula, rhs=2, lhs=0))
-  # RHS2 not in RHS1
-  if(!all(names.rhs2 %in% names.rhs1))
-    err.msg <- c(err.msg, "Please specify every endogenous regressors also in the first right-hand side (main model) of the formula.")
-
-  # Check that not all RHS1 are endogenous
-  if(all(names.rhs1 %in% names.rhs2))
-    err.msg <- c(err.msg, "Please do not specify all regressors as endogenous.")
-
-  # Check that only sinle endogenous is given
-  if(length(names.rhs2) > 1)
-    err.msg <- c(err.msg, "Please specify only a single regressor as endogenous.")
-
-  # Process special for checks
-  F.terms.rhs3      <- terms(F.formula, rhs=3, lhs=0, specials = "IIV")
-  num.specials.rhs1 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=1, specials = "IIV"), "specials"), length))
-  num.specials.rhs2 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=2, specials = "IIV"), "specials"), length))
-  num.specials.rhs3 <- sum(sapply(attr(terms(F.formula, lhs=0, rhs=3, specials = "IIV"), "specials"), length))
-  num.specials.lhs  <- sum(sapply(attr(terms(F.formula, lhs=1, rhs=0, specials = "IIV"), "specials"), length))
-
-  # Check that no other/misspelled/not indicated function
-  if( length(labels(F.terms.rhs3)) != num.specials.rhs3)
-    err.msg <- c(err.msg, "Please indicate how the IIV shall be constructed in the 3rd right-hand side of the formula")
-
-  # Check that there are no special functions in the first & second RHS
-  if(num.specials.rhs1 > 0)
-    err.msg <- c(err.msg, "Please specify no endogenous regressor in the 1st righ-hand side of the formula.")
-  if(num.specials.rhs2 > 0)
-    err.msg <- c(err.msg, "Please specify no endogenous regressor in the 2nd righ-hand side of the formula.")
-  if(num.specials.lhs > 0)
-    err.msg <- c(err.msg, "Please specify no endogenous regressor in the left-hand side of the formula.")
-
-  # Check if any special is empty or there is none
-  if(any(labels(F.terms.rhs3) == "IIV()") | num.specials.rhs3 == 0)
-    err.msg <- c(err.msg, "Please specify a variable in every function call on the third right-hand side of the formula.")
-
-
-  # Read out the special functions
-  # Check if any special is empty
-
-  return(err.msg)
-}
-
-checkinput_highermomentsiv_data <- function(data){
-  return(.checkinputhelper_data_basicstructure(data=data))
-}
-
-#' @importFrom Formula as.Formula
-checkinput_highermomentsiv_formulaVSdata <- function(formula, data){
-  F.formula <- as.Formula(formula)
-  relevant.cols.for.datacols <- if(length(F.formula)[[2]] == 4) c(1,2,4) else c(1,2)
-
-  # Num only: Endogenous + exogenous in the IIV()s
-  #   Have to use intersect() because params to IIVs (x2,gp,..) are recognized as vars
-  exo.cols.IIV  <- intersect(all.vars(terms(F.formula, lhs=0, rhs=1)),
-                             all.vars(terms(F.formula, lhs=0, rhs=3)))
-  num.only.cols <- union(all.vars(terms(F.formula, lhs=0, rhs=2)), # endo
-                         exo.cols.IIV)
-
-  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,
-                                                            rhs.rel.regr = relevant.cols.for.datacols,
-                                                            num.only.cols = num.only.cols)
-
-  # Check that no column is named IIV.NUMBER
-  if(any(grepl(pattern = "^IIV\\.[0-9]", x = colnames(data))))
-    err.msg <- c(err.msg, paste0("Please name no column in the data \'IIV.NUMERIC"))
-  #**?? Check that no column is named iivs or g to avoid confusion wh
-
-  return(err.msg)
-}
-
 checkinput_highermomentsiv_iivVSg <- function(g, iiv){
   # g from c("x2", "x3", "lnx", "1/x")
   # IIV from c("g","gp","gy","yp","p2","y2"))
@@ -152,7 +82,6 @@ checkinput_highermomentsiv_iivVSg <- function(g, iiv){
 checkinput_highermomentsiv_iivregressors <- function(l.iivregressors, F.formula, iiv){
   # The regressors are specified in the ... arg
   err.msg <- c()
-
 
   # All IIVs need exo data, except y2, p2,yp
   if(iiv %in% c("y2", "p2", "yp")){

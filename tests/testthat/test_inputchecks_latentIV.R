@@ -87,7 +87,7 @@ test_that("Fail if wrong data type in any of the formula parts", {
 
 test_that("Allow wrong data type in irrelevant columns", {
   # Allow wrong data types in unused columns
-  expect_silent(latentIV(formula = y ~ P, start.params = c("(Intercept)"=2.9, P = -0.852), verbose = FALSE,
+  expect_silent(latentIV(formula = y ~ P, verbose = FALSE,
                          data = cbind(dataLatentIV,
                                       unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
 })

@@ -160,7 +160,7 @@ test_that("Fail if transformation inside special", {
 test_that("Fail if special outside RHS3", {
   expect_error(higherMomentsIV(y~IIV(g=x2, iiv=g,X1)+X2+P|P|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(IIV(g=x2, iiv=yp,y)~X1+X2+P|P|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
-  expect_error(higherMomentsIV(y~X1+X2+P|IIV(g=x2, iiv=yp,P)|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|IIV(g=x2, iiv=yp,X1)|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
   # In EIV
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv=yp,P)|IIV(g=x2, iiv=g,X2), data=dataHigherMoments), regexp = "The above errors were encountered!")
 })

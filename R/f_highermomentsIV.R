@@ -31,7 +31,7 @@ higherMomentsIV <- function(formula, data, verbose=TRUE){
                                 args = c(alist(data=data, F.formula=F.formula),
                                          iiv.args))})
 
-  # Read out IV data
+  # Read out IV data and desc
   l.data.IIVs   <- lapply(l.res.IIVs, "[[","df.IIV")
   vec.desc.IIVs <- unique(unlist(lapply(l.res.IIVs, "[[","desc.IIV")))
 
