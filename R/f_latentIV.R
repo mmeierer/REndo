@@ -115,12 +115,15 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   # If optimx failed, single NA is returned as the hessian. Replace it with correctly-sized
   #   matrix of NAs
   hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
-  if(length(hessian)==1 & all(is.na(hessian)))
+  if(length(hessian)==1 & all(is.na(hessian))){
     hessian <- matrix(data = NA_real_, nrow = length(all.estimated.params), ncol = length(all.estimated.params))
+    warning("Hessian could not be derived. Setting all entries to NA.", immediate. = TRUE)
+  }
 
   rownames(hessian) <- colnames(hessian) <- names(all.estimated.params)
   fct.se.warn.error <- function(ew){
-                              warning("Hessian cannot be solved for the standard errors. All SEs set to NA.",
+                              warning("Hessian cannot be solved for the standard errors: ",
+                                      ew$message,". All SEs set to NA.",
                                       call. = FALSE, immediate. = TRUE)
                               return(rep(NA_real_,length(all.estimated.params)))}
 
@@ -151,7 +154,7 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
 
   # Put together returns ------------------------------------------------------------------
   res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
-                            start.params=optimx.start.params,
+                            start.params     = optimx.start.params,
                             estim.params     = all.estimated.params,
                             estim.params.se  = all.param.se,
                             names.main.coefs = names.main.model,
