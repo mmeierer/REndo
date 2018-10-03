@@ -70,12 +70,6 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   optimx.name.endo.param <- make.names(name.endo.param)
   optimx.name.intercept  <- make.names(name.intercept)
 
-  # Constrain theta8 to [0,1] for L-BFGS-B
-  # lower.bounds <- setNames(rep(-Inf, length(optimx.start.params)), names(optimx.start.params))
-  # upper.bounds <- setNames(rep( Inf, length(optimx.start.params)), names(optimx.start.params))
-  # lower.bounds[names(lower.bounds) == "theta8"] <- 0
-  # upper.bounds[names(upper.bounds) == "theta8"] <- 1
-
   # Fit LL with optimx
   res.optimx <- tryCatch(expr =
                            optimx(par = optimx.start.params,
@@ -85,9 +79,6 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
                                   name.intercept  = name.intercept,
                                   name.endo.param = name.endo.param,
                                   method = "Nelder-Mead",
-                                  # method = "L-BFGS-B",
-                                  # lower = lower.bounds,
-                                  # upper = upper.bounds,
                                   hessian = TRUE,
                                   control = list(trace = 0,
                                                  maxit = 5000)),

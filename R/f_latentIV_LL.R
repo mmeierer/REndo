@@ -15,11 +15,6 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
     a1      <- params[name.endo.param]
   }
 
-  # Manual Nelder Mead Bounds group probability: [0,1]
-  # pt <- (params["theta8"])
-  # if(pt < 0 || pt>1)
-  #   return(Inf)
-
   # Probability for group 1 - constraint to [0,1]
   # (incl bound because can be very large which flips to 0 and 1)
   pt <- exp(params["theta8"])
