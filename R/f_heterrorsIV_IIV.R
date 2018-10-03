@@ -11,22 +11,18 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
 
 
   # Calculate residuals for internal instruments -------------------------------------------------------------
+  # Cannot use labels/character as it is internally converted to symbols instead
+  #  of language objects. Transformations in symbols then get backticks what fails
+  #  any further processing in lm and model.frame.
+  #   Alternative:
+  #   attr(delete.response(terms(f, rhs=2)), "variables")[-1]
+  # response   = labels(terms(F.formula, rhs=formula.rhs.endo, lhs=0)),
   F.residuals <-
     reformulate(response = formula(F.formula, rhs=2, lhs=0)[[2]],
-                # Cannot use labels/character as it is internally converted to symbols instead
-                #  of langauge objects. Transformations in symbols then get backticks what fails
-                #  any further processing in lm and model.frame.
-                #   Alternative:
-                #   attr(delete.response(terms(f, rhs=2)), "variables")[-1]
-                # response   = labels(terms(F.formula, rhs=formula.rhs.endo, lhs=0)),
-
                 # all exo regs: complete model - endogenous reg
                 termlabels = setdiff(labels(terms(F.formula, lhs=0, rhs=1)),
                                      labels(terms(F.formula, lhs=0, rhs=2))),
                 intercept  = TRUE)
-  # termlabels = names.exo.IIV)
-  # termlabels = attr(terms(formula(F.formula, rhs=formula.rhs.exo,  lhs=0)), "term.labels"),
-  # intercept  = attr(terms(formula(F.formula, rhs=formula.rhs.exo,  lhs=0)), "intercept"))
 
   res.lm.resid <- lm(F.residuals, data=data)
   if(anyNA(coef(res.lm.resid)))
@@ -50,16 +46,18 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
   # Naming stuff
   # labels.het.exo   <- labels(terms(F.formula, lhs = 0, rhs = formula.rhs.exo))
   vec.desc.hetii.s <- paste0("IIV(",names.exo.IIV , ")")
-  colnames(df.data.internal.instr) <- make.names(paste0("HET.internal.instruments.", names.exo.IIV))
+  colnames(df.data.internal.instr) <- make.names(paste0("IIV.", names.exo.IIV))
 
   # IV assumption check ----------------------------------------------------------------------------------------------
   # The covariance between the squared residuals and the instruments should be different from 0.
   # If the assumption does not hold, the model assumption are not met and the instrument is weak.
 
   assumption.cov <- cov(internal.instr.residuals, df.data.internal.instr)
-  if(assumption.cov >= 0.1)
-    warning("The model assuption are not met: The covariance between the IVs and the residuals is ",assumption.cov,".",
-            "The instrument therefore is weak.", immediate. = TRUE, call. = FALSE)
+
+  if(any(assumption.cov >= 0.1))
+    warning("The model assuption are not met:\nThe covariance between the instruments and the residuals are ",
+            paste(names.exo.IIV,"=",round(assumption.cov,4), collapse = ", "),". ",
+            "\nThe instruments therefore are weak.", immediate. = TRUE, call. = FALSE)
 
 
   # Return ------------------------------------------------------------------------------------------------
