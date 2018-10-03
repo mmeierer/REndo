@@ -152,7 +152,7 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
                has.Pvalue = TRUE, signif.stars = signif.stars,...)
 
   if(anyNA(x$estim.params.se))
-    cat("\n",paste0(strwrap("For some parameters the statistics could not be calculated because the Std. Error is unavailable.",
+    cat("\n",paste0(strwrap("For some parameters the statistics could not be calculated because the Std. Errors are unavailable.",
                             width = max.width),
                     collapse = "\n"), "\n",sep = "")
   cat("\n")
