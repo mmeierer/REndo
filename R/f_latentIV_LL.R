@@ -15,16 +15,21 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
     a1      <- params[name.endo.param]
   }
 
-  # Nelder Mead Bounds group probability: [0,1]
+  # Manual Nelder Mead Bounds group probability: [0,1]
   # pt <- (params["theta8"])
   # if(pt < 0 || pt>1)
   #   return(Inf)
+
+  # Probability for group 1 - constraint to [0,1]
+  # (incl bound because can be very large which flips to 0 and 1)
+  pt <- exp(params["theta8"])
+  pt <- pt / (1+pt)
 
 
   # Sigma ----------------------------------------------------------------------
   m.sigma.tmp <- matrix(c(params["theta5"], 0,
                           params["theta6"], params["theta7"]),
-                        byrow = T, ncol = 2, nrow = 2)
+                        byrow = TRUE, ncol = 2, nrow = 2)
   m.sigma     <- m.sigma.tmp %*% t(m.sigma.tmp)
 
   # Varcov matrix reduced form -------------------------------------------------
@@ -53,10 +58,6 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
   pdf2 <- dmvnorm(m.data.mvnorm, mean=mu2, sigma=varcov)
 
   # Log Likelihood -------------------------------------------------------------
-
-  # Probability for group 1
-  pt <- exp(params["theta8"])
-  pt <- pt / (1+pt)
 
   logLL <-  sum(log(pt*pdf1 + (1-pt)*pdf2))
 

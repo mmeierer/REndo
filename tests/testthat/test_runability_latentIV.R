@@ -14,7 +14,8 @@ test_that("Verbose produces output", {
 
 test_that("Works without intercept", {
   # Works
-  expect_silent(res.no.i <- latentIV(formula = y~P-1, data = dataLatentIV, verbose=FALSE))
+  expect_warning(res.no.i <- latentIV(formula = y~P-1, data = dataLatentIV, verbose=FALSE),
+                 regexp = "Hessian cannot be solved")
   # Has no intercept in coefs
   expect_false("(Intercept)" %in% coef(res.no.i))
   # Also not in summary
@@ -26,18 +27,18 @@ test_that("Works without intercept", {
 })
 
 test_that("Works with start.params given", {
-  expect_silent(latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=-2), data = dataLatentIV, verbose=FALSE))
+  expect_silent(latentIV(formula = y~P, start.params = c("(Intercept)"=2.5, P=-0.5), data = dataLatentIV, verbose=FALSE))
 })
 
 
 test_that("Works with start.params and transformations", {
-  expect_silent(latentIV(formula = y~I(P+1), start.params = c("(Intercept)"=1, "I(P + 1)"=-2), data = dataLatentIV, verbose=FALSE))
+  expect_silent(latentIV(formula = y~I(P+1), start.params = c("(Intercept)"=2.5, "I(P + 1)"=-0.5), data = dataLatentIV, verbose=FALSE))
 })
 
 
 test_that("Same results with start.params swapped", {
-  expect_silent(res.lat.1 <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=-2), data = dataLatentIV, verbose=FALSE))
-  expect_silent(res.lat.2 <- latentIV(formula = y~P, start.params = c(P=-2, "(Intercept)"=1), data = dataLatentIV, verbose=FALSE))
+  expect_silent(res.lat.1 <- latentIV(formula = y~P, start.params = c("(Intercept)"=2.5, P=-0.5), data = dataLatentIV, verbose=FALSE))
+  expect_silent(res.lat.2 <- latentIV(formula = y~P, start.params = c(P=-0.5, "(Intercept)"=2.5), data = dataLatentIV, verbose=FALSE))
   expect_identical(coef(res.lat.1), coef(res.lat.2))
 })
 
@@ -47,7 +48,7 @@ test_that("Fails graciously for bad start.params", {
 })
 
 test_that("Works with function in lhs", {
-  expect_silent(latentIV(formula = I(y/2)~P, data = dataLatentIV, verbose = FALSE))
+  expect_silent(latentIV(formula = I(y+1)~P, data = dataLatentIV, verbose = FALSE))
 })
 
 test_that("Works with all endo transformed", {
@@ -82,20 +83,22 @@ test_that("Summary prints about SE unavailable", {
 })
 
 
-# test_that("Stops if lm fails for start",{
-#   expect_error(latentIV(y~K, data=),
-#                regexp = "The start parameters could not be derived by fitting a linear model")
-# })
-
+test_that("Stops if lm fails for start",{
+  # linearly dependend on intercept
+  expect_error(latentIV(y~K, data=data.frame(y=1:100, K=rep(2, 100))),
+               regexp = "The start parameters could not be derived by fitting a linear model")
+})
 
 
 test_that("Hessian cannot be solved - produce warning + cannot do vcov", {
   # As of print the hessian contains no NAs but simply cannot be solved
   set.seed(0xcaffee)
-  expect_warning(res.lat.warn <- latentIV(formula = y ~ K-1, data = cbind(dataLatentIV, K=rnorm(nrow(dataLatentIV))), start.params = c(K=1.23)),
-                 regexp = "cannot be solved for the standard errors. All SEs set to NA.")
-  # This does not seem to work anymore. Set entry mannualy to NA
-  res.lat.warn$hessian[3,4] <- NA_real_
+  expect_warning(res.lat.warn <- latentIV(formula = y ~ K-1, data = cbind(dataLatentIV, K=rnorm(nrow(dataLatentIV))),
+                                          start.params = c(K=1.23), verbose = FALSE),
+                 regexp = "Eigenvalue failure after method Nelder-Mea")
+  # Hessian is fine but cannot derive the SEs
+  # Manually set non-finite hessian
+  # res.lat.warn$hessian[3,4] <- NA_real_
   # can run summary just fine but SE are not available -> no zscore/pvals
   expect_silent(sum.coef <- coef(summary(res.lat.warn)))
   expect_true(all(is.na(sum.coef[, c(2,3,4)]))) # SE/zscore/pval all NA for all coefs

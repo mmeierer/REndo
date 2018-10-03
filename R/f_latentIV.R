@@ -50,7 +50,7 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   start.vals.support.params <- c(pi1 = mean(vec.data.endo),
                                  pi2 = mean(vec.data.endo) + sd(vec.data.endo),
                                  theta5 = 1, theta6 = 1, theta7 = 1,
-                                 theta8 = 0.5)
+                                 theta8 = log(0.5)) # log because will be exp()
   names.support.params      <- names(start.vals.support.params)
 
   # Append support params to start params
@@ -70,24 +70,24 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   optimx.name.endo.param <- make.names(name.endo.param)
   optimx.name.intercept  <- make.names(name.intercept)
 
-  # Constrain theta8 to [0,1]
-  lower.bounds <- setNames(rep(-Inf, length(optimx.start.params)), names(optimx.start.params))
-  upper.bounds <- setNames(rep( Inf, length(optimx.start.params)), names(optimx.start.params))
-  lower.bounds[names(lower.bounds) == "theta8"] <- 0
-  upper.bounds[names(upper.bounds) == "theta8"] <- 1
+  # Constrain theta8 to [0,1] for L-BFGS-B
+  # lower.bounds <- setNames(rep(-Inf, length(optimx.start.params)), names(optimx.start.params))
+  # upper.bounds <- setNames(rep( Inf, length(optimx.start.params)), names(optimx.start.params))
+  # lower.bounds[names(lower.bounds) == "theta8"] <- 0
+  # upper.bounds[names(upper.bounds) == "theta8"] <- 1
 
   # Fit LL with optimx
   res.optimx <- tryCatch(expr =
                            optimx(par = optimx.start.params,
-                                  fn=latentIV_LL,
+                                  fn  = latentIV_LL,
                                   m.data.mvnorm = m.data.mvnorm,
                                   use.intercept = use.intercept,
                                   name.intercept  = name.intercept,
                                   name.endo.param = name.endo.param,
-                                  method = "L-BFGS-B",
-                                  # method = "Nelder-Mead",
-                                  lower = lower.bounds,
-                                  upper = upper.bounds,
+                                  method = "Nelder-Mead",
+                                  # method = "L-BFGS-B",
+                                  # lower = lower.bounds,
+                                  # upper = upper.bounds,
                                   hessian = TRUE,
                                   control = list(trace = 0,
                                                  maxit = 5000)),
