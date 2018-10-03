@@ -97,11 +97,11 @@ checkinput_highermomentsiv_iivregressors <- function(l.iivregressors, F.formula,
     return("Please specify the exogenous regressors to build the internal instruments from in the IIV() function.")
 
   # Check that all regressors are in the RHS1 (main model)
-  if(!all(l.iivregressors %in% all.vars(formula(F.formula, lhs=0,rhs=1))))
+  if(!all(l.iivregressors %in% labels(terms(F.formula, lhs=0,rhs=1))))
     err.msg <- c(err.msg, "Please specifiy in IIV() only regressors that are also present in the first right-hand side (main model) of the formula.")
 
   # Check that no regressors is in the RHS2 (endo)
-  if(any(l.iivregressors %in% all.vars(formula(F.formula, lhs=0,rhs=2))))
+  if(any(l.iivregressors %in% labels(terms(F.formula, lhs=0,rhs=2))))
     err.msg <- c(err.msg, "Please specifiy only the exogenous but not the endogenous regressors in IIV().")
 
   # Formula has already been checked to have all regressors in data - therefore if it is in the formula it is also in the data
