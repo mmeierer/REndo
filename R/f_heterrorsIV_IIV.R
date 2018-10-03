@@ -57,8 +57,9 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
   # If the assumption does not hold, the model assumption are not met and the instrument is weak.
 
   assumption.cov <- cov(internal.instr.residuals, df.data.internal.instr)
-  if(isTRUE(all.equal.numeric(assumption.cov, 0, tolerance = sqrt(.Machine$double.eps))))
-    warning("The model assuption are not meet. The instrument is weak.", immediate. = TRUE, call. = FALSE)
+  if(assumption.cov >= 0.1)
+    warning("The model assuption are not met: The covariance between the IVs and the residuals is ",assumption.cov,".",
+            "The instrument therefore is weak.", immediate. = TRUE, call. = FALSE)
 
 
   # Return ------------------------------------------------------------------------------------------------
