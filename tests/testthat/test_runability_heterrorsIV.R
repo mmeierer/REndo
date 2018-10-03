@@ -59,7 +59,11 @@ test_that("Works with transformation in exogenous", {
 })
 
 test_that("Works with endo transformation", {
-  expect_silent(hetErrorsIV(y~X1+X2+exp(P)  |exp(P)|IIV(X1,X2), data=dataHetIV, verbose=F))
+  expect_silent(hetErrorsIV(y~X1+X2+I(P+1)|I(P+1)|IIV(X1,X2), data=dataHetIV, verbose=F))
+})
+
+test_that("Weak instruments trigger warning", {
+  expect_warning(hetErrorsIV(y~X1+X2+exp(P)|exp(P)|IIV(X1,X2), data=dataHetIV, verbose=F))
 })
 
 test_that("Transformations are correct", {
