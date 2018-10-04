@@ -67,7 +67,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Add rho and sigma with defaults
   #   Same order as model.matrix/formula. This is done in LL again,
   #   but do here to have consistent output (inputorder to optimx counts for this)
-  start.params <- c(start.params, rho=0.0, sigma=1)
+  start.params <- c(start.params, rho=0.0, sigma=1) # rho=0 -> rho=0.5 in LL
   start.params <- start.params[c(names.model.mat, "rho", "sigma")]
 
 

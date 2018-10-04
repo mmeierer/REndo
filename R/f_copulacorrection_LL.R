@@ -10,10 +10,11 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   params.endo.exo <- params.endo.exo[colnames(m.data.exo.endo)]
 
 
-  # *** TODO: WHAT DO HERE? May crash hessian calculation. Choose gradient methods + bounds instead?
-  #   (Bounds for rho: [0,1]. Return Inf as NelderMead cannot handle bounds)
-  if(rho < 0 || rho > 1)
-    return(Inf)
+  # Constrain rho to [0,1]
+  # (incl bound because can be very large which flips to 0 and 1)
+  rho <- exp(rho)
+  rho <- rho / (1+rho)
+
 
   # P.star -----------------------------------------------------------------------------------
   p.star <- copulaCorrectionContinuous_pstar(vec.data.endo = vec.data.endo)
