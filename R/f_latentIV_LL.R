@@ -44,17 +44,40 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
 
   mu1 <- matrix(data = c(b00+a1*pi1, pi1), nrow=2, ncol=1)
 
-  pdf1 <- dmvnorm(m.data.mvnorm, mean=mu1, sigma=varcov)
+  # Use log probs after LL explanations
+  # pdf1 <- dmvnorm(m.data.mvnorm, mean=mu1, sigma=varcov)
 
   # Group 2 contribution -------------------------------------------------------
   pi2 <- params["pi2"]
   mu2 <- matrix(c(b00+a1*pi2, pi2), nrow=2,ncol=1)
 
-  pdf2 <- dmvnorm(m.data.mvnorm, mean=mu2, sigma=varcov)
+  # Use log probs after LL explanations
+  # pdf2 <- dmvnorm(m.data.mvnorm, mean=mu2, sigma=varcov)
 
   # Log Likelihood -------------------------------------------------------------
+  # original: sum(log(pt*pdf1 + (1-pt)*pdf2))
+  #
+  # log(A+B)
+  # log(exp(log(A)) + exp(log(B)))
+  # -> LogSumExp trick:
+  # max(log(A), log(B)) + log(exp(log(A)-max) + exp(log(B)-max))
+  # A = pt*pdf1    B = (1-pt)*pdf2
+  # Step 1:
+  # max(log(pt*pdf1), log((1-pt)*pdf2))
+  # max(log(pt)+log(pdf1), log(1-pt)+log(pdf2))
+  # Step 2:
+  # log(exp(log(pt*pdf1)-max) + exp(log(1-pt)*pdf2()-max))
+  # log(exp(log(pt)+log(pdf1)-max) + exp(log(1-pt)+log(pdf2)-max))
+  # log(pt*exp(log(pdf1)-max)) + (1-pt)*exp(log(pdf2)-max)))
+  # -> log(pdf1)&log(pdf2) = dmvnorm(..., log=T)
+  log.pdf1 <- dmvnorm(m.data.mvnorm, mean=mu1, sigma=varcov, log = TRUE)
+  log.pdf2 <- dmvnorm(m.data.mvnorm, mean=mu2, sigma=varcov, log = TRUE)
+  max.AB   <- pmax(log(pt)+log.pdf1, log(1-pt)+log.pdf2)
+  logLL.lse<- sum(max.AB+log(pt*exp(log.pdf1-max.AB) + (1-pt)*exp(log.pdf2-max.AB)))
 
-  logLL <-  sum(log(pt*pdf1 + (1-pt)*pdf2))
+  # logLL <-  sum(log(pt*pdf1 + (1-pt)*pdf2))
+  # print(isTRUE(all.equal(logLL, logLL.lse))) # TRUE
 
-  return(-1*logLL)
+
+  return(-1*logLL.lse)
 }
