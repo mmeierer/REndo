@@ -306,6 +306,12 @@ test_that("start.params is NULL or missing but runs with message", {
   expect_message(copulaCorrection(start.params = NULL, formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1, verbose=TRUE),regexp = "The linear model", all = FALSE)
 })
 
+test_that("Fails if start.params cannot be derived with lm", {
+  expect_error(copulaCorrection(formula = y ~ X1+X2+X3+P |continuous(P), data = cbind(dataCopC1, X3=dataCopC1$X2*2)),
+               regexp = "The start parameters could not be derived by fitting a linear model")
+})
+
+
 test_that("start.params is named correctly", {
   # Unnamed vec given
   expect_error(copulaCorrection(start.params = c(2, 1, -2,0),                                formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")

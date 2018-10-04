@@ -111,7 +111,8 @@ check_err_msg <- function(err.msg){
 checkinputhelper_data_notnamed <- function(formula, data, forbidden.colname){
   err.msg <- c()
   # Check that no column is named forbiddencol.ENDO
-  name.data.endo <- paste(forbidden.colname, all.vars(formula(as.Formula(formula), lhs=0, rhs=2)), sep=".")
+  name.data.endo <- paste(forbidden.colname,
+                          all.vars(formula(as.Formula(formula), lhs=0, rhs=2)), sep=".")
   if(any(name.data.endo %in% colnames(data)))
     err.msg <- c(err.msg, paste0("Please name no column in the data \'",forbidden.colname,".ENDOGENOUSREGRESSOR\"."))
   return(err.msg)
@@ -256,7 +257,7 @@ checkinputhelper_formula_IIVs <- function(formula){
   if(all(names.rhs1 %in% names.rhs2))
     err.msg <- c(err.msg, "Please do not specify all regressors as endogenous.")
 
-  # Check that only sinle endogenous is given
+  # Check that only single endogenous is given
   if(length(names.rhs2) > 1)
     err.msg <- c(err.msg, "Please specify only a single regressor as endogenous.")
 

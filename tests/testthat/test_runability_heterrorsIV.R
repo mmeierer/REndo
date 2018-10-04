@@ -5,13 +5,18 @@ context("hetErrorsIV - Runability")
 # Required data ----------------------------------------------------------------------------------------------------------------------
 data("dataHetIV")
 
-
 test_that("Works with intercept", {
   expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=F))
 })
 
 test_that("Works without intercept", {
   expect_silent(hetErrorsIV(y~X1+X2+P-1|P|IIV(X1), data=dataHetIV, verbose=F))
+})
+
+
+test_that("Produces output", {
+  expect_message(hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=TRUE),
+                 regexp = "The following internal instruments were built:")
 })
 
 
