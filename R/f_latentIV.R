@@ -1,6 +1,7 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm coef model.frame model.matrix sd update setNames
 #' @importFrom optimx optimx
+#' @importFrom corpcor pseudoinverse
 #' @importFrom methods is
 #' @export
 latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
@@ -50,7 +51,7 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
   start.vals.support.params <- c(pi1 = mean(vec.data.endo),
                                  pi2 = mean(vec.data.endo) + sd(vec.data.endo),
                                  theta5 = 1, theta6 = 1, theta7 = 1,
-                                 theta8 = log(0.5)) # log because will be exp()
+                                 theta8 = 0) # 0 -> will be 0.5 in LL
   names.support.params      <- names(start.vals.support.params)
 
   # Append support params to start params
@@ -118,7 +119,7 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
                                       call. = FALSE, immediate. = TRUE)
                               return(rep(NA_real_,length(all.estimated.params)))}
 
-  all.param.se <- tryCatch(expr = sqrt(diag(solve(hessian))),
+  all.param.se <- tryCatch(expr = sqrt(diag(corpcor::pseudoinverse(hessian))),
                        # Return same NAs vector if failed to solve so can still read-out results
                        warning = fct.se.warn.error,
                        error   = fct.se.warn.error)
