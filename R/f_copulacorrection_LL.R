@@ -6,20 +6,19 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   sigma           <- params["sigma"]
   rho             <- params["rho"]
 
-  # Reorder start.params to fit matrix col order
-  params.endo.exo <- params.endo.exo[colnames(m.data.exo.endo)]
-
-
   # Constrain rho to [0,1]
   # (incl bound because can be very large which flips to 0 and 1)
   rho <- exp(rho)
   rho <- rho / (1+rho)
 
-
   # P.star -----------------------------------------------------------------------------------
   p.star <- copulaCorrectionContinuous_pstar(vec.data.endo = vec.data.endo)
 
   # epsilon, incl. endo regressor ------------------------------------------------------------
+
+  # Reorder params to fit matrix col order
+  params.endo.exo <- params.endo.exo[colnames(m.data.exo.endo)]
+
   eps.1 <- vec.y - m.data.exo.endo %*% params.endo.exo
 
   # PPnorm -----------------------------------------------------------------------------------
@@ -32,7 +31,8 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   eps.star <- stats::qnorm(ppnorm)
 
   # l.eps ------------------------------------------------------------------------------------
-  l.eps <- sum(log(dnorm(eps.1,mean=0,sd=sigma)))
+  # l.eps <- sum(log(dnorm(eps.1,mean=0,sd=sigma)))
+  l.eps <- sum(dnorm(eps.1,mean=0,sd=sigma, log = TRUE))
 
   # s
   s <- sum((p.star^2 + eps.star^2)/(2*(1-rho^2)) - (rho*p.star*eps.star)/(1-rho^2))
