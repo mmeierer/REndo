@@ -67,7 +67,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Add rho and sigma with defaults
   #   Same order as model.matrix/formula. This is done in LL again,
   #   but do here to have consistent output (inputorder to optimx counts for this)
-  start.params <- c(start.params, rho=0.0, sigma=1) # rho=0 -> rho=0.5 in LL
+  start.params <- c(start.params, rho=0, sigma=1) # rho=0 -> rho=0.5 in LL
   start.params <- start.params[c(names.model.mat, "rho", "sigma")]
 
 
@@ -76,11 +76,13 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
     # Bounds for rho (0,1): LL returns Inf if outside as NelderMead cannot deal with bounds
     res.optimx <- tryCatch(expr =
-                             optimx(par = optimx.start.params,
-                                    fn  = copulaCorrection_LL,
+                             optimx(par     = optimx.start.params,
+                                    fn      = copulaCorrection_LL,
                                     method  = "Nelder-Mead",
-                                    control = list(trace=0),
+                                    itnmax  = 5000,
                                     hessian = hessian,
+                                    control = list(trace=0,
+                                                   dowarn = FALSE),
                                     vec.y   = vec.data.y,
                                     m.data.exo.endo = m.model.data.exo.endo,
                                     vec.data.endo   = vec.data.endo),
@@ -115,7 +117,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
       i.vec.data.endo         <- vec.data.endo[indices]
       # return as vector / first row (only 1 method used). As matrix it cannot be used again as input to optimx
       return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y,
-                                  m.model.data.exo.endo = i.m.model.data.exo.endo, vec.data.endo = i.vec.data.endo))[1,])
+                                  m.model.data.exo.endo = i.m.model.data.exo.endo,
+                                  vec.data.endo = i.vec.data.endo))[1,])
     })
 
   if(verbose)
@@ -127,8 +130,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
   # Parameter and sd
   # Boots results: Rows = per parameter,  Columns = for each boots run
-  coefficients          <- coef(res.real.data.optimx)[1,] # extract parameters from single fit
-  parameter.sd          <- apply(res.boots, 1, sd)   # SD of bootstrapped parameters
+  coefficients          <- coef(res.real.data.optimx)[1,]     # extract parameters from single fit
+  parameter.sd          <- apply(res.boots, 1, sd, na.rm=T)   # SD of bootstrapped parameters
   names(coefficients)   <- names(parameter.sd) <- names(start.params)
 
   names.params.exo.endo <- setdiff(names(coefficients), c("rho", "sigma"))

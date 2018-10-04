@@ -81,8 +81,9 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
                                   name.endo.param = name.endo.param,
                                   method = "Nelder-Mead",
                                   hessian = TRUE,
+                                  itnmax  = 5000,
                                   control = list(trace = 0,
-                                                 maxit = 5000)),
+                                                 dowarn = FALSE)),
                          error   = function(e){ return(e)})
 
   if(is(res.optimx, "error"))
