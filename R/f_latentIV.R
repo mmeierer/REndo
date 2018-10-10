@@ -105,15 +105,8 @@ latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
 
   # Hessian and SE ------------------------------------------------------------------------------
   # Read out hessian.
-  # If optimx failed, single NA is returned as the hessian. Replace it with correctly-sized
-  #   matrix of NAs
-  hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
-  if(length(hessian)==1 & all(is.na(hessian))){
-    hessian <- matrix(data = NA_real_, nrow = length(all.estimated.params), ncol = length(all.estimated.params))
-    warning("Hessian could not be derived. Setting all entries to NA.", immediate. = TRUE)
-  }
+  hessian <- extract.hessian(res.optimx = res.optimx, names.hessian = names(all.estimated.params))
 
-  rownames(hessian) <- colnames(hessian) <- names(all.estimated.params)
   fct.se.warn.error <- function(ew){
                               warning("Hessian cannot be solved for the standard errors: ",
                                       ew$message,". All SEs set to NA.",

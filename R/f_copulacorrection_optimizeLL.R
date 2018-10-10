@@ -99,7 +99,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Run once for coef estimates with real data---------------------------------------------------------
   res.real.data.optimx  <- fct.optimize.LL(optimx.start.params = start.params, vec.data.y = vec.data.y,
                                           m.model.data.exo.endo = m.model.data.exo.endo,
-                                          vec.data.endo = vec.data.endo, hessian = T)
+                                          vec.data.endo = vec.data.endo, hessian = TRUE)
 
   # bootstrap num.boots times
   # Bootstrapping for SD ------------------------------------------------------------------------------
@@ -131,13 +131,13 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Parameter and sd
   # Boots results: Rows = per parameter,  Columns = for each boots run
   coefficients          <- coef(res.real.data.optimx)[1,]     # extract parameters from single fit
-  parameter.sd          <- apply(res.boots, 1, sd, na.rm=T)   # SD of bootstrapped parameters
+  parameter.sd          <- apply(res.boots, 1, sd, na.rm=TRUE)   # SD of bootstrapped parameters
   names(coefficients)   <- names(parameter.sd) <- names(start.params)
 
   names.params.exo.endo <- setdiff(names(coefficients), c("rho", "sigma"))
 
-  hessian               <- attr(res.real.data.optimx, "details")[,"nhatend"][[1]]
-  rownames(hessian)     <- colnames(hessian) <- names(start.params)
+  # Read out hessian.
+  hessian <- extract.hessian(res.optimx = res.real.data.optimx, names.hessian = names(start.params))
 
   fitted.values         <- as.vector(coefficients[names.params.exo.endo] %*% t(m.model.data.exo.endo))
   names(fitted.values)  <- rownames(m.model.data.exo.endo)
