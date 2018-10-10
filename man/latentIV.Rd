@@ -55,8 +55,8 @@ It is assumed that \code{Z} is independent of the error terms \eqn{\epsilon}{eps
 The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}{Sigma}:
 \deqn{\Sigma = \left(
 \begin{array}{ccc}
-\sigma_{\epsilon}^{2} & \sigma_{\epsilon\nu}\\
-\sigma_{\epsilon\nu} & \sigma_{\nu}^{2}
+\sigma_{\epsilon}^{2} \& \sigma_{\epsilon\nu}\\
+\sigma_{\epsilon\nu} \& \sigma_{\nu}^{2}
 \end{array}\right)}{Sigma = (sigma_eps^2,       sigma_0^2 ; sigma_0^2,       sigma_nu^2)}
 The identification of the model lies in the assumption of the non-normality of \eqn{P_{t}}{P}, the discreteness of the unobserved instruments and the existence of
 at least two groups with different means.
@@ -68,12 +68,14 @@ for the two group means have to be different, otherwise the model is not identif
 in a frequentist approach identification issues appear. The optimization algorithm used is Nelder-Mead.
 
 Additional parameters used during model fitting and printed in \code{summary} are:
+\describe{
 \item{pi1}{test}
 \item{pi2}{test}
 \item{theta5}{test}
 \item{theta6}{test}
 \item{theta7}{test}
 \item{theta8}{test}
+}
 }
 \examples{
 data(dataLatentIV)
@@ -92,7 +94,4 @@ Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving 
 (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
 \emph{Quantitative Marketing and Economics},
 \bold{3}:365--392.
-}
-\author{
-The implementation of the model formula by Raluca Gui based on the paper of Ebbes et al. (2005).
 }

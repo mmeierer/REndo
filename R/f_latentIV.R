@@ -1,3 +1,4 @@
+# @author The implementation by Raluca Gui based on the paper of Ebbes et al. (2005).
 #' @title  Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables
 #'
 #' @description  Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
@@ -26,8 +27,8 @@
 #' The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}{Sigma}:
 #' \deqn{\Sigma = \left(
 #' \begin{array}{ccc}
-#' \sigma_{\epsilon}^{2} & \sigma_{\epsilon\nu}\\
-#' \sigma_{\epsilon\nu} & \sigma_{\nu}^{2}
+#' \sigma_{\epsilon}^{2} \& \sigma_{\epsilon\nu}\\
+#' \sigma_{\epsilon\nu} \& \sigma_{\nu}^{2}
 #' \end{array}\right)}{Sigma = (sigma_eps^2,       sigma_0^2 ; sigma_0^2,       sigma_nu^2)}
 #' The identification of the model lies in the assumption of the non-normality of \eqn{P_{t}}{P}, the discreteness of the unobserved instruments and the existence of
 #' at least two groups with different means.
@@ -39,12 +40,14 @@
 #' in a frequentist approach identification issues appear. The optimization algorithm used is Nelder-Mead.
 #'
 #' Additional parameters used during model fitting and printed in \code{summary} are:
+#' \describe{
 #' \item{pi1}{test}
 #' \item{pi2}{test}
 #' \item{theta5}{test}
 #' \item{theta6}{test}
 #' \item{theta7}{test}
 #' \item{theta8}{test}
+#' }
 #'
 #' @return An object of class rendo.optim.LL is returned that is a list and contains the following components:
 #' \item{formula}{The formula given to specify the model to be fitted.}
@@ -63,7 +66,6 @@
 #' The function summary can be used to obtain and print a summary of the results.
 #' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
 #'
-#' @author The implementation of the model formula by Raluca Gui based on the paper of Ebbes et al. (2005).
 #' @references   Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
 #' (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
 #' \emph{Quantitative Marketing and Economics},
