@@ -1,10 +1,91 @@
+#' @title  Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables
+#'
+#' @description  Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
+#' presented in Ebbes, P., Wedel, M.,  Böckenholt, U., and Steerneman, A. G. M. (2005). This is a statistical technique to address the endogeneity problem where no external instrumental
+#' variables are needed. The important assumption of the model is that the latent variables are discrete with at least two groups with different means and
+#' the structural error is normally distributed.
+#'
+#' @param formula A symbolic description of the model to be fitted. Of class "formula".
+#' @param start.params A named vector containing a set of parameters to use in the first optimization iteration.
+#' The names have to correspond exactly to the names of the components specified in the formula parameter.
+#' If not provided, a linear model is fitted to derive them.
+#' @param data A data.frame containing the data of all parts specified in the formula parameter.
+#' @param verbose Show details about the running of the function.
+#'
+#' @details
+#' Let's consider the model:
+#' \deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}{Y_t = b0 + a * P_t + eps_t}
+#' \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}{P_t = pi * Z_t + nu_t}
+#' where \code{t = 1,..,T} indexes either time or cross-sectional units, \eqn{Y_{t}}{Y_t} is the dependent variable, \eqn{P_{t}}{P_t} is a \code{k x 1} continuous, endogenous regressor,
+#' \eqn{\epsilon_{t}} is a structural error term with mean zero and \eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}{E(eps^2) = sigma_eps^2}, \eqn{\alpha}{a} and \eqn{\beta}{b0}
+#' are model parameters. \eqn{Z_{t}}{Z_t} is a \code{l x 1} vector of instruments, and \eqn{\nu_{t}}{nu} is a random error with mean zero and \eqn{E(\nu^{2}) = \sigma^{2}_{\nu}}{E(nu^2) = sigma_nu^2}.
+#' The endogeneity problem arises from the correlation of \code{P} and \eqn{\epsilon_{t}}{eps} through \eqn{E(\epsilon\nu) = \sigma_{\epsilon\nu}}{E(eps * nu) = sigma_0^2}.
+#'
+#' \code{latentIV}  considers \eqn{Z_{t}^{'}}{Z_t} to be a latent, discrete, exogenous variable with an unknown number of groups \code{m} and \eqn{\pi}{pi} is a vector of group means.
+#' It is assumed that \code{Z} is independent of the error terms \eqn{\epsilon}{eps} and \eqn{\nu}{nu} and that it has at least two groups with different means.
+#' The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}{Sigma}:
+#' \deqn{\Sigma = \left(
+#' \begin{array}{ccc}
+#' \sigma_{\epsilon}^{2} & \sigma_{\epsilon\nu}\\
+#' \sigma_{\epsilon\nu} & \sigma_{\nu}^{2}
+#' \end{array}\right)}{Sigma = (sigma_eps^2,       sigma_0^2 ; sigma_0^2,       sigma_nu^2)}
+#' The identification of the model lies in the assumption of the non-normality of \eqn{P_{t}}{P}, the discreteness of the unobserved instruments and the existence of
+#' at least two groups with different means.
+#'
+#' The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
+#' even if the true number of the categories of the instrument is larger than two, \code{latentIV} estimates are approximately consistent. Besides, overfitting in terms
+#' of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
+#' for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
+#' in a frequentist approach identification issues appear. The optimization algorithm used is Nelder-Mead.
+#'
+#' Additional parameters used during model fitting and printed in \code{summary} are:
+#' \item{pi1}{test}
+#' \item{pi2}{test}
+#' \item{theta5}{test}
+#' \item{theta6}{test}
+#' \item{theta7}{test}
+#' \item{theta8}{test}
+#'
+#' @return An object of class rendo.optim.LL is returned that is a list and contains the following components:
+#' \item{formula}{The formula given to specify the model to be fitted.}
+#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' \item{estim.params}{A named vector of all coefficients used during model fitting.}
+#' \item{estim.params.se}{A named vector of the standard error of all coefficients used during model fitting.}
+#' \item{names.main.coefs}{A vector specifying which coefficients are.}
+#' \item{res.optimx}{The result object returned by the function \code{optimx}.}
+#' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
+#' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
+#' \item{fitted.values}{Fitted values at the found solution.}
+#' \item{residuals}{The residuals.}
+#' \item{model}{The model.frame used for model fitting.}
+#' \item{terms}{The terms object used for model fitting.}
+#'
+#' The function summary can be used to obtain and print a summary of the results.
+#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+#'
+#' @author The implementation of the model formula by Raluca Gui based on the paper of Ebbes et al. (2005).
+#' @references   Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
+#' (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
+#' \emph{Quantitative Marketing and Economics},
+#' \bold{3}:365--392.
+#' @examples
+#' data(dataLatentIV)
+#'
+#' # function call without any initial parameter values
+#' l  <- latentIV(y ~ P, data = dataLatentIV)
+#' summary(l)
+#'
+#' # function call with initial parameter values given by the user
+#' l1 <- latentIV(y ~ P, start.params = c("(Intercept)"=2.5, P=-0.5),
+#'                data = dataLatentIV)
+#' summary(l1)
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm coef model.frame model.matrix sd update setNames
 #' @importFrom optimx optimx
 #' @importFrom corpcor pseudoinverse
 #' @importFrom methods is
 #' @export
-latentIV <- function(formula, start.params=c(), data, verbose=TRUE){
+latentIV <- function(formula, data, start.params=c(), verbose=TRUE){
   cl <- match.call()
 
   # Input checks ------------------------------------------------------------------------------
