@@ -42,7 +42,7 @@ test_that("Same results with start.params swapped", {
 })
 
 test_that("Fails graciously for bad start.params", {
-  expect_error(latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=9999), data = dataLatentIV, verbose=FALSE),
+  expect_error(latentIV(formula = y~P, start.params = c("(Intercept)"=10e99, P=10e99), data = dataLatentIV, verbose=FALSE),
                regexp = "Failed to optimize the log-likelihood function with error")
 })
 
