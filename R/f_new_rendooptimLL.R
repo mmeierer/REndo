@@ -8,7 +8,7 @@ new_rendo_optim_LL <- function(call, F.formula, mf, start.params, estim.params, 
             class = "rendo.optim.LL",
             list(call = call,
                  formula = as.Formula(F.formula), #to be sure its a Formula
-                 mf      = mf,
+                 model   = mf,
                  terms   = terms(mf),
                  start.params = start.params,
                  estim.params = estim.params,
