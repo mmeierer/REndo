@@ -92,6 +92,5 @@ summary(l1)
 \references{
 Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
 (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
-\emph{Quantitative Marketing and Economics},
-\bold{3}:365--392.
+Quantitative Marketing and Economics, 3:365--392.
 }
