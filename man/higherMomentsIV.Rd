@@ -53,6 +53,34 @@ are included as instruments, \eqn{G(X)} should not be linear in \eqn{X} in equat
 Let small letter denote deviation from the sample mean: \eqn{s_{i} = S_{i}-\bar{S}}{s_i = S_i - mean(S)}. Then, using as instruments the variables presented in
 equations \code{3} together with \code{1} and \eqn{X_{t}}{X}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
 in equation \code{1} under the assumptions exposed in Lewbel(1997).
+
+The \code{formula} argument has the following notation:
+A two-sided formula object describing the MODEL (??), a single endogenous regressor, and
+the internal instrumental variables to be built, each part separated by a single vertical bar (\code{|}).
+The MODEL (??) part consists of the response on the left of the \code{~} operator and the term labels
+on the right-hand side. The sole endogenous regressor is specified in the second right-hand side part
+of the formula by separating it with a vertical bar from the MODEL(??). The instrumental variables
+that should be built are specified as (multiple) functions, one for each instrument, and
+separated from the endogenous regressor by a vertical bar. The function to build the
+internal variables is \code{IIV} and uses the following arguments:
+
+\describe{
+\item{\code{iiv}}{Which internal instrument to build. One of \code{g, gp, gy, yp, p2, y2} can be choosen.}
+\item{\code{g}}{Which function \code{g} represents in \code{iiv}.
+One of \code{x2, x3, lnx, 1/x} can be choosen.
+Only required if the type of internal instrument demands it.}
+\item{\code{...}}{The exogenous regressors to build the internal instrument.
+If more than one is given, separate instruments are built for each.
+Only required if the type of internal instrument demands it.}
+}
+
+Note that no argument to \code{IIV} is to be supplied as character but as symbols without quotation marks.
+
+Optionally, additional external instrumental variables to be used during the instrumental variable
+regression and already present in the data can be specified, again separated by a vertical bar,
+as the fourth right-hand side part.
+
+See the example section for illustrations on how to specify the \code{formula} parameter.
 }
 \examples{
 data("dataHigherMoments")
@@ -71,7 +99,7 @@ hm <- higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2)+IIV(iiv=yp)+IIV(iiv=g,g=x3,X1),
                       data = dataHigherMoments)
 
 # use X2 as external IV
-hm <- higherMomentsIV(y~X1+P|P|IIV(iiv=y2)++IIV(iiv=g,g=lnx,X1) | X2,
+hm <- higherMomentsIV(y~X1+P|P|IIV(iiv=y2)+IIV(iiv=g,g=lnx,X1) | X2,
                       data = dataHigherMoments)
 summary(hm)
 

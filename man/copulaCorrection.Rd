@@ -13,7 +13,7 @@ copulaCorrection(formula, data, verbose = TRUE, ...)
 
 \item{verbose}{Show details about the running of the function.}
 
-\item{...}{Arguments for the log-likleihood optimization function in the case of a single continuous endogenous
+\item{...}{Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
  regressor. Ignored with a warning otherwise.
 \describe{
 \item{start.params}{A named vector containing a set of parameters to use in the first optimization iteration.
@@ -35,7 +35,9 @@ For the case of a single continuous.
 
 Something about how the formula is given.
 
-Something about the confidence interval for discrete only the performed.
+Something about the additional parameters that are used during optimization
+
+Something about the confidence interval for discrete only
 }
 \examples{
 data("dataCopC1")
