@@ -2,9 +2,6 @@
 #' @export
 confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250L, ...){
 
-  # -----------------------------------------------------------------------------------------------------
-  # check_err_msg() **TODO: Check or not?
-
   # Read out needed stuff -------------------------------------------------------------------------------
   # All if parm is missing (needed because parm is unknown in lapply)
   if(missing(parm))
@@ -28,7 +25,7 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
                                                data                  = object$original.data,
                                                names.vars.continuous = names.vars.continuous,
                                                names.vars.discrete   = names.vars.discrete,
-                                               verbose = FALSE, cl=match.call())
+                                               verbose = FALSE, cl=quote(match.call()))
         # Be sure to call lm's confint per fit, otherwise Inf loop
         return(confint.lm(res.lm, parm = parm, level = level))
       })
