@@ -58,6 +58,9 @@ The important assumption of the model is that the endogeneous variables should N
 \details{
 \subsection{Method}{
 
+?? SOMETHING ABOUT THE MATH BEHIND THE MODEL ??
+?? something about the confidence interval for the discrete only case ??
+
 For the case of a single continuous endogenous regressor maximum likelihood estimation is used.
 Therefore, the call of the function is: \\
 \code{copulaCorrection(y ~ X1 + X2 + P | continuous(P), data, start.params, num.boots)}, \\
@@ -74,9 +77,6 @@ it is important to also have a look at the confidence interval of the coefficien
 In the case of multiple endogenous regressors of both discrete or continuous distributions, the call of the \code{copulaCorrection()} function is: \\
 \code{copulaCorrection(y ~ X1 + X2 + P1 + P2 | discrete(P1) + continuous(P2), data)}
 
-
-Something about the additional parameters that are used during optimization
-Something about the confidence interval for discrete only
 }
 
 \subsection{Formula parameter}{
@@ -85,11 +85,10 @@ The \code{formula} argument follows a two part notation:
 A two-sided formula describing the model (e.g. \code{y ~ X1 + X2 + P}) to be estimated and a
 second right-hand side part in which the endogenous regressors and their distributional
 assumptions are indicated (e.g. \code{continuous(P)}). These two parts are separated by a single vertical bar (\code{|}).
-In the second part, the special functions \code{continuous} or \code{discrete}, or a combination
+In the second part, the special functions \code{continuous}, \code{discrete}, or a combination
 of both are used to indicate the endogenous regressors and their respective distribution.
-Both functions use the following parameter:
-
-\describe{ \item{...}{The endogenous regressors with the respective distribution.}}
+Both functions use the \code{...} parameter in which the distribution for the respective
+endogenous regressors is specified.
 
 Note that no argument to \code{continuous} or \code{discrete} is to be supplied as character
 but as symbols without quotation marks.
@@ -124,6 +123,9 @@ d1 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1), data=dataCopDis)
 d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2), data=dataCopDis)
 # same as above
 d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), data=dataCopDis)
+
+# the discrete only cases have a dedicated confint function
+d2.ci <- confint(d2)
 
 # single discrete, single continuous
 cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), data=dataCopDisCont)
