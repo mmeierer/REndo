@@ -12,11 +12,13 @@
 #' no external instruments are available or to supplement external instruments to improve the efficiency of the
 #' IV estimator.
 #' Consider the model in the equation below:
-#'  \deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}
+#' \ifelse{html}{\out{y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub>}}{\deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
+#'
 #' where \eqn{t=1,..,T} indexes either time or cross-sectional units.The endogeneity problem arises from the correlation of
 #' \eqn{P_{t}} and \eqn{\epsilon_{t}}. As such:
-#' \deqn{P_{t}=\gamma Z_{t}+\nu_{t}},
+#' \deqn{P_{t}=\gamma Z_{t}+\nu_{t},}
 #' where \eqn{Z_{t}} is a subset of variables in \eqn{X_{t}}.
+#'
 #' The errors, \eqn{\epsilon} and \eqn{\nu}, may be correlated with each other. Structural parameters are identified by an
 #' ordinary two-stage least squares regression of \eqn{Y} on \eqn{X} and \eqn{P}, using \eqn{X} and \eqn{[Z-E(Z)]\nu} as instruments.
 #' A vital assumption for identification is that \eqn{cov(Z,\nu^2) \neq 0}. The strength of the instrument is proportional
@@ -26,26 +28,23 @@
 #' hetErrorsIV() function). If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors.
 #'
 #'
-#' The \code{formula} argument has the following notation:
-#' A two-sided formula object describing the MODEL (??), a single endogenous regressor, and
-#' the internal instrumental variables to be built, each part separated by a single vertical bar (\code{|}).
-#' The MODEL (??) part consists of the response on the left of the \code{~} operator and the term labels
-#' on the right-hand side. The sole endogenous regressor is specified in the second right-hand side part
-#' of the formula by separating it with a vertical bar from the MODEL(??). The instrumental variables
-#' that should be built are specified as (multiple) functions, one for each instrument, and
-#' separated from the endogenous regressor by a vertical bar. The function to build the
-#' internal variables is \code{IIV} and uses the following arguments:
+#' The \code{formula} argument follows a four part notation:
+#' A two-sided formula describing the model (e.g. \code{y ~ X1 + X2 + P}), a single endogenous regressor
+#' (e.g. \code{P}), and the exogenous variables from which the internal instrumental variables should
+#' be build (e.g. \code{IIV(X1) + IIV(X2)}), each part separated by a single vertical bar (\code{|}).
+#'
+#' The instrumental variables that should be built are specified as (multiple) functions, one for each
+#' instrument. This function is \code{IIV} and uses the following arguments:
 #'
 #'\describe{
 #'\item{\code{...}}{The exogenous regressors to build the internal instruments from.
 #'If more than one is given, separate instruments are built for each.}
 #'}
-#'
 #' Note that no argument to \code{IIV} is to be supplied as character but as symbols without quotation marks.
 #'
-#' Optionally, additional external instrumental variables to be used during the instrumental variable
-#' regression and already present in the data can be specified, again separated by a vertical bar,
-#' as the fourth right-hand side part.
+#' Optionally, additional external instrumental variables to also include in the instrumental variable
+#' regression can be specified. These external instruments have to be already present in the data
+#' and are provided as the fourth right-hand side part of the formula, again separated by a vertical bar.
 #'
 #' See the example section for illustrations on how to specify the \code{formula} parameter.
 #'
@@ -54,12 +53,12 @@
 #' # P is the endogenous regressor in all examples
 #'
 #' # 2 IVs, one from X1, one from X2
-#' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1)+IIV(X2), data= dataHetIV)
+#' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1)+IIV(X2), data=dataHetIV)
 #' # same as above
-#' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), data= dataHetIV)
+#' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), data=dataHetIV)
 #'
-#' # use X2 as external IV
-#' het <- hetErrorsIV(y~X1+P|P|IIV(X1) | X2, data= dataHetIV)
+#' # use X2 as an external IV
+#' het <- hetErrorsIV(y~X1+P|P|IIV(X1) | X2, data=dataHetIV)
 #'
 #' summary(het)
 #'
