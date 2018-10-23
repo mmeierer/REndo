@@ -28,27 +28,35 @@ variables are needed. The implementation allows the incorporation of external in
 An important assumption for identification is that the endogenous variable has a skewed distribution.
 }
 \details{
-Consider the model below:
-\deqn{ Y_{t} = \beta_{0}+ \gamma^{'}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }{Y_t = b0 + gamma' * X_t + alpha * P_t + eps_t}
-\deqn{ P_{t} = Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}{P_t = Z + nu_t}
+Consider the model:
+\ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&gamma;'X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ Y_{t} = \beta_{0}+ \gamma^{'}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
 
-The observed data consist of \eqn{Y_{t}}{Y}, \eqn{X_{t}}{X} and \eqn{P_{t}}{P_t}, while \eqn{Z_{t}}{Z_t}, \eqn{\epsilon_{t}}{eps_t}, and \eqn{\nu_{t}}{nu_t}
-are unobserved. The endogeneity problem arises from the correlation of \eqn{P_{t}}{P} with the structural error, \eqn{\epsilon_{t}}{eps_t},
-since \eqn{E(\epsilon \nu)\neq 0}{E(eps * nu) > 0}.
+\ifelse{html}{\out{<center>P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{\deqn{ P_{t} = Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
+
+
+The observed data consist of \eqn{Y_{t}}{Y}, \eqn{X_{t}}{X} and \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}},
+while \ifelse{html}{\out{Z<sub>t</sub>}}{\eqn{Z_{t}}}, \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}},
+and \ifelse{html}{\out{&nu;<sub>t</sub>}}{\eqn{\nu_{t}}} are unobserved. The endogeneity problem arises from
+the correlation of \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} with the structural error
+\ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}},
+since \ifelse{html}{\out{E(&epsilon;&nu;)&ne;0}}{\eqn{E(\epsilon \nu)\neq 0}}.
 The requirement for the structural and measurement error is to have mean zero, but no restriction is imposed on their distribution.
 
-Let \eqn{\bar{S}}{mean(S)} be the sample mean of a variable \eqn{S_{t}}{S_t} and \eqn{G_{t} = G(X_{t})}{G = G(X)} for any given function \eqn{G}{G} that
+Let \ifelse{html}{\out{S&#773;}}{\eqn{\bar{S}}} be the sample mean of a variable \ifelse{html}{\out{S<sub>t</sub>}}{\eqn{S_{t}}}
+and \ifelse{html}{\out{G<sub>t</sub>=G(X<sub>t</sub>)}}{\eqn{G_{t} = G(X_{t})}} for any given function \eqn{G} that
 has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with 2SLS to obtain consistent estimates:
-\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}{q1 = G_t - mean(G)}
-\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b) }{q2 = (G_t - mean(G))(P_t -mean(P))}
-\deqn{ q_{3t}=(G_{t} - \bar{G})(Y_{t}-\bar{Y}) \hspace{0.3cm} (3c)}{q3 = (G_t - mean(G))(Y_t - mean(Y))}
-\deqn{ q_{4t}=(Y_{t} - \bar{Y})(P_{t}-\bar{P}) \hspace{0.3cm} (3d)}{q4 = (Y_t - mean(Y))(P_t - mean(P))}
-\deqn{ q_{5t}=(P_{t}-\bar{P})^{2} \hspace{1.5 cm} (3e) }{q5 = (P_t - mean(P))^2}
-\deqn{ q_{6t}=(Y_{t} - \bar{Y})^{2}\hspace{1.5 cm} (3f)}{q6 = (Y_t - mean(Y))^2}
 
-Instruments in equations \code{3e} and \code{3f} can be used only when the measurement and the structural errors are symmetrically distributed.
+\ifelse{html}{\out{<div align="center">q<sub>1t</sub>=(G<sub>t</sub>-G&#773;)<span style="float:right;">(3a)</span></div>}}{\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}}
+\ifelse{html}{\out{<div align="center">q<sub>2t</sub>=(G<sub>t</sub>-G&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3b)</span></div>}}{\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b) }}
+\ifelse{html}{\out{<div align="center">q<sub>3t</sub>=(G<sub>t</sub>-G&#773;)(Y<sub>t</sub>-Y&#773;)<span style="float:right;">(3c)</span></div>}}{\deqn{ q_{3t}=(G_{t} - \bar{G})(Y_{t}-\bar{Y}) \hspace{0.3cm} (3c)}}
+\ifelse{html}{\out{<div align="center">q<sub>4t</sub>=(Y<sub>t</sub>-Y&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3d)</span></div>}}{\deqn{ q_{4t}=(Y_{t} - \bar{Y})(P_{t}-\bar{P}) \hspace{0.3cm} (3d)}}
+\ifelse{html}{\out{<div align="center">q<sub>5t</sub>=(P<sub>t</sub>-P&#773;)<sup>2</sup><span style="float:right;">(3e)</span></div>}}{\deqn{ q_{5t}=(P_{t}-\bar{P})^{2} \hspace{1.5 cm} (3e)}}
+\ifelse{html}{\out{<div align="center">q<sub>6t</sub>=(Y<sub>t</sub>-Y&#773;)<sup>2</sup><span style="float:right;">(3f)</span></div>}}{\deqn{ q_{6t}=(Y_{t}-\bar{Y})^{2}\hspace{1.5 cm} (3f)}}
+
+
+Instruments in equations \eqn{3e} and \eqn{3f} can be used only when the measurement and the structural errors are symmetrically distributed.
 Otherwise, the use of the instruments does not require any distributional assumptions for the errors. Given that the regressors \eqn{G(X) = X}
-are included as instruments, \eqn{G(X)} should not be linear in \eqn{X} in equation \code{3a}.
+are included as instruments, \eqn{G(X)} should not be linear in \eqn{X} in equation \eqn{3a}.
 
 Let small letter denote deviation from the sample mean: \eqn{s_{i} = S_{i}-\bar{S}}{s_i = S_i - mean(S)}. Then, using as instruments the variables presented in
 equations \code{3} together with \code{1} and \eqn{X_{t}}{X}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
