@@ -6,7 +6,25 @@
 #' @template template_param_formuladataverbose
 #'
 #' @details
-#' ?? ANY DETAILS ABOUT THE MATH MODEL ??
+#' The method proposed in Lewbel(2012) identifies structural parameters in regression models with endogenous
+#' regressors by means of variables that are uncorrelated with the product of heteroskedastic errors.
+#' The instruments are constructed as simple functions of the model's data. The method can be applied when
+#' no external instruments are available or to supplement external instruments to improve the efficiency of the
+#' IV estimator.
+#' Consider the model in the equation below:
+#'  \deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}
+#' where \eqn{t=1,..,T} indexes either time or cross-sectional units.The endogeneity problem arises from the correlation of
+#' \eqn{P_{t}} and \eqn{\epsilon_{t}}. As such:
+#' \deqn{P_{t}=\gamma Z_{t}+\nu_{t}},
+#' where \eqn{Z_{t}} is a subset of variables in \eqn{X_{t}}.
+#' The errors, \eqn{\epsilon} and \eqn{\nu}, may be correlated with each other. Structural parameters are identified by an
+#' ordinary two-stage least squares regression of \eqn{Y} on \eqn{X} and \eqn{P}, using \eqn{X} and \eqn{[Z-E(Z)]\nu} as instruments.
+#' A vital assumption for identification is that \eqn{cov(Z,\nu^2) \neq 0}. The strength of the instrument is proportional
+#' to the covariance of \eqn{(Z-\bar{Z}) \nu} with \eqn{\nu}, which corresponds to the degree of heteroskedasticity of \eqn{\nu} with respect to \eqn{Z} (Lewbel 2012).
+#'
+#' The assumption that the covariance between \eqn{Z} and the squared error is different from zero can be empirically tested (it is checked in the background when calling the
+#' hetErrorsIV() function). If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors.
+#'
 #'
 #' The \code{formula} argument has the following notation:
 #' A two-sided formula object describing the MODEL (??), a single endogenous regressor, and

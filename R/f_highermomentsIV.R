@@ -105,7 +105,6 @@ higherMomentsIV <- function(formula, data, verbose=TRUE){
   F.formula  <- as.Formula(formula)
   l.IIV.args <- formula_readout_special(F.formula = F.formula, name.special = "IIV",
                                         from.rhs = 3, params.as.chars.only = FALSE)
-  # str(l.IIV.args)
 
 
   # Execute the IIV function and pass in the read out arguments --------------------------------------
@@ -138,7 +137,6 @@ higherMomentsIV <- function(formula, data, verbose=TRUE){
   df.data.ivreg <- cbind(data, df.data.IIVs)
 
   if(verbose){
-    # print(head(df.data.ivreg))
     message("The following internal instruments were built: ", paste0(vec.desc.IIVs, collapse = ", "),".")
     message("Fitting an instrumental variable regression with model ", model.desc,".")
   }

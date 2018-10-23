@@ -23,10 +23,10 @@ multilevel_gmmestim <- function(y, X, W, HIV){
   # GammaHat = inv(Ghat'inv(M_HH)GHat)Ghat'inv(M_HH)
   GammaH  <- corpcor::pseudoinverse(Matrix::t(GHat) %*% ginvMHH %*% GHat)%*% Matrix::t(GHat) %*% ginvMHH
 
-  # ** Where is this from??
+  # A.1 GMM Estimator
   bIV     <- GammaH %*% (Matrix::t(HIV) %*% yf) / num.indep
 
-  # ***WRONG? see (6) in paper? or where is this from?? What is this used for??
+  # Model residuals - Gmm (Proposition 2)
   # residW  <- yf - Xf %*% bIV
   # *** tcrossprod(residW, W)?? where is this in the paper??
   # rwrw <- W %*% Matrix::crossprod(W, residW)

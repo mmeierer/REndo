@@ -1,10 +1,30 @@
 #' @title  Fitting Linear Models Endogeneous Regressors using Gaussian Copula
 #' @description
-#' Fits linear models with continuous or discrete endogeneous regressors using Gaussian copulas, method presented in Park and Gupta (2012).
-#' This is a statistical technique to address the endogeneity problem, where no external instrumental variables are needed.
-#' The important assumption of the model is that the endogeneous variables should NOT be normally distributed.
+#' Fits linear models with continuous or discrete endogeneous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
+#' This is a statistical technique to address the endogeneity problem where no external instrumental variables are needed.
+#' The important assumption of the model is that the endogeneous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
 #'
 #' @details
+#' For the case of a single continuous endogenous regressor maximum likelihood estimation is used.
+#' Therefore, the call of the function is: \\
+#' \code{copulaCorrection(y ~ X1 + X2 + P | continuous(P), data, start.params, num.boots)}, \\
+#' where the first argument is a two-part formula with the LHS representing the model to be estimated while the RHS is the endogenous regressor, whose distributional
+#' assumption should be specified in paranthesis.
+#' the starting values for \eqn{\rho} and \eqn{\sigma}, where \eqn{\rho} is the correlation between the endogenous regressor and the error, and \eqn{\sigma} is
+#' the variance of the model's error.
+#'
+#' In the case of one discrete endogenous regressor, the call of the function is:\\
+#' \code{copulaCorrection(y ~ X1 + X2 + P | discrete(P), data)}\\
+#' Here, an alternative model specification is used, still based on Gaussian copula, but using augmented OLS.
+#' A note in this case: Since the marginal distribution function of the endogenous regressor is a step function in this case,
+#' it is important to also have a look at the confidence interval of the coefficient estimates, by calling the \code{confint()} function.
+#'
+#' In the case of multiple endogenous regressors of both discrete or continuous distributions, the call of the \code{copulaCorrection()} function is: \\
+#' \code{copulaCorrection(y ~ X1 + X2 + P1 + P2 | discrete(P1) + continuous(P2), data)}
+#'
+#'
+#'
+#'
 #' For the case of a single continuous.
 #'
 #' Something about how the formula is given.
