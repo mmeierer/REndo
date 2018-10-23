@@ -14,30 +14,42 @@
 #' @param verbose Show details about the running of the function.
 #'
 #' @details
-#' Let's consider the model:
-#' \deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}{Y_t = b0 + a * P_t + eps_t}
-#' \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}{P_t = pi * Z_t + nu_t}
-#' where \code{t = 1,..,T} indexes either time or cross-sectional units, \eqn{Y_{t}}{Y_t} is the dependent variable, \eqn{P_{t}}{P_t} is a \code{k x 1} continuous, endogenous regressor,
-#' \eqn{\epsilon_{t}} is a structural error term with mean zero and \eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}{E(eps^2) = sigma_eps^2}, \eqn{\alpha}{a} and \eqn{\beta}{b0}
-#' are model parameters. \eqn{Z_{t}}{Z_t} is a \code{l x 1} vector of instruments, and \eqn{\nu_{t}}{nu} is a random error with mean zero and \eqn{E(\nu^{2}) = \sigma^{2}_{\nu}}{E(nu^2) = sigma_nu^2}.
-#' The endogeneity problem arises from the correlation of \code{P} and \eqn{\epsilon_{t}}{eps} through \eqn{E(\epsilon\nu) = \sigma_{\epsilon\nu}}{E(eps * nu) = sigma_0^2}.
 #'
-#' \code{latentIV}  considers \eqn{Z_{t}^{'}}{Z_t} to be a latent, discrete, exogenous variable with an unknown number of groups \code{m} and \eqn{\pi}{pi} is a vector of group means.
-#' It is assumed that \code{Z} is independent of the error terms \eqn{\epsilon}{eps} and \eqn{\nu}{nu} and that it has at least two groups with different means.
-#' The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}{Sigma}:
+#' Let's consider the model:
+#' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{ \deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}}
+#' \ifelse{html}{\out{<br><center>P<sub>t</sub>=&pi;'Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{ \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}}
+#'
+#' where \eqn{t = 1,..,T} indexes either time or cross-sectional units, \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}} is the dependent variable,
+#' \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is a \code{k x 1} continuous, endogenous regressor,
+#' \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}} is a structural error term with mean zero
+#' and \ifelse{html}{\out{E(&epsilon;<sup>2</sup>)=&sigma;<sub>&epsilon;</sub><sup>2</sup>}}{\eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}},
+#' \eqn{\alpha} and \ifelse{html}{\out{&beta;<sub>0</sub>}}{\eqn{\beta_0}} are model parameters.
+#' \ifelse{html}{\out{Z;<sub>t</sub>}}{\eqn{Z_{t}}} is a \code{l x 1} vector of instruments,
+#' and \ifelse{html}{\out{&nu;<sub>t</sub>}}{\eqn{\nu_{t}}} is a random error with mean zero and
+#' \ifelse{html}{\out{E(&nu;<sup>2</sup>)=&sigma;<sub>&nu;</sub><sup>2</sup>}}{\eqn{E(\nu^{2}) = \sigma^{2}_{\nu}}}.
+#' The endogeneity problem arises from the correlation of \eqn{P} and \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}}
+#' through \ifelse{html}{\out{E(&epsilon;&nu;)=&sigma;<sub>&epsilon;&nu;</sub>}}{\eqn{E(\epsilon\nu) = \sigma_{\epsilon\nu}}}
+#'
+#' \code{latentIV} considers \ifelse{html}{\out{Z<sub>t</sub>'}}{\eqn{Z_{t}^{'}}} to be a latent, discrete, exogenous variable with an unknown number of groups \eqn{m} and \eqn{\pi} is a vector of group means.
+#' It is assumed that \eqn{Z} is independent of the error terms \eqn{\epsilon} and \eqn{\nu} and that it has at least two groups with different means.
+#' The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}:
+#' \ifelse{html}{\out{<center>&Sigma;=(&sigma;<sub>&epsilon;</sub><sup>2</sup>, &sigma;<sub>0</sub><sup>2</sup>,
+#' <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&sigma;<sub>0</sub><sup>2</sup>, &sigma;<sub>&nu;</sub><sup>2</sup>)</center>}}{
 #' \deqn{\Sigma = \left(
 #' \begin{array}{ccc}
 #' \sigma_{\epsilon}^{2} \& \sigma_{\epsilon\nu}\\
 #' \sigma_{\epsilon\nu} \& \sigma_{\nu}^{2}
-#' \end{array}\right)}{Sigma = (sigma_eps^2,       sigma_0^2 ; sigma_0^2,       sigma_nu^2)}
-#' The identification of the model lies in the assumption of the non-normality of \eqn{P_{t}}{P}, the discreteness of the unobserved instruments and the existence of
+#' \end{array}\right)}}
+#'
+#' The identification of the model lies in the assumption of the non-normality of
+#' \ifelse{html}{\out{P<sub>t</sub>'}}{\eqn{P_{t}}}, the discreteness of the unobserved instruments and the existence of
 #' at least two groups with different means.
 #'
 #' The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
 #' even if the true number of the categories of the instrument is larger than two, \code{latentIV} estimates are approximately consistent. Besides, overfitting in terms
 #' of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
 #' for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
-#' in a frequentist approach identification issues appear. The optimization algorithm used is Nelder-Mead.
+#' in a frequentist approach identification issues appear.
 #'
 #' Additional parameters used during model fitting and printed in \code{summary} are:
 #' \describe{
@@ -48,6 +60,7 @@
 #' \item{theta7}{test}
 #' \item{theta8}{test}
 #' }
+#'
 #'
 #' @return An object of class \code{rendo.optim.LL} is returned that is a list and contains the following components:
 #' \item{formula}{The formula given to specify the model to be fitted.}
