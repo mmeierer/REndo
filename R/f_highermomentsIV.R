@@ -15,7 +15,7 @@
 #' \ifelse{html}{\out{<center>P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{\deqn{ P_{t} = Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
 #'
 #'
-#' The observed data consist of \eqn{Y_{t}}{Y}, \eqn{X_{t}}{X} and \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}},
+#' The observed data consist of \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{Y_{t}}}, \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}} and \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}},
 #' while \ifelse{html}{\out{Z<sub>t</sub>}}{\eqn{Z_{t}}}, \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}},
 #' and \ifelse{html}{\out{&nu;<sub>t</sub>}}{\eqn{\nu_{t}}} are unobserved. The endogeneity problem arises from
 #' the correlation of \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} with the structural error
@@ -39,9 +39,10 @@
 #' Otherwise, the use of the instruments does not require any distributional assumptions for the errors. Given that the regressors \eqn{G(X) = X}
 #' are included as instruments, \eqn{G(X)} should not be linear in \eqn{X} in equation \eqn{3a}.
 #'
-#' Let small letter denote deviation from the sample mean: \eqn{s_{i} = S_{i}-\bar{S}}{s_i = S_i - mean(S)}. Then, using as instruments the variables presented in
-#' equations \code{3} together with \code{1} and \eqn{X_{t}}{X}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
-#' in equation \code{1} under the assumptions exposed in Lewbel(1997).
+#' Let small letter denote deviation from the sample mean: \ifelse{html}{\out{s<sub>i</sub> = S<sub>i</sub>-S&#773;}}{\eqn{s_{i} = S_{i}-\bar{S}}}.
+#' Then, using as instruments the variables presented in equations \eqn{3} together with \eqn{1} and
+#' \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
+#' in equation \eqn{1} under the assumptions exposed in Lewbel(1997).
 #'
 #' The \code{formula} argument follows a four part notation:
 #' A two-sided formula describing the model (e.g. \code{y ~ X1 + X2 + P}), a single endogenous regressor
