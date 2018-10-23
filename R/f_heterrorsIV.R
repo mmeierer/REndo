@@ -6,14 +6,14 @@
 #' @template template_param_formuladataverbose
 #'
 #' @details
+#' \subsection{Method}{
 #' The method proposed in Lewbel(2012) identifies structural parameters in regression models with endogenous
 #' regressors by means of variables that are uncorrelated with the product of heteroskedastic errors.
 #' The instruments are constructed as simple functions of the model's data. The method can be applied when
 #' no external instruments are available or to supplement external instruments to improve the efficiency of the
 #' IV estimator.
 #' Consider the model in the equation:
-#'
-#' \ifelse{html}{\out{y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub>}}{\deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
+#' \ifelse{html}{\out{<br><center>y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
 #'
 #' where \eqn{t=1,..,T} indexes either time or cross-sectional units.The endogeneity problem arises from the correlation of
 #' \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} and \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}}.
@@ -26,11 +26,13 @@
 #' The strength of the instrument is proportional to the covariance of \ifelse{html}{\out{(Z-Z&#773;)&nu;}}{\eqn{(Z-\bar{Z}) \nu}} with \eqn{\nu}, which corresponds to
 #' the degree of heteroskedasticity of \eqn{\nu} with respect to \eqn{Z} (Lewbel 2012).
 #'
-#' The assumption that the covariance between \eqn{Z} and the squared error is different from zero can be empirically tested (it is checked in the background when calling the
-#' hetErrorsIV() function). If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors.
+#' The assumption that the covariance between \eqn{Z} and the squared error is different from zero can be empirically tested (this is checked in the background when calling the
+#' function). If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors.
+#'}
 #'
-#'
+#'\subsection{Formula parameter}{
 #' The \code{formula} argument follows a four part notation:
+#'
 #' A two-sided formula describing the model (e.g. \code{y ~ X1 + X2 + P}), a single endogenous regressor
 #' (e.g. \code{P}), and the exogenous variables from which the internal instrumental variables should
 #' be build (e.g. \code{IIV(X1) + IIV(X2)}), each part separated by a single vertical bar (\code{|}).
@@ -49,6 +51,7 @@
 #' and are provided as the fourth right-hand side part of the formula, again separated by a vertical bar.
 #'
 #' See the example section for illustrations on how to specify the \code{formula} parameter.
+#'}
 #'
 #' @examples
 #' data("dataHetIV")
@@ -57,10 +60,10 @@
 #' # 2 IVs, one from X1, one from X2
 #' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1)+IIV(X2), data=dataHetIV)
 #' # same as above
-#' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), data=dataHetIV)
+#' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1,X2), data=dataHetIV)
 #'
 #' # use X2 as an external IV
-#' het <- hetErrorsIV(y~X1+P|P|IIV(X1) | X2, data=dataHetIV)
+#' het <- hetErrorsIV(y~X1+P|P|IIV(X1)|X2, data=dataHetIV)
 #'
 #' summary(het)
 #'

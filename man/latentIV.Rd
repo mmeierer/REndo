@@ -44,7 +44,7 @@ the structural error is normally distributed.
 \details{
 Let's consider the model:
 \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{ \deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}}
-\ifelse{html}{\out{<br><center>P<sub>t</sub>=&pi;'Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{ \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}}
+\ifelse{html}{\out{<center>P<sub>t</sub>=&pi;'Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{ \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}}
 
 where \eqn{t = 1,..,T} indexes either time or cross-sectional units, \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}} is the dependent variable,
 \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is a \code{k x 1} continuous, endogenous regressor,
@@ -73,7 +73,7 @@ The identification of the model lies in the assumption of the non-normality of
 at least two groups with different means.
 
 The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
-even if the true number of the categories of the instrument is larger than two, \code{latentIV} estimates are approximately consistent. Besides, overfitting in terms
+even if the true number of the categories of the instrument is larger than two, estimates are approximately consistent. Besides, overfitting in terms
 of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. For a model with additonal explanatory variables a Bayesian approach is needed, since
 in a frequentist approach identification issues appear.
 
