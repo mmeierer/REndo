@@ -11,18 +11,20 @@
 #' The instruments are constructed as simple functions of the model's data. The method can be applied when
 #' no external instruments are available or to supplement external instruments to improve the efficiency of the
 #' IV estimator.
-#' Consider the model in the equation below:
+#' Consider the model in the equation:
+#'
 #' \ifelse{html}{\out{y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub>}}{\deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
 #'
 #' where \eqn{t=1,..,T} indexes either time or cross-sectional units.The endogeneity problem arises from the correlation of
-#' \eqn{P_{t}} and \eqn{\epsilon_{t}}. As such:
-#' \deqn{P_{t}=\gamma Z_{t}+\nu_{t},}
-#' where \eqn{Z_{t}} is a subset of variables in \eqn{X_{t}}.
+#' \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} and \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}}.
+#' As such: \ifelse{html}{\out{P<sub>t</sub> = Z<sub>t</sub>+&nu;<sub>t</sub>,}}{\deqn{P_{t}=\gamma Z_{t}+\nu_{t},}}
+#' where \ifelse{html}{\out{Z<sub>t</sub>}}{\eqn{Z_{t}}} is a subset of variables in \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}}.
 #'
-#' The errors, \eqn{\epsilon} and \eqn{\nu}, may be correlated with each other. Structural parameters are identified by an
-#' ordinary two-stage least squares regression of \eqn{Y} on \eqn{X} and \eqn{P}, using \eqn{X} and \eqn{[Z-E(Z)]\nu} as instruments.
-#' A vital assumption for identification is that \eqn{cov(Z,\nu^2) \neq 0}. The strength of the instrument is proportional
-#' to the covariance of \eqn{(Z-\bar{Z}) \nu} with \eqn{\nu}, which corresponds to the degree of heteroskedasticity of \eqn{\nu} with respect to \eqn{Z} (Lewbel 2012).
+#' The errors, \ifelse{html}{\out{&epsilon;}}{\eqn{\epsilon}} and \ifelse{html}{\out{&nu;}}{\eqn{\nu}}, may be correlated with each other.
+#' Structural parameters are identified by an ordinary two-stage least squares regression of \eqn{Y} on \eqn{X} and \eqn{P}, using \eqn{X} and \eqn{[Z-E(Z)]\nu} as instruments.
+#' A vital assumption for identification is that \ifelse{html}{\out{cov(Z,&nu;<sup>2</sup>)&ne;0}}{\eqn{cov(Z,\nu^2) \neq 0}}.
+#' The strength of the instrument is proportional to the covariance of \ifelse{html}{\out{(Z-Z&#773;)&nu;}}{\eqn{(Z-\bar{Z}) \nu}} with \eqn{\nu}, which corresponds to
+#' the degree of heteroskedasticity of \eqn{\nu} with respect to \eqn{Z} (Lewbel 2012).
 #'
 #' The assumption that the covariance between \eqn{Z} and the squared error is different from zero can be empirically tested (it is checked in the background when calling the
 #' hetErrorsIV() function). If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors.
