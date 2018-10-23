@@ -74,8 +74,7 @@ at least two groups with different means.
 
 The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
 even if the true number of the categories of the instrument is larger than two, \code{latentIV} estimates are approximately consistent. Besides, overfitting in terms
-of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. When provided by the user, the initial parameter values
-for the two group means have to be different, otherwise the model is not identified. For a model with additonal explanatory variables a Bayesian approach is needed, since
+of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. For a model with additonal explanatory variables a Bayesian approach is needed, since
 in a frequentist approach identification issues appear.
 
 Additional parameters used during model fitting and printed in \code{summary} are:
