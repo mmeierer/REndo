@@ -9,6 +9,9 @@
 #' @template template_param_formuladataverbose
 #'
 #' @details
+#'
+#' \subsection{Method}{
+#'
 #' Consider the model:
 #' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&gamma;'X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ Y_{t} = \beta_{0}+ \gamma^{'}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
 #'
@@ -43,8 +46,12 @@
 #' Then, using as instruments the variables presented in equations \eqn{3} together with \eqn{1} and
 #' \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}}, the two-stage-least-squares estimation will provide consistent estimates for the parameters
 #' in equation \eqn{1} under the assumptions exposed in Lewbel(1997).
+#' }
+#'
+#' \subsection{Formula parameter}{
 #'
 #' The \code{formula} argument follows a four part notation:
+#'
 #' A two-sided formula describing the model (e.g. \code{y ~ X1 + X2 + P}), a single endogenous regressor
 #' (e.g. \code{P}), and the exogenous variables from which the internal instrumental variables should
 #' be build (e.g. \code{IIV(iiv=y2)}), each part separated by a single vertical bar (\code{|}).
@@ -69,6 +76,7 @@
 #' and are provided as the fourth right-hand side part of the formula, again separated by a vertical bar.
 #'
 #' See the example section for illustrations on how to specify the \code{formula} parameter.
+#' }
 #'
 #' @template template_text_return_rendoivreg
 #'

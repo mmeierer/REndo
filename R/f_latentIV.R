@@ -49,12 +49,12 @@
 #' \item{theta8}{test}
 #' }
 #'
-#' @return An object of class rendo.optim.LL is returned that is a list and contains the following components:
+#' @return An object of class \code{rendo.optim.LL} is returned that is a list and contains the following components:
 #' \item{formula}{The formula given to specify the model to be fitted.}
 #' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 #' \item{estim.params}{A named vector of all coefficients used during model fitting.}
 #' \item{estim.params.se}{A named vector of the standard error of all coefficients used during model fitting.}
-#' \item{names.main.coefs}{A vector specifying which coefficients are.}
+#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
 #' \item{res.optimx}{The result object returned by the function \code{optimx}.}
 #' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
 #' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}

@@ -4,12 +4,24 @@
 #' This is a statistical technique to address the endogeneity problem where no external instrumental variables are needed.
 #' The important assumption of the model is that the endogeneous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
 #'
+#' @template template_param_formuladataverbose
+#' @param ... Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
+#'  regressor. Ignored with a warning otherwise.
+#' \describe{
+#' \item{start.params}{A named vector containing a set of parameters to use in the first optimization iteration.
+#' The names have to correspond exactly to the names of the components specified in the \code{formula} parameter.
+#' If not provided, a linear model is fitted to derive them.}
+#' \item{num.boots}{Number of bootstrapping iterations. Defaults to 1000.}
+#' }
+#'
 #' @details
+#'
+#' \subsection{Method}{
+#'
 #' For the case of a single continuous endogenous regressor maximum likelihood estimation is used.
 #' Therefore, the call of the function is: \\
 #' \code{copulaCorrection(y ~ X1 + X2 + P | continuous(P), data, start.params, num.boots)}, \\
-#' where the first argument is a two-part formula with the LHS representing the model to be estimated while the RHS is the endogenous regressor, whose distributional
-#' assumption should be specified in paranthesis.
+#'
 #' the starting values for \eqn{\rho} and \eqn{\sigma}, where \eqn{\rho} is the correlation between the endogenous regressor and the error, and \eqn{\sigma} is
 #' the variance of the model's error.
 #'
@@ -23,28 +35,57 @@
 #' \code{copulaCorrection(y ~ X1 + X2 + P1 + P2 | discrete(P1) + continuous(P2), data)}
 #'
 #'
-#'
-#'
-#' For the case of a single continuous.
-#'
-#' Something about how the formula is given.
-#'
 #' Something about the additional parameters that are used during optimization
-#'
 #' Something about the confidence interval for discrete only
+#'}
 #'
-#' @template template_param_formuladataverbose
-#' @param ... Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
-#'  regressor. Ignored with a warning otherwise.
-#' \describe{
-#' \item{start.params}{A named vector containing a set of parameters to use in the first optimization iteration.
-#' The names have to correspond exactly to the names of the components specified in the formula parameter.
-#' If not provided, a linear model is fitted to derive them.}
-#' \item{num.boots}{Number of bootstrapping iterations. Defaults to 1000.}
-#' }
+#'\subsection{Formula parameter}{
+#' The \code{formula} argument follows a two part notation:
 #'
+#' A two-sided formula describing the model (e.g. \code{y ~ X1 + X2 + P}) to be estimated and a
+#' second right-hand side part in which the endogenous regressors and their distributional
+#' assumptions are indicated (e.g. \code{continuous(P)}). These two parts are separated by a single vertical bar (\code{|}).
+#' In the second part, the special functions \code{continuous} or \code{discrete}, or a combination
+#' of both are used to indicate the endogenous regressors and their respective distribution.
+#' Both functions use the following parameter:
+#'
+#'\describe{ \item{...}{The endogenous regressors with the respective distribution.}}
+#'
+#' Note that no argument to \code{continuous} or \code{discrete} is to be supplied as character
+#' but as symbols without quotation marks.
+#'
+#' See the example section for illustrations on how to specify the \code{formula} parameter.
+#'}
 #' @return
+#' For the case of a single continuous endogenous regressor, an object of class \code{rendo.optim.LL} is returned.
+#' It is a list and contains the following components:
+#' \item{formula}{The formula given to specify the model to be fitted.}
+#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' \item{estim.params}{A named vector of all coefficients used during model fitting.}
+#' \item{estim.params.se}{A named vector of the standard error of all coefficients used during model fitting.}
+#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
+#' \item{res.optimx}{The result object returned by the function \code{optimx}.}
+#' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
+#' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
+#' \item{fitted.values}{Fitted values at the found solution.}
+#' \item{residuals}{The residuals.}
+#' \item{model}{The model.frame used for model fitting.}
+#' \item{terms}{The terms object used for model fitting.}
 #'
+#' The function summary can be used to obtain and print a summary of the results.
+#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+#'
+#' For all other cases, an object of classes \code{rendo.pstar.lm} and \code{lm} is returned.
+#' It extends the object returned from \code{lm} of package \code{stats} to additionally include the
+#' following components:
+#' \item{original.data}{The original data used to fit the model.}
+#' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
+#' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
+#'
+#' All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
+#'
+#' @seealso \code{\link[stats]{lm}}
+#' @seealso \code{\link[optimx]{optimx}}
 #'
 #' @references   Park, S. and Gupta, S., (2012), 'Handling Endogeneous Regressors by Joint Estimation Using Copulas', Marketing Science, 31(4), 567-86.
 #'

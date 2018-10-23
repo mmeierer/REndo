@@ -18,7 +18,7 @@ If not provided, a linear model is fitted to derive them.}
 \item{verbose}{Show details about the running of the function.}
 }
 \value{
-An object of class rendo.optim.LL is returned that is a list and contains the following components:
+An object of class \code{rendo.optim.LL} is returned that is a list and contains the following components:
 \item{formula}{The formula given to specify the model to be fitted.}
 \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 \item{estim.params}{A named vector of all coefficients used during model fitting.}
