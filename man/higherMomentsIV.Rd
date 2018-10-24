@@ -104,15 +104,17 @@ data("dataHigherMoments")
 hm <- higherMomentsIV(y~X1+X2+P|P|IIV(iiv=gp, g=x2, X1, X2),
                       data = dataHigherMoments)
 # same as above
-hm <- higherMomentsIV(y~X1+X2+P|P|IIV(iiv=gp, g=x2, X1) + IIV(iiv=gp, g=x2, X2),
+hm <- higherMomentsIV(y~X1+X2+P|P|IIV(iiv=gp, g=x2, X1) +
+                                  IIV(iiv=gp, g=x2, X2),
                       data = dataHigherMoments)
 
 # 3 different IVs
-hm <- higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2)+IIV(iiv=yp)+IIV(iiv=g,g=x3,X1),
+hm <- higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2) + IIV(iiv=yp) +
+                                  IIV(iiv=g,g=x3,X1),
                       data = dataHigherMoments)
 
 # use X2 as external IV
-hm <- higherMomentsIV(y~X1+P|P|IIV(iiv=y2)+IIV(iiv=g,g=lnx,X1) | X2,
+hm <- higherMomentsIV(y~X1+P|P|IIV(iiv=y2)+IIV(iiv=g,g=lnx,X1)| X2,
                       data = dataHigherMoments)
 summary(hm)
 
