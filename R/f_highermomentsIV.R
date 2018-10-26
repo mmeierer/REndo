@@ -13,12 +13,11 @@
 #' \subsection{Method}{
 #'
 #' Consider the model:
-#' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&gamma;'X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ Y_{t} = \beta_{0}+ \gamma^{'}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
+#' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ Y_{t} = \beta_{0}+ \beta_{1}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
 #'
-#' \ifelse{html}{\out{<center>P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{\deqn{ P_{t} = Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
+#' \ifelse{html}{\out{<center>P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{\deqn{ P_{t} = \gamma Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
 #'
-#'
-#' The observed data consist of \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{Y_{t}}}, \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}} and \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}},
+#' The observed data consist of \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}}, \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}} and \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}},
 #' while \ifelse{html}{\out{Z<sub>t</sub>}}{\eqn{Z_{t}}}, \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}},
 #' and \ifelse{html}{\out{&nu;<sub>t</sub>}}{\eqn{\nu_{t}}} are unobserved. The endogeneity problem arises from
 #' the correlation of \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} with the structural error
@@ -31,7 +30,7 @@
 #' has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with 2SLS to obtain consistent estimates:
 #'
 #' \ifelse{html}{\out{<div align="center">q<sub>1t</sub>=(G<sub>t</sub>-G&#773;)<span style="float:right;">(3a)</span></div>}}{\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}}
-#' \ifelse{html}{\out{<div align="center">q<sub>2t</sub>=(G<sub>t</sub>-G&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3b)</span></div>}}{\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b) }}
+#' \ifelse{html}{\out{<div align="center">q<sub>2t</sub>=(G<sub>t</sub>-G&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3b)</span></div>}}{\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b)}}
 #' \ifelse{html}{\out{<div align="center">q<sub>3t</sub>=(G<sub>t</sub>-G&#773;)(Y<sub>t</sub>-Y&#773;)<span style="float:right;">(3c)</span></div>}}{\deqn{ q_{3t}=(G_{t} - \bar{G})(Y_{t}-\bar{Y}) \hspace{0.3cm} (3c)}}
 #' \ifelse{html}{\out{<div align="center">q<sub>4t</sub>=(Y<sub>t</sub>-Y&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3d)</span></div>}}{\deqn{ q_{4t}=(Y_{t} - \bar{Y})(P_{t}-\bar{P}) \hspace{0.3cm} (3d)}}
 #' \ifelse{html}{\out{<div align="center">q<sub>5t</sub>=(P<sub>t</sub>-P&#773;)<sup>2</sup><span style="float:right;">(3e)</span></div>}}{\deqn{ q_{5t}=(P_{t}-\bar{P})^{2} \hspace{1.5 cm} (3e)}}
@@ -79,6 +78,8 @@
 #' }
 #'
 #' @template template_text_return_rendoivreg
+#'
+#' @references Lewbel A (1997). “Constructing Instruments for Regressions with Measurement Error When No Additional Data are Available, With an Application to Patents and R&D.” Econometrica, 65(5), 1201–1213.
 #'
 #' @examples
 #' data("dataHigherMoments")

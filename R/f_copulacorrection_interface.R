@@ -18,24 +18,61 @@
 #'
 #' \subsection{Method}{
 #'
-#' ?? SOMETHING ABOUT THE MATH BEHIND THE MODEL ??
-#' ?? something about the confidence interval for the discrete only case ??
+#' The underlying idea of the joint estimation method is that using information contained in the observed data,
+#' one selects marginal distributions for the endogenous regressor and the structural error term, respectively.
+#' Then, the copula model enables the construction of a flexible multivariate joint distribution allowing a wide range
+#' of correlations between the two marginals.
 #'
-#' For the case of a single continuous endogenous regressor maximum likelihood estimation is used.
-#' Therefore, the call of the function is: \\
-#' \code{copulaCorrection(y ~ X1 + X2 + P | continuous(P), data, start.params, num.boots)}, \\
 #'
-#' the starting values for \eqn{\rho} and \eqn{\sigma}, where \eqn{\rho} is the correlation between the endogenous regressor and the error, and \eqn{\sigma} is
-#' the variance of the model's error.
+#' Consider the model:
 #'
-#' In the case of one discrete endogenous regressor, the call of the function is:\\
-#' \code{copulaCorrection(y ~ X1 + X2 + P | discrete(P), data)}\\
-#' Here, an alternative model specification is used, still based on Gaussian copula, but using augmented OLS.
-#' A note in this case: Since the marginal distribution function of the endogenous regressor is a step function in this case,
-#' it is important to also have a look at the confidence interval of the coefficient estimates, by calling the \code{confint()} function.
+#' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{Y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
 #'
-#' In the case of multiple endogenous regressors of both discrete or continuous distributions, the call of the \code{copulaCorrection()} function is: \\
-#' \code{copulaCorrection(y ~ X1 + X2 + P1 + P2 | discrete(P1) + continuous(P2), data)}
+#' where \eqn{t=1,..,T} indexes either time or cross-sectional units, \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}} is a \eqn{1x1} response variable,
+#' \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}} is a \eqn{kxn} exogenous regressor,
+#' \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is a \eqn{kx1} continuous endogenous regressor,
+#' \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}} is a normally distributed structural error term with mean zero and
+#' \ifelse{html}{\out{E(&epsilon;<sup>2</sup>)=&sigma;<sub>&epsilon;</sub><sup>2</sup>}}{\eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}},
+#' \eqn{\alpha} and \eqn{\beta} are model parameters.
+#'
+#'
+#' The marginal distribution of the endogenous regressor \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is obtained using the Epanechnikov
+#' kernel density estimator \citep{Epa69}, as below:
+#'
+#' \ifelse{html}{\out{<br><center>h&#770;(p)=1/(T&#183;b) &sum;(K&#183;((p-P<sub>t</sub>)/b))</center>}}{\deqn{\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)}}
+#'
+#' where \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is the endogenous regressor,
+#' \ifelse{html}{\out{K(x)=0.75&#183;(1-x<sup>2</sup>)&#183;I(|x|<=1)}}{\eqn{K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|<=1)}}
+#' and the bandwidth \eqn{b} is the one proposed by Silverman (1986),
+#' and is equal to \ifelse{html}{\out{b=0.9&#183;T<sup>-1.5</sup>&#183;min(s, IQR/1.34)}}{\eqn{b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)}}.
+#' \eqn{IQR} is the interquartile range while \eqn{s} is the data sample standard deviation
+#' and \eqn{T} is the number of time periods observed in the data.
+#' After obtaining the joint distribution of the error term and the continuous endogenous regressor, the model parameters are estimated using
+#' maximum likelihood estimation.
+#'
+#' The additional parameters used during model fitting and printed in \code{summary} hence are:
+#' \describe{
+#' \item{\code{rho}}{The correlation between the endogenous regressor and the error.}
+#' \item{\code{sigma}}{The variance of the model's error.}
+#' }
+#'
+#'
+#' With more than one continuous endogenous regressor or an endogenous discrete regressor, an alternative approach to the
+#' estimation using Gaussian copula should be applied. This approach is similar to the control function approach (Petrin and Train, 2010).
+#' The core idea is to apply OLS estimation on the original set of explanatory variables in the model equation above, plus an additional regressor
+#' \ifelse{html}{\out{P<sub>t</sub>&#42;=&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{P_{t}^{*}=\Phi^{-1}(H(P_{t}))}}.
+#' Here, \ifelse{html}{\out{H(P<sub>t</sub>)}}{\eqn{H(P_{t})}} is the marginal distribution of the endogenous regressor \eqn{P}.
+#' Including this regressor solves the correlation between the endogenous regressor and the structural error, \eqn{\epsilon},
+#' OLS providing consistent parameter estimates. Due to identification problems, the discrete endogenous regressor cannot have a binomial
+#' distribution.
+#'
+#' Hence, only in the case of a single continuous endogenous regressor maximum likelihood estimation is used.
+#' In all other cases, augmented OLS based on Gaussian copula is applied. This includes cases of multiple endogenous regressors
+#' of both discrete or continuous distributions.
+#'
+#' If all endogenous regressor(s) are discrete, it is important to also have a look at the confidence interval of the
+#' coefficient estimates because the marginal distribution function of the endogenous regressor is a step function in this case.
+#' The \code{\link[confint.rendo.pstar.lm]{confint}} function accounts for this case specifically by XXXX.
 #'
 #'}
 #'
@@ -46,9 +83,8 @@
 #' second right-hand side part in which the endogenous regressors and their distributional
 #' assumptions are indicated (e.g. \code{continuous(P)}). These two parts are separated by a single vertical bar (\code{|}).
 #' In the second part, the special functions \code{continuous}, \code{discrete}, or a combination
-#' of both are used to indicate the endogenous regressors and their respective distribution.
-#' Both functions use the \code{...} parameter in which the distribution for the respective
-#' endogenous regressors is specified.
+#' of both, are used to indicate the endogenous regressors and their respective distribution.
+#' Both functions use the \code{...} parameter in which the respective endogenous regressors is specified.
 #'
 #' Note that no argument to \code{continuous} or \code{discrete} is to be supplied as character
 #' but as symbols without quotation marks.
@@ -83,8 +119,10 @@
 #'
 #' All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
 #'
-#' @seealso \code{\link[stats]{lm}}
-#' @seealso \code{\link[optimx]{optimx}}
+#** check that this and above link work after package renamed to rendo
+#' @seealso \code{\link[confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
+# @seealso \code{\link[stats]{lm}}
+# @seealso \code{\link[optimx]{optimx}}
 #'
 #' @references   Park, S. and Gupta, S., (2012), 'Handling Endogeneous Regressors by Joint Estimation Using Copulas', Marketing Science, 31(4), 567-86.
 #'
@@ -94,13 +132,14 @@
 #' data("dataCopDis")
 #' data("dataCopDisCont")
 #'
-#' \notrun{
+#' \donttest{
+#' \dontrun{
 #' # Single continuous: log-likelihood optimization
 #' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), data=dataCopC1)
 #' # same as above, with start.parameters and number of bootstrappings
 #' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=500, data=dataCopC1,
 #'                        start.params = c("(Intercept)"=1, X1=1, X2=-2, P=-1))
-#' }
+#' }}
 #'
 #' # All following examples fit linear model with Gaussian copulas
 #'

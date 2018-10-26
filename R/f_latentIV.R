@@ -1,4 +1,3 @@
-# @author The implementation by Raluca Gui based on the paper of Ebbes et al. (2005).
 #' @title  Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables
 #'
 #' @description  Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
@@ -48,16 +47,16 @@
 #' The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
 #' even if the true number of the categories of the instrument is larger than two, estimates are approximately consistent. Besides, overfitting in terms
 #' of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. For a model with additonal explanatory variables a Bayesian approach is needed, since
-#' in a frequentist approach identification issues appear.
+#' in a frequentist approach identification issues appear. The probability of the latent variable
 #'
 #' Additional parameters used during model fitting and printed in \code{summary} are:
 #' \describe{
-#' \item{pi1}{test}
-#' \item{pi2}{test}
-#' \item{theta5}{test}
-#' \item{theta6}{test}
-#' \item{theta7}{test}
-#' \item{theta8}{test}
+#' \item{pi1}{The instrumental variables \eqn{Z} are assumed to be divided into two groups. \code{pi1} represents the estimated group mean of the first group.}
+#' \item{pi2}{The estimated group mean of the second group of the instrumental variables \eqn{Z}.}
+#' \item{theta5}{The probability of being in the first group of the instruments.}
+#' \item{theta6}{The variance, \ifelse{html}{\out{&sigma;<sub>&epsilon;</sub><sup>2</sup>}}{\eqn{\sigma_{\epsilon}^{2}}}}
+#' \item{theta7}{The covariance, \ifelse{html}{\out{&sigma;<sub>&epsilon;&nu;</sub>}}{\eqn{\sigma_{\epsilon\nu}}}}
+#' \item{theta8}{The variance, \ifelse{html}{\out{&sigma;<sub>&nu;</sub><sup>2</sup>}}{\eqn{\sigma_{\nu}^{2}}}}
 #' }
 #'
 #'
