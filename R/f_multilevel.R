@@ -1,6 +1,9 @@
 #' @importFrom lme4 lmer VarCorr lFormula
 multilevel <- function(formula, data, verbose){
 
+# ** CHECK THAT EVERY CHILD ONLY APPEARS IN 1 SCHOOL
+  # .N, by=SID, CID, then uniqueN(CID) == nrow() (ie CID appears only once for every SID )
+
 
   # Check input ----------------------------------------------------------
 

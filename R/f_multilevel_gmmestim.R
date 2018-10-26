@@ -19,6 +19,7 @@ multilevel_gmmestim <- function(y, X, W, HIV){
   GHat    <- Matrix::t(HIV) %*% Xf/num.indep
   # M_HH = 1/nH'H
   MHH     <- Matrix::crossprod(HIV)/num.indep
+  # ** use solve
   ginvMHH <- corpcor::pseudoinverse(MHH)
   # GammaHat = inv(Ghat'inv(M_HH)GHat)Ghat'inv(M_HH)
   GammaH  <- corpcor::pseudoinverse(Matrix::t(GHat) %*% ginvMHH %*% GHat)%*% Matrix::t(GHat) %*% ginvMHH

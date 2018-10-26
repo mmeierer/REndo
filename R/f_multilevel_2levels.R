@@ -1,7 +1,108 @@
 #' @importFrom lme4 lFormula VarCorr lmer
 #' @importFrom Matrix Diagonal crossprod bdiag
 #' @importFrom corpcor pseudoinverse
-multilevel_2levels <- function(formula, dt.data){
+multilevel_2levels <- function(formula, data){
+
+  l4.form <- lme4::lFormula(formula = formula, data=data)
+  num.levels <- length(l4.form$reTrms$flist) + 1
+
+  name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # CID
+  message("name.group.L2", name.group.L2)
+
+  VC       <- lme4::VarCorr(lme4::lmer(formula=formula, data=data))
+  D.2      <- VC[[name.group.L2]]
+  sigma.sq <- attr(VC, "sc")
+
+
+  # ** sort same as in buildmatrices!!
+  # dt.y <- cbind(model.response(l4.form$fr))
+  y <- as.matrix(model.response(l4.form$fr))
+
+  l.matrices.L2 <- multilevel_buildmatrices(data = data, l4.form = l4.form, formula = formula,
+                                            names.endo = "X15", num.levels = 2,
+                                            name.group.by = name.group.L2,
+                                            D.2 = D.2, sigma.sq = sigma.sq)
+
+  message("matrices done")
+  X  <- l.matrices.L2$X
+  X1 <- l.matrices.L2$X1
+  Q  <- l.matrices.L2$Q
+  P  <- l.matrices.L2$P
+  W  <- l.matrices.L2$W
+
+  print(paste0("X done:", class(X)))
+  print(paste0("X1 done:", class(X1)))
+  print(paste0("Q done:", class(Q)))
+  print(paste0("P done:", class(P)))
+  print(paste0("W done:", class(W)))
+
+
+  HIV.s1 <- Q %*% (W%*%(X))
+
+  # End page 517:
+  # H_1sgls = (Q(1)_sglsV^-0.5X_s:P(1)_sglsV^-0.5X_1s)
+  #   where Q(1)_sgls = I_sc-P(V^0.5_sZ_2sc)
+  #   and   P(1)_sgls = I_sc-Q(1)_sgls
+  #   ** what is P(1)_gls ??
+
+  # 2=GMM
+  HIV.s2 <- cbind(Q %*% W%*%X, P%*%W%*%X1)
+
+  # s
+  HREE   <- W %*% X
+
+  # ** drop0, tol = sqrt(machine)
+  # HIV.s1 <- Matrix::drop0(x=)
+
+  print(paste0("HIV.s1 done:", class(HIV.s1)))
+  print(paste0("HIV.s2 done:", class(HIV.s2)))
+  print(paste0("HREE done:", class(HREE)))
+
+  # return(list(HIV.s1 = HIV.s1, y=y, X=X, W=W, Q=Q, P=P))
+
+
+  # Estimate GMMs for IVs ------------------------------------------------------------------------------
+
+  res.gmm.s1   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.s1)
+  message("GMMestim donr for HIV.s1")
+  res.gmm.s2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.s2)
+  message("GMMestim donr for HIV.s2")
+  res.gmm.HREE <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE)
+  message("GMMestim donr for HREE")
+
+  # Omitted Var tests ----------------------------------------------------------------------------------
+
+  # FEL_vs_REF   <-  multilevel_ommitedvartest(IV1 = HREE, IV2=HIV.s1,
+  #                                            coef.IV1   = res.gmm.HREE$coef,   coef.IV2   = res.gmm.s1$coef,
+  #                                            gammaH.IV1 = res.gmm.HREE$GammaH, gammaH.IV2 = res.gmm.s1$GammaH,
+  #                                            l.L2.groups.X = l.Xgroups, l.L2.groups.y = l.y.groups,
+  #                                            W=W)
+  # GMML_vs_REF  <-  multilevel_ommitedvartest(IV1 = HIV.s2, IV2=HREE,
+  #                                            coef.IV1   = res.gmm.s2$coef,   coef.IV2   = res.gmm.HREE$coef,
+  #                                            gammaH.IV1 = res.gmm.s2$GammaH, gammaH.IV2 = res.gmm.HREE$GammaH,
+  #                                            l.L2.groups.X = l.Xgroups, l.L2.groups.y = l.y.groups,
+  #                                            W=W)
+  # FEL_vs_GMML  <-  multilevel_ommitedvartest(IV1 = HIV.s1, IV2 = HIV.s2,
+  #                                            coef.IV1   = res.gmm.s1$coef,   coef.IV2   = res.gmm.s2$coef,
+  #                                            gammaH.IV1 = res.gmm.s1$GammaH, gammaH.IV2 = res.gmm.s2$GammaH,
+  #                                            l.L2.groups.X = l.Xgroups, l.L2.groups.y = l.y.groups,
+  #                                            W=W)
+
+  return(list(HIV.s1=HIV.s1, HIV.s2=HIV.s2, HREE=HREE,
+              W=W,
+              # FEL_vs_REF=FEL_vs_REF, GMML_vs_REF=GMML_vs_REF, FEL_vs_GMML=FEL_vs_GMML,
+              res.gmm.s1 = res.gmm.s1,res.gmm.s2=res.gmm.s2,res.gmm.HREE=res.gmm.HREE))
+
+
+
+
+
+
+
+
+
+
+
   name.endo     <- "X25"
   name.response <- as.character((formula)[[2]])
 
@@ -59,6 +160,9 @@ multilevel_2levels <- function(formula, dt.data){
   # V=blkdiag(V1,..,Vn)
   # V=blkdiag(V_s) (18) Var ∂s=Vs
 
+  # p 515: V_s = R_s + Z_2sVar(€(2)_s)Z'_2s+Z_3sVar(€_s(3))Z'_3s
+  # -> For L2 case drop the Z_3 part
+
 
   # sigma.sq, D.2
   #  get D.2 and random error from VarCor
@@ -66,9 +170,6 @@ multilevel_2levels <- function(formula, dt.data){
   D.2      <- VC[[name.L2.group]]
   sigma.sq <- attr(VC, "sc")
 
-
-  # ** Where is the whole by-group thingee here ??
-  # Create bdiag matrix with D2s *** Really? or simply stack them ??
   # num.groups.L2 <- nrow(dt.data[, .N, by=name.L2.group])
   bd.D.2 <- Matrix::bdiag(rep(list(D.2), times=length(l.Z2.groups))) # rep D.2 in as many times as there are groups
   V.bd <- Diagonal(sigma.sq, n=nrow(dt.data)) + bd.Z2 %*% bd.D.2 %*% t(bd.Z2)
@@ -131,6 +232,7 @@ V<-V.bd.l
   # (8): Q(1)_sc=I_sc-P(Z_2sc) -?> P(Z_2sc) = Isc-Q_sc?
   # End page 512: P(1)_sc=I_sc-Q(1)_sc
   # (12):P(1)_sc=I_sc-Q(1)_sc
+  # Where P(1)=blkdiag(P(1)_sc)
 
 
   # s = school
@@ -158,11 +260,27 @@ V<-V.bd.l
   #   X(1)=stacked X(1)_sc
   #
   #
-  #
 
   Q <- Matrix::Diagonal(x=1, n=nrow(dt.data)) - W %*% Z2 %*%
     corpcor::pseudoinverse(Matrix::crossprod(Z2, W) %*% W %*% Z2) %*%
     Matrix::crossprod(Z2, W)
+
+  bd.Z2 <- Matrix::bdiag(l.Z2.groups)
+  Q.using.bd <-Matrix::Diagonal(x=1, n=nrow(dt.data)) - W %*% bd.Z2 %*%
+    corpcor::pseudoinverse(Matrix::crossprod(bd.Z2, W) %*% W %*% bd.Z2) %*%
+    Matrix::crossprod(bd.Z2, W)
+
+  l.groups.Q <- mapply(l.Z2.groups, l.W.groups, FUN = function(g.z3, g.w){
+    Matrix::Diagonal(x=1, n=nrow(g.z3)) - g.w %*% g.z3 %*%
+      corpcor::pseudoinverse(Matrix::crossprod(g.z3, g.w) %*% g.w %*% g.z3) %*%
+      Matrix::crossprod(g.z3, g.w)
+  })
+  Q.bd <- Matrix::bdiag(l.groups.Q)
+
+  print(all.equal(as.matrix(Q.bd), as.matrix(Q)), check.attributes=F)
+  print(all.equal(as.matrix(Q.bd), as.matrix(Q.using.bd)), check.attributes=F)
+
+  Q <- Q.using.bd
 
   P <- Matrix::Diagonal(x=1, n=nrow(dt.data)) - Q
 
@@ -173,24 +291,36 @@ V<-V.bd.l
 # original code for the L2 case only HIVs12, line 318ff
   # "Consequently, the instruments H consist of QX and PX1" (p.516)
   # H_2s=(Q(2)_sX_s : P(2)_sX2s)
-  # ** Where is this one from in the paper??
-  # ** How long/dimensions are the IVs expected to be??
 
+  # "As noted above, bGMM equals bRE when X = X1, where all variables are assumed to be exogenous.
+  #   At the opposite end, where X1 is empty, we obtain bFE by using only the QX part of the instruments (see Section 3.1).
+  #   Therefore, X1 can be as small as empty and as large as X. In between, we obtain different bGMM’s for different sets of X1"
+
+  # 1=FIXED EFFECT
+  # c1 but same formula for s1
+  # ** Where does the W come from then if "by using only the QX part of the instruments" ??
   HIV.s1 <- Q %*% (W%*%(X))
+
   # End page 517:
   # H_1sgls = (Q(1)_sglsV^-0.5X_s:P(1)_sglsV^-0.5X_1s)
   #   where Q(1)_sgls = I_sc-P(V^0.5_sZ_2sc)
   #   and   P(1)_sgls = I_sc-Q(1)_sgls
   #   ** what is P(1)_gls ??
+
+  # 2=GMM
   HIV.s2 <- cbind(Q %*% W%*%X, P%*%W%*%X1)
 
-  # ***Is it correct that X1 is only used once to construct HIV.s2??? Ie appears multiple times in the paper, say (15)
-
+  # s
   HREE   <- W %*% X
 
   print(paste0("HIV.s1 done:", class(HIV.s1)))
   print(paste0("HIV.s2 done:", class(HIV.s2)))
   print(paste0("HREE done:", class(HREE)))
+
+  # For L3 case:
+  # Next, we define X3,s to be those columns belonging to X that are exogenous to the transformed disturbance terms
+  # in the sense that E X′3,s Q(2) δ = 0. We use the set of instruments H3 = (Q(1)X : P(1)P(2)X3).
+
 
   # ??? Comments say s1,s2 are for level 3 case??
   # HIVc1 <- Interim$HIVc1    # fixed effects level 2
@@ -230,6 +360,7 @@ V<-V.bd.l
   # *** HOW should all of this be reported / returned?
 
   return(list(HIV.s1=HIV.s1, HIV.s2=HIV.s2, HREE=HREE,
+              FEL_vs_REF=FEL_vs_REF, GMML_vs_REF=GMML_vs_REF, FEL_vs_GMML=FEL_vs_GMML,
               res.gmm.s1 = res.gmm.s1,res.gmm.s2=res.gmm.s2,res.gmm.HREE=res.gmm.HREE))
 
   # Results --------------------------------------------------------------
