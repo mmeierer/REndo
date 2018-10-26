@@ -25,7 +25,6 @@
 #'
 #'
 #' Consider the model:
-#'
 #' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{Y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
 #'
 #' where \eqn{t=1,..,T} indexes either time or cross-sectional units, \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}} is a \eqn{1x1} response variable,
@@ -35,10 +34,8 @@
 #' \ifelse{html}{\out{E(&epsilon;<sup>2</sup>)=&sigma;<sub>&epsilon;</sub><sup>2</sup>}}{\eqn{E(\epsilon^{2})=\sigma^{2}_{\epsilon}}},
 #' \eqn{\alpha} and \eqn{\beta} are model parameters.
 #'
-#'
 #' The marginal distribution of the endogenous regressor \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is obtained using the Epanechnikov
-#' kernel density estimator \citep{Epa69}, as below:
-#'
+#' kernel density estimator (Epanechnikov, 1996), as below:
 #' \ifelse{html}{\out{<br><center>h&#770;(p)=1/(T&#183;b) &sum;(K&#183;((p-P<sub>t</sub>)/b))</center>}}{\deqn{\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)}}
 #'
 #' where \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is the endogenous regressor,
@@ -72,7 +69,7 @@
 #'
 #' If all endogenous regressor(s) are discrete, it is important to also have a look at the confidence interval of the
 #' coefficient estimates because the marginal distribution function of the endogenous regressor is a step function in this case.
-#' The \code{\link[confint.rendo.pstar.lm]{confint}} function accounts for this case specifically by XXXX.
+#' The \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} function accounts for this case specifically by XXXX.
 #'
 #'}
 #'
@@ -120,7 +117,7 @@
 #' All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
 #'
 #** check that this and above link work after package renamed to rendo
-#' @seealso \code{\link[confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
+#' @seealso \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
 # @seealso \code{\link[stats]{lm}}
 # @seealso \code{\link[optimx]{optimx}}
 #'
