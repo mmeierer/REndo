@@ -9,11 +9,10 @@
 #' @usage dataCopCont
 #' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
-#' \item \code{y} - a numeric vector representing the dependent variable.
-#' \item \code{I} - a numeric vector representing the intercept.
-#' \item \code{X1} - a numeric vector, normally distributed and exogenous.
-#' \item \code{X2} - a numeric vector, normally distributed and exogenous.
-#' \item \code{P} - a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{P}}{a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}
 #' }
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
@@ -30,12 +29,11 @@
 #' @usage dataCopDisCont
 #' @format A data frame with 2500 observations on 6 variables:
 #' \describe{
-#' \item \code{y} - a numeric vector representing the dependent variable.
-#' \item \code{I} - a numeric vector representing the intercept.
-#' \item \code{X1} - a numeric vector, normally distributed and exogenous.
-#' \item \code{X2} - a numeric vector, normally distributed and exogenous.
-#' \item \code{P1} - a numeric vector, continuous and endogenous having Poisson distribution with parameter lambda equal to 3.
-#' \item \code{P2} - a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}
+#' \item{\code{y}}{a numeric vector representing the dependent variable}.
+#' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{P1}}{a numeric vector, continuous and endogenous having Poisson distribution with parameter lambda equal to 3.}
+#' \item{\code{P2}}{a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}}
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataCopDisCont"
@@ -51,11 +49,10 @@
 #' @usage dataCopDis
 #' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
-#' \item \code{y} - a numeric vector representing the dependent variable.
-#' \item \code{I} - a numeric vector representing the intercept.
-#' \item \code{X1} - a numeric vector, normally distributed and exogenous.
-#' \item \code{X2} - a numeric vector, normally distributed and exogenous.
-#' \item \code{P} - a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{P}}{a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}
 #' }
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
@@ -72,11 +69,10 @@
 #' @usage dataHigherMoments
 #' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
-#' \item \code{y} - a numeric vector representing the dependent variable.
-#' \item \code{I} - a numeric vector representing the intercept.
-#' \item \code{X1} - a numeric vector, normally distributed and exogenous.
-#' \item \code{X2} - a numeric vector, normally distributed and exogenous.
-#' \item \code{P} - a numeric vector, continuous and endogenous regressor, normally distributed.
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{P}}{a numeric vector, continuous and endogenous regressor, normally distributed.}
 #' }
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
@@ -98,11 +94,28 @@
 #' @usage dataLatentIV
 #' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
-#' \item \code{y} - a numeric vector representing the dependent variable.
-#' \item \code{I} - a numeric vector representing the intercept.
-#' \item \code{P} - a numeric vector representing the endogenous variable.
-#' \item \code{Z} - a numeric vector used in the construction of the endogenous variable, P.
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{P}}{a numeric vector representing the endogenous variable.}
+#' \item{\code{Z}}{a numeric vector used in the construction of the endogenous variable, P.}
 #' }
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataLatentIV"
+
+#' @title Simulated Dataset with One Endogeous Continuous Regressor
+#' @description A dataset with two exogenous regressors,
+#'  \code{X1},\code{X2}, one endogenous, continuous regressor \code{P}, and the dependent variable \code{y}.
+#'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
+#'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+#' @name dataHetIV
+#' @usage dataHetIV
+#' @format A data frame with 2500 observations on 4 variables:
+#' \describe{
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
+#' \item{\code{P}}{a numeric vector, continuous and endogenous regressor, normally distributed.}
+#' }
+#' @docType data
+#' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
+"dataHetIV"

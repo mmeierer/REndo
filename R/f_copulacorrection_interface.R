@@ -35,7 +35,7 @@
 #' \eqn{\alpha} and \eqn{\beta} are model parameters.
 #'
 #' The marginal distribution of the endogenous regressor \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is obtained using the Epanechnikov
-#' kernel density estimator (Epanechnikov, 1996), as below:
+#' kernel density estimator (Epanechnikov, 1969), as below:
 #' \ifelse{html}{\out{<br><center>h&#770;(p)=1/(T&#183;b) &sum;(K&#183;((p-P<sub>t</sub>)/b))</center>}}{\deqn{\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)}}
 #'
 #' where \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is the endogenous regressor,
@@ -65,11 +65,15 @@
 #'
 #' Hence, only in the case of a single continuous endogenous regressor maximum likelihood estimation is used.
 #' In all other cases, augmented OLS based on Gaussian copula is applied. This includes cases of multiple endogenous regressors
-#' of both discrete or continuous distributions.
+#' of both discrete and continuous distributions.
 #'
-#' If all endogenous regressor(s) are discrete, it is important to also have a look at the confidence interval of the
+#' If all endogenous regressors are discrete, it is important to also have a look at the confidence interval of the
 #' coefficient estimates because the marginal distribution function of the endogenous regressor is a step function in this case.
-#' The \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} function accounts for this case specifically by XXXX.
+#' By being a step function, the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} lies between 2 values,
+#' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
+#' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
+#' Since the exact value is not known, when the \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} functions is applied to a fitted model,
+#' it runs a set of 250 simmulations and returns the estimated coefficients.
 #'
 #'}
 #'
@@ -121,7 +125,14 @@
 # @seealso \code{\link[stats]{lm}}
 # @seealso \code{\link[optimx]{optimx}}
 #'
-#' @references   Park, S. and Gupta, S., (2012), 'Handling Endogeneous Regressors by Joint Estimation Using Copulas', Marketing Science, 31(4), 567-86.
+#' @references
+#' Park, S. and Gupta, S., (2012), "Handling Endogeneous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
+#'
+#' Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Den- sity." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
+#
+#' Silverman B (1986). "Density Estimation for Satistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman & Hall.
+#'
+#' Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consumer Choice Models." Journal of Marketing Research, 47(1), 3–13.
 #'
 #' @examples
 #' data("dataCopC1")

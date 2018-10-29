@@ -6,12 +6,11 @@
 \title{Simulated Dataset with Two Endogeous Regressors}
 \format{A data frame with 2500 observations on 6 variables:
 \describe{
-\item \code{y} - a numeric vector representing the dependent variable.
-\item \code{I} - a numeric vector representing the intercept.
-\item \code{X1} - a numeric vector, normally distributed and exogenous.
-\item \code{X2} - a numeric vector, normally distributed and exogenous.
-\item \code{P1} - a numeric vector, continuous and endogenous having Poisson distribution with parameter lambda equal to 3.
-\item \code{P2} - a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}}
+\item{\code{y}}{a numeric vector representing the dependent variable}.
+\item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
+\item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
+\item{\code{P1}}{a numeric vector, continuous and endogenous having Poisson distribution with parameter lambda equal to 3.}
+\item{\code{P2}}{a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}}}
 \usage{
 dataCopDisCont
 }

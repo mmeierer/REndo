@@ -6,10 +6,9 @@
 \title{Simulated Dataset with One Endogeous Continuous Regressor}
 \format{A data frame with 2500 observations on 4 variables:
 \describe{
-\item \code{y} - a numeric vector representing the dependent variable.
-\item \code{I} - a numeric vector representing the intercept.
-\item \code{P} - a numeric vector representing the endogenous variable.
-\item \code{Z} - a numeric vector used in the construction of the endogenous variable, P.
+\item{\code{y}}{a numeric vector representing the dependent variable.}
+\item{\code{P}}{a numeric vector representing the endogenous variable.}
+\item{\code{Z}}{a numeric vector used in the construction of the endogenous variable, P.}
 }}
 \usage{
 dataLatentIV

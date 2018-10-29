@@ -41,13 +41,18 @@
 #' \end{array}\right)}}
 #'
 #' The identification of the model lies in the assumption of the non-normality of
-#' \ifelse{html}{\out{P<sub>t</sub>'}}{\eqn{P_{t}}}, the discreteness of the unobserved instruments and the existence of
+#' \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}}, the discreteness of the unobserved instruments and the existence of
 #' at least two groups with different means.
 #'
 #' The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
 #' even if the true number of the categories of the instrument is larger than two, estimates are approximately consistent. Besides, overfitting in terms
 #' of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. For a model with additonal explanatory variables a Bayesian approach is needed, since
-#' in a frequentist approach identification issues appear. The probability of the latent variable
+#' in a frequentist approach identification issues appear.
+#'
+#' Identification of the parameters relies on the distributional assumptions of the latent instruments as well as that of
+#' the endogenous regressor \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}}.
+#' Specifically, the endogenous regressor should have a non-normal distribution while the unobserved instruments, \eqn{Z}, should be discrete and have at least two groups with different means Ebbes, Wedel, and Böckenholt (2009).
+#' A continuous distribution for the instruments leads to an unidentified model, while a normal distribution of the endogenous regressor gives rise to inefficient estimates.
 #'
 #' Additional parameters used during model fitting and printed in \code{summary} are:
 #' \describe{
@@ -80,6 +85,8 @@
 #' @references   Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
 #' (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
 #' Quantitative Marketing and Economics, 3:365--392.
+#'
+#' Ebbes P., Wedel M., Böckenholt U. (2009). “Frugal IV Alternatives to Identify the Parameter for an Endogeneous Regressor.” Journal of Applied Econometrics, 24(3), 446–468.
 #'
 #' @examples
 #' data(dataLatentIV)
