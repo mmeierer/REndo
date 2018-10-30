@@ -26,9 +26,7 @@ Imports:
     optimx (>= 2013.8.7), 
     mvtnorm (>= 1.0-8), 
     AER (>= 1.2-5), 
-    corpcor (>= 1.6.9), 
-    Matrix (>= 1.2-14), 
-    lme4 (>= 1.1-18-1)
+    corpcor (>= 1.6.9)
 Suggests: 
     testthat, 
     covr
