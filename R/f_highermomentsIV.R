@@ -27,7 +27,7 @@
 #'
 #' Let \ifelse{html}{\out{S&#773;}}{\eqn{\bar{S}}} be the sample mean of a variable \ifelse{html}{\out{S<sub>t</sub>}}{\eqn{S_{t}}}
 #' and \ifelse{html}{\out{G<sub>t</sub>=G(X<sub>t</sub>)}}{\eqn{G_{t} = G(X_{t})}} for any given function \eqn{G} that
-#' has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with 2SLS to obtain consistent estimates:
+#' has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with two-stage least squares to obtain consistent estimates:
 #'
 #' \ifelse{html}{\out{<div align="center">q<sub>1t</sub>=(G<sub>t</sub>-G&#773;)<span style="float:right;">(3a)</span></div>}}{\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}}
 #' \ifelse{html}{\out{<div align="center">q<sub>2t</sub>=(G<sub>t</sub>-G&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3b)</span></div>}}{\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b)}}
@@ -59,9 +59,9 @@
 #' instrument. This function is \code{IIV} and uses the following arguments:
 #'
 #' \describe{
-#' \item{\code{iiv}}{Which internal instrument to build. One of \code{g, gp, gy, yp, p2, y2} can be choosen.}
+#' \item{\code{iiv}}{Which internal instrument to build. One of \code{g, gp, gy, yp, p2, y2} can be chosen.}
 #' \item{\code{g}}{Which function \code{g} represents in \code{iiv}.
-#' One of \code{x2, x3, lnx, 1/x} can be choosen.
+#' One of \code{x2, x3, lnx, 1/x} can be chosen.
 #' Only required if the type of internal instrument demands it.}
 #' \item{\code{...}}{
 #' The exogenous regressors to build the internal instrument. If more than one is given,

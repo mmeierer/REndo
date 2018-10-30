@@ -3,7 +3,7 @@
 \docType{data}
 \name{dataCopDisCont}
 \alias{dataCopDisCont}
-\title{Simulated Dataset with Two Endogeous Regressors}
+\title{Simulated Dataset with Two Endogenous Regressors}
 \format{A data frame with 2500 observations on 6 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable}.
@@ -17,7 +17,7 @@ dataCopDisCont
 \description{
 A dataset with two exogenous regressors,
  \code{X1},\code{X2}, and two endogenous regressors,
- \code{P1}, having a Poisson distribution with lamba parameter equal to 3, and \code{P2}, having a T-distribution with 3 degrees of freedom.
+ \code{P1}, having a Poisson distribution with lambda parameter equal to 3, and \code{P2}, having a T-distribution with 3 degrees of freedom.
  An intercept and a dependent variable, \code{y}, are also included.
  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
  \code{b2 = -3} and the coefficient of the endogenous regressor \code{P1} is set to \code{a1 = -1} and of \code{P2} is set to \code{a2=0.8}.

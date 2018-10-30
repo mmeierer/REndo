@@ -1,8 +1,8 @@
-#' @title  Fitting Linear Models Endogeneous Regressors using Gaussian Copula
+#' @title  Fitting Linear Models Endogenous Regressors using Gaussian Copula
 #' @description
-#' Fits linear models with continuous or discrete endogeneous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
+#' Fits linear models with continuous or discrete endogenous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
 #' This is a statistical technique to address the endogeneity problem where no external instrumental variables are needed.
-#' The important assumption of the model is that the endogeneous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
+#' The important assumption of the model is that the endogenous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
 #'
 #' @template template_param_formuladataverbose
 #' @param ... Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
@@ -73,7 +73,7 @@
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
 #' Since the exact value is not known, when the \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} functions is applied to a fitted model,
-#' it runs a set of 250 simmulations and returns the estimated coefficients.
+#' it runs a set of 250 simulations and returns the estimated coefficients.
 #'
 #'}
 #'
@@ -126,11 +126,11 @@
 # @seealso \code{\link[optimx]{optimx}}
 #'
 #' @references
-#' Park, S. and Gupta, S., (2012), "Handling Endogeneous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
+#' Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
 #'
-#' Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Den- sity." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
+#' Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Density." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
 #
-#' Silverman B (1986). "Density Estimation for Satistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman & Hall.
+#' Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman & Hall.
 #'
 #' Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consumer Choice Models." Journal of Marketing Research, 47(1), 3–13.
 #'

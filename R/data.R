@@ -1,4 +1,4 @@
-#' @title Simulated Dataset with One Endogeous Continuous Regressor
+#' @title Simulated Dataset with One Endogenous Continuous Regressor
 #' @description A dataset with two exogenous regressors,
 #'  \code{X1},\code{X2}, and one endogenous, continuous regressor,
 #'  \code{P}, having a T-distribution with 3 degrees of freedom.
@@ -18,10 +18,10 @@
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataCopCont"
 
-#' @title Simulated Dataset with Two Endogeous Regressors
+#' @title Simulated Dataset with Two Endogenous Regressors
 #' @description A dataset with two exogenous regressors,
 #'  \code{X1},\code{X2}, and two endogenous regressors,
-#'  \code{P1}, having a Poisson distribution with lamba parameter equal to 3, and \code{P2}, having a T-distribution with 3 degrees of freedom.
+#'  \code{P1}, having a Poisson distribution with lambda parameter equal to 3, and \code{P2}, having a T-distribution with 3 degrees of freedom.
 #'  An intercept and a dependent variable, \code{y}, are also included.
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor \code{P1} is set to \code{a1 = -1} and of \code{P2} is set to \code{a2=0.8}.
@@ -38,7 +38,7 @@
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataCopDisCont"
 
-#' @title Simulated Dataset with One Endogeous Discrete Regressor
+#' @title Simulated Dataset with One Endogenous Discrete Regressor
 #' @description A dataset with two exogenous regressors,
 #'  \code{X1},\code{X2}, and one endogenous, discrete (Poisson distributed) regressor,
 #'  \code{P}.
@@ -59,7 +59,7 @@
 "dataCopDis"
 
 
-#' @title Simulated Dataset with One Endogeous Regressor
+#' @title Simulated Dataset with One Endogenous Regressor
 #' @description A dataset with two exogenous regressors,
 #'  \code{X1},\code{X2}, and one endogenous, continuous regressor \code{P}.
 #'  An intercept and a dependent variable, \code{y}, are also included.
@@ -85,7 +85,7 @@
 # summary(resultsHM)
 
 
-#' @title Simulated Dataset with One Endogeous Continuous Regressor
+#' @title Simulated Dataset with One Endogenous Continuous Regressor
 #' @description A dataset with one endogenous regressor \code{P}, an instrument \code{Z}
 #'  used to build \code{P}, an intercept and a dependent variable, \code{y}.
 #'  The true parameter values for the coefficients are: \code{b0 = 3} for the intercept
@@ -102,7 +102,7 @@
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataLatentIV"
 
-#' @title Simulated Dataset with One Endogeous Continuous Regressor
+#' @title Simulated Dataset with One Endogenous Continuous Regressor
 #' @description A dataset with two exogenous regressors,
 #'  \code{X1},\code{X2}, one endogenous, continuous regressor \code{P}, and the dependent variable \code{y}.
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},

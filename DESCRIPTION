@@ -17,7 +17,7 @@ Description: Fits linear models with endogenous regressor using latent
     These are statistical techniques to address the endogeneity problem where no
     external instrumental variables are needed.
 Depends: R (>= 3.4) 
-Imports: methods(>= 3.4), Formula (>= 1.2), optimx (>= 2013.8.7), mvtnorm (>= 1.0-8), AER (>= 1.2-5), corpcor (>= 1.6.9)
+Imports: methods(>= 3.4), Formula (>= 1.2), optimx (>= 2013.8.7), mvtnorm (>= 1.0-8), AER (>= 1.2-5), corpcor (>= 1.6.9), Matrix (>= 1.2-14), lme4 (>= 1.1-18-1)
 License: GPL-3
 RoxygenNote: 6.1.0.9000
 NeedsCompilation: no

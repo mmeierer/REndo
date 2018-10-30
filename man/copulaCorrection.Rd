@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_copulacorrection_interface.R
 \name{copulaCorrection}
 \alias{copulaCorrection}
-\title{Fitting Linear Models Endogeneous Regressors using Gaussian Copula}
+\title{Fitting Linear Models Endogenous Regressors using Gaussian Copula}
 \usage{
 copulaCorrection(formula, data, verbose = TRUE, ...)
 }
@@ -51,9 +51,9 @@ following components:
 All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
 }
 \description{
-Fits linear models with continuous or discrete endogeneous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
+Fits linear models with continuous or discrete endogenous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
 This is a statistical technique to address the endogeneity problem where no external instrumental variables are needed.
-The important assumption of the model is that the endogeneous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
+The important assumption of the model is that the endogenous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
 }
 \details{
 \subsection{Method}{
@@ -113,7 +113,7 @@ By being a step function, the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} 
 \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
 Since the exact value is not known, when the \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} functions is applied to a fitted model,
-it runs a set of 250 simmulations and returns the estimated coefficients.
+it runs a set of 250 simulations and returns the estimated coefficients.
 
 }
 
@@ -170,10 +170,10 @@ cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), data=dataCopDi
 
 }
 \references{
-Park, S. and Gupta, S., (2012), "Handling Endogeneous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
 
-Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Den- sity." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
-Silverman B (1986). "Density Estimation for Satistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman & Hall.
+Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Density." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
+Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman & Hall.
 
 Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consumer Choice Models." Journal of Marketing Research, 47(1), 3–13.
 }

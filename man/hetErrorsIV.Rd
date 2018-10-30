@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_heterrorsIV.R
 \name{hetErrorsIV}
 \alias{hetErrorsIV}
-\title{Fitting Linear Models with Endogenous Regressors using Heteroskedastic Covariance Restictions}
+\title{Fitting Linear Models with Endogenous Regressors using Heteroskedastic Covariance Restrictions}
 \usage{
 hetErrorsIV(formula, data, verbose = TRUE)
 }

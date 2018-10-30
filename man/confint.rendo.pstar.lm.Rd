@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_s3_rendopstarlm.R
 \name{confint.rendo.pstar.lm}
 \alias{confint.rendo.pstar.lm}
-\title{Confindence interval for model from copula correction fitted with augmented OLS}
+\title{Confidence interval for model from copula correction fitted with augmented OLS}
 \usage{
 \method{confint}{rendo.pstar.lm}(object, parm, level = 0.95,
   num.simulations = 250L, ...)

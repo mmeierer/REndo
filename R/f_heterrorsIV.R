@@ -1,4 +1,4 @@
-#' @title  Fitting Linear Models with Endogenous Regressors using Heteroskedastic Covariance Restictions
+#' @title  Fitting Linear Models with Endogenous Regressors using Heteroskedastic Covariance Restrictions
 #' @description  This function estimates the model parameters and associated standard errors for a
 #' linear regression model with one or more endogenous regressors. Identification is achieved
 #' through heteroscedastic covariance restrictions within the triangular system as proposed in Lewbel(2012).

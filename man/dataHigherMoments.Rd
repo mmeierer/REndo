@@ -3,7 +3,7 @@
 \docType{data}
 \name{dataHigherMoments}
 \alias{dataHigherMoments}
-\title{Simulated Dataset with One Endogeous Regressor}
+\title{Simulated Dataset with One Endogenous Regressor}
 \format{A data frame with 2500 observations on 5 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}

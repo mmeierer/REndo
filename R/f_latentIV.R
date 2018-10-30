@@ -44,9 +44,9 @@
 #' \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}}, the discreteness of the unobserved instruments and the existence of
 #' at least two groups with different means.
 #'
-#' The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiement that
+#' The method has been implemented such that the latent variable has two groups. Ebbes et al.(2005) show in a Monte Carlo experiment that
 #' even if the true number of the categories of the instrument is larger than two, estimates are approximately consistent. Besides, overfitting in terms
-#' of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. For a model with additonal explanatory variables a Bayesian approach is needed, since
+#' of the number of groups/categories reduces the degrees of freedom and leads to efficiency loss. For a model with additional explanatory variables a Bayesian approach is needed, since
 #' in a frequentist approach identification issues appear.
 #'
 #' Identification of the parameters relies on the distributional assumptions of the latent instruments as well as that of
@@ -86,7 +86,7 @@
 #' (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
 #' Quantitative Marketing and Economics, 3:365--392.
 #'
-#' Ebbes P., Wedel M., Böckenholt U. (2009). “Frugal IV Alternatives to Identify the Parameter for an Endogeneous Regressor.” Journal of Applied Econometrics, 24(3), 446–468.
+#' Ebbes P., Wedel M., Böckenholt U. (2009). “Frugal IV Alternatives to Identify the Parameter for an Endogenous Regressor.” Journal of Applied Econometrics, 24(3), 446–468.
 #'
 #' @examples
 #' data(dataLatentIV)

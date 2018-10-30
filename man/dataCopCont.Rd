@@ -3,7 +3,7 @@
 \docType{data}
 \name{dataCopCont}
 \alias{dataCopCont}
-\title{Simulated Dataset with One Endogeous Continuous Regressor}
+\title{Simulated Dataset with One Endogenous Continuous Regressor}
 \format{A data frame with 2500 observations on 5 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}

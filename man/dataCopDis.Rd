@@ -3,7 +3,7 @@
 \docType{data}
 \name{dataCopDis}
 \alias{dataCopDis}
-\title{Simulated Dataset with One Endogeous Discrete Regressor}
+\title{Simulated Dataset with One Endogenous Discrete Regressor}
 \format{A data frame with 2500 observations on 5 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}

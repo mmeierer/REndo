@@ -1,4 +1,4 @@
-#' Confindence interval for model from copula correction fitted with augmented OLS
+#' Confidence interval for model from copula correction fitted with augmented OLS
 #' @param num.simulations The numbers of simulations to run
 #' @param ... for consistency with the standard lm function. Ignored
 #' @description Fit some extra. Do some simulation.
