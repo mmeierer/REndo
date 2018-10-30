@@ -2,16 +2,31 @@
 % Please edit documentation in R/f_s3_rendopstarlm.R
 \name{confint.rendo.pstar.lm}
 \alias{confint.rendo.pstar.lm}
-\title{Confidence interval for model from copula correction fitted with augmented OLS}
+\title{Confidence Interval for copla correction models fitted with augmented OLS.}
 \usage{
 \method{confint}{rendo.pstar.lm}(object, parm, level = 0.95,
   num.simulations = 250L, ...)
 }
 \arguments{
-\item{num.simulations}{The numbers of simulations to run}
+\item{object}{a fitted model object.}
 
-\item{...}{for consistency with the standard lm function. Ignored}
+\item{parm}{a specification of which parameters are to be given
+    confidence intervals, either a vector of numbers or a vector of
+    names.  If missing, all parameters are considered.}
+
+\item{level}{the confidence level required.}
+
+\item{num.simulations}{the numbers of simulations to run.}
+
+\item{...}{ignored, for consistency with the generic function.}
 }
 \description{
-Fit some extra. Do some simulation.
+In the case of only discrete endogenous regressors, the confint is fitted multiple times.
+
+In all other cases, the standard confint method for a fitted linear model \code{\link[stats]{lm}} is applied.
+}
+\seealso{
+\code{\link[stats]{confint}} for the standard method for linear models
+
+\code{\link{copulaCorrection}} for more information about the model background
 }
