@@ -1,9 +1,10 @@
 # TEST RUNABILITY ==================================================================================================================================================================
 
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-data("dataCopC1")
-data("dataCopC2")
-data("dataCopDis")
+# load from test/testthat folder
+load(file = "./old_dataCopC1.rda")
+load(file = "./old_dataCopC2.rda")
+load(file = "./old_dataCopDis.rda")
 data("dataCopDisCont")
 
 context("copulaCorrection - Runability")

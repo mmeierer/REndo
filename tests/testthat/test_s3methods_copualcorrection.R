@@ -3,8 +3,10 @@
 # The tests are only required for the optim LL case and the discrete only case
 
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-data("dataCopDis")
-data("dataCopC1")
+# load from test/testthat folder
+load(file = "./old_dataCopDis.rda")
+load(file = "./old_dataCopC1.rda")
+load(file = "./old_dataCopC2.rda")
 data("dataCopDisCont")
 
 # Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
