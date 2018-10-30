@@ -1,7 +1,13 @@
-#' Confidence interval for model from copula correction fitted with augmented OLS
-#' @param num.simulations The numbers of simulations to run
-#' @param ... for consistency with the standard lm function. Ignored
-#' @description Fit some extra. Do some simulation.
+#' @title Confidence Interval for copla correction models fitted with augmented OLS.
+#' @description
+#' In the case of only discrete endogenous regressors, the confint is fitted multiple times.
+#'
+#' In all other cases, the standard confint method for a fitted linear model \code{\link[stats]{lm}} is applied.
+#' @inheritParams stats::confint
+#' @param num.simulations the numbers of simulations to run.
+#' @param ... ignored, for consistency with the generic function.
+#' @seealso \code{\link[stats]{confint}} for the standard method for linear models
+#' @seealso \code{\link{copulaCorrection}} for more information about the model background
 #' @importFrom stats confint confint.lm
 #' @export
 confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250L, ...){
@@ -54,6 +60,6 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
     return(confint.mean)
   }else{
     # No discrete only case: Return lm's confint
-    return(confint.lm(object = object, parm = parm, level = level))
+    return(stats::confint.lm(object = object, parm = parm, level = level))
   }
 }
