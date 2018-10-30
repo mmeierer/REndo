@@ -7,7 +7,7 @@ REndo implements the following instrument-free methods (all assuming a continuou
 (1) latent instrumental variables approach (Ebbes, Wedel, Boeckenholt, and Steerneman 2005), 
 (2) higher moments estimation(Lewbel 1997), 
 (3) heteroskedastic error approach (Lewbel 2012), 
-(4)joint estimation using copula (Park and Gupta 2012) 
+(4) joint estimation using copula (Park and Gupta 2012) 
 (5) multilevel GMM (Kim and Frees 2007). 
               
 Install stable version from CRAN:
