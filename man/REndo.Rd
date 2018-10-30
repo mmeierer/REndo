@@ -19,5 +19,5 @@ Various bugs were fixed, performance improved, handling of S3 objects and method
 and a set of argument checks has been added. Starting with REndo 2.0, all functions support the use
 of transformations such as I(x^2) or log(x) in the formulas.
 
-Check the NEWS file or our \href{https://github.com/mmeierer/REndo}{github page} for the latest updates or reporting issues.
+Check the NEWS file or our \href{https://github.com/mmeierer/REndo}{github page} for the latest updates and for reporting issues.
 }

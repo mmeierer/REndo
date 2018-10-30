@@ -72,7 +72,7 @@
 #' By being a step function, the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} lies between 2 values,
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
-#' Since the exact value is not known, when the \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} functions is applied to a fitted model,
+#' Since the exact value is not known, when the \code{\link[REndo:confint.rendo.pstar.lm]{confint}} functions is applied to a fitted model,
 #' it runs a set of 250 simulations and returns the estimated coefficients.
 #'
 #'}
@@ -121,7 +121,7 @@
 #' All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
 #'
 #** check that this and above link work after package renamed to rendo
-#' @seealso \code{\link[REndo2:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
+#' @seealso \code{\link[REndo:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
 # @seealso \code{\link[stats]{lm}}
 # @seealso \code{\link[optimx]{optimx}}
 #'

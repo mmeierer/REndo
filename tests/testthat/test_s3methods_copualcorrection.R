@@ -86,7 +86,7 @@ test_that("NA if unknown parm", {
 })
 
 test_that("num.simulations has integer default value", {
-  expect_is(eval(formals(REndo2:::confint.rendo.pstar.lm)[["num.simulations"]]), "integer")
+  expect_is(eval(formals(REndo:::confint.rendo.pstar.lm)[["num.simulations"]]), "integer")
 })
 
 
