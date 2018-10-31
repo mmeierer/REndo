@@ -1,43 +1,35 @@
 Package: REndo
-Type: Package
-Title: Fitting Linear Models with Endogenous Regressors using Latent
-    Instrumental Variables
-Version: 1.3
-Date: 2017-11-08
-Author: Raluca Gui,
-    Markus Meierer,
-    Rene Algesheimer
-Maintainer: Raluca Gui <raluca.gui@business.uzh.ch>
-Description: Fits linear models with endogenous regressor using latent
-    instrumental variable approaches. The methods included in the package
-    are Lewbel's (1997) <doi:10.2307/2171884> higher moments approach as well as Lewbel's (2012) <doi:10.1080/07350015.2012.643126>
-    heteroskedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718>joint estimation method
+Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables
+Version: 2.0.0
+Date: 2018-10-31
+Authors@R: c(
+    person(given="Raluca", family="Gui", email = "raluca.gui@business.uzh.ch", role = c("cre","aut")),
+    person(given="Markus", family="Meierer", email = "markus.meierer@business.uzh.ch", role = "aut"),
+    person(given="Rene", family="Algesheimer", email = "market-research@business.uzh.ch", role = "aut"),
+    person(given="Patrik", family="Schilter", email = "patrik.schilter@gmail.com",role = "aut"))
+Description: Fits linear models with endogenous regressor using latent instrumental variable approaches. 
+    The methods included in the package are Lewbel's (1997) <doi:10.2307/2171884> higher moments approach as well as 
+    Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroskedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718> joint estimation method 
     that uses Gaussian copula and Kim and Frees's (2007) <doi:10.1007/s11336-007-9008-1> multilevel generalized
     method of moment approach that deals with endogeneity in a multilevel setting.
-    These are statistical techniques to address the endogeneity problem where no
-    external instrumental variables are needed.
-    This version: 
-       - includes an omitted variable test in the multilevel estimation. It is reported in the summary() function of the 
-         multilevelIV() function.
-       - resolves the error "Error in listIDs[, 1] : incorrect number of dimensions" when using the multilevelIV() function.
-       - a new simulated dataset is provided, dataMultilevelIV, on which to exemplify the multilevelIV() function.
-Imports:
-    optimx,
-    mvtnorm,
-    AER,
-    e1071,
-    stats,
-    corpcor,
-    lme4,
-    gmm,
-    lmtest,
-    plyr,
-    sandwich,
-    compiler,
-    data.table,
-    Matrix
-Depends:
-    methods
+    These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
+    Note that with version 2.0.0 sweeping changes were introduced which greatly improve 
+    functionality and usability but break backwards compatibility.
 License: GPL-3
-RoxygenNote: 6.0.1
-
+URL: https://github.com/mmeierer/REndo
+BugReports: https://github.com/mmeierer/REndo/issues
+NeedsCompilation: no
+Depends: 
+    R (>= 3.5) 
+Imports:
+    methods(>= 3.4), 
+    Formula (>= 1.2), 
+    optimx (>= 2013.8.7), 
+    mvtnorm (>= 1.0-8), 
+    AER (>= 1.2-5), 
+    corpcor (>= 1.6.9)
+Suggests: 
+    testthat, 
+    covr
+Encoding: UTF-8
+RoxygenNote: 6.1.0.9000
