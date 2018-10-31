@@ -297,5 +297,11 @@ test_that("Fail if any column starts with \'IIV.\'",{
 
 
 
+# verbose ----------------------------------------------------------------------
+context("higherMomentsIV - Parameter verbose")
+test.single.logical(function.to.test = higherMomentsIV, parameter.name="verbose",
+                    formula=y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), function.std.data=dataHigherMoments)
+
+
 # **TODO Fail if underlying assumptions violated
 # ??*** Data may not be named after iiv or g to avoid confusion when naming. could interfere with unique(list) in readout

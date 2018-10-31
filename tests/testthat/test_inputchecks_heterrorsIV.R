@@ -110,7 +110,7 @@ test_that("Fail if special outside RHS3", {
 })
 
 
-# data -------------------
+# data -----------------------------------------------------------------------------------------
 context("hetErrorsIV - Parameter data")
 
 
@@ -177,7 +177,7 @@ test_that("Fail if any column starts with \'IIV.\'",{
 })
 
 
-
+# verbose ----------------------------------------------------------------------
 context("hetErrorsIV - Parameter verbose")
 test.single.logical(function.to.test = hetErrorsIV, parameter.name="verbose",
                     formula=y~X1+X2+P|P|IIV(X1), function.std.data=dataHetIV)

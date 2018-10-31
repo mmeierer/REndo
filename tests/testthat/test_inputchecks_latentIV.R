@@ -166,3 +166,11 @@ test_that("start.params contains no parameter named pi1, pi2, theta5, theta6, th
 })
 
 
+# verbose ----------------------------------------------------------------------
+context("latentIV - Parameter verbose")
+test.single.logical(function.to.test = latentIV, parameter.name="verbose",
+                    formula=y~P, function.std.data=dataLatentIV)
+
+
+
+
