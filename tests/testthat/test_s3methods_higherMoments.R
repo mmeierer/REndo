@@ -1,10 +1,10 @@
 # Required data -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-data("dataHetIV")
+data("dataHigherMoments")
 
 # Run once to get result ----------------------------------------------------------------------------------------------------------------------------------------------------------
-context("hetErrorsIV - S3 Methods")
-hetiv.input.form <- y~ X1+X2+P|P|IIV(X1)+IIV(X2)
-expect_silent(res.hetiv <- hetErrorsIV(formula = hetiv.input.form, data = dataHetIV, verbose = FALSE))
+context("higherMomentsIV - S3 Methods")
+hm.input.form <- y~X1+X2+P|P|IIV(iiv=gp, g=x2, X1, X2)
+expect_silent(res.hm <- higherMomentsIV(hm.input.form,data = dataHigherMoments, verbose = FALSE))
 
-test.s3methods.ivreg.models(res.ivreg.model=res.hetiv, input.form=hetiv.input.form, function.std.data=dataHetIV,
+test.s3methods.ivreg.models(res.ivreg.model=res.hm, input.form=hm.input.form, function.std.data=dataHigherMoments,
                             full.coefs=c("(Intercept)", "X1", "X2", "P"))

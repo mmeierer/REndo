@@ -30,6 +30,13 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_silent(terms(res.model))
   })
 
+  test_that("case.names", {
+    expect_silent(res.cases <- case.names(res.model))
+    expect_type(res.cases, "character")
+    expect_equal(res.cases, rownames(function.std.data))
+    expect_length(res.cases, nrow(function.std.data))
+  })
+
   test_that("labels", {
     expect_silent(res.labels <- labels(res.model))
     expect_type(res.labels, "character")
