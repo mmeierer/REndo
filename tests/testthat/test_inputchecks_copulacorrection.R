@@ -2,9 +2,10 @@
 
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # load from test/testthat folder
-load(file = "./old_dataCopC1.rda")
-load(file = "./old_dataCopC2.rda")
-load(file = "./old_dataCopDis.rda")
+data("dataCopCont")
+data("dataCopCont2")
+# data("dataCopDis.rda") #only use the 2 discrete version
+data("dataCopDis2")
 data("dataCopDisCont")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -14,41 +15,41 @@ context("Inputchecks - copulaCorrection - Parameter formula")
 
 test_that("Fail if bad 2nd RHS", {
   # Fail for missing 2nd RHS
-  expect_error(copulaCorrection(formula= y ~ X1 + X2 + P1+P2, data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1 + X2 + P1+P2, data=dataCopCont2), regexp = "The above errors were encountered!")
   # Fail for 2nd RHS not in 1st RHS
-  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P1|continuous(P2),                    data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(P1),                    data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ y ~ X1 + X2 + P1|continuous(P1)+continuous(P2), data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(P1)+continuous(P2),     data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P1|continuous(P2),                    data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(P1),                    data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ y ~ X1 + X2 + P1|continuous(P1)+continuous(P2), data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(P1)+continuous(P2),     data=dataCopCont2), regexp = "The above errors were encountered!")
 
   # Fail if all regressors are endogenous
-  expect_error(copulaCorrection(formula=  y ~ P1|continuous(P1),                                          data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ P1+P2|continuous(P1)+continuous(P2),                        data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(X1)+continuous(X2)+continuous(P2),  data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2+P1|continuous(P1)+continuous(P2)+continuous(X1)+continuous(X2),  data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ P1|continuous(P1),                                          data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ P1+P2|continuous(P1)+continuous(P2),                        data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(X1)+continuous(X2)+continuous(P2),  data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2+P1|continuous(P1)+continuous(P2)+continuous(X1)+continuous(X2),  data=dataCopCont2), regexp = "The above errors were encountered!")
 
   # expect_error(function.to.test(formula = y ~ X1 + X2 + P|., data = function.std.data), regexp = "The above errors were encountered!") # dot version
 })
 
 test_that("Fail if > 2 RHS", {
-  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|continuous(P1)|continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|continuous(P1)|discrete(P2),  data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|discrete(P1)|discrete(P2),    data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|continuous(P1)|discrete(P2)|continuous(X1),    data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|continuous(P1)|continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|continuous(P1)|discrete(P2),  data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|discrete(P1)|discrete(P2),    data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1+X2+P1+P2|continuous(P1)|discrete(P2)|continuous(X1),    data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if bad LHS", {
   # Fail for missing LHS
-  expect_error(copulaCorrection(formula=   ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=   ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
   # Fail for > 1 LHS
-  expect_error(copulaCorrection(formula= y1 + y2  ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y1 + y2 + y3 ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y1 | y2 ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y1 + y2  ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y1 + y2 + y3 ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y1 | y2 ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
 
   # Fail for LHS in RHS and vice-versa
-  expect_error(copulaCorrection(formula= X1 ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y  ~  y+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y  ~  y+X2+P1+P2|continuous(y)+continuous(P2),data=dataCopC2),  regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= X1 ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y  ~  y+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y  ~  y+X2+P1+P2|continuous(y)+continuous(P2),data=dataCopCont2),  regexp = "The above errors were encountered!")
 
   # Fail for dot in LHS as not more than one LHS allowed
   # expect_error(function.to.test(formula = . ~ X1 + X2 + P|P, data = function.std.data), regexp = "The above errors were encountered!")
@@ -58,84 +59,84 @@ test_that("Fail if bad LHS", {
 
 test_that("Fail if formula contains dot (.)", {
   # Fail if dot (.) is in formula in any part
-  expect_error(copulaCorrection(formula= . ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ . |continuous(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(.)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(.),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(.),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= . ~ X1+X2+P1+P2|continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ . |continuous(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(.)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(.),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(.),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if no special function", {
   # Non at all
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P1,data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P1+P2,data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P1,data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P1+P2,data=dataCopCont2), regexp = "The above errors were encountered!")
   # Only for some
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+P2,data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+P2,data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P2 + discrete(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P1 + continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+P2,data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+P2,data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P2 + discrete(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|P1 + continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 
 test_that("Fail if regressor in different special functions", {
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1),   data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+continuous(P1),   data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1),   data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+continuous(P1),   data=dataCopCont2), regexp = "The above errors were encountered!")
 
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1,P2)+discrete(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1,P2)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1,P2)+discrete(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1,P2)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
 
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1, P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+continuous(P1, P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1, P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+continuous(P1, P2),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if non existent special function", {
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|brunz(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+brunz(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|brunz(P1)+continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|brunz(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+brunz(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|brunz(P1)+continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 
 test_that("Fail if function across special", {
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)*continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)*discrete(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)*discrete(P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)*continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)*discrete(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)*discrete(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
 
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|I(continuous(P1)/continuous(P2)),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|I(discrete(P1)/discrete(P2)),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|I(continuous(P1)/discrete(P2)),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|I(continuous(P1)/continuous(P2)),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|I(discrete(P1)/discrete(P2)),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|I(continuous(P1)/discrete(P2)),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if empty special", {
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+discrete(),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+continuous(),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+continuous(),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+discrete(),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1)+continuous(),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if special in RHS1", {
-  expect_error(copulaCorrection(formula= y ~ X1+X2+continuous(P1)+P2|discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+discrete(P1)+P2|discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+continuous(P1)+P2|discrete(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+discrete(P1)+P2|discrete(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
 
-  expect_error(copulaCorrection(formula= y ~ X1+X2+continuous(P1)+P2|continuous(P1),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+discrete(P1)+P2|discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+continuous(P1)+P2|continuous(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+discrete(P1)+P2|discrete(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
 
-  expect_error(copulaCorrection(formula= y ~ X1+X2+continuous(P1)+P2|continuous(P2),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+discrete(P1)+P2|discrete(P2),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+continuous(P1)+P2|continuous(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+discrete(P1)+P2|discrete(P2),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if special in LHS", {
-  expect_error(copulaCorrection(formula= continuous(y) ~ X1+X2+P1+P2|continuous(P1),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= continuous(y) ~ X1+X2+P1+P2|P1,data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= continuous(y) ~ X1+X2+P1+P2|continuous(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= continuous(y) ~ X1+X2+P1+P2|P1,data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if var is in both specials", {
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2)+discrete(P1),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2)+continuous(P1),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2)+continuous(X1, P1),data=dataCopC2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2)+discrete(X1, P1),data=dataCopC2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2)+discrete(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2)+continuous(P1),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2)+continuous(X1, P1),data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2)+discrete(X1, P1),data=dataCopCont2), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if formula variables are not in data", {
@@ -149,31 +150,31 @@ test_that("Fail if formula variables are not in data", {
 
 test_that("Fails if transformations are not in special", {
   # C1
-  expect_error(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(P), verbose = FALSE, num.boots=2, data=dataCopC1),
+  expect_error(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
                  regexp = "The above errors were encountered!")
   # C2, Dis, DisCont
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1, P2), verbose = FALSE, data=dataCopC2),regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P1, P2),   verbose = FALSE, data=dataCopDis),regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1, P2), verbose = FALSE, data=dataCopCont2),regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2),regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont),regexp = "The above errors were encountered!")
 })
 
 test_that("Fails if transformations are not named exactly the same", {
   # C1
-  expect_error(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/1)), verbose = FALSE, num.boots=2, data=dataCopC1),
+  expect_error(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/1)), verbose = FALSE, num.boots=2, data=dataCopCont),
                regexp = "The above errors were encountered!")
   # C2, Dis, DisCont
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1, I(P2/1)), verbose = FALSE, data=dataCopC2),regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P1, I(P2/1)),   verbose = FALSE, data=dataCopDis),regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1, I(P2/1)), verbose = FALSE, data=dataCopCont2),regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P1, I(P2/1)),   verbose = FALSE, data=dataCopDis2),regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1)+discrete(I(P2/1)), verbose = FALSE, data=dataCopDisCont),regexp = "The above errors were encountered!")
 })
 
 test_that("Fails if transformations are done for different endo", {
   # C1
-  # expect_warning(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/1)), verbose = FALSE, num.boots=2, data=dataCopC1),
+  # expect_warning(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/1)), verbose = FALSE, num.boots=2, data=dataCopCont),
   #                regexp = "It is recommended to run more than", all = TRUE)
   # C2, Dis, DisCont
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P2, I(P1/2)), verbose = FALSE, data=dataCopC2),regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P2, I(P1/2)),   verbose = FALSE, data=dataCopDis),regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P2, I(P1/2)), verbose = FALSE, data=dataCopCont2),regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P2, I(P1/2)),   verbose = FALSE, data=dataCopDis2),regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P2)+discrete(I(P1/2)), verbose = FALSE, data=dataCopDisCont),regexp = "The above errors were encountered!")
 })
 
@@ -223,7 +224,7 @@ test_that("Fail if wrong data type in endogenous formula part", {
 
 # test_that("Allow wrong data type in irrelevant columns", {
 #   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2),verbose=FALSE, data=
-#                                    cbind(dataCopC2, unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
+#                                    cbind(dataCopCont2, unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
 # })
 
 test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and mixed models PStar.ENDO"), {
@@ -244,13 +245,13 @@ test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and
 
 test_that("Warn if binomial/dummy data passed in endo regressor", {
   expect_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D),
-                                  data = cbind(dataCopDis, D = c(0,1))), regexp = "may not be binomial")
+                                  data = cbind(dataCopDis2, D = c(0,1))), regexp = "may not be binomial")
 })
 
 # verbose --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - copulaCorrection - Parameter verbose")
 test.single.logical(function.to.test = copulaCorrection, parameter.name="verbose",
-                    formula=y~X1+X2+P1+P2|continuous(P1)+discrete(P2), function.std.data=dataCopC2)
+                    formula=y~X1+X2+P1+P2|continuous(P1)+discrete(P2), function.std.data=dataCopCont2)
 
 
 # num.boots --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -258,23 +259,23 @@ context("Inputchecks - copulaCorrection - Parameter num.boots")
 # Single continuous
 # Failure tests
 test.positive.numeric.whole.number(function.to.test = copulaCorrection, parameter.name="num.boots",
-                                   formula=y~X1+X2+P|continuous(P), function.std.data=dataCopC1)
+                                   formula=y~X1+X2+P|continuous(P), function.std.data=dataCopCont)
 # Start params required for silence
 # additional.args =list(verbose=F, start.params = c("(Intercept)"=1.983, X1=1.507, X2=-3.014, P1=-0.891)
 
 test_that("Warning if num.boots < 10", {
   # only for continuous 1
-  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopC1),all=FALSE, regexp = "It is recommended to run more than")
+  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont),all=FALSE, regexp = "It is recommended to run more than")
 })
 
 # Warning if num.boots given for any other case
 test_that("Warning if unneeded num.boots given", {
   # >1 continuous
-  expect_warning(copulaCorrection(num.boots = 10, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopC2),all=TRUE, regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
+  expect_warning(copulaCorrection(num.boots = 10, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopCont2),all=TRUE, regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
   # Mixed
   expect_warning(copulaCorrection(num.boots = 10, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont), all=TRUE, regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
   # Discrete
-  expect_warning(copulaCorrection(num.boots = 10, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis),all=TRUE,regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
+  expect_warning(copulaCorrection(num.boots = 10, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis2),all=TRUE,regexp = "Additional parameters given in the ... argument are ignored because they are not needed.")
 })
 
 # start.params ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -283,70 +284,70 @@ context("Inputchecks - copulaCorrection - Parameter start.params")
 test_that("start.params is vector and all numeric", {
   # Any parameter is character, logical, factor, matrix
   expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = as.character(1), X2 = -2, P = 0),
-                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(start.params = as.factor(c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0)),
-                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(start.params = as.logical(c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0)),
-                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(start.params = as.matrix(c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0)),
-                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = complex(1,4,2), X2 = -2, P = 0),
-                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+                                           formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
 })
 
 test_that("start.params is not NA",{
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = NA_integer_, X2 = -2, P = 0),    formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = NA_real_, X2 = -2, P = 0),       formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = NA_integer_, formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = NA_real_, formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = NA_integer_, X2 = -2, P = 0),    formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = NA_real_, X2 = -2, P = 0),       formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = NA_integer_, formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = NA_real_, formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
 })
 
 test_that("start.params is NULL or missing but runs with message", {
   # Does not work with missing start.params in ...
-  # expect_warning(copulaCorrection(start.params =     , formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1, num.boots = 2, verbose=TRUE))
-  expect_message(copulaCorrection(start.params = NULL, formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1, verbose=TRUE),regexp = "The linear model", all = FALSE)
+  # expect_warning(copulaCorrection(start.params =     , formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont, num.boots = 2, verbose=TRUE))
+  expect_message(copulaCorrection(start.params = NULL, formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont, verbose=TRUE),regexp = "The linear model", all = FALSE)
 })
 
 test_that("Fails if start.params cannot be derived with lm", {
-  expect_error(copulaCorrection(formula = y ~ X1+X2+X3+P |continuous(P), data = cbind(dataCopC1, X3=dataCopC1$X2*2)),
+  expect_error(copulaCorrection(formula = y ~ X1+X2+X3+P |continuous(P), data = cbind(dataCopCont, X3=dataCopCont$X2*2)),
                regexp = "The start parameters could not be derived by fitting a linear model")
 })
 
 
 test_that("start.params is named correctly", {
   # Unnamed vec given
-  expect_error(copulaCorrection(start.params = c(2, 1, -2,0),                                formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c(2, 1, -2,0),                                formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Partially named vec given
-  expect_error(copulaCorrection(start.params = c(2, X1 = 1, X2=-2,P=0),                      formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c(2, X1 = 1, X2=-2,P=0),                      formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Wrong case
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, x1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, x1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Same param name twice
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X2 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X2 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Unrelated name
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X10 = 1, X2 = -2, P = 0),  formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X10 = 1, X2 = -2, P = 0),  formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Param missing (main, endo, intercept)
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, P = 0),            formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2),          formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c(X1 = 1, X2 = -2, P = 0),                    formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, P = 0),            formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2),          formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c(X1 = 1, X2 = -2, P = 0),                    formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Intercept spelling
-  expect_error(copulaCorrection(start.params = c("Intercept"=2, X1 = 1, X2 = -2, P = 0),     formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(intercept)"=2, X1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("Intercept"=2, X1 = 1, X2 = -2, P = 0),     formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(intercept)"=2, X1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Intercept given but none required
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P -1 |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0),   formula = y ~ X1 + X2 + P -1 |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Additional, not required param given
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, X3 = 99, P = 0), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, X3 = 99, P = 0), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
 })
 
 
 test_that("start.params with non-numeric exo requires multiple per factor",{
   expect_error(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P),
-                                data=cbind(dataCopC1,color=factor(x = c("red", "green", "blue", "white", "yellow"))),
+                                data=cbind(dataCopCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))),
                                 start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
                                                  color=1)),
                regexp = "The above errors were encountered!")
   # 1 dummy only -> still not only color!
   expect_error(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P),
-                                data=cbind(dataCopC1,color=factor(x = c("red", "green"))),
+                                data=cbind(dataCopCont,color=factor(x = c("red", "green"))),
                                 start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
                                                  color=1)),
                regexp = "The above errors were encountered!")
@@ -354,24 +355,24 @@ test_that("start.params with non-numeric exo requires multiple per factor",{
 
 test_that("start.params contains no parameter rho or sigma", {
   # Given additionally
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0, rho=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0, sigma=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0, rho=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, P = 0, sigma=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # Given instead of other parameters
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, rho=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, sigma=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, sigma = -2, P=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, rho = -2, P=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, sigma = -2, rho=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, rho=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, X2 = -2, sigma=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, sigma = -2, P=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, rho = -2, P=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1, sigma = -2, rho=1), formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
 })
 
 
 test_that("start.params fails if transformation missing", {
   # Not endo
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + exp(X2) + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + I(X2/2) + P |continuous(P), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + exp(X2) + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + I(X2/2) + P |continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
   # in endo
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + X2 + exp(P) |continuous(exp(P)), data = dataCopC1), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + X2 + I(P/2) |continuous(I(P/2)), data = dataCopC1), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + X2 + exp(P) |continuous(exp(P)), data = dataCopCont), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + X2 + I(P/2) |continuous(I(P/2)), data = dataCopCont), regexp = "The above errors were encountered!")
 })
 
 # *** TODO: Check that start.params work with dot in formula
@@ -381,11 +382,11 @@ test_that("start.params fails if transformation missing", {
 context("Inputchecks - copulaCorrection - Parameter 3-dots")
 test_that("Warning if further unneded params are given", {
   # 1 continuous
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopC1),all=TRUE, regexp = "are ignored")
+  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont),all=TRUE, regexp = "are ignored")
   # >1 continuous
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopC2),all=TRUE, regexp = "are ignored")
+  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopCont2),all=TRUE, regexp = "are ignored")
   # Mixed
   expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont), all=TRUE, regexp = "are ignored")
   # Discrete
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis),all=TRUE,regexp = "are ignored")
+  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis2),all=TRUE,regexp = "are ignored")
 })
