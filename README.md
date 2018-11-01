@@ -3,7 +3,7 @@ Endogeneity arises when the independence assumption between an explanatory varia
 
 Instrumental variable estimation is a common treatment when endogeneity is of concern. However valid, strong external instruments are difficcult to find. Consequently, statistical methods to correct for endogeneity without external instruments have been advanced and they are generically called **internal instrumental variable models (IIV)**. 
 
-REndo implements the following instrument-free methods (all assuming a continuous dependent variable): 
+REndo implements the following instrument-free methods: 
 (1) latent instrumental variables approach (Ebbes, Wedel, Boeckenholt, and Steerneman 2005), 
 (2) higher moments estimation(Lewbel 1997), 
 (3) heteroskedastic error approach (Lewbel 2012), 
