@@ -7,7 +7,7 @@ load(file = "./old_dataCopC2.rda")
 load(file = "./old_dataCopDis.rda")
 data("dataCopDisCont")
 
-context("copulaCorrection - Runability")
+context("Runability - copulaCorrection - Runability")
 
 test_that("Works with intercept", {
   # C1
@@ -106,7 +106,7 @@ test_that("Start params work with non-numeric", {
 
 
 # Transformations in formula ---------------------------------------------------------------------------------------------------
-context("copulaCorrection - Formula transformations")
+context("Runability - copulaCorrection - Formula transformations")
 test_that("Works with function in exogenous", {
   # C1
   # ****TODO optimx warning bounds. Use elsewhere.

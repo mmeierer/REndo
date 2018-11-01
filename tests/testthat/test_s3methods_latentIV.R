@@ -1,7 +1,8 @@
 # Required data -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataLatentIV")
 
-context("latentIV - S3 Methods")
+context("S3methods - latentIV - S3methods")
+
 # Run once to get result
 latentiv.input.form <- y ~ P # needed as var to compare against
 expect_message(res.latent <- latentIV(formula = latentiv.input.form, data = dataLatentIV), regexp = "No start parameters were given")

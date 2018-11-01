@@ -11,14 +11,16 @@ data("dataCopDisCont")
 
 # Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Standard S3 methods checks
-context("copulaCorrection - 1 discrete S3 Methods")
+context("S3methods - copulaCorrection - 1 discrete")
 d.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1, P2)
 expect_silent(res.d <- copulaCorrection(formula = d.input.form, data = dataCopDis, verbose=FALSE))
 test.s3methods.lm.models(res.lm.model=res.d, input.form=d.input.form, function.std.data=dataCopDis,
                          full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
 
-context("copulaCorrection - confint")
+
+# Discrete case confint --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+context("S3methods - copulaCorrection - discrete confint")
 # Get results to work with
 expect_silent(res.dis.only <- copulaCorrection(formula=y~X1+X2+P1+P2|discrete(P1, P2),
                                                data=dataCopDis, verbose = FALSE))
@@ -105,7 +107,8 @@ test_that("Not discrete only returns normal lm confint", {
 
 
 # C1 optim LL case ----------------------------------------------------------------------------------------------------
-context("copulaCorrection - 1 continuous S3 Methods")
+context("S3methods - copulaCorrection - 1 continuous")
+
 # Test all S3 methods
 c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
 expect_silent(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopC1, verbose=FALSE))
@@ -114,14 +117,16 @@ test.s3methods.rendooptimLL(res.model=res.c1, input.form=c1.input.form, function
                             req.df=6,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))
 
 # C2 case -------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - 2 continuous S3 Methods")
+context("S3methods - copulaCorrection - 2 continuous")
+
 c2.input.form <- y ~ X1 + X2 + P1+P2|continuous(P1, P2)
 expect_silent(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCopC2, verbose=FALSE))
 test.s3methods.lm.models(res.lm.model=res.c2, input.form=c2.input.form, function.std.data=dataCopC2,
                          full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
 # Mixed case -------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - 1 continuous, 1 discrete S3 Methods")
+context("S3methods - copulaCorrection - 1 continuous, 1 discrete")
+
 cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
 expect_silent(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE))
 test.s3methods.lm.models(res.lm.model=res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,

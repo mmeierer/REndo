@@ -1,8 +1,8 @@
-# TEST RUNABILITY ==================================================================================================================================================================
-
-context("higherMomentsIV - Runability")
+# Required data ----------------------------------------------------------------------------------------------------------------------
 data("dataHigherMoments")
 
+# Runability ----------------------------------------------------------------------------------------------------------------------
+context("Runability - higherMomentsIV - Runability")
 test_that("Works with a single IIV",{
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=lnx,iiv=gp, X1,X2),data = dataHigherMoments, verbose = FALSE))
 })
@@ -16,6 +16,8 @@ test_that("Works with 3 IIVs",{
                                 data = dataHigherMoments, verbose = FALSE))
 })
 
+# Formula transformations ------------------------------------------------------------------------------------------------------------
+context("Runability - higherMomentsIV - Formula transformations")
 
 test_that("Works with transformation in IIV",{
   expect_silent(higherMomentsIV(y~X1+log(X2)+P|P|IIV(g=x2, iiv=gp,log(X2))+IIV(iiv=y2),

@@ -1,8 +1,8 @@
-# TEST RUNABILITY ==================================================================================================================================================================
-
-context("latentIV - Runability")
+# Required data ----------------------------------------------------------------------------------------------------------------------
 data("dataLatentIV")
 
+# Runability ----------------------------------------------------------------------------------------------------------------------
+context("Runability - latentIV - Runability")
 test_that("Works with intercept", {
   expect_silent(latentIV(formula = y~P, data = dataLatentIV, verbose=FALSE))
 })
@@ -54,6 +54,9 @@ test_that("Works with all endo transformed", {
   expect_silent(latentIV(formula = y~I(P/2), data = dataLatentIV, verbose = FALSE))
 })
 
+
+# Formula transformations ------------------------------------------------------------------------------------------------------------
+context("Runability - latentIV - Formula transformations")
 
 test_that("Transformations are correct", {
   expect_silent(correct.res <- latentIV(formula = y ~ P, data = dataLatentIV, verbose = FALSE))

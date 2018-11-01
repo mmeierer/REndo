@@ -4,7 +4,7 @@
 data("dataHetIV")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("hetErrorsIV - Parameter formula")
+context("Inputchecks - hetErrorsIV - Parameter formula")
 
 test_that("Fail if bad 2nd RHS", {
   # Fail for missing 2nd RHS
@@ -111,7 +111,7 @@ test_that("Fail if special outside RHS3", {
 
 
 # data -----------------------------------------------------------------------------------------
-context("hetErrorsIV - Parameter data")
+context("Inputchecks - hetErrorsIV - Parameter data")
 
 
 test_that("Fail if is NA, NULL or missing", {
@@ -178,7 +178,7 @@ test_that("Fail if any column starts with \'IIV.\'",{
 
 
 # verbose ----------------------------------------------------------------------
-context("hetErrorsIV - Parameter verbose")
+context("Inputchecks - hetErrorsIV - Parameter verbose")
 test.single.logical(function.to.test = hetErrorsIV, parameter.name="verbose",
                     formula=y~X1+X2+P|P|IIV(X1), function.std.data=dataHetIV)
 

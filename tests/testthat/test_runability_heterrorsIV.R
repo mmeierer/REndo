@@ -1,10 +1,8 @@
-# TEST RUNABILITY ====================================================================================================================
-
-context("hetErrorsIV - Runability")
-
 # Required data ----------------------------------------------------------------------------------------------------------------------
 data("dataHetIV")
 
+# Runability ----------------------------------------------------------------------------------------------------------------------
+context("Runability - hetErrorsIV - Runability")
 test_that("Works with intercept", {
   expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=F))
 })
@@ -55,7 +53,7 @@ test_that("Non-numerics can be used in exogenous data", {
 })
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
-context("hetErrors - Formula transformations")
+context("Runability - hetErrorsIV - Formula transformations")
 test_that("Works with transformation in exogenous", {
   # Non IIV exo
   expect_silent(hetErrorsIV(y~log(X1)+X2+P  |P|IIV(X2), data=dataHetIV, verbose=F))

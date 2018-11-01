@@ -8,7 +8,7 @@ load(file = "./old_dataCopDis.rda")
 data("dataCopDisCont")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - Parameter formula")
+context("Inputchecks - copulaCorrection - Parameter formula")
 
 # *** TODO: Test if NA/NULL/MISSING/not formula....
 
@@ -180,7 +180,7 @@ test_that("Fails if transformations are done for different endo", {
 
 
 # data --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - Parameter data")
+context("Inputchecks - copulaCorrection - Parameter data")
 
 test_that("Fail if is NA, NULL or missing", {
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1),data=), regexp = "The above errors were encountered!")
@@ -248,13 +248,13 @@ test_that("Warn if binomial/dummy data passed in endo regressor", {
 })
 
 # verbose --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - Parameter verbose")
+context("Inputchecks - copulaCorrection - Parameter verbose")
 test.single.logical(function.to.test = copulaCorrection, parameter.name="verbose",
                     formula=y~X1+X2+P1+P2|continuous(P1)+discrete(P2), function.std.data=dataCopC2)
 
 
 # num.boots --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - Parameter num.boots")
+context("Inputchecks - copulaCorrection - Parameter num.boots")
 # Single continuous
 # Failure tests
 test.positive.numeric.whole.number(function.to.test = copulaCorrection, parameter.name="num.boots",
@@ -278,7 +278,7 @@ test_that("Warning if unneeded num.boots given", {
 })
 
 # start.params ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - Parameter start.params")
+context("Inputchecks - copulaCorrection - Parameter start.params")
 
 test_that("start.params is vector and all numeric", {
   # Any parameter is character, logical, factor, matrix
@@ -378,7 +378,7 @@ test_that("start.params fails if transformation missing", {
 
 
 # ...  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("copulaCorrection - Parameter 3-dots")
+context("Inputchecks - copulaCorrection - Parameter 3-dots")
 test_that("Warning if further unneded params are given", {
   # 1 continuous
   expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopC1),all=TRUE, regexp = "are ignored")

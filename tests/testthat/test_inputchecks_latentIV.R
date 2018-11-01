@@ -4,7 +4,7 @@
 data("dataLatentIV")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("latentIV - Parameter formula")
+context("Inputchecks - latentIV - Parameter formula")
 
 test_that("Fail if no formula object is passed",  {
   expect_error(latentIV(formula = data.frame(1:3), data = dataLatentIV), regexp = "The above errors were encountered!")
@@ -58,7 +58,8 @@ test_that("Fail if formula variables are not in data", {
 })
 
 
-context("latentIV - Parameter data")
+# data ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+context("Inputchecks - latentIV - Parameter data")
 test_that("Fail if not data.frame", {
   expect_error(latentIV(formula = y ~ P, data =     ),                regexp = "The above errors were encountered!")
   expect_error(latentIV(formula = y ~ P, data = NULL),                regexp = "The above errors were encountered!")
@@ -94,7 +95,7 @@ test_that("Allow wrong data type in irrelevant columns", {
 
 
 # start.params ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("latentIV - Parameter start.params")
+context("Inputchecks - latentIV - Parameter start.params")
 
 test_that("start.params is vector and all numeric", {
   # Any parameter is character, logical, factor, matrix
@@ -167,7 +168,7 @@ test_that("start.params contains no parameter named pi1, pi2, theta5, theta6, th
 
 
 # verbose ----------------------------------------------------------------------
-context("latentIV - Parameter verbose")
+context("Inputchecks - latentIV - Parameter verbose")
 test.single.logical(function.to.test = latentIV, parameter.name="verbose",
                     formula=y~P, function.std.data=dataLatentIV)
 

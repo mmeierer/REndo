@@ -5,7 +5,8 @@ test.s3methods.lm.models <- function(res.lm.model, input.form, function.std.data
 
   test_that("class is lm", {
     expect_s3_class(res.lm.model, "lm")
-    expect_true(length(class(res.lm.model)) == 1)
+    expect_s3_class(res.lm.model, "rendo.pstar.lm")
+    expect_true(length(class(res.lm.model)) == 2)
   })
 
   test_that("summary works", {
