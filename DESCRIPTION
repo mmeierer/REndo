@@ -19,7 +19,7 @@ License: GPL-3
 URL: https://github.com/mmeierer/REndo
 BugReports: https://github.com/mmeierer/REndo/issues
 NeedsCompilation: no
-Depends: 
+Depends:
     R (>= 3.5) 
 Imports:
     methods(>= 3.4), 
@@ -28,8 +28,11 @@ Imports:
     mvtnorm (>= 1.0-8), 
     AER (>= 1.2-5), 
     corpcor (>= 1.6.9)
-Suggests: 
+Suggests:
     testthat, 
-    covr
+    covr,
+    knitr,
+    rmarkdown
 Encoding: UTF-8
 RoxygenNote: 6.1.0.9000
+VignetteBuilder: knitr
