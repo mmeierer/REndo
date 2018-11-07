@@ -39,14 +39,9 @@ multilevel_gmmestim <- function(y, X, W, HIV){
   MVarbIV     <- GammaH %*% Matrix::tcrossprod(Lambda, GammaH)/num.indep
   Mstderr_bIV <- sqrt(Matrix::diag(MVarbIV))
 
-
-  # *** Move to summary function
-  # z         <- as.matrix(bIV/Mstderr_bIV) # make sparse to regular matrix for pval
-  # p.val     <- 2*stats::pnorm(-abs(z))
-
-  bIV <- as.vector(bIV)
-  names(bIV) <- colnames(X)
-  Mstderr_bIV <- as.vector(Mstderr_bIV)
+  bIV                <- as.vector(bIV)
+  names(bIV)         <- colnames(X)
+  Mstderr_bIV        <- as.vector(Mstderr_bIV)
   names(Mstderr_bIV) <- names(bIV)
   return(list(coef=bIV, SE = Mstderr_bIV, GammaH=GammaH))
 }

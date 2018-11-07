@@ -16,8 +16,7 @@
 #' @export
 multilevelIV <- function(formula, name.endo, data, verbose=TRUE){
 
-  # stop("The multilevelIV function is currently under active development and therefore unfortunately not available.", call. = FALSE)
-
+  cl <- match.call()
 
   # ** CHECK THAT EVERY CHILD ONLY APPEARS IN 1 SCHOOL
   # .N, by=SID, CID, then uniqueN(CID) == nrow() (ie CID appears only once for every SID )
@@ -26,17 +25,20 @@ multilevelIV <- function(formula, name.endo, data, verbose=TRUE){
   # Check input -----------------------------------------------------------------
 
   # Extract information ---------------------------------------------------------
-  dt.data <- data.table(data)
 
   # Let lme4 do the formula processing
   l4.form    <- lme4::lFormula(formula = formula, data=data)
   num.levels <- length(l4.form$reTrms$flist)+1
   stopifnot(num.levels %in% c(2,3))
 
-  #
   if(num.levels == 2)
-    res <- multilevel_2levels(formula = formula, data=data)
+    res <- multilevel_2levels(cl = cl, formula = formula, data=data, name.endo=name.endo)
   else
-    stop("Not yet supported")
+    if(num.levels == 3)
+      res <- multilevel_3levels(cl = cl, formula = formula, data=data, name.endo=name.endo)
+    else
+      stop("wrong number of levels!")
 
+
+  return(res)
 }

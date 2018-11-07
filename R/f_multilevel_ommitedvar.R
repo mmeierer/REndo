@@ -2,12 +2,18 @@
 #' @importFrom Matrix rankMatrix t solve bdiag
 #' @importFrom stats pchisq
 multilevel_ommitedvartest <- function(IV1, IV2,
-                                      coef.IV1, coef.IV2,
-                                      gammaH.IV1, gammaH.IV2,
+                                      res.gmm.IV1, res.gmm.IV2,
                                       W,
-                                      # Have to be school level groups
-                                      l.L2.groups.X, l.L2.groups.y){
+                                      # Have to be highest level blocks (L3:s, L2:c)
+                                      l.Lhighest.X, l.Lhighest.y){
 
+  # Read data from GMM results -----------------------------------------------------------
+  coef.IV1 <- res.gmm.IV1$coef
+  coef.IV2 <- res.gmm.IV2$coef
+  gammaH.IV1 <- res.gmm.IV1$GammaH
+  gammaH.IV2 <- res.gmm.IV2$GammaH
+
+  num.groups <- length(l.Lhighest.X) # number groups at highest level (L3:num schools)
 
   # LambdaHats ---------------------------------------------------------------------------
 
@@ -16,29 +22,25 @@ multilevel_ommitedvartest <- function(IV1, IV2,
   #  where  Vhat = blkdiag(e1e′1, . . . , ene′n)
   #   and residuals e_i = y_i − X_ib_1
 
-
-  # residuals in blocks in bdiag
-  # bd.b1      <- Matrix::bdiag(rep(list(coef.IV1), times=num.groups))
-  # bd.resid.e <- bd.y - bd.X %*% bd.b1
-  m.coef.IV1 <- matrix(coef.IV1, ncol=1)
-  l.L2.groups.resid.e <- mapply(g.y=l.L2.groups.y, g.x=l.L2.groups.X, FUN=function(g.y,g.x){
-    g.y - g.x %*% m.coef.IV1})
-
-
+  m.coef.IV1 <- matrix(data = coef.IV1, ncol=1)
+  l.Lhighest.resid.e <- mapply(l.Lhighest.y, l.Lhighest.X, FUN=function(g.y,g.x){
+                                  g.y - g.x %*% m.coef.IV1})
   # resid * resid' in blocks
-  V.hat <- Matrix::tcrossprod(Matrix::bdiag(l.L2.groups.resid.e))
-  print(paste0("V.hat done:", class(V.hat)))
+  V.hat <- Matrix::tcrossprod(Matrix::bdiag(l.Lhighest.resid.e))
+
+  # Alternative:
+  # bd.b1      <- Matrix::bdiag(rep(list(coef.IV1), times=num.groups))
+  # bd.resid.e <- Matrix::bdiag(l.Lhighest.y) - Matrix::bdiag(l.Lhighest.X) %*% bd.b1
+  # V.hat.bd <- Matrix::tcrossprod(bd.resid.e)
+  # print(all.equal(V.hat.bd, V.hat)) # TRUE
+
 
   # to reduce computations
   WVhatW <- W %*% V.hat %*% W
-  print(paste0("WvhatW done:", class(WVhatW)))
 
-  n <- length(l.L2.groups.X) #nrow(IV1) # num.groups?? num.groups <- length(l.Xgroups)
-  LambdaHat11 <- Matrix::t(IV1) %*% WVhatW %*% IV1 / n
-  LambdaHat22 <- Matrix::t(IV2) %*% WVhatW %*% IV2 / n
-  LambdaHat12 <- Matrix::t(IV1) %*% WVhatW %*% IV2 / n
-
-  print(paste0("lambdahat done:", class(LambdaHat12)))
+  LambdaHat11 <- Matrix::t(IV1) %*% WVhatW %*% IV1 / num.groups
+  LambdaHat22 <- Matrix::t(IV2) %*% WVhatW %*% IV2 / num.groups
+  LambdaHat12 <- Matrix::t(IV1) %*% WVhatW %*% IV2 / num.groups
 
   # Proposition 6.
   OmegaHat <- gammaH.IV2 %*% LambdaHat22 %*% Matrix::t(gammaH.IV2) +
@@ -47,7 +49,6 @@ multilevel_ommitedvartest <- function(IV1, IV2,
                 gammaH.IV1 %*% LambdaHat12 %*% Matrix::t(gammaH.IV2)
   colnames(OmegaHat) <- rownames(OmegaHat) <- names(coef.IV1)
 
-  print(paste0("OmegaHat done:", class(OmegaHat)))
 
   # Results ------------------------------------------------------------------------------------
   names.common  <- intersect(names(coef.IV1), names(coef.IV2))
@@ -56,12 +57,12 @@ multilevel_ommitedvartest <- function(IV1, IV2,
   diff.coef    <- coef.IV1[names.common] - coef.IV2[names.common]
 
   # vcov diff
-  common.OmegaHat <- corpcor::make.positive.definite(OmegaHat[names.common, names.common]/n)
+  common.OmegaHat <- corpcor::make.positive.definite(OmegaHat[names.common, names.common]/num.groups)
 
   # x2 diff
   # Proposition 6:
   # The test statistic TS_robust = (b_2gmm-b_1gmm)'F'inv(OmegaHat)F(b_2gmm-b_1gmm)
-  stat.ht    <- as.numeric(Matrix::t(diff.coef) %*% corpcor::pseudoinverse(common.OmegaHat)%*% diff.coef)
+  stat.ht    <- as.numeric(Matrix::t(diff.coef) %*% corpcor::pseudoinverse(common.OmegaHat) %*% diff.coef)
   names(stat.ht) <- "chisq"
 
   df      <- as.numeric(Matrix::rankMatrix(common.OmegaHat))
