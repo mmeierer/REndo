@@ -6,7 +6,7 @@ coef.rendo.multilevel <- function(object, ...){
 #' @export
 #' @importFrom stats vcov
 vcov.rendo.multilevel <- function(object, ...){
-  return(list(object$V, object$W))
+  return(list(V=object$V, W=object$W))
 }
 
 
@@ -115,5 +115,5 @@ coef.summary.rendo.multilevel <- function(object, ...){
 
 #' @export
 vcov.summary.rendo.multilevel <- function(object, ...){
-  return(list(object$V, object$W))
+  return(list(V=object$V, W=object$W))
 }
