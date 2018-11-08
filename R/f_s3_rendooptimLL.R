@@ -52,7 +52,7 @@ vcov.rendo.optim.LL <- function(object, ...){
   if(any(!is.finite(object$hessian)))
     stop("The vcov matrix cannot be calulated because the hessian contains non-finite values!", call. = FALSE)
 
-  m.vcov <- pseudoinverse(-object$hessian)
+  m.vcov <- corpcor::pseudoinverse(object$hessian)
   rownames(m.vcov) <- colnames(m.vcov) <- colnames(object$hessian)
   return(m.vcov)
 }
