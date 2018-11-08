@@ -22,7 +22,9 @@ NeedsCompilation: no
 Depends:
     R (>= 3.5) 
 Imports:
-    methods(>= 3.4), 
+    methods (>= 3.5), 
+    stats (>= 3.5),
+    utils (>= 3.5),
     Formula (>= 1.2), 
     optimx (>= 2013.8.7), 
     mvtnorm (>= 1.0-8), 
@@ -34,5 +36,5 @@ Suggests:
     knitr,
     rmarkdown
 Encoding: UTF-8
-RoxygenNote: 6.1.0.9000
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
