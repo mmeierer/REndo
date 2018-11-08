@@ -16,7 +16,7 @@
 
 \item{level}{the confidence level required.}
 
-\item{num.simulations}{the number of times the model is re-fitted to obtain confidence intervals in case of only discrete endogenous regressors. Ignored with a warning otherwise.}
+\item{num.simulations}{the number of times the model is re-fitted to obtain confidence intervals in case of discrete endogenous regressors only. Ignored with a warning otherwise.}
 
 \item{...}{ignored, for consistency with the generic function.}
 }
