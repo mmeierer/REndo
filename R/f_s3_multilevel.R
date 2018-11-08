@@ -32,9 +32,7 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
 summary.rendo.multilevel <- function(object, model=c("REF"), ...){
 
   # check model input
-  # check_err_msg()
-  if(!(model %in% c("REF", "FE_L2", "GMM_L2", "FE_L3","GMM_L3")))
-    stop("This model is not supported")
+  check_err_msg(checkinput_multilevelsummary_model(model=model))
 
   # Copy from input
   res <- object[c("call","coefficients", "V", "W")]

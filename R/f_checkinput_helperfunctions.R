@@ -86,7 +86,7 @@ check_err_msg <- function(err.msg){
 #' @importFrom stats .MFclass
 .checkinputhelper_dataVSformula_basicstructure <- function(formula, data, rhs.rel.regr,
                                                            num.only.cols){
-  # here, the basic structure of data and formula are guaranteed to be correct
+  # when here, the basic structure of data and formula are guaranteed to be correct
   err.msg <- c()
   F.formula <- as.Formula(formula)
   # Do not need terms object to expand . (dot) because not yet allowed in formula input.

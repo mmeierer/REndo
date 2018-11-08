@@ -23,6 +23,10 @@ multilevelIV <- function(formula, name.endo, data, verbose=TRUE){
 
 
   # Check input -----------------------------------------------------------------
+  check_err_msg(checkinput_multilevel_formula(formula=formula))
+  check_err_msg(checkinput_multilevel_data(data=data))
+  check_err_msg(checkinput_multilevel_dataVSformula(formula=formula, data=data))
+  check_err_msg(checkinput_multilevel_verbose(verbose = verbose))
 
   # Extract information ---------------------------------------------------------
 
