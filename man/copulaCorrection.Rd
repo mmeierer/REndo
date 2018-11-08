@@ -134,36 +134,37 @@ See the example section for illustrations on how to specify the \code{formula} p
 }
 }
 \examples{
-data("dataCopC1")
-data("dataCopC2")
+data("dataCopCont")
+data("dataCopCont2")
 data("dataCopDis")
+data("dataCopDis2")
 data("dataCopDisCont")
 
 \donttest{
 \dontrun{
 # Single continuous: log-likelihood optimization
-c1 <- copulaCorrection(y~X1+X2+P|continuous(P), data=dataCopC1)
+c1 <- copulaCorrection(y~X1+X2+P|continuous(P), data=dataCopCont)
 # same as above, with start.parameters and number of bootstrappings
-c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=500, data=dataCopC1,
+c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=500, data=dataCopCont,
                        start.params = c("(Intercept)"=1, X1=1, X2=-2, P=-1))
 }}
 
 # All following examples fit linear model with Gaussian copulas
 
 # 2 continuous endogenous regressors
-c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2), data=dataCopC2)
+c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2), data=dataCopCont2)
 # same as above
-c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1)+continuous(P2), data=dataCopC2)
+c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1)+continuous(P2), data=dataCopCont2)
 
 # single discrete endogenous regressor
-d1 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1), data=dataCopDis)
+d1 <- copulaCorrection(y~X1+X2+P|discrete(P), data=dataCopDis)
 # two discrete endogenous regressor
-d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2), data=dataCopDis)
+d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2), data=dataCopDis2)
 # same as above
-d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), data=dataCopDis)
+d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), data=dataCopDis2)
 
 # the discrete only cases have a dedicated confint function
-d2.ci <- confint(d2)
+d2.ci <- confint(d2, num.simulations = 100)
 
 # single discrete, single continuous
 cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), data=dataCopDisCont)
