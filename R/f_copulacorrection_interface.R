@@ -165,7 +165,7 @@
 #' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), data=dataCopDis2)
 #'
 #' # the discrete only cases have a dedicated confint function
-#' d2.ci <- confint(d2)
+#' d2.ci <- confint(d2, num.simulations = 100)
 #'
 #' # single discrete, single continuous
 #' cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), data=dataCopDisCont)

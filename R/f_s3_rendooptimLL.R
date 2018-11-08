@@ -72,7 +72,7 @@ print.rendo.optim.LL <- function(x, digits = max(3L, getOption("digits") - 3L), 
   invisible(x)
 }
 
-# Calculate summary statistics for result object from copulaCorrectionDiscrete
+
 #' @importFrom stats pt AIC BIC fitted
 #' @export
 summary.rendo.optim.LL <- function(object, ...){

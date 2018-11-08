@@ -124,6 +124,7 @@ expect_silent(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCop
 test.s3methods.lm.models(res.lm.model=res.c2, input.form=c2.input.form, function.std.data=dataCopCont2,
                          full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
+
 # Mixed case -------------------------------------------------------------------------------------------------------------
 context("S3methods - copulaCorrection - 1 continuous, 1 discrete")
 
@@ -131,5 +132,12 @@ cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
 expect_silent(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE))
 test.s3methods.lm.models(res.lm.model=res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,
                          full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
+
+
+# confint for all other than discrete ---------------------------------------------------------------------------------
+test_that("Throws warning if num.simulations not needed", {
+  expect_warning(confint(res.c2, num.simulations = 100), regexp = "is ignored because this model")
+  expect_warning(confint(res.cd, num.simulations = 100), regexp = "is ignored because this model")
+})
 
 

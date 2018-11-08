@@ -16,18 +16,19 @@
 
 \item{level}{the confidence level required.}
 
-\item{num.simulations}{the numbers of simulations to run.}
+\item{num.simulations}{the number of times the model is re-fitted to obtain confidence intervals in case of only discrete endogenous regressors. Ignored with a warning otherwise.}
 
 \item{...}{ignored, for consistency with the generic function.}
 }
 \description{
-In the case of only discrete endogenous regressors, the standard confidence interval function
-is fitted multiple times and per parameter the mean of all simulated confidence intervals is reported.
+In the case of only discrete endogenous regressors, the model is re-fitted multiple times
+and the confidence interval is obtained for each fitted model. The mean of all simulated confidence
+intervals per parameter is reported.
 
 In all other cases, the standard method for a fitted linear model \code{\link[stats]{lm}} is applied.
 }
 \seealso{
 \code{\link[stats]{confint}} for the standard method for linear models
 
-\code{\link{copulaCorrection}} for more information about the model background
+\code{\link{copulaCorrection}} for more information about the model's background
 }
