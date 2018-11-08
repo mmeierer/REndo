@@ -1,5 +1,8 @@
+#' @importFrom Matrix bdiag Matrix Diagonal crossprod tcrossprod drop0 nnzero
+#' @importFrom data.table as.data.table setkeyv
+#' @importFrom lme4 lFormula lmer VarCorr
+#' @importFrom corpcor pseudoinverse
 multilevel_3levels <- function(cl, formula, data, name.endo){
-
 
   l4.form    <- lme4::lFormula(formula = formula, data=data)
   num.levels <- length(l4.form$reTrms$flist) + 1
@@ -147,7 +150,7 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   })
   L3.Q <- Matrix::bdiag(l.L3.Q)
 
-  L3.Q.simple <-Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Matrix::bdiag(l.L3.Z3) %*%
+  L3.Q.simple <- Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Matrix::bdiag(l.L3.Z3) %*%
     corpcor::pseudoinverse(Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W) %*% W %*% Matrix::bdiag(l.L3.Z3)) %*%
     Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W)
   print(all.equal(L3.Q,L3.Q.simple)) # TRUE

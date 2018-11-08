@@ -171,7 +171,6 @@
 #' cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), data=dataCopDisCont)
 #'
 #' @importFrom Formula as.Formula
-#' @importFrom methods formalArgs
 #' @export
 copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   # Catch stuff ------------------------------------------------------------------------------------------------

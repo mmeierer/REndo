@@ -1,5 +1,5 @@
 #' @importFrom corpcor make.positive.definite
-#' @importFrom Matrix rankMatrix t solve bdiag
+#' @importFrom Matrix rankMatrix t bdiag
 #' @importFrom stats pchisq
 multilevel_ommitedvartest <- function(IV1, IV2,
                                       res.gmm.IV1, res.gmm.IV2,
