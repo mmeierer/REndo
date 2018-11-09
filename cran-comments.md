@@ -1,3 +1,6 @@
+# Comment from the authors
+In the previous submission to CRAN we accidentially left the unused `VignetteBuilder` field in the DESCRIPTION file which is now removed. 
+
 ## Test environments
 * local install on OS X 10.13.6, R 3.5.1
 * win-builder (rdevel and release)
