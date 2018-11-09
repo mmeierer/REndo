@@ -1,68 +1,113 @@
 
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataMultilevelIV")
-f.multilevel <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 + X11 | CID) + (1 | SID)
+f.multilevel <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 + X11 | CID) + (1 | SID) | endo(X15)
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - multilevelIV - Parameter formula")
 
 test_that("Fail if no formula object is passed",  {
-  expect_error(multilevelIV(formula = data.frame(1:3), data = dataMultilevelIV,name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = NULL,            data = dataMultilevelIV,name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = NA,              data = dataMultilevelIV,name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula =   ,              data = dataMultilevelIV,name.endo="X15"), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = data.frame(1:3), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = NULL,            data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = NA,              data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula =   ,              data = dataMultilevelIV), regexp = "The above errors were encountered!")
 })
 
 
-# test_that("Fail if formula contains dot (.)", {
-# ** TODO **
-# })
+test_that("Fail if formula contains dot (.)", {
+  expect_error(multilevelIV(formula = y ~ . + (1 + X11 | CID) + (1 | SID),data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
 
+test_that("Fail if formula contains no random effect parts", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12 | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
 
 test_that("Fail if formula variables are not in data", {
   # Fail if any regressors not in data (RHS1, RHS2, LHS1)
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, X1=1:10, X2=1:10),name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(X1=1:10,X2=1:10, P=1:10)),  regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, X11=1:10, X12=1:10)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(X11=1:10,X12=1:10, ABC=1:10)), regexp = "The above errors were encountered!")
 })
 
-# ** TODO
-# test_that("Fail if no levels given", {})
-# test_that("Fail if one level given", {})
-# test_that("Fail if more than 3 levels given", {})
 
+test_that("Fail if more than 2 parts given", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + (1 | SID) | endo(X11) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + (1 | SID) | endo(X11) | endo(X12)| endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if more than 3 levels given", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + (1|SID)+(1|CID)+(1|A)|endo(X11), data = cbind(dataMultilevelIV, A=1:5)), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if less than 2 levels given", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12|endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if endo() not in model", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X99), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X11, X99), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if empty special (endo()) given", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(  ), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if empty special (endo()) given", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(  ), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X11)+endo(), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if no / misspelled special (endo()) given", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | edno(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | edno(X11)+endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | X11, data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail special not in RHS2", {
+  expect_error(multilevelIV(formula = y+endo(y) ~ X11 + X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = endo(y) ~ X11 + X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ endo(X11) + X12 + X15(1|CID) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+# ** TODO **
+# test_that("Fail if all regressors are endogenous", {
+#   expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X11,X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+# })
 
 # data ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - multilevelIV - Parameter data")
 test_that("Fail if not data.frame", {
-  expect_error(multilevelIV(formula = f.multilevel, data =     ,name.endo="X15"),                regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = NULL,name.endo="X15"),                regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = NA_integer_,name.endo="X15"),         regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = c(y=1:10,   P=1:10),name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = list(y=1:10,P=1:10),name.endo="X15"), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data =     ),                regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = NULL),                regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = NA_integer_),         regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = c(y=1:10,   P=1:10)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = list(y=1:10,P=1:10)), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if no rows or cols",{
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(),name.endo="X15"), regexp = "The above errors were encountered!") # no cols
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=integer(), P=integer()),name.endo="X15"), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame()), regexp = "The above errors were encountered!") # no cols
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=integer(), P=integer())), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if wrong data type in any of the formula parts", {
   # Only allow numericals in all relevant columns
   # Factor
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=factor(1:10), P=1:10),name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=factor(1:10),name.endo="X15"), regexp = "The above errors were encountered!"))
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=factor(1:10), P=1:10)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=factor(1:10)), regexp = "The above errors were encountered!"))
   # Characters
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=as.character(1:10), P=1:10, stringsAsFactors=F),name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=as.character(1:10), stringsAsFactors=F),name.endo="X15"), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=as.character(1:10), P=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=as.character(1:10), stringsAsFactors=F)), regexp = "The above errors were encountered!")
   # Logicals (as indicate dichotomous variable (=factor))
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=as.logical(0:9), P=1:10),name.endo="X15"), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=as.logical(0:9)),name.endo="X15"), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=as.logical(0:9), P=1:10)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=as.logical(0:9))), regexp = "The above errors were encountered!")
 })
 
 # ** TODO: not silent yet
 # test_that("Allow wrong data type in irrelevant columns", {
 #   # Allow wrong data types in unused columns
-#   expect_silent(multilevelIV(formula = f.multilevel, verbose = FALSE, name.endo = "X15",
+#   expect_silent(multilevelIV(formula = f.multilevel, verbose = FALSE,
 #                          data = cbind(dataMultilevelIV,
 #                                       unused1=as.logical(0:4), unused2=as.character(1:5),unused3=as.factor(1:5), stringsAsFactors = F)))
 # })
@@ -77,7 +122,8 @@ test.single.logical(function.to.test = multilevelIV, parameter.name="verbose",
 
 # summary model parameter ------------------------------------------------------
 context("Inputchecks - multilevelIV summary - Parameter model")
-res.ml <- multilevelIV(formula = f.multilevel, name.endo = "X15", data = dataMultilevelIV, verbose = FALSE)
+# **TODO: expect_silent **
+res.ml <- multilevelIV(formula = f.multilevel, data = dataMultilevelIV, verbose = FALSE)
 test_that("Fails for forms of no input",{
   expect_error(summary(res.ml, model = NULL), regexp = "The above errors were encountered!")
   expect_error(summary(res.ml, model = NA), regexp = "The above errors were encountered!")

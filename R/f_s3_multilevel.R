@@ -4,11 +4,28 @@ coef.rendo.multilevel <- function(object, ...){
 }
 
 #' @export
+fitted.rendo.multilevel <- function(object, model="REF", ...){
+  check_err_msg(checkinput_multilevel_model(object=object,model=model))
+  return(object$l.fitted[[model]])
+}
+
+#' @export
+residuals.rendo.multilevel <- function(object, model="REF", ...){
+  check_err_msg(checkinput_multilevel_model(object=object,model=model))
+  return(object$l.residuals[[model]])
+}
+
+#' @export
+nobs.rendo.multilevel <- function(object, ...){
+  return(NROW(residuals(object=object, model="REF")))
+}
+
+
+#' @export
 #' @importFrom stats vcov
 vcov.rendo.multilevel <- function(object, ...){
   return(list(V=object$V, W=object$W))
 }
-
 
 
 #' @export
@@ -32,7 +49,7 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
 summary.rendo.multilevel <- function(object, model=c("REF"), ...){
 
   # check model input
-  check_err_msg(checkinput_multilevelsummary_model(model=model))
+  check_err_msg(checkinput_multilevel_model(object=object,model=model))
 
   # Copy from input
   res <- object[c("call","coefficients", "V", "W")]
@@ -44,8 +61,6 @@ summary.rendo.multilevel <- function(object, model=c("REF"), ...){
   # Coefficients are stored with names MODEL_vs_MODEL
   #   Select all coefs that belong to the given model
   n.coefs   <- grep(pattern = model, x = colnames(object$coefficients), value = TRUE)
-  if(length(n.coefs) == 0)
-    stop("The specified model cannot be found.")
   m.coefs   <- object$coefficients[,    n.coefs, drop=TRUE]
   m.coef.se <- object$coefficients.se[, n.coefs, drop=TRUE]
 

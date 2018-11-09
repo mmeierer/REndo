@@ -14,13 +14,9 @@
 #' @references   Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.
 #' @importFrom lme4 lmer VarCorr lFormula
 #' @export
-multilevelIV <- function(formula, name.endo, data, verbose=TRUE){
+multilevelIV <- function(formula, data, verbose=TRUE){
 
   cl <- match.call()
-
-  # ** CHECK THAT EVERY CHILD ONLY APPEARS IN 1 SCHOOL
-  # .N, by=SID, CID, then uniqueN(CID) == nrow() (ie CID appears only once for every SID )
-
 
   # Check input -----------------------------------------------------------------
   check_err_msg(checkinput_multilevel_formula(formula=formula))
@@ -28,21 +24,37 @@ multilevelIV <- function(formula, name.endo, data, verbose=TRUE){
   check_err_msg(checkinput_multilevel_dataVSformula(formula=formula, data=data))
   check_err_msg(checkinput_multilevel_verbose(verbose = verbose))
 
+  # May endo be in (ENDO | CID) ?
+
+  # checkassumptions_multilevel_L2(data = data)
+  #  check that has more than 1 single group (?)
+  #  distribution?
+
+  # checkassumptions_multilevel_L3(data = data)
+  # ** CHECK THAT EVERY CHILD ONLY APPEARS IN 1 SCHOOL
+  # .N, by=SID, CID, then uniqueN(CID) == nrow() (ie CID appears only once for every SID )
+  #   check that has more than 1 single group (?)
+  #   df
+
   # Extract information ---------------------------------------------------------
+  F.formula <- as.Formula(formula)
+  f.lmer    <- formula(F.formula, lhs = 1, rhs = 1)
+  name.endo <- formula_readout_special(F.formula = F.formula, name.special = "endo",
+                                       from.rhs = 2, params.as.chars.only = TRUE)
 
   # Let lme4 do the formula processing
-  l4.form    <- lme4::lFormula(formula = formula, data=data)
-  num.levels <- length(l4.form$reTrms$flist)+1
-  stopifnot(num.levels %in% c(2,3))
+  l4.form    <- lme4::lFormula(formula = f.lmer, data=data)
+  num.levels <- lme4formula_get_numberoflevels(l4.form)
+
+  message("Num levels detected: ", num.levels)
 
   if(num.levels == 2)
-    res <- multilevel_2levels(cl = cl, formula = formula, data=data, name.endo=name.endo)
+    res <- multilevel_2levels(cl = cl, f.orig=formula, f.lmer.part=f.lmer, l4.form=l4.form,
+                              data=data, name.endo=name.endo)
   else
     if(num.levels == 3)
-      res <- multilevel_3levels(cl = cl, formula = formula, data=data, name.endo=name.endo)
-    else
-      stop("wrong number of levels!")
-
+      res <- multilevel_3levels(cl = cl, f.orig=formula, f.lmer.part=f.lmer, l4.form=l4.form,
+                                data=data, name.endo=name.endo)
 
   return(res)
 }

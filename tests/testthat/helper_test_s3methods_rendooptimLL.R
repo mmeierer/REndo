@@ -79,7 +79,7 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_silent(sum.coef <- coef(summary(res.model)))
     # right cols
     expect_true(ncol(sum.coef) == 4)
-    expect_true(all(names(sum.coef) != ""))
+    expect_true(all(colnames(sum.coef) != ""))
     # right rows
     expect_true(nrow(sum.coef) == length(coef(res.model)))
     expect_true(all(rownames(sum.coef) == names(coef(res.model))))

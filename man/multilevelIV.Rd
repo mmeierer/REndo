@@ -4,7 +4,7 @@
 \alias{multilevelIV}
 \title{Multilevel GMM Estimation}
 \usage{
-multilevelIV(formula, name.endo, data, verbose = TRUE)
+multilevelIV(formula, data, verbose = TRUE)
 }
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}

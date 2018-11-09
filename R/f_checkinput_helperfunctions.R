@@ -93,7 +93,7 @@ check_err_msg <- function(err.msg){
 
   # Check that every regressor is in the data
   if(!all(all.vars(formula(F.formula, rhs=rhs.rel.regr)) %in% colnames(data)))
-    err.msg <- c(err.msg, "Please provide a data object that contains all the formula's variables.")
+    return("Please provide a data object that contains all the formula's variables.")
 
   # Only allow numeric (real & integer) values in the specified columns
   data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")

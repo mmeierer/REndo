@@ -2,9 +2,10 @@
 #' @importFrom data.table as.data.table setkeyv
 #' @importFrom lme4 lFormula lmer VarCorr
 #' @importFrom corpcor pseudoinverse
-multilevel_3levels <- function(cl, formula, data, name.endo){
+multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo){
 
-  l4.form    <- lme4::lFormula(formula = formula, data=data)
+  .SD <- .I <- NULL
+
   num.levels <- length(l4.form$reTrms$flist) + 1
 
   name.group.L2    <- names(l4.form$reTrms$flist)[[1]] # CID
@@ -26,8 +27,7 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   data.table::setkeyv(dt.model.frame,  cols = name.split.by.L2)
 
   name.y <- colnames(l4.form$fr)[[1L]] # always at first position, same as model.response reads out
-  y   <- Matrix::Matrix(as.matrix(dt.model.frame[, .SD, .SDcols=name.y]), sparse = TRUE)
-
+  y      <- multilevel_colstomatrix(dt = dt.model.frame, name.cols = name.y)
   l.L3.y <- multilevel_splittomatrix(dt = dt.model.frame, name.group = name.y, name.by = name.split.by.L3)
 
 
@@ -39,8 +39,8 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   l.L2.X1 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X1, name.by = name.split.by.L2)
   l.L3.X  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X,  name.by = name.split.by.L3)
   l.L3.X1 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X1, name.by = name.split.by.L3)
-  X    <- Matrix::Matrix(as.matrix(dt.model.matrix[, .SD, .SDcols = names.X]),  sparse = TRUE)
-  X1   <- Matrix::Matrix(as.matrix(dt.model.matrix[, .SD, .SDcols = names.X1]), sparse = TRUE)
+  X    <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X)
+  X1   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X1)
 
   # Build Z2, Z3 --------------------------------------------------------------------------------
 
@@ -48,10 +48,8 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   names.Z3 <- l4.form$reTrms$cnms[[2]]
   l.L2.Z2 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z2, name.by = name.split.by.L2)
   l.L3.Z3 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z3, name.by = name.split.by.L3)
-  Z2    <- Matrix::Matrix(as.matrix(dt.model.matrix[, .SD, .SDcols = names.Z2]),  sparse = TRUE)
-  Z3    <- Matrix::Matrix(as.matrix(dt.model.matrix[, .SD, .SDcols = names.Z3]),  sparse = TRUE)
-  message("num.Z2 groups", length(l.L2.Z2))
-  message("num.Z3 groups", length(l.L3.Z3))
+  Z2   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z2)
+  Z3   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z3)
 
   # Sorting verification ------------------------------------------------------------
   # Before doing any math, verify that each group contains the same observations in the same order
@@ -71,7 +69,7 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   fct.check.all.same.names(l.L3.Z3, l.L3.X, l.L3.X1)
 
   # Fit REML -----------------------------------------------------------------------------------
-  VC       <- lme4::VarCorr(lme4::lmer(formula=formula, data=data))
+  VC       <- lme4::VarCorr(lme4::lmer(formula=f.lmer.part, data=data))
   D.2      <- VC[[name.group.L2]]
   D.3      <- VC[[name.group.L3]]
   sigma.sq <- attr(VC, "sc")
@@ -114,7 +112,7 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   # W = V^(-1/2)
   # Do eigen decomp on each block. Has to be L3 as L2 would omits non-zero vars
 
-  g.L3.idx <- dt.model.matrix[, .(g.idx=list(.I)), by=name.split.by.L3]$g.idx
+  g.L3.idx <- dt.model.matrix[, list(g.idx=list(.I)), by=name.split.by.L3]$g.idx
   l.L3.V   <- lapply(g.L3.idx, function(g.id) {V[g.id, g.id, drop=FALSE]})
 
   # Do eigen decomp on each block
@@ -161,7 +159,7 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   #   Matrix::crossprod(Z3, W)
 
   # Split into L2 groups
-  g.L2.idx <- dt.model.matrix[, .(g.idx=list(.I)), by=name.split.by.L2]$g.idx
+  g.L2.idx <- dt.model.matrix[, list(g.idx=list(.I)), by=name.split.by.L2]$g.idx
   l.L2.W <- lapply(g.L2.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
 
   # *** Q formulas for L2 and L3 are different?? ***
@@ -301,7 +299,7 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
 
   return(new_rendo_multilevel(
             call = cl,
-            formula = formula,
+            formula = f.orig,
             num.levels = 2,
             dt.mf = dt.model.frame,
             dt.mm = dt.model.matrix,
@@ -322,7 +320,9 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
                          GMM_L2_vs_FE_L2   = GMM_L2_vs_FE_L2,
                          GMM_L3_vs_FE_L3   = GMM_L3_vs_FE_L3,
                          GMM_L2_vs_FE_L3  = GMM_L2_vs_FE_L3,
-                         FE_L2_vs_GMM_L3 = FE_L2_vs_GMM_L3)))
+                         FE_L2_vs_GMM_L3 = FE_L2_vs_GMM_L3),
+            y = y,
+            X = X))
 }
 
 
@@ -423,7 +423,7 @@ multilevel_3levels <- function(cl, formula, data, name.endo){
   # # W = V^(-1/2)
   #
   # # split V into its L3 blocks
-  # g.idx <- dt.data[, .(g.idx=list(.I)), by=name.L3.group]$g.idx
+  # g.idx <- dt.data[, list(g.idx=list(.I)), by=name.L3.group]$g.idx
   # l.V.groups <- lapply(g.idx, function(g.id) {V[g.id, g.id]})
   #
   # # Do eigen decomp on each block

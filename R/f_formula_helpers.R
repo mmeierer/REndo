@@ -86,6 +86,10 @@ formula_build_mainmodel_data <- function(F.formula, data){
 }
 
 
+lme4formula_get_numberoflevels <- function(l4.form){
+  return(length(l4.form$reTrms$flist)+1)
+}
+
 
 # Builds a formula as input to ivreg
 # In:     response ~ complete model | single endogenous | instructions for IV (| EIV)

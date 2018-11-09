@@ -102,7 +102,8 @@ checkinput_copulacorrection_dataVSformula <- function(data, formula, names.cols.
                                                             rhs.rel.regr=c(1,2),
                                                             num.only.cols = names.cols.endo)
 
-  err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data, forbidden.colname="PStar"))
+  err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data,
+                                                       forbidden.colname="PStar"))
 
   return(err.msg)
 }

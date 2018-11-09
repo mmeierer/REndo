@@ -2,9 +2,9 @@
 #' @importFrom Matrix Diagonal crossprod bdiag
 #' @importFrom corpcor pseudoinverse
 #' @importFrom data.table as.data.table setkeyv
-multilevel_2levels <- function(cl, formula, data, name.endo){
+multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo){
 
-  l4.form <- lme4::lFormula(formula = formula, data=data)
+  .SD <- .I <- NULL
 
   name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # CID
   message("name.group.L2", name.group.L2)
@@ -15,15 +15,16 @@ multilevel_2levels <- function(cl, formula, data, name.endo){
   # Make model variables to data.table to efficiently split into groups
   mm <- model.matrix(object = terms(l4.form$fr), data = l4.form$fr)
   dt.model.matrix <- data.table::as.data.table(mm, keep.rownames = TRUE)
-  # to extract response which is not in model.matrix
+
+  # to extract response (dv) which is not in model.matrix
   dt.model.frame  <- data.table::as.data.table(l4.form$fr, keep.rownames = TRUE)
+
   data.table::setkeyv(dt.model.matrix, cols = name.group.L2)
   data.table::setkeyv(dt.model.frame, cols = name.group.L2)
 
   name.y <- colnames(l4.form$fr)[[1L]] # always at first position, same as model.response reads out
-  y   <- Matrix::Matrix(as.matrix(dt.model.frame[, .SD, .SDcols=name.y]), sparse = TRUE)
+  y   <- multilevel_colstomatrix(dt = dt.model.frame, name.cols = name.y)
   l.y <- multilevel_splittomatrix(dt = dt.model.frame, name.group = name.y,  name.by = name.group.L2)
-
 
 
   # Build X, X1 --------------------------------------------------------------------------------
@@ -32,8 +33,8 @@ multilevel_2levels <- function(cl, formula, data, name.endo){
 
   l.X  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X,  name.by = name.group.L2)
   l.X1 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X1, name.by = name.group.L2)
-  X    <- Matrix::Matrix(as.matrix(dt.model.matrix[, .SD, .SDcols = names.X]),  sparse = TRUE)
-  X1   <- Matrix::Matrix(as.matrix(dt.model.matrix[, .SD, .SDcols = names.X1]), sparse = TRUE)
+  X    <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X)
+  X1   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X1)
 
 
   # Build Z2 ------------------------------------------------------------------------------------
@@ -44,7 +45,7 @@ multilevel_2levels <- function(cl, formula, data, name.endo){
 
   # Fit REML -----------------------------------------------------------------------------------
 
-  VC       <- lme4::VarCorr(lme4::lmer(formula=formula, data=data))
+  VC       <- lme4::VarCorr(lme4::lmer(formula=f.lmer.part, data=data))
   D.2      <- VC[[name.group.L2]]
   sigma.sq <- attr(VC, "sc")
 
@@ -146,7 +147,7 @@ multilevel_2levels <- function(cl, formula, data, name.endo){
 
   return(new_rendo_multilevel(
               call = cl,
-              formula = formula,
+              formula = f.orig,
               num.levels = 2,
               dt.mf = dt.model.frame,
               dt.mm = dt.model.matrix,
@@ -158,7 +159,9 @@ multilevel_2levels <- function(cl, formula, data, name.endo){
                            REF  = res.gmm.HREE),
               l.ovt = list(FE_L2_vs_REF  = FE_L2_vs_REF,
                            GMM_L2_vs_REF  = GMM_L2_vs_REF,
-                           FE_L2_vs_GMM_L2 = FE_L2_vs_GMM_L2)))
+                           FE_L2_vs_GMM_L2 = FE_L2_vs_GMM_L2),
+              y = y,
+              X = X))
 }
 
 
