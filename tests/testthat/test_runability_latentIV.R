@@ -77,14 +77,13 @@ test_that("Transformations are correct", {
 
 
 
-# More stable now :(
-# test_that("Summary prints about SE unavailable", {
-#   expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=2), verbose = FALSE,data = dataLatentIV),
-#                  regexp = "Hessian cannot be solved for the standard errors")
-#   expect_output(print(summary(res.latent)), all = F,
-#                 regexp = "For some parameters the statistics could not be calculated")
-#   expect_true(anyNA(coef(summary(res.latent))))
-# })
+test_that("Summary prints about SE unavailable", {
+  expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=9999), verbose = FALSE,data = dataLatentIV),
+                 regexp = "Hessian cannot be solved for the standard errors")
+  expect_output(print(summary(res.latent)), all = F,
+                regexp = "For some parameters the statistics could not be calculated")
+  expect_true(anyNA(coef(summary(res.latent))))
+})
 
 
 test_that("Stops if lm fails for start",{

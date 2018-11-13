@@ -22,8 +22,8 @@ NeedsCompilation: no
 Depends:
     R (>= 3.5) 
 Imports:
-    stats (>= 3.5),
     methods (>= 3.5), 
+    stats (>= 3.5),
     utils (>= 3.5),
     Formula (>= 1.2), 
     optimx (>= 2013.8.7), 

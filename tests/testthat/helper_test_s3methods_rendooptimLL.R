@@ -26,6 +26,8 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_equal(as.numeric(res.BIC), log(nobs(res.model))*nparam - 2*as.numeric(logLik(res.model)))
   })
 
+
+
   test_that("terms", {
     expect_silent(terms(res.model))
   })

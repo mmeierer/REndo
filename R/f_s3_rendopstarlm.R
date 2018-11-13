@@ -1,16 +1,17 @@
 #' @title Confidence Interval for copula correction models fitted with augmented OLS.
 #' @description
-#' In the case of only discrete endogenous regressors, the standard confidence interval function
-#' is fitted multiple times and per parameter the mean of all simulated confidence intervals is reported.
+#' In the case of only discrete endogenous regressors, the model is re-fitted multiple times
+#' and the confidence interval is obtained for each fitted model. The mean of all simulated confidence
+#' intervals per parameter is reported.
 #'
 #' In all other cases, the standard method for a fitted linear model \code{\link[stats]{lm}} is applied.
 #'
 #' @inheritParams stats::confint
-#' @param num.simulations the numbers of simulations to run.
+#' @param num.simulations the number of times the model is re-fitted to obtain confidence intervals in case of discrete endogenous regressors only. Ignored with a warning otherwise.
 #' @param ... ignored, for consistency with the generic function.
 #'
 #' @seealso \code{\link[stats]{confint}} for the standard method for linear models
-#' @seealso \code{\link{copulaCorrection}} for more information about the model background
+#' @seealso \code{\link{copulaCorrection}} for more information about the model's background
 #'
 #' @importFrom stats confint confint.lm
 #' @export
@@ -63,6 +64,11 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
 
     return(confint.mean)
   }else{
+
+    if(!missing(num.simulations))
+      warning("The specified parameter for \'num.simulations\' is ignored because this model does not use discrete endogenous regressors only.",
+                call. = FALSE, immediate. = TRUE)
+
     # No discrete only case: Return lm's confint
     return(stats::confint.lm(object = object, parm = parm, level = level))
   }

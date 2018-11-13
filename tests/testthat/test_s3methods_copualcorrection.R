@@ -21,6 +21,8 @@ test.s3methods.lm.models(res.lm.model=res.d, input.form=d.input.form, function.s
 
 # Discrete case confint --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("S3methods - copulaCorrection - discrete confint")
+# Do not use .S3.helper.confint because also num.sumulations can be supplied
+
 # Get results to work with
 expect_silent(res.dis.only <- copulaCorrection(formula=y~X1+X2+P1+P2|discrete(P1, P2),
                                                data=dataCopDis2, verbose = FALSE))
@@ -40,11 +42,8 @@ test_that("Confint works with different alphas", {
   expect_equal(rownames(ci.99), rownames(ci.95))
   expect_equal(rownames(ci.95), rownames(ci.90))
   expect_equal(rownames(ci.90), rownames(ci.70))
-
-  # CI have to be larger for higher level (with very high probability)
-  # expect_gt(ci.99[, 2] - ci.99[, 2], ) ***maybe do as well if time
-
 })
+
 test_that("Confint works with character param", {
   # Single
   for(p in names(coef(res.dis.only)))
@@ -80,8 +79,9 @@ test_that("Confint works with integer param", {
   # Remove all
   expect_null(rownames(confint(res.dis.only,num.simulations=10, parm = -seq(length(p)))))
 })
+
 # same behavior as lm
-test_that("NA if unknown parm", {
+test_that("confint NA if unknown parm", {
   # Unknown character
   expect_true(all(is.na( confint(res.dis.only,num.simulations=10, parm = "abc") )))
   expect_true(all(is.na( confint(res.dis.only,num.simulations=10, parm = c("abc", "zcgd")) )))
@@ -124,6 +124,7 @@ expect_silent(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCop
 test.s3methods.lm.models(res.lm.model=res.c2, input.form=c2.input.form, function.std.data=dataCopCont2,
                          full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
+
 # Mixed case -------------------------------------------------------------------------------------------------------------
 context("S3methods - copulaCorrection - 1 continuous, 1 discrete")
 
@@ -131,5 +132,12 @@ cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
 expect_silent(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE))
 test.s3methods.lm.models(res.lm.model=res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,
                          full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
+
+
+# confint for all other than discrete ---------------------------------------------------------------------------------
+test_that("Throws warning if num.simulations not needed", {
+  expect_warning(confint(res.c2, num.simulations = 100), regexp = "is ignored because this model")
+  expect_warning(confint(res.cd, num.simulations = 100), regexp = "is ignored because this model")
+})
 
 
