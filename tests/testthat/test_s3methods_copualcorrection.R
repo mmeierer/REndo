@@ -21,6 +21,8 @@ test.s3methods.lm.models(res.lm.model=res.d, input.form=d.input.form, function.s
 
 # Discrete case confint --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("S3methods - copulaCorrection - discrete confint")
+# Do not use .S3.helper.confint because also num.sumulations can be supplied
+
 # Get results to work with
 expect_silent(res.dis.only <- copulaCorrection(formula=y~X1+X2+P1+P2|discrete(P1, P2),
                                                data=dataCopDis2, verbose = FALSE))
@@ -77,6 +79,7 @@ test_that("Confint works with integer param", {
   # Remove all
   expect_null(rownames(confint(res.dis.only,num.simulations=10, parm = -seq(length(p)))))
 })
+
 # same behavior as lm
 test_that("confint NA if unknown parm", {
   # Unknown character

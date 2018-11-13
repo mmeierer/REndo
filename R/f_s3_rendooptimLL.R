@@ -78,7 +78,6 @@ confint.rendo.optim.LL <- function(object, parm, level = 0.95, ...){
 
 
 
-
 #' @export
 #' @importFrom stats vcov
 #' @importFrom corpcor pseudoinverse
