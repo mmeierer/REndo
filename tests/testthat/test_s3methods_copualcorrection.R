@@ -81,7 +81,7 @@ test_that("Confint works with integer param", {
   expect_null(rownames(confint(res.dis.only,num.simulations=10, parm = -seq(length(p)))))
 })
 # same behavior as lm
-test_that("NA if unknown parm", {
+test_that("confint NA if unknown parm", {
   # Unknown character
   expect_true(all(is.na( confint(res.dis.only,num.simulations=10, parm = "abc") )))
   expect_true(all(is.na( confint(res.dis.only,num.simulations=10, parm = c("abc", "zcgd")) )))

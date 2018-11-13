@@ -3,6 +3,7 @@
 S3method(case.names,rendo.optim.LL)
 S3method(coef,rendo.optim.LL)
 S3method(coef,summary.rendo.optim.LL)
+S3method(confint,rendo.optim.LL)
 S3method(confint,rendo.pstar.lm)
 S3method(fitted,rendo.optim.LL)
 S3method(labels,rendo.optim.LL)
