@@ -133,9 +133,6 @@ test_that("Works with single endo transformation", {
 
 
 test_that("Works with transformed and untransformed endo", {
-  # ***TODO: Use elsewhere: LM FAILURE!!
-  # expect_warning(res.c1.1 <- copulaCorrection(formula= y ~ X1+X2+P+I(P/1.1)|continuous(I(P/1.1)), verbose = FALSE, num.boots=2, data=dataCopCont),
-  #                regexp = "It is recommended to run more than", all = TRUE)
   # check that not the same are taken by comparing results
 
   # ****TODO: Ask raluca why they are not unequal?
@@ -260,6 +257,12 @@ test_that("Transformations are correct", {
   expect_silent(res.trans.rhs <- copulaCorrection(formula= y ~ X1+X2+P1+log(P2)|continuous(P1)+discrete(log(P2)), verbose = FALSE, data=data.altered))
   expect_equal(coef(res.trans.rhs), coef(correct.res.disCont), check.attributes=FALSE)
   expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.disCont)), check.attributes=FALSE)
+})
+
+
+test_that("Fails if lm cannot be used to derive start.params", {
+  expect_error(res.c1.1 <- copulaCorrection(formula= y ~ X1+X2+P+I(P/1.1)|continuous(I(P/1.1)),data=dataCopCont, verbose=FALSE),
+                 regexp = "The start parameters could not be derived by fitting a linear model.")
 })
 
 

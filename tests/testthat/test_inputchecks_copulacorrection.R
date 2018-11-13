@@ -11,7 +11,12 @@ data("dataCopDisCont")
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - copulaCorrection - Parameter formula")
 
-# *** TODO: Test if NA/NULL/MISSING/not formula....
+test_that("Fail if no formula object is passed",{
+  expect_error(copulaCorrection(formula= ,                data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= NULL,            data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= NA,              data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula= data.frame(1:3), data=dataCopCont2), regexp = "The above errors were encountered!")
+})
 
 test_that("Fail if bad 2nd RHS", {
   # Fail for missing 2nd RHS

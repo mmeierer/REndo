@@ -40,11 +40,8 @@ test_that("Confint works with different alphas", {
   expect_equal(rownames(ci.99), rownames(ci.95))
   expect_equal(rownames(ci.95), rownames(ci.90))
   expect_equal(rownames(ci.90), rownames(ci.70))
-
-  # CI have to be larger for higher level (with very high probability)
-  # expect_gt(ci.99[, 2] - ci.99[, 2], ) ***maybe do as well if time
-
 })
+
 test_that("Confint works with character param", {
   # Single
   for(p in names(coef(res.dis.only)))
