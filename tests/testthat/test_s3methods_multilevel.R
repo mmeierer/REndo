@@ -84,6 +84,8 @@ test_that("coef", {
   expect_type(res.coef, "double")
 })
 
+# ** TODO : confint **
+# test_that("confint works",{})
 
 # This breaks too many things when used for lm and ivreg models.
 #   reduced to the minimum

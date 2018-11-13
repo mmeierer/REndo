@@ -296,11 +296,11 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   FE_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.c1, IV2 = HIV.s2,
                                                res.gmm.IV1 = res.gmm.c1, res.gmm.IV2 = res.gmm.s2,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-
+  # phtest in plmer
   return(new_rendo_multilevel(
             call = cl,
             formula = f.orig,
-            num.levels = 2,
+            num.levels = 3,
             dt.mf = dt.model.frame,
             dt.mm = dt.model.matrix,
             V = V,
