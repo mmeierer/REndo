@@ -26,12 +26,17 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   data.table::setkeyv(dt.model.matrix, cols = name.split.by.L2)
   data.table::setkeyv(dt.model.frame,  cols = name.split.by.L2)
 
+  # Build y ------------------------------------------------------------------------------------
+  # Only needed for calculating residuals in ommitted var test
   name.y <- colnames(l4.form$fr)[[1L]] # always at first position, same as model.response reads out
   y      <- multilevel_colstomatrix(dt = dt.model.frame, name.cols = name.y)
   l.L3.y <- multilevel_splittomatrix(dt = dt.model.frame, name.group = name.y, name.by = name.split.by.L3)
 
 
   # Build X, X1 --------------------------------------------------------------------------------
+  # Do not use the X component present in l4.form as their ordering is somewhat obscure.
+  # X1 is everything but endogenous
+
   names.X  <- colnames(l4.form$X)
   names.X1 <- setdiff(names.X, name.endo)
 
@@ -43,6 +48,7 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   X1   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X1)
 
   # Build Z2, Z3 --------------------------------------------------------------------------------
+  # Only extract names from l4.form and build Z self because of unknown ordering
 
   names.Z2 <- l4.form$reTrms$cnms[[1]]
   names.Z3 <- l4.form$reTrms$cnms[[2]]
@@ -69,6 +75,8 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   fct.check.all.same.names(l.L3.Z3, l.L3.X, l.L3.X1)
 
   # Fit REML -----------------------------------------------------------------------------------
+  # get D.2 and random error from VarCor
+
   VC       <- lme4::VarCorr(lme4::lmer(formula=f.lmer.part, data=data))
   D.2      <- VC[[name.group.L2]]
   D.3      <- VC[[name.group.L3]]
@@ -76,7 +84,7 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   # ensure sorting of D cols is same as Z columns
   D.2 <- D.2[names.Z2, names.Z2]
-  D.3 <- D.2[names.Z3, names.Z3]
+  D.3 <- D.3[names.Z3, names.Z3]
   if(!all(colnames(D.2) == colnames(l.L2.Z2[[1]])) ||
      !all(rownames(D.2) == colnames(l.L2.Z2[[1]])))
     stop("D.2 is wrongly sorted!")
@@ -85,9 +93,12 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
     stop("D.3 is wrongly sorted!")
 
   # Calc V -------------------------------------------------------------------------------------
-  # V = blkdiag(V1, . . . , Vn)
-  # Calculate per school level
-  # TODO ** L2 or L3
+  # TODO ** L2 or L3 ** add formula from paper
+  # Relevant Formula:
+  #   p 515: V_s = R_s + Z_2sVar(err(2)_s)Z'_2s+Z_3sVar(err_s(3))Z'_3s
+  #          -> For L2 case drop the Z_3 part
+  # Structure:
+  # (18) V=blkdiag(V_s) and V = blkdiag(V1, . . . , Vn)
 
   l.L2.V.part <- lapply(l.L2.Z2, FUN = function(g.z2){
     g.z2 %*% D.2 %*% t(g.z2)
@@ -109,7 +120,10 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   # print(Matrix::image((V)))
 
   # Calc W -------------------------------------------------------------------------------------
-  # W = V^(-1/2)
+  # Formula:
+  #   p.510: "the weight can be the inverse of the square root of the variance–covariance matrix of the disturbance term"
+  #   W = V_{s}^(-1/2)
+  # **TODO: Is this actually meant to be always at a per school level and not whole V ?? **
   # Do eigen decomp on each block. Has to be L3 as L2 would omits non-zero vars
 
   g.L3.idx <- dt.model.matrix[, list(g.idx=list(.I)), by=name.split.by.L3]$g.idx
@@ -126,13 +140,24 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   W <- Matrix::bdiag(l.L3.W)
   rownames(W) <- colnames(W) <- dt.model.matrix$rn
-  # print(Matrix::image((W)))
 
 
   # Calc Q -------------------------------------------------------------------------------------
-  # between(10-11):
-  #   Q(2)_s=I_s-P(Z_3s), Z_3s=stacked Z_3sct -> Q(2)=blkdiag(Q_s(2))
-  #   (11): Q(2)=blkdiag(Q(2)_s)
+  # Q has to be caluclated at a L3 and L2 level for building the instruments
+  # Formula:
+  #   L3: between(10-11):
+  #         Q(2)_s=I_s-P(Z_3s), Z_3s=stacked Z_3sct
+  #         where P(H) = H(H'H)^(-1)H' (p.510)
+  #
+  #   L2: ?
+  #
+  # Structure:
+  #   L3: p.512 (11)
+  #       Q(2)=blkdiag(Q(2)_s)
+  #   L2: ?
+
+
+  # . Q at L3 level ------------------------------------------------------------------------------------
 
   # ** Exists already but rownames wrong. worth splitting again?
   l.L3.W   <- lapply(g.L3.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
@@ -151,34 +176,32 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   L3.Q.simple <- Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Matrix::bdiag(l.L3.Z3) %*%
     corpcor::pseudoinverse(Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W) %*% W %*% Matrix::bdiag(l.L3.Z3)) %*%
     Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W)
-  print(all.equal(L3.Q,L3.Q.simple)) # TRUE
+  # print(all.equal(L3.Q,L3.Q.simple)) # TRUE
 
   # NO!
   # Q.naive <- Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Z3 %*%
   #   corpcor::pseudoinverse(Matrix::crossprod(Z3, W) %*% W %*% Z3) %*%
   #   Matrix::crossprod(Z3, W)
 
+  # . Q at L2 level ------------------------------------------------------------------------------------
+
   # Split into L2 groups
   g.L2.idx <- dt.model.matrix[, list(g.idx=list(.I)), by=name.split.by.L2]$g.idx
   l.L2.W <- lapply(g.L2.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
 
-  # *** Q formulas for L2 and L3 are different?? ***
   # Q at L2 only (according to raluca's code, no reference to L3 at all)
-  # Ql2 <- diag(Tl2) - Wl2 %*% Zl2 %*% (case with > 1 obs)
-  #   corpcor::pseudoinverse(t(Zl2) %*% (Wl2 %*% Wl2) %*% Zl2) %*% crossprod(Zl2,Wl2)
   l.L2.Q <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
     Matrix::Diagonal(x=1, n=nrow(g.z2)) - g.w2 %*% g.z2 %*%
       corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
   })
   L2.Q <- Matrix::bdiag(l.L2.Q)
 
+  # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
   l.L2.Q.out <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
     g.w2 %*% g.z2 %*%
       corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
   })
-  L2.Q.out <- Matrix::bdiag(l.L2.Q.out)
-  L2.Q.out <- Matrix::Diagonal(x=1, n=nrow(L2.Q.out)) - L2.Q.out
-
+  L2.Q.out <- Matrix::Diagonal(x=1, n=nrow(L2.Q)) - Matrix::bdiag(l.L2.Q.out)
   # print(all.equal(Matrix::drop0(L2.Q.out, tol=1e-15), Matrix::drop0(L2.Q, tol = 1e-15))) # TRUE
 
   # too slow...? and wrong size
@@ -192,26 +215,27 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   #     corpcor::pseudoinverse(t(Z2)%*%(W%*%W)%*%Z2) %*% Matrix::crossprod(Z2, W)
   # print(all.equal(L2.Q, L2.Q.naive))
 
+  # From previous code:
+  # print(all.equal(as.matrix(Q.bd), as.matrix(Q)), check.attributes=F) # FALSE
+  # print(all.equal(as.matrix(Q.bd), as.matrix(Q.using.bd)), check.attributes=F) # TRUE
 
   # Calc P -------------------------------------------------------------------------------------
+  # Formula:
+  #   L3:
+  #   L2:
+  # Structure:
+  #   L3:
+  #   L2:
 
   L2.P <- Matrix::Diagonal(x=1, n=nrow(data)) - L2.Q
   L3.P <- Matrix::Diagonal(x=1, n=nrow(data)) - L3.Q
 
-  # Build instruments --------------------------------------------------------------------------
-  # HIVs1[sloc,] <- Ql3 %*% (Wl3 %*% Xl3)
-  # HIVs2[sloc,] <- cbind(Ql3 %*% (Wl3 %*% Xl3), Pl3 %*% (Wl3 %*% X1l3))
-
-  # Wl2 is W split on L2 level
-  # Pl2 <- diag(Tl2)- Ql2
-  # HIVc1[scloc,] <- Ql2 %*% (Wl2 %*% Xl2)
-  # HIVc2[scloc,] <- cbind(Ql2 %*% (Wl2 %*% Xl2), Pl2 %*% (Wl2 %*% X1l2))
-
+  # Drop near zero values ----------------------------------------------------------------------
   fct.drop.near.zeros <- function(M){
     nnz.before <- Matrix::nnzero(M)
     M <- Matrix::drop0(M, tol=1e-15)
     nnz.after <- Matrix::nnzero(M)
-    print(paste0("perc zeros dropped:",(nnz.before-nnz.after)/nnz.before))
+    # print(paste0("perc zeros dropped:",(nnz.before-nnz.after)/nnz.before))
     return(M)
   }
 
@@ -223,11 +247,18 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   L2.P <- fct.drop.near.zeros(L2.P)
   L3.P <- fct.drop.near.zeros(L3.P)
 
-  HIV.c1 <- L2.Q %*% (W %*% X)
-  HIV.c2 <- cbind(L2.Q %*% (W %*% X), L2.P %*% (W %*% X1))
 
-  HIV.s1 <- L3.Q %*% (W %*% X)
-  HIV.s2 <- cbind(L3.Q %*% (W %*% X), L3.P %*% (W %*% X1))
+  # Build instruments --------------------------------------------------------------------------
+  # Formula: independent of level (** RALUCA: Double-check these)
+  #   HREE,p?: ?
+  #   FE,  p?: ?
+  #   GMM, p518: H_{1,GLS} = (Q(1)_gls V^(-0.5) X : P(1)_GLS V^(-0.5) X_1)
+
+  HIV.FE_L2  <- L2.Q %*% (W %*% X)
+  HIV.GMM_L2 <- cbind(L2.Q %*% (W %*% X), L2.P %*% (W %*% X1))
+
+  HIV.FE_L3  <- L3.Q %*% (W %*% X)
+  HIV.GMM_L3 <- cbind(L3.Q %*% (W %*% X), L3.P %*% (W %*% X1))
 
   HREE   <- W %*% X
 
@@ -245,56 +276,58 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   # print(paste0("HIV.s2: ", class(HIV.s2)))
   # print(paste0("HREE: ", class(HREE)))
 
+
   # Estimate GMM --------------------------------------------------------------------------------------
 
-  res.gmm.HREE <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE)
-  res.gmm.s1   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.s1)
-  res.gmm.s2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.s2)
-  res.gmm.c1   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.c1)
-  res.gmm.c2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.c2)
+  res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE)
+  res.gmm.FE_L3    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L3)
+  res.gmm.GMM_L3   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L3)
+  res.gmm.FE_L2    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L2)
+  res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2)
 
   # Ommitted Variable ---------------------------------------------------------------------------------
+  # ** TODO: remove id=
   # HIVc1 vs HREE, id=1
-  FE_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.c1, IV2 = HREE,
-                                           res.gmm.IV1 = res.gmm.c1, res.gmm.IV2 = res.gmm.HREE,
+  FE_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HREE,
+                                           res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
                                            W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVs1 vs HREE, id=2
-  FE_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.s1, IV2 = HREE,
-                                            res.gmm.IV1 = res.gmm.s1, res.gmm.IV2 = res.gmm.HREE,
+  FE_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L3, IV2 = HREE,
+                                            res.gmm.IV1 = res.gmm.FE_L3, res.gmm.IV2 = res.gmm.HREE,
                                             W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc2 vs HREE, id=1
-  GMM_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.c2, IV2 = HREE,
-                                              res.gmm.IV1 = res.gmm.c2, res.gmm.IV2 = res.gmm.HREE,
+  GMM_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HREE,
+                                              res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.HREE,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVs2 vs HREE, id=2
-  GMM_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.s2, IV2 = HREE,
-                                              res.gmm.IV1 = res.gmm.s2, res.gmm.IV2 = res.gmm.HREE,
+  GMM_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.GMM_L3, IV2 = HREE,
+                                              res.gmm.IV1 = res.gmm.GMM_L3, res.gmm.IV2 = res.gmm.HREE,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc1 vs HREE, id=2 ** double but different id ??
 
   # HIVc1 vs HIVs1, id=1
-  FE_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.c1, IV2 = HIV.s1,
-                                              res.gmm.IV1 = res.gmm.c1, res.gmm.IV2 = res.gmm.s1,
+  FE_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.FE_L3,
+                                              res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.FE_L3,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc2 vs HIVs2, id=1
-  GMM_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.c2, IV2 = HIV.s2,
-                                                res.gmm.IV1 = res.gmm.c2, res.gmm.IV2 = res.gmm.s2,
+  GMM_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.GMM_L3,
+                                                res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc2 vs HIVc1, id=1
-  GMM_L2_vs_FE_L2 <- multilevel_ommitedvartest(IV1 = HIV.c2, IV2 = HIV.c1,
-                                                res.gmm.IV1 = res.gmm.c2, res.gmm.IV2 = res.gmm.c1,
+  GMM_L2_vs_FE_L2 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.FE_L2,
+                                                res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.FE_L2,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVs2 vs HIVs1 ** missing?!
-  GMM_L3_vs_FE_L3  <- multilevel_ommitedvartest(IV1 = HIV.s2, IV2 = HIV.s1,
-                                                res.gmm.IV1 = res.gmm.s2, res.gmm.IV2 = res.gmm.s1,
+  GMM_L3_vs_FE_L3  <- multilevel_ommitedvartest(IV1 = HIV.GMM_L3, IV2 = HIV.FE_L3,
+                                                res.gmm.IV1 = res.gmm.GMM_L3, res.gmm.IV2 = res.gmm.FE_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc2 vs HIVs1, id=1
-  GMM_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.c2, IV2 = HIV.s1,
-                                               res.gmm.IV1 = res.gmm.c2, res.gmm.IV2 = res.gmm.s1,
+  GMM_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.FE_L3,
+                                               res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.FE_L3,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc1 vs HIVs2, id=1
-  FE_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.c1, IV2 = HIV.s2,
-                                               res.gmm.IV1 = res.gmm.c1, res.gmm.IV2 = res.gmm.s2,
+  FE_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L3,
+                                               res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # phtest in plmer
   return(new_rendo_multilevel(
@@ -307,10 +340,10 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
             W = W,
             # The list names determine the final naming of the coefs
             l.gmm = list(REF = res.gmm.HREE,
-                         FE_L2 = res.gmm.c1,
-                         FE_L3 = res.gmm.s1,
-                         GMM_L2 = res.gmm.c2,
-                         GMM_L3 = res.gmm.s2),
+                         FE_L2 = res.gmm.FE_L2,
+                         FE_L3 = res.gmm.FE_L3,
+                         GMM_L2 = res.gmm.GMM_L2,
+                         GMM_L3 = res.gmm.GMM_L3),
             l.ovt = list(FE_L2_vs_REF   = FE_L2_vs_REF,
                          FE_L3_vs_REF   = FE_L3_vs_REF,
                          GMM_L2_vs_REF = GMM_L2_vs_REF,
@@ -324,167 +357,3 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
             y = y,
             X = X))
 }
-
-
-  # TRY OUT / OLD CODE ===============================================================
-
-  # name.endo     <- "X25"
-  # name.response <- as.character((formula)[[2]])
-  #
-  # l4.form <- lme4::lFormula(formula = formula, data=dt.data)
-  #
-  # name.L2.group <- names(l4.form$reTrms$flist)[[1]] # CID
-  # name.L3.group <- names(l4.form$reTrms$flist)[[2]] # SID
-  # message("name.L2.group", name.L2.group)
-  # message("name.L3.group", name.L3.group)
-  #
-  # names.by <- c(name.L3.group, name.L2.group)
-  #
-  # data.table::setorderv(x = dt.data, cols = names.by)
-  #
-  # mf <- model.frame(formula, dt.data)
-  # mm <- model.matrix(object = formula, data = mf)
-  #
-  # y <- as.matrix(model.response(mf))
-  #
-  #
-  # # Build X, X1 ----------------------------------------------------------
-  # # X1 is everything but endogenous
-  #
-  # names.X  <- colnames(l4.form$X)
-  # names.X1 <- setdiff(names.X, name.endo)
-  #
-  # # X  <- as.matrix(dt.data[, .SD, .SDcols = names.X][, "(Intercept)" := 1])
-  # # X1 <- as.matrix(dt.data[, .SD, .SDcols = names.X1][, "(Intercept)" := 1])
-  # X  <- mm[, names.X,  drop=F]
-  # X1 <- mm[, names.X1, drop=F]
-  #
-  # # ** Are the groups for X L2 or L3 wise ??
-  # dt.mm <- data.table(mm)
-  # dt.mm[, (name.L2.group) := dt.data[, .SD,.SDcols=name.L2.group]]
-  # dt.mm[, (name.L3.group) := dt.data[, .SD,.SDcols=name.L3.group]]
-  #
-  # # For ommitted var test only (Residuals):
-  # # l.Xgroups <- data.table:::split.data.table(dt.mm, by=name.L2.group, keep.by = FALSE)
-  # # l.Xgroups <- lapply(l.Xgroups, as.matrix)
-  # #
-  # # l.y.groups <- data.table:::split.data.table(dt.data[, .SD, .SDcols=c(name.L2.group, name.response)],
-  # #                                             by=name.L2.group, keep.by = FALSE)
-  # # l.y.groups <- lapply(l.y.groups, as.matrix)
-  #
-  # # Build Z2, Z3 ---------------------------------------------------------
-  # # Only extract names from l4.form and build Z self because of unknown ordering
-  # names.Z2 <- l4.form$reTrms$cnms[[1]]
-  # names.Z3 <- l4.form$reTrms$cnms[[2]]
-  #
-  # message("names.Z2", names.Z2)
-  # message("names.Z3", names.Z3)
-  #
-  # Z2 <- mm[, names.Z2, drop=FALSE]
-  # Z3 <- mm[, names.Z3, drop=FALSE]
-  #
-  # # Split into school level groups
-  # l.Z2.groups <- data.table:::split.data.table(dt.mm[, .SD, .SDcols = c(names.Z2, name.L3.group)],
-  #                                              by=name.L3.group, keep.by = FALSE)
-  # l.Z3.groups <- data.table:::split.data.table(dt.mm[, .SD, .SDcols = c(names.Z3, name.L3.group)],
-  #                                              by=name.L3.group, keep.by = FALSE)
-  # l.Z2.groups <- lapply(l.Z2.groups, as.matrix)
-  # l.Z3.groups <- lapply(l.Z3.groups, as.matrix)
-  #
-  # # Calc V ---------------------------------------------------------------
-  #
-  # # sigma.sq, D.2, D.3
-  # #  get D.2 and random error from VarCor
-  # VC       <- lme4::VarCorr(lme4::lmer(formula=formula, data=dt.data))
-  # D.2      <- VC[[name.L2.group]]
-  # D.3      <- VC[[name.L3.group]]
-  # sigma.sq <- attr(VC, "sc")
-  #
-  #
-  # # V = blkdiag(V1, . . . , Vn)
-  # # "and s=1,...,n schools"
-  # # n = number of schools
-  # # p 515: V_s = R_s + Z_2sVar(€(2)_s)Z'_2s+Z_3sVar(€_s(3))Z'_3s
-  # # R_s is sigma.sq
-  # # Var(€) is D.2 and D.3
-  #
-  # # Calculate per school level
-  # l.groups.V <- mapply(l.Z2.groups, l.Z3.groups, FUN = function(g.z2, g.z3){
-  #   Matrix::Diagonal(sigma.sq, n=length(g.z2)) + g.z2 %*% D.2 %*% t(g.z2) + g.z3 %*% D.3 %*% t(g.z3)
-  # })
-  #
-  # V <- Matrix::bdiag(l.groups.V)
-  #
-  #
-  # # V <- Matrix::Diagonal(sigma.sq, n=nrow(dt.data)) + Z2 %*% D.2 %*% t(Z2) + Z3 %*% D.3 %*% t(Z3)
-  #
-  #
-  # # Calc W ---------------------------------------------------------------
-  # # W = V^(-1/2)
-  #
-  # # split V into its L3 blocks
-  # g.idx <- dt.data[, list(g.idx=list(.I)), by=name.L3.group]$g.idx
-  # l.V.groups <- lapply(g.idx, function(g.id) {V[g.id, g.id]})
-  #
-  # # Do eigen decomp on each block
-  # l.W.groups <- lapply(l.V.groups, function(V.group){
-  #   ei                     <- eigen(V.group)
-  #   ei$values[ei$values<0] <- 0
-  #   sValS                  <- 1/sqrt(ei$values)
-  #   sValS[ei$values==0]    <- 0
-  #   ei$vectors %*% (diag(x=sValS,nrow=NROW(sValS)) %*% t(ei$vectors))})
-  # W <- Matrix::bdiag(l.W.groups)
-  # l.W.groups <- lapply(g.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
-  # print(paste0("W done:", class(W)))
-  #
-  # # Calc Q, P, -----------------------------------------------------------
-  # # between(10-11):
-  # #   Q(2)_s=I_s-P(Z_3s), Z_3s=stacked Z_3sct -> Q(2)=blkdiag(Q_s(2))
-  # #   (11): Q(2)=blkdiag(Q(2)_s)
-  # # ** Where is this huge formula from ??
-  #
-  # l.groups.Q <- mapply(l.Z3.groups, l.W.groups, FUN = function(g.z3, g.w){
-  #   Matrix::Diagonal(x=1, n=nrow(g.z3)) - g.w %*% g.z3 %*%
-  #     corpcor::pseudoinverse(Matrix::crossprod(g.z3, g.w) %*% g.w %*% g.z3) %*%
-  #     Matrix::crossprod(g.z3, g.w)
-  # })
-  #
-  # Q.bd <- Matrix::bdiag(l.groups.Q)
-  #
-  # bd.Z3 <- Matrix::bdiag(l.Z3.groups)
-  # Q.using.bd <-Matrix::Diagonal(x=1, n=nrow(dt.data)) - W %*% bd.Z3 %*%
-  #   corpcor::pseudoinverse(Matrix::crossprod(bd.Z3, W) %*% W %*% bd.Z3) %*%
-  #   Matrix::crossprod(bd.Z3, W)
-  #
-  # Q <- Matrix::Diagonal(x=1, n=nrow(dt.data)) - W %*% Z3 %*%
-  #   corpcor::pseudoinverse(Matrix::crossprod(Z3, W) %*% W %*% Z3) %*%
-  #   Matrix::crossprod(Z3, W)
-  #
-  # print(all.equal(as.matrix(Q.bd), as.matrix(Q)), check.attributes=F) # FALSE
-  # print(all.equal(as.matrix(Q.bd), as.matrix(Q.using.bd)), check.attributes=F) # TRUE
-  # Q <- Q.bd
-  #
-  #
-  # P <- Matrix::Diagonal(x=1, n=nrow(dt.data)) - Q
-  #
-  # print(paste0("Q done:", class(Q)))
-  # print(paste0("P done:", class(P)))
-  #
-  #
-  # # Instruments ------------------------------------------------------------------------------------
-  #
-  # l.L2.matrices <- multilevel_buildmatrices()
-  # l.L3.matrices <- multilevel_buildmatrices()
-  #
-  # # HIVs1[sloc,] <- Ql3 %*% (Wl3 %*% Xl3)
-  # # HIVs2[sloc,] <- cbind(Ql3 %*% (Wl3 %*% Xl3), Pl3 %*% (Wl3 %*% X1l3))
-  #
-  # # HIVc1[scloc,] <- Ql2 %*% (Wl2 %*% Xl2)
-  # # HIVc2[scloc,] <- cbind(Ql2 %*% (Wl2 %*% Xl2), Pl2 %*% (Wl2 %*% X1l2))
-  #
-  # # HIV.s1 <-
-  # # HIV.s2 <-
-  # # HIV.c1 <-
-  # # HIV.c2 <-
-  # # HREE <- W %*% as.matrix(X)
-

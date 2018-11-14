@@ -3,45 +3,49 @@
 #' @importFrom corpcor pseudoinverse
 multilevel_gmmestim <- function(y, X, W, HIV){
 
-  # For both levels, num.indep is number elements (childs)
-  num.indep <- nrow(W)
+  # GMM Estimator in Appendix A1, p529 ---------------------------------------------------------------------
+  # b_GMM = GammaHat(H) (1/n) H' Wy
+  #   where GammaHat(H) = inv(Ghat' inv(M_HH) GHat) Ghat' inv(M_HH)
+  #           and Ghat = 1/n H' W X
+  #           and M_HH = 1/n H' H
+  #           and n is the number of ***** TODO: n=highest level group (school) or observations??? *****
 
-  # KM07 Appendix 1  -----------------------------------------------------------------------------------
+  # *** REALLY ?? For both levels, num.indep is number elements (childs) **
+  n <- nrow(W)
 
-  # From A.1 (21)
-  # Original (from raluca):
+  # Ghat = 1/n H' W X
+  # M_HH = 1/n H' H
+  # GammaHat(H) = inv(Ghat' inv(M_HH) GHat) Ghat' inv(M_HH)
+  GHat    <- Matrix::t(HIV) %*% W %*% X / n
+  MHH     <- Matrix::crossprod(HIV) / n
+  ginvMHH <- corpcor::pseudoinverse(MHH) # ** use solve
+  Gamma.H <- corpcor::pseudoinverse( Matrix::t(GHat) %*% ginvMHH %*% GHat) %*% Matrix::t(GHat) %*% ginvMHH
 
-  # Precalculations:
-  yf      <- W %*% y
-  Xf      <- W %*% X
+  # Actual parameter estimate
+  # b_GMM = GammaHat(H) (1/n) H' Wy
+  bIV     <- Gamma.H %*% Matrix::t(HIV) %*% W %*% y / n
 
-  # Ghat = 1/nH'WX
-  GHat    <- Matrix::t(HIV) %*% Xf/num.indep
-  # M_HH = 1/nH'H
-  MHH     <- Matrix::crossprod(HIV)/num.indep
-  # ** use solve
-  ginvMHH <- corpcor::pseudoinverse(MHH)
-  # GammaHat = inv(Ghat'inv(M_HH)GHat)Ghat'inv(M_HH)
-  GammaH  <- corpcor::pseudoinverse(Matrix::t(GHat) %*% ginvMHH %*% GHat)%*% Matrix::t(GHat) %*% ginvMHH
 
-  # A.1 GMM Estimator
-  bIV     <- GammaH %*% (Matrix::t(HIV) %*% yf) / num.indep
-
-  # Model residuals - Gmm (Proposition 2)
-  # residW  <- yf - Xf %*% bIV
-  # *** tcrossprod(residW, W)?? where is this in the paper??
-  # rwrw <- W %*% Matrix::crossprod(W, residW)
-
-  # Standard Error, pval --------------------------------------------------------------------------------
+  # Standard Error, pval, p.530 --------------------------------------------------------------------------------
+  #   b_GMM has an asymptotic (n -> Inf) normal distribution with mean beta
+  #     and asymptotic variance Gamma(H) Lambda Gamma(H)'
+  #       where Lambda = ?? *** RALUCA ***
 
   Lambda  <- MHH
 
-  MVarbIV     <- GammaH %*% Matrix::tcrossprod(Lambda, GammaH)/num.indep
+  MVarbIV     <- Gamma.H %*% Matrix::tcrossprod(Lambda, Gamma.H) / n
   Mstderr_bIV <- sqrt(Matrix::diag(MVarbIV))
 
   bIV                <- as.vector(bIV)
   names(bIV)         <- colnames(X)
   Mstderr_bIV        <- as.vector(Mstderr_bIV)
   names(Mstderr_bIV) <- names(bIV)
-  return(list(coef=bIV, SE = Mstderr_bIV, GammaH=GammaH))
+  return(list(coef=bIV, SE = Mstderr_bIV, Gamma.H=Gamma.H))
 }
+
+
+
+# Model residuals - Gmm (Proposition 2)
+# residW  <- yf - Xf %*% bIV
+# *** tcrossprod(residW, W)?? where is this in the paper??
+# rwrw <- W %*% Matrix::crossprod(W, residW)

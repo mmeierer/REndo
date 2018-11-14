@@ -1,4 +1,5 @@
 multilevel_splittomatrix <- function(dt, name.group, name.by){
+  .SD <- NULL
   l.groups <- split(dt[, .SD, .SDcols=c("rn",name.group, name.by)],
                     by = name.by, keep.by = FALSE,
                     sorted = FALSE) # keep original ordering
@@ -9,6 +10,7 @@ multilevel_splittomatrix <- function(dt, name.group, name.by){
 
 
 multilevel_colstomatrix <- function(dt, name.cols){
+  .SD <- NULL
   return(Matrix::Matrix(as.matrix(dt[, .SD, .SDcols = c(name.cols, "rn")],
                                   rownames = "rn"),  sparse = TRUE))
 }

@@ -6,22 +6,27 @@ multilevel_ommitedvartest <- function(IV1, IV2,
                                       W,
                                       # Have to be highest level blocks (L3:s, L2:c)
                                       l.Lhighest.X, l.Lhighest.y){
-
   # Read data from GMM results -----------------------------------------------------------
   coef.IV1 <- res.gmm.IV1$coef
   coef.IV2 <- res.gmm.IV2$coef
-  gammaH.IV1 <- res.gmm.IV1$GammaH
-  gammaH.IV2 <- res.gmm.IV2$GammaH
+  gammaH.IV1 <- res.gmm.IV1$Gamma.H
+  gammaH.IV2 <- res.gmm.IV2$Gamma.H
 
   num.groups <- length(l.Lhighest.X) # number groups at highest level (L3:num schools)
 
-  # LambdaHats ---------------------------------------------------------------------------
 
-  # Proposition 6
-  # lambdaHat = (1/n)H_i'WVhatWH_j, i,j = 1,2
-  #  where  Vhat = blkdiag(e1e′1, . . . , ene′n)
-  #   and residuals e_i = y_i − X_ib_1
+  # Proposition 6 ------------------------------------------------------------------------
+  #  The Test-statistic TS_robust = (b_2 - b_1)' inv(OmegaHat) (b_2 - b_1)'
+  #   A robust estimator of the asymptotic variance of b_{2,GMM} - b_{1,GMM} is
+  #     OmegaHat = ....
+  #       with
+  #     lambdaHat = (1/n) H_i' W Vhat W H_j,   i,j = 1,2
+  #       where  Vhat = blkdiag(e1e′1, . . . , ene′n), n=number highest level (school)
+  #         and residuals e_i = y_i − X_ib_1
 
+
+
+  # Residuals ----------------------------------------------------------------------------
   m.coef.IV1 <- matrix(data = coef.IV1, ncol=1)
   l.Lhighest.resid.e <- mapply(l.Lhighest.y, l.Lhighest.X, FUN=function(g.y,g.x){
                                   g.y - g.x %*% m.coef.IV1})
@@ -35,37 +40,40 @@ multilevel_ommitedvartest <- function(IV1, IV2,
   # print(all.equal(V.hat.bd, V.hat)) # TRUE
 
 
-  # to reduce computations
-  WVhatW <- W %*% V.hat %*% W
-
+  # LambdaHats + OmegaHat -------------------------------------------------------------------------
+  #   lambdaHat = (1/n) H_i' W Vhat W H_j,   i,j = 1,2
+  WVhatW <- W %*% V.hat %*% W # to reduce computations
   LambdaHat11 <- Matrix::t(IV1) %*% WVhatW %*% IV1 / num.groups
-  LambdaHat22 <- Matrix::t(IV2) %*% WVhatW %*% IV2 / num.groups
   LambdaHat12 <- Matrix::t(IV1) %*% WVhatW %*% IV2 / num.groups
+  LambdaHat21 <- Matrix::t(IV2) %*% WVhatW %*% IV1 / num.groups
+  LambdaHat22 <- Matrix::t(IV2) %*% WVhatW %*% IV2 / num.groups
 
-  # Proposition 6.
+  # OmegaHat = GH2 L22 GH2' + GH1 L11 GH1' - GH2 L21 GH1' - GH1 L12 GH2'
   OmegaHat <- gammaH.IV2 %*% LambdaHat22 %*% Matrix::t(gammaH.IV2) +
                 gammaH.IV1 %*% LambdaHat11 %*% Matrix::t(gammaH.IV1) -
-                gammaH.IV1 %*% LambdaHat12 %*% Matrix::t(gammaH.IV2) -
+                gammaH.IV2 %*% LambdaHat21 %*% Matrix::t(gammaH.IV1) -
                 gammaH.IV1 %*% LambdaHat12 %*% Matrix::t(gammaH.IV2)
   colnames(OmegaHat) <- rownames(OmegaHat) <- names(coef.IV1)
 
 
   # Results ------------------------------------------------------------------------------------
-  names.common  <- intersect(names(coef.IV1), names(coef.IV2))
-
-  # diff of coefs
-  diff.coef    <- coef.IV1[names.common] - coef.IV2[names.common]
-
-  # vcov diff
-  common.OmegaHat <- corpcor::make.positive.definite(OmegaHat[names.common, names.common]/num.groups)
-
+  # **** How should they have coefs which are not in common?? ****
+  # names.common  <- intersect(names(coef.IV1), names(coef.IV2))
+  #
+  # # diff of coefs
+  # diff.coef    <- coef.IV1[names.common] - coef.IV2[names.common]
+  #
+  # # vcov diff
+  # ** where was that /n from? have not seen anywhere ??
+  # common.OmegaHat <- corpcor::make.positive.definite(OmegaHat[names.common, names.common]/num.groups)
   # x2 diff
+
   # Proposition 6:
-  # The test statistic TS_robust = (b_2gmm-b_1gmm)'F'inv(OmegaHat)F(b_2gmm-b_1gmm)
-  stat.ht    <- as.numeric(Matrix::t(diff.coef) %*% corpcor::pseudoinverse(common.OmegaHat) %*% diff.coef)
+  # The test statistic TS_robust = (b_2gmm-b_1gmm)' inv(OmegaHat) (b_2gmm-b_1gmm)
+  stat.ht    <- as.numeric(Matrix::t(coef.IV2-coef.IV1) %*% corpcor::pseudoinverse(OmegaHat) %*% (coef.IV2-coef.IV1))
   names(stat.ht) <- "chisq"
 
-  df      <- as.numeric(Matrix::rankMatrix(common.OmegaHat))
+  df      <- as.numeric(Matrix::rankMatrix(OmegaHat))
   p.val   <- stats::pchisq(q = stat.ht, df = df, lower.tail = FALSE)
 
   return(list(stat=stat.ht, df = df, p.val = p.val))

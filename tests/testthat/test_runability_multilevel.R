@@ -3,9 +3,6 @@ data("dataMultilevelIV")
 
 context("Runability - multilevelIV - Runability")
 
-# ** TODO **
-# Works without intercept, 2/3 levels
-
 test_that("Works with 2 levels", {
   expect_message(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                 X31 + X32 + X33 + (1 | SID) | endo(X15),
