@@ -5,12 +5,14 @@ coef.rendo.multilevel <- function(object, ...){
 
 #' @export
 fitted.rendo.multilevel <- function(object, model="REF", ...){
+  # check model input
   check_err_msg(checkinput_multilevel_model(object=object,model=model))
   return(object$l.fitted[[model]])
 }
 
 #' @export
 residuals.rendo.multilevel <- function(object, model="REF", ...){
+  # check model input
   check_err_msg(checkinput_multilevel_model(object=object,model=model))
   return(object$l.residuals[[model]])
 }
@@ -23,8 +25,12 @@ nobs.rendo.multilevel <- function(object, ...){
 
 #' @export
 #' @importFrom stats vcov
-vcov.rendo.multilevel <- function(object, ...){
-  return(list(V=object$V, W=object$W))
+vcov.rendo.multilevel <- function(object, model="REF", ...){
+  # check model input
+  check_err_msg(checkinput_multilevel_model(object=object, model=model))
+
+  # return vcov of respective gmm estimation
+  return(object$l.vcov[[model]])
 }
 
 
@@ -52,7 +58,8 @@ summary.rendo.multilevel <- function(object, model=c("REF"), ...){
   check_err_msg(checkinput_multilevel_model(object=object,model=model))
 
   # Copy from input
-  res <- object[c("call","coefficients", "V", "W")]
+  res <- object[c("call","coefficients")]
+  res$vcov <- vcov(object = object, model = model)
   res$summary.model <- model
 
   # Coefficient table --------------------------------------------------------------------
@@ -128,5 +135,6 @@ coef.summary.rendo.multilevel <- function(object, ...){
 
 #' @export
 vcov.summary.rendo.multilevel <- function(object, ...){
-  return(list(V=object$V, W=object$W))
+  # Model is determined in summary already
+  return(object$vcov)
 }

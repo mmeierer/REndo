@@ -4,11 +4,13 @@ f.multilevel.L3 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31
 f.multilevel.L2 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 | SID) | endo(X15)
 
 context("S3methods - multilevelIV - S3methods")
-expect_silent(res.ml.L3 <- multilevelIV(formula = f.multilevel.L3, data = dataMultilevelIV, verbose = FALSE))
-expect_silent(res.ml.L2 <- multilevelIV(formula = f.multilevel.L2, data = dataMultilevelIV, verbose = FALSE))
+expect_message(res.ml.L3 <- multilevelIV(formula = f.multilevel.L3, data = dataMultilevelIV, verbose = FALSE))
+expect_message(res.ml.L2 <- multilevelIV(formula = f.multilevel.L2, data = dataMultilevelIV, verbose = FALSE))
 
 all.L3.models <- c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3")
 all.L2.models <- c("REF", "FE_L2", "GMM_L2")
+
+# Summary ----------------------------------------------------------------------------------------------------------------------------------
 
 test_that("Summary works for every model for L3 case",{
   for(m in all.L3.models)
@@ -25,12 +27,89 @@ test_that("Summary fails for L3 models in L2 object",{
   expect_error(summary(res.ml.L2, model = "GMM_L3"), regexp = "The above errors were encountered!")
 })
 
-test_that("Has default argument REF",{
+
+test_that("summary() - coef", {
+  for(m in all.L3.models){
+    expect_silent(sum.coef <- coef(summary(res.ml.L3, model=m)))
+    # right cols
+    expect_true(ncol(sum.coef) == 4)
+    expect_true(all(colnames(sum.coef) != ""))
+    # right rows
+    expect_true(nrow(sum.coef) == nrow(coef(res.ml.L3)))
+    expect_true(all(rownames(sum.coef) == rownames(coef(res.ml.L3))))
+  }
+})
+
+fct.check.vcov.structure <- function(res.model, vcov){
+  res.attr <- attributes(vcov)
+  expect_named(res.attr, c("dim", "dimnames"))
+  expect_length(res.attr$dimnames, 2)
+  expect_equal(res.attr$dim, c(nrow(coef(res.model)), nrow(coef(res.model))) )
+  expect_equal(res.attr$dimnames[[1]], rownames(coef(res.model)))
+  expect_equal(res.attr$dimnames[[2]], rownames(coef(res.model)))
+}
+test_that("summary() - vcov", {
+  for(m in all.L3.models)
+    fct.check.vcov.structure(res.model = res.ml.L3, vcov=vcov(summary(res.ml.L3)))
+})
+
+test_that("summary() has default argument REF",{
   default.arg <- eval(formals(REndo:::summary.rendo.multilevel)[["model"]])
   expect_equal(default.arg, "REF")
 })
 
 
+# ** TODO **
+# test_that("summary() object structure",
+
+# vcov ----------------------------------------------------------------------------------------------------------------------------------
+test_that("vcov works for every model for L3 case", {
+  for(m in all.L3.models)
+    expect_silent(res.vcov <- vcov(res.ml.L3, m))
+})
+
+test_that("vcov works for every model for L2 case", {
+  for(m in all.L2.models)
+    expect_silent(res.vcov <- vcov(res.ml.L2, m))
+})
+
+test_that("vcov fails for L3 models in L2 object",{
+  expect_error(vcov(res.ml.L2, model = "FE_L3"), regexp = "The above errors were encountered!")
+  expect_error(vcov(res.ml.L2, model = "GMM_L3"), regexp = "The above errors were encountered!")
+})
+
+
+test_that("vcov has default argument REF",{
+  default.arg <- eval(formals(REndo:::vcov.rendo.multilevel)[["model"]])
+  expect_equal(default.arg, "REF")
+})
+
+
+# Structure of list(V, W)
+# fct.check.vcov.structure <- function(vcov){
+#   expect_type(vcov, "list")
+#   expect_true(length(vcov) == 2)
+#   expect_named(vcov, c("V", "W"), ignore.order = TRUE)
+#   V <- vcov$V
+#   W <- vcov$W
+#   # Checks that named sparse matrices
+#   expect_s4_class(V, "dgCMatrix")
+#   expect_true(all(rownames(V) %in% rownames(dataMultilevelIV)))
+#   expect_true(all(colnames(V) %in% rownames(dataMultilevelIV)))
+#   expect_s4_class(W, "dgCMatrix")
+#   expect_true(all(rownames(W) %in% rownames(dataMultilevelIV)))
+#   expect_true(all(colnames(W) %in% rownames(dataMultilevelIV)))
+# }
+
+test_that("vcov structure", {
+  expect_silent(res.vcov <- vcov(res.ml.L3))
+  fct.check.vcov.structure(res.model = res.ml.L3, vcov=res.vcov)
+})
+
+
+
+
+# Basic S3 functionalities -----------------------------------------------------------------------------
 
 # Cannot use .test.s3methods.basic.structure as to many deviations ---------------------------
 #   Copy and adapt
@@ -107,42 +186,7 @@ test_that("formula", {
 #   expect_false(any(all.vars(res.form) == "."))
 # })
 
-fct.check.vcov.structure <- function(vcov){
-  expect_type(vcov, "list")
-  expect_true(length(vcov) == 2)
-  expect_named(vcov, c("V", "W"), ignore.order = TRUE)
-  V <- vcov$V
-  W <- vcov$W
-  # Checks that named sparse matrices
-  expect_s4_class(V, "dgCMatrix")
-  expect_true(all(rownames(V) %in% rownames(dataMultilevelIV)))
-  expect_true(all(colnames(V) %in% rownames(dataMultilevelIV)))
-  expect_s4_class(W, "dgCMatrix")
-  expect_true(all(rownames(W) %in% rownames(dataMultilevelIV)))
-  expect_true(all(colnames(W) %in% rownames(dataMultilevelIV)))
-}
 
-test_that("vcov", {
-  expect_silent(res.vcov <- vcov(res.ml.L3))
-  fct.check.vcov.structure(res.vcov)
-})
-
-test_that("summary() - vcov", {
-  for(m in all.L3.models)
-    fct.check.vcov.structure(vcov(summary(res.ml.L3)))
-})
-
-test_that("summary() - coef", {
-  for(m in all.L3.models){
-    expect_silent(sum.coef <- coef(summary(res.ml.L3, model=m)))
-    # right cols
-    expect_true(ncol(sum.coef) == 4)
-    expect_true(all(colnames(sum.coef) != ""))
-    # right rows
-    expect_true(nrow(sum.coef) == nrow(coef(res.ml.L3)))
-    expect_true(all(rownames(sum.coef) == rownames(coef(res.ml.L3))))
-  }
-})
 
 
 test_that("Printing methods", {
@@ -165,5 +209,3 @@ test_that("Printing methods", {
   }
 })
 
-# ** TODO **
-# test_that("summary() object structure",

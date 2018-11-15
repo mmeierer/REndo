@@ -18,7 +18,7 @@ multilevel_gmmestim <- function(y, X, W, HIV){
   # GammaHat(H) = inv(Ghat' inv(M_HH) GHat) Ghat' inv(M_HH)
   GHat    <- Matrix::t(HIV) %*% W %*% X / n
   MHH     <- Matrix::crossprod(HIV) / n
-  ginvMHH <- corpcor::pseudoinverse(MHH) # ** use solve
+  ginvMHH <- corpcor::pseudoinverse(MHH) # ** use Matrix::solve
   Gamma.H <- corpcor::pseudoinverse( Matrix::t(GHat) %*% ginvMHH %*% GHat) %*% Matrix::t(GHat) %*% ginvMHH
 
   # Actual parameter estimate
@@ -33,14 +33,15 @@ multilevel_gmmestim <- function(y, X, W, HIV){
 
   Lambda  <- MHH
 
-  MVarbIV     <- Gamma.H %*% Matrix::tcrossprod(Lambda, Gamma.H) / n
-  Mstderr_bIV <- sqrt(Matrix::diag(MVarbIV))
+  gmm.vcov     <- as.matrix(Gamma.H %*% Matrix::tcrossprod(Lambda, Gamma.H) / n)
+  Mstderr_bIV <- sqrt(Matrix::diag(gmm.vcov))
 
   bIV                <- as.vector(bIV)
   names(bIV)         <- colnames(X)
   Mstderr_bIV        <- as.vector(Mstderr_bIV)
   names(Mstderr_bIV) <- names(bIV)
-  return(list(coef=bIV, SE = Mstderr_bIV, Gamma.H=Gamma.H))
+  rownames(gmm.vcov) <- colnames(gmm.vcov) <- names(bIV)
+  return(list(coef=bIV, SE = Mstderr_bIV, Gamma.H=Gamma.H, vcov = gmm.vcov))
 }
 
 
