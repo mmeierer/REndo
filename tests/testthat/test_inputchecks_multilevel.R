@@ -43,9 +43,14 @@ test_that("Fail if less than 2 levels given", {
 })
 
 test_that("Fail if endo() not in model", {
-  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X99), data = dataMultilevelIV), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X11, X99), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X33), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X11, X33), data = dataMultilevelIV), regexp = "The above errors were encountered!")
   expect_error(multilevelIV(formula = y ~ X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fail if transformations different in model and endo()", {
+  expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(log(X11)), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ log(X11) + X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if empty special (endo()) given", {
