@@ -33,6 +33,44 @@ vcov.rendo.multilevel <- function(object, model="REF", ...){
   return(object$l.vcov[[model]])
 }
 
+#' @export
+#' @importFrom stats qnorm confint
+confint.rendo.multilevel <- function(object, model="REF", parm, level = 0.95, ...){
+  # check model input
+  check_err_msg(checkinput_multilevel_model(object=object, model=model))
+
+  # This largely follows stats:::confint.lm to exhibit the exact same behavior
+
+  estim.coefs <- coef(object)[, model, drop = TRUE]
+
+  # KimFrees: p.530:
+  # "b_GMM has an asymptotic (n -> Inf) normal distribution with mean beta
+  #     and asymptotic variance Gamma(H) Lambda Gamma(H)'" (=vcov)
+
+  # Param selection --------------------------------------------------------------------------------
+  if(missing(parm))
+    # Use all by default
+    parm <- names(estim.coefs)
+  else
+    if(is.numeric(parm))
+      # Make numbers to respective names
+      parm <- names(estim.coefs)[parm]
+
+    # CI calc ----------------------------------------------------------------------------------------
+    req.a <- (1-level) / 2
+    req.a <- c(req.a, 1 - req.a)
+# ** RALUCA: SD = 1 correct ???  ***
+    zs <- stats::qnorm(p = req.a, mean = 0, sd = 1)
+    ci <- estim.coefs[parm] + sqrt(diag(vcov(object, model = model)))[parm] %o% zs
+
+    # Return ----------------------------------------------------------------------------------------
+    # from stats:::format.perc - cannot call with ::: as gives CRAN note
+    names.perc <- paste(format(100 * req.a, trim = TRUE, scientific = FALSE, digits = 3), "%")
+    res <- array(data = NA, dim = c(length(parm), 2L), dimnames = list(parm, names.perc))
+    res[] <- ci
+    return(res)
+}
+
 
 #' @export
 print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L), ...){

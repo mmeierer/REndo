@@ -187,8 +187,6 @@ test_that("formula", {
 # })
 
 
-
-
 test_that("Printing methods", {
   # Just that they work and return their input
   expect_output(res <- show(res.ml.L3))
@@ -209,3 +207,29 @@ test_that("Printing methods", {
   }
 })
 
+
+# confint ------------------------------------------------------------------------------------------------------------------------
+# confint structure is correct
+.test.s3methods.confint.multilevel(res.model = res.ml.L2)
+.test.s3methods.confint.multilevel(res.model = res.ml.L3)
+
+
+test_that("confint works for all L2 models", {
+  for(m in all.L2.models){
+    expect_silent(res.ci <- confint(object = res.ml.L2, model=m))
+    expect_true(!is.null(res.ci))
+    expect_true(all.equal(rownames(res.ci), rownames(coef(res.ml.L2))))
+    expect_true(all.equal(colnames(res.ci), c("2.5 %", "97.5 %")))
+    expect_true(nrow(res.ci) == nrow(coef(res.ml.L2)))
+  }
+})
+
+test_that("confint works for all L3 models", {
+  for(m in all.L3.models){
+    expect_silent(res.ci <- confint(object = res.ml.L3, model=m))
+    expect_true(!is.null(res.ci))
+    expect_true(all.equal(rownames(res.ci), rownames(coef(res.ml.L3))))
+    expect_true(all.equal(colnames(res.ci), c("2.5 %", "97.5 %")))
+    expect_true(nrow(res.ci) == nrow(coef(res.ml.L3)))
+  }
+})
