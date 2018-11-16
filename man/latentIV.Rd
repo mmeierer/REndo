@@ -4,7 +4,8 @@
 \alias{latentIV}
 \title{Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables}
 \usage{
-latentIV(formula, data, start.params = c(), verbose = TRUE)
+latentIV(formula, data, start.params = c(), optimx.args = list(),
+  verbose = TRUE)
 }
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. Of class "formula".}
@@ -14,6 +15,8 @@ latentIV(formula, data, start.params = c(), verbose = TRUE)
 \item{start.params}{A named vector containing a set of parameters to use in the first optimization iteration.
 The names have to correspond exactly to the names of the components specified in the formula parameter.
 If not provided, a linear model is fitted to derive them.}
+
+\item{optimx.args}{A named list of arguments which are passed to \code{\link[optimx]{optimx}}. This allows users to tweak optimization settings to their liking.}
 
 \item{verbose}{Show details about the running of the function.}
 }
@@ -103,6 +106,20 @@ summary(l)
 l1 <- latentIV(y ~ P, start.params = c("(Intercept)"=2.5, P=-0.5),
                data = dataLatentIV)
 summary(l1)
+
+# use own optimization settings (see optimx())
+# set maximum number of iterations to 50000
+l2 <- latentIV(y ~ P, optimx.args = list(itnmax = 5000),
+               data = dataLatentIV)
+
+# print detailed tracing information on progress
+l3 <- latentIV(y ~ P, optimx.args = list(control = list(trace = 6)),
+               data = dataLatentIV)
+
+# use method L-BFGS-B instead of Nelder-Mead and print report every 50 iterations
+l4 <- latentIV(y ~ P, optimx.args = list(method = "L-BFGS-B", control=list(trace = 2, REPORT=50)),
+               data = dataLatentIV)
+
 }
 \references{
 Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error

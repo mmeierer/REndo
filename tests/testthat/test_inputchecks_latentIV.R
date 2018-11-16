@@ -166,8 +166,38 @@ test_that("start.params contains no parameter named pi1, pi2, theta5, theta6, th
   expect_error(latentIV(start.params = c("(Intercept)"=2, theta8=1), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
 })
 
+# optimx.args  -----------------------------------------------------------------------------------------------------------
+context("Inputchecks - latentIV - Parameter optimx.args")
+test_that("Has default value empty list()",{
+  default.arg <- eval(formals(REndo:::latentIV)[["optimx.args"]])
+  expect_equal(class(default.arg), "list") # S3 class does not work
+})
 
-# verbose ----------------------------------------------------------------------
+
+test_that("Fails if optimx.args is not a list", {
+  expect_error(latentIV(optimx.args = NA, formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  expect_error(latentIV(optimx.args = c(itnmax = 5000), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  expect_error(latentIV(optimx.args = data.frame(itnmax = 5000), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  expect_error(latentIV(optimx.args = NULL, formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+})
+
+test_that("Fails if optimx.args is not named", {
+  expect_error(latentIV(optimx.args = list(5000), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  expect_error(latentIV(optimx.args = list(itnmax = 5000, TRUE), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+})
+
+
+test_that("Fails if optimx.args contains arguments not in optimx", {
+  # Missspelled
+  expect_error(latentIV(optimx.args = list(itmax = 5000), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  expect_error(latentIV(optimx.args = list(kktol = 0.01), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  expect_error(latentIV(optimx.args = list(itnmax = 5000, kktol = 0.01), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  expect_error(latentIV(optimx.args = list(itmax = 5000, kkttol = 0.01), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+  # Inexistent
+  expect_error(latentIV(optimx.args = list(a = 12), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
+})
+
+# verbose ----------------------------------------------------------------------------------------------------------------
 context("Inputchecks - latentIV - Parameter verbose")
 test.single.logical(function.to.test = latentIV, parameter.name="verbose",
                     formula=y~P, function.std.data=dataLatentIV)
