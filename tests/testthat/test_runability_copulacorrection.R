@@ -105,6 +105,15 @@ test_that("Start params work with non-numeric", {
 })
 
 
+test_that("Works with proper optimx.args", {
+  expect_warning(copulaCorrection(optimx.args = list(itnmax = 100), formula = y~X1+X2+P|continuous(P),
+                                 data = dataCopCont, verbose = FALSE, num.boots = 2),
+                 regexp = "t is recommended to run more than")
+  expect_warning(copulaCorrection(optimx.args = list(itnmax = 100, control=list(kkttol=0.01)), formula = y~X1+X2+P|continuous(P),
+                                  data = dataCopCont, verbose = FALSE, num.boots = 2),
+                 regexp = "t is recommended to run more than")
+})
+
 # Transformations in formula ---------------------------------------------------------------------------------------------------
 context("Runability - copulaCorrection - Formula transformations")
 test_that("Works with function in exogenous", {

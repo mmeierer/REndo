@@ -382,6 +382,17 @@ test_that("start.params fails if transformation missing", {
 
 # *** TODO: Check that start.params work with dot in formula
 
+# optimx.args --------------------------------------------------------------------------------------------------------------------------------------------------------------
+context("Inputchecks - copulaCorrection - Parameter optimx.args")
+test.optimx.args(function.to.test = copulaCorrection, parameter.name = "optimx.args",
+                 formula=y ~ X1+X2+P|continuous(P), function.std.data = dataCopCont)
+
+test_that("Has default value empty list()",{
+  default.arg <- eval(formals(REndo:::copulaCorrection_optimizeLL)[["optimx.args"]])
+  expect_equal(class(default.arg), "list") # S3 class does not work
+})
+
+
 
 # ...  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - copulaCorrection - Parameter 3-dots")

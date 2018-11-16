@@ -150,3 +150,7 @@ checkinput_copulacorrection_warnbinomialendodata <- function(data, names.vars.co
   # Nothing to return
 }
 
+
+checkinput_copulacorrection_optimxargs <- function(optimx.args){
+  return(checkinputhelper_optimxargs(optimx.args = optimx.args))
+}

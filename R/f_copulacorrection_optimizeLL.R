@@ -3,12 +3,14 @@
 #' @importFrom Formula as.Formula model.part
 #' @importFrom utils txtProgressBar setTxtProgressBar
 copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, verbose,
-                                        start.params=NULL, num.boots=10, cl, ...){
+                                        start.params=NULL, num.boots=10, optimx.args = list(),
+                                        cl, ...){
   # Catch
   l.ellipsis <- list(...)
 
   # Further checks required for the parameters in copualCorrection's ... ------------------------------
   check_err_msg(checkinput_copulacorrection_numboots(num.boots=num.boots))
+  check_err_msg(checkinput_copulacorrection_optimxargs(optimx.args = optimx.args))
   # start.params are only checked when the model.matrix has been fitted
 
 
@@ -74,19 +76,24 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Definition: Optimization function -----------------------------------------------------------------
   fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo, hessian=F){
 
+    # Default arguments for optimx
     # Bounds for rho (0,1): LL returns Inf if outside as NelderMead cannot deal with bounds
-    res.optimx <- tryCatch(expr =
-                             optimx(par     = optimx.start.params,
-                                    fn      = copulaCorrection_LL,
-                                    method  = "Nelder-Mead",
-                                    itnmax  = 100000,
-                                    # save.failures = FALSE,
-                                    hessian = hessian,
-                                    control = list(trace=0,
-                                                   dowarn = FALSE),
-                                    vec.y   = vec.data.y,
-                                    m.data.exo.endo = m.model.data.exo.endo,
-                                    vec.data.endo   = vec.data.endo),
+    optimx.default.args <- list(par     = optimx.start.params,
+                                fn      = copulaCorrection_LL,
+                                method  = "Nelder-Mead",
+                                itnmax  = 100000,
+                                hessian = hessian,
+                                control = list(trace=0,
+                                               dowarn = FALSE),
+                                vec.y   = vec.data.y,
+                                m.data.exo.endo = m.model.data.exo.endo,
+                                vec.data.endo   = vec.data.endo)
+
+    # Update default args with user given args for optimx
+    optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)
+
+    # Call optimx with assembled args
+    res.optimx <- tryCatch(expr = do.call(what = optimx, args = optimx.call.args),
                            error   = function(e){ return(e)})
 
     if(is(res.optimx, "error"))

@@ -108,8 +108,8 @@ l1 <- latentIV(y ~ P, start.params = c("(Intercept)"=2.5, P=-0.5),
 summary(l1)
 
 # use own optimization settings (see optimx())
-# set maximum number of iterations to 50000
-l2 <- latentIV(y ~ P, optimx.args = list(itnmax = 5000),
+# set maximum number of iterations to 50'000
+l2 <- latentIV(y ~ P, optimx.args = list(itnmax = 50000),
                data = dataLatentIV)
 
 # print detailed tracing information on progress
