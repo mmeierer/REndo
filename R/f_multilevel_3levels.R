@@ -278,12 +278,12 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
 
   # Estimate GMM --------------------------------------------------------------------------------------
-
-  res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE)
-  res.gmm.FE_L3    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L3)
-  res.gmm.GMM_L3   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L3)
-  res.gmm.FE_L2    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L2)
-  res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2)
+  n <- length(l.L3.X) # num schools
+  res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE,       num.groups.highest.level = n)
+  res.gmm.FE_L3    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L3,  num.groups.highest.level = n)
+  res.gmm.GMM_L3   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L3, num.groups.highest.level = n)
+  res.gmm.FE_L2    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L2,  num.groups.highest.level = n)
+  res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
 
   # Ommitted Variable ---------------------------------------------------------------------------------
   # ** TODO: remove id=

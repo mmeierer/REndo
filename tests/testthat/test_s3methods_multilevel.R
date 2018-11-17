@@ -111,7 +111,7 @@ test_that("vcov structure", {
 
 # Basic S3 functionalities -----------------------------------------------------------------------------
 
-# Cannot use .test.s3methods.basic.structure as to many deviations ---------------------------
+# Cannot use .test.s3methods.basic.structure as to many deviations
 #   Copy and adapt
 names.coef <- c("(Intercept)","X11","X12","X13","X14","X15","X21","X22","X23","X24","X31","X32","X33")
 
@@ -162,9 +162,6 @@ test_that("coef", {
   expect_named(res.coef[,1], names.coef, ignore.order  = TRUE)
   expect_type(res.coef, "double")
 })
-
-# ** TODO : confint **
-# test_that("confint works",{})
 
 # This breaks too many things when used for lm and ivreg models.
 #   reduced to the minimum

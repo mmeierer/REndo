@@ -177,10 +177,10 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
 
   # Estimate GMMs for IVs ------------------------------------------------------------------------------
-
-  res.gmm.FE_L2    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L2)
-  res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2)
-  res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE)
+  n <- length(l.X) # num schools = num groups
+  res.gmm.FE_L2    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L2,  num.groups.highest.level = n)
+  res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
+  res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE,       num.groups.highest.level = n)
 
   # Omitted Var tests ----------------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 #' @importFrom Matrix tcrossprod t diag
 #' @importFrom stats pnorm
 #' @importFrom corpcor pseudoinverse
-multilevel_gmmestim <- function(y, X, W, HIV){
+multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
 
   # GMM Estimator in Appendix A1, p529 ---------------------------------------------------------------------
   # b_GMM = GammaHat(H) (1/n) H' Wy
@@ -10,8 +10,8 @@ multilevel_gmmestim <- function(y, X, W, HIV){
   #           and M_HH = 1/n H' H
   #           and n is the number of ***** TODO: n=highest level group (school) or observations??? *****
 
-  # *** REALLY ?? For both levels, num.indep is number elements (childs) **
-  n <- nrow(W)
+  # p.512: "and s = 1,...,n schools"
+  n <- num.groups.highest.level
 
   # Ghat = 1/n H' W X
   # M_HH = 1/n H' H
