@@ -12,8 +12,6 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   name.group.L3    <- names(l4.form$reTrms$flist)[[2]] # SID
   name.split.by.L3 <- name.group.L3
   name.split.by.L2 <- c(name.group.L3, name.group.L2)
-  message("name.split.by.L3", name.split.by.L3)
-  message("name.split.by.L2", name.split.by.L2)
 
 
   # Extract data ---------------------------------------------------------------
@@ -109,15 +107,11 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   })
 
   # Needed as vcov matrix
-  # **add col/rownames?
   V <- Matrix::Diagonal(sigma.sq, n=nrow(dt.model.frame)) +
             Matrix::bdiag(l.L3.V.part) +
             Matrix::bdiag(l.L2.V.part)
   rownames(V) <- colnames(V) <- dt.model.matrix$rn
 
-  # print(Matrix::image(Matrix::bdiag(l.L3.V.part)))
-  # print(Matrix::image(Matrix::bdiag(l.L2.V.part)))
-  # print(Matrix::image((V)))
 
   # Calc W -------------------------------------------------------------------------------------
   # Formula:
@@ -215,9 +209,6 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   #     corpcor::pseudoinverse(t(Z2)%*%(W%*%W)%*%Z2) %*% Matrix::crossprod(Z2, W)
   # print(all.equal(L2.Q, L2.Q.naive))
 
-  # From previous code:
-  # print(all.equal(as.matrix(Q.bd), as.matrix(Q)), check.attributes=F) # FALSE
-  # print(all.equal(as.matrix(Q.bd), as.matrix(Q.using.bd)), check.attributes=F) # TRUE
 
   # Calc P -------------------------------------------------------------------------------------
   # Formula:
@@ -231,21 +222,16 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   L3.P <- Matrix::Diagonal(x=1, n=nrow(data)) - L3.Q
 
   # Drop near zero values ----------------------------------------------------------------------
-  fct.drop.near.zeros <- function(M){
-    nnz.before <- Matrix::nnzero(M)
-    M <- Matrix::drop0(M, tol=1e-15)
-    nnz.after <- Matrix::nnzero(M)
-    # print(paste0("perc zeros dropped:",(nnz.before-nnz.after)/nnz.before))
-    return(M)
-  }
+  # Very small values (ca 0) can cause troubles during inverse caluclation
+  #   remove, tolerance same as zapsmall()
 
-  W <- fct.drop.near.zeros(W)
-  X <- fct.drop.near.zeros(X)
-  X1 <- fct.drop.near.zeros(X1)
-  L2.Q <- fct.drop.near.zeros(L2.Q)
-  L3.Q <- fct.drop.near.zeros(L3.Q)
-  L2.P <- fct.drop.near.zeros(L2.P)
-  L3.P <- fct.drop.near.zeros(L3.P)
+  W  <- Matrix::drop0(W, tol=sqrt(.Machine$double.eps))
+  X  <- Matrix::drop0(X, tol=sqrt(.Machine$double.eps))
+  X1 <- Matrix::drop0(X1, tol=sqrt(.Machine$double.eps))
+  L2.Q  <- Matrix::drop0(L2.Q, tol=sqrt(.Machine$double.eps))
+  L3.Q  <- Matrix::drop0(L3.Q, tol=sqrt(.Machine$double.eps))
+  L2.P  <- Matrix::drop0(L2.P, tol=sqrt(.Machine$double.eps))
+  L3.P  <- Matrix::drop0(L3.P, tol=sqrt(.Machine$double.eps))
 
 
   # Build instruments --------------------------------------------------------------------------
@@ -262,19 +248,6 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   HREE   <- W %*% X
 
-  # print(paste0("W: ", class(W)))
-  # print(paste0("V: ", class(V)))
-  # print(paste0("X: ", class(X)))
-  # print(paste0("X1: ", class(X1)))
-  # print(paste0("L2.Q: ", class(L2.Q)))
-  # print(paste0("L3.Q: ", class(L3.Q)))
-  # print(paste0("L2.P: ", class(L2.P)))
-  # print(paste0("L3.P: ", class(L3.P)))
-  # print(paste0("HIV.c1: ", class(HIV.c1)))
-  # print(paste0("HIV.c2: ", class(HIV.c2)))
-  # print(paste0("HIV.s1: ", class(HIV.s1)))
-  # print(paste0("HIV.s2: ", class(HIV.s2)))
-  # print(paste0("HREE: ", class(HREE)))
 
 
   # Estimate GMM --------------------------------------------------------------------------------------
@@ -286,34 +259,33 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
 
   # Ommitted Variable ---------------------------------------------------------------------------------
-  # ** TODO: remove id=
-  # HIVc1 vs HREE, id=1
+  # HIVc1 vs HREE
   FE_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HREE,
-                                           res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
-                                           W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVs1 vs HREE, id=2
+                                            res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
+                                            W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
+  # HIVs1 vs HREE
   FE_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L3, IV2 = HREE,
                                             res.gmm.IV1 = res.gmm.FE_L3, res.gmm.IV2 = res.gmm.HREE,
                                             W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc2 vs HREE, id=1
+  # HIVc2 vs HREE
   GMM_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HREE,
-                                              res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.HREE,
-                                              W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVs2 vs HREE, id=2
+                                             res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.HREE,
+                                             W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
+  # HIVs2 vs HREE
   GMM_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.GMM_L3, IV2 = HREE,
                                               res.gmm.IV1 = res.gmm.GMM_L3, res.gmm.IV2 = res.gmm.HREE,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc1 vs HREE, id=2 ** double but different id ??
 
-  # HIVc1 vs HIVs1, id=1
+  # HIVc1 vs HIVs1
   FE_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.FE_L3,
                                               res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.FE_L3,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc2 vs HIVs2, id=1
+  # HIVc2 vs HIVs2
   GMM_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.GMM_L3,
                                                 res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc2 vs HIVc1, id=1
+  # HIVc2 vs HIVc1
   GMM_L2_vs_FE_L2 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.FE_L2,
                                                 res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.FE_L2,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
@@ -321,11 +293,11 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   GMM_L3_vs_FE_L3  <- multilevel_ommitedvartest(IV1 = HIV.GMM_L3, IV2 = HIV.FE_L3,
                                                 res.gmm.IV1 = res.gmm.GMM_L3, res.gmm.IV2 = res.gmm.FE_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc2 vs HIVs1, id=1
+  # HIVc2 vs HIVs1
   GMM_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.FE_L3,
                                                res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.FE_L3,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc1 vs HIVs2, id=1
+  # HIVc1 vs HIVs2
   FE_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L3,
                                                res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)

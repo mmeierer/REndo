@@ -35,7 +35,7 @@ vcov.rendo.multilevel <- function(object, model="REF", ...){
 
 #' @export
 #' @importFrom stats qnorm confint
-confint.rendo.multilevel <- function(object, model="REF", parm, level = 0.95, ...){
+confint.rendo.multilevel <- function(object, parm, level = 0.95,  model="REF", ...){
   # check model input
   check_err_msg(checkinput_multilevel_model(object=object, model=model))
 

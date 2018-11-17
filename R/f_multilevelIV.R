@@ -26,15 +26,6 @@ multilevelIV <- function(formula, data, verbose=TRUE){
 
   # May endo be in (ENDO | CID) ?
 
-  # checkassumptions_multilevel_L2(data = data)
-  #  check that has more than 1 single group (?)
-  #  distribution?
-
-  # checkassumptions_multilevel_L3(data = data)
-  # ** CHECK THAT EVERY CHILD ONLY APPEARS IN 1 SCHOOL
-  # .N, by=SID, CID, then uniqueN(CID) == nrow() (ie CID appears only once for every SID )
-  #   check that has more than 1 single group (?)
-  #   df
 
   # Extract information ---------------------------------------------------------
   F.formula <- as.Formula(formula)

@@ -6,11 +6,8 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   .SD <- .I <- NULL
 
-  name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # CID
-  message("name.group.L2", name.group.L2)
-
-
   # Extract data ---------------------------------------------------------------
+  name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # CID
 
   # Make model variables to data.table to efficiently split into groups
   mm <- model.matrix(object = terms(l4.form$fr), data = l4.form$fr)
@@ -125,27 +122,16 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   #   Where P(1)=blkdiag(P(1)_sc), ie also same as Q
   P <- Matrix::Diagonal(x=1, n=nrow(data)) - Q
 
-#   print(paste0("X done:", class(X)))
-#   print(paste0("X1 done:", class(X1)))
-#   print(paste0("Q done:", class(Q)))
-#   print(paste0("P done:", class(P)))
-#   print(paste0("W done:", class(W)))
-
 
   # Drop near zero values ----------------------------------------------------------------------
-  fct.drop.near.zeros <- function(M){
-    nnz.before <- Matrix::nnzero(M)
-    M <- Matrix::drop0(M, tol=1e-15)
-    nnz.after <- Matrix::nnzero(M)
-    # print(paste0("perc zeros dropped:",(nnz.before-nnz.after)/nnz.before))
-    return(M)
-  }
+  # Very small values (ca 0) can cause troubles during inverse caluclation
+  #   remove, tolerance same as zapsmall()
 
-  W <- fct.drop.near.zeros(W)
-  X <- fct.drop.near.zeros(X)
-  X1 <- fct.drop.near.zeros(X1)
-  Q <- fct.drop.near.zeros(Q)
-  P <- fct.drop.near.zeros(P)
+  W  <- Matrix::drop0(W, tol=sqrt(.Machine$double.eps))
+  X  <- Matrix::drop0(X, tol=sqrt(.Machine$double.eps))
+  X1 <- Matrix::drop0(X1,tol=sqrt(.Machine$double.eps))
+  Q  <- Matrix::drop0(Q, tol=sqrt(.Machine$double.eps))
+  P  <- Matrix::drop0(P, tol=sqrt(.Machine$double.eps))
 
   # Build instruments --------------------------------------------------------------------------
   # "As noted above, bGMM equals bRE when X = X1, where all variables are assumed to be exogenous.
@@ -168,12 +154,6 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   HIV.GMM_L2 <- cbind(Q %*% W%*%X, P%*%W%*%X1)
 
   HREE   <- W %*% X
-
-  # ** TODO or not: drop0, tol = sqrt(machine)
-
-  print(paste0("HIV.s1 done:", class(HIV.FE_L2)))
-  print(paste0("HIV.s2 done:", class(HIV.GMM_L2)))
-  print(paste0("HREE done:", class(HREE)))
 
 
   # Estimate GMMs for IVs ------------------------------------------------------------------------------
