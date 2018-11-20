@@ -4,6 +4,22 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
   .test.s3methods.basic.structure(res.model=res.model, input.form=input.form,
                                   function.std.data=function.std.data, full.coefs=full.coefs)
 
+  test_that("coef has default = TRUE", {
+    expect_equal(eval(formals(REndo:::coef.rendo.optim.LL)[["complete"]]), TRUE)
+  })
+
+  test_that("coef with complete=TRUE", {
+    expect_silent(res.cf <- coef(res.model, complete = TRUE))
+    # equal to all parameters
+    expect_equal(res.cf, expected = res.model$estim.params)
+  })
+
+  test_that("coef with complete=FALSE", {
+    expect_silent(res.cf <- coef(res.model, complete = FALSE))
+    # equal to main parameters only
+    expect_equal(res.cf, expected = res.model$estim.params[res.model$names.main.coefs])
+  })
+
   test_that("logLik", {
     expect_silent(res.loglik <- logLik(res.model))
     expect_s3_class(res.loglik, "logLik")
