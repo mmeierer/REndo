@@ -48,6 +48,24 @@ test_that("Fail if endo() not in model", {
   expect_error(multilevelIV(formula = y ~ X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
 })
 
+test_that("Fail if endo in brackets part", {
+  # L2
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X33 +(1+X33|SID) | endo(X33), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X33 +(1+X33+X12|SID) | endo(X33), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X33 +(1+X12+X33|SID) | endo(X33), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X33 +(1+X12+X33|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X33 +(1+X33+X12|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  # L3
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1+X33|CID)+(1+X12|SID) | endo(X33), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1+X12|CID)+(1+X33|SID) | endo(X33), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1+X33|CID)+(1+X12|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1+X12|CID)+(1+X33|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1+X33+X12|CID)+(1|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1+X12+X33|CID)+(1|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1|CID)+(1+X33+X12|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12+ X31+ X33 +(1|CID)+(1+X12+X33|SID) | endo(X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
 test_that("Fail if transformations different in model and endo()", {
   expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(log(X11)), data = dataMultilevelIV), regexp = "The above errors were encountered!")
   expect_error(multilevelIV(formula = y ~ log(X11) + X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")

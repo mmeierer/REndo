@@ -73,11 +73,11 @@ checkinput_multilevel_data <- function(data){
 #' @importFrom Formula as.Formula
 #' @importFrom lme4 lFormula
 checkinput_multilevel_dataVSformula <- function(formula,data){
-  F.formula <- as.Formula(formula)
+  F.formula     <- as.Formula(formula)
   num.only.cols <- all.vars(F.formula)
   err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=formula, data=data,
-                                                        rhs.rel.regr = 1,
-                                                        num.only.cols = num.only.cols)
+                                                            rhs.rel.regr = 1,
+                                                            num.only.cols = num.only.cols)
   if(length(err.msg) > 0)
     return(err.msg)
 
@@ -99,6 +99,18 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
   # check number of levels
   if(!(lme4formula_get_numberoflevels(l4.form = l4.form) %in% c(2,3)))
     err.msg <- c(err.msg, "Please specify exactly 2 or 3 levels in the formula.")
+
+  # Check that no endogenous is in (|) part
+  # Read out the special functions
+  names.vars.endo <- formula_readout_special(F.formula = F.formula, name.special = "endo",
+                                             from.rhs=2, params.as.chars.only=TRUE)
+
+  l.bars <- lme4::findbars(term = f.lmer) #read out brackets (x|s)
+  l.bars <- lapply(l.bars, function(b){as.Formula(paste0("~", deparse(b)))}) # make char, add ~, make Formula
+  l.bars <- lapply(l.bars, function(F.f){all.vars(formula(F.f, rhs=1, lhs=0))})
+  if(any(names.vars.endo %in% unlist(l.bars)))
+    err.msg <- c(err.msg, "Please specify no endogenous regressor in the brackets part \'(x|x)\' of the formula.")
+
 
   return(err.msg)
 }

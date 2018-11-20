@@ -4,8 +4,8 @@ f.multilevel.L3 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31
 f.multilevel.L2 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 | SID) | endo(X15)
 
 context("S3methods - multilevelIV - S3methods")
-expect_message(res.ml.L3 <- multilevelIV(formula = f.multilevel.L3, data = dataMultilevelIV, verbose = FALSE))
-expect_message(res.ml.L2 <- multilevelIV(formula = f.multilevel.L2, data = dataMultilevelIV, verbose = FALSE))
+expect_message(res.ml.L3 <- multilevelIV(formula = f.multilevel.L3, data = dataMultilevelIV, verbose = FALSE), regexp = "singular fit")
+expect_silent(res.ml.L2 <- multilevelIV(formula = f.multilevel.L2, data = dataMultilevelIV, verbose = FALSE))
 
 all.L3.models <- c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3")
 all.L2.models <- c("REF", "FE_L2", "GMM_L2")
