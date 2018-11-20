@@ -10,6 +10,7 @@
 #' The names have to correspond exactly to the names of the components specified in the formula parameter.
 #' If not provided, a linear model is fitted to derive them.
 #' @param data A data.frame containing the data of all parts specified in the formula parameter.
+#' @param optimx.args A named list of arguments which are passed to \code{\link[optimx]{optimx}}. This allows users to tweak optimization settings to their liking.
 #' @param verbose Show details about the running of the function.
 #'
 #' @details
@@ -99,13 +100,28 @@
 #' l1 <- latentIV(y ~ P, start.params = c("(Intercept)"=2.5, P=-0.5),
 #'                data = dataLatentIV)
 #' summary(l1)
+#'
+#' # use own optimization settings (see optimx())
+#' # set maximum number of iterations to 50'000
+#' l2 <- latentIV(y ~ P, optimx.args = list(itnmax = 50000),
+#'                data = dataLatentIV)
+#'
+#' # print detailed tracing information on progress
+#' l3 <- latentIV(y ~ P, optimx.args = list(control = list(trace = 6)),
+#'                data = dataLatentIV)
+#'
+#' # use method L-BFGS-B instead of Nelder-Mead and print report every 50 iterations
+#' l4 <- latentIV(y ~ P, optimx.args = list(method = "L-BFGS-B", control=list(trace = 2, REPORT=50)),
+#'                data = dataLatentIV)
+#'
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm coef model.frame model.matrix sd update setNames
 #' @importFrom optimx optimx
 #' @importFrom corpcor pseudoinverse
 #' @importFrom methods is
+#' @importFrom utils modifyList
 #' @export
-latentIV <- function(formula, data, start.params=c(), verbose=TRUE){
+latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbose=TRUE){
   cl <- match.call()
 
   # Input checks ------------------------------------------------------------------------------
@@ -113,6 +129,7 @@ latentIV <- function(formula, data, start.params=c(), verbose=TRUE){
   check_err_msg(checkinput_latentIV_formula(formula=formula))
   check_err_msg(checkinput_latentIV_dataVSformula(formula=formula, data=data))
   check_err_msg(checkinput_latentIV_startparams(start.params=start.params, formula=formula))
+  check_err_msg(checkinput_latentIV_optimxargs(optimx.args = optimx.args))
   check_err_msg(checkinput_latentIV_verbose(verbose=verbose))
 
   # Extract data ------------------------------------------------------------------------------
@@ -172,19 +189,23 @@ latentIV <- function(formula, data, start.params=c(), verbose=TRUE){
   optimx.name.endo.param <- make.names(name.endo.param)
   optimx.name.intercept  <- make.names(name.intercept)
 
-  # Fit LL with optimx
-  res.optimx <- tryCatch(expr =
-                           optimx(par = optimx.start.params,
-                                  fn  = latentIV_LL,
-                                  m.data.mvnorm = m.data.mvnorm,
-                                  use.intercept = use.intercept,
-                                  name.intercept  = name.intercept,
-                                  name.endo.param = name.endo.param,
-                                  method = "Nelder-Mead",
-                                  hessian = TRUE,
-                                  itnmax  = 5000,
-                                  control = list(trace = 0,
-                                                 dowarn = FALSE)),
+  # Default arguments for optimx
+  optimx.default.args <- list(par = optimx.start.params,
+                              fn  = latentIV_LL,
+                              m.data.mvnorm = m.data.mvnorm,
+                              use.intercept = use.intercept,
+                              name.intercept  = name.intercept,
+                              name.endo.param = name.endo.param,
+                              method = "Nelder-Mead",
+                              hessian = TRUE,
+                              itnmax  = 5000,
+                              control = list(trace = 0,
+                                             dowarn = FALSE))
+  # Update default args with user given args for optimx
+  optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)
+
+  # Call optimx with assembled args
+  res.optimx <- tryCatch(expr = do.call(what = optimx, args = optimx.call.args),
                          error   = function(e){ return(e)})
 
   if(is(res.optimx, "error"))

@@ -316,3 +316,42 @@ checkinputhelper_dataVSformula_IIV <- function(formula, data){
   return(err.msg)
 }
 
+
+#' @importFrom optimx optimx
+#' @importFrom methods formalArgs is
+#' @importFrom utils getFromNamespace
+checkinputhelper_optimxargs <- function(optimx.args){
+  err.msg <- c()
+  if(is.null(optimx.args))
+    return("The parameter \"optimx.args\" may not be NULL!")
+
+  if(!is(object = optimx.args, class2 = "list"))
+    return("Please provide \"optimx.args\" as a list!")
+
+  # further checks only if not empty list (ie no argument passed)
+  if(length(optimx.args) > 0){
+
+    if(is.null(names(optimx.args)))
+      err.msg <- c(err.msg, "Please provide a named list for \"optimx.args\"!")
+
+    for(n in names(optimx.args))
+      if(nchar(n) < 1){
+        err.msg <- c(err.msg, "Please provide names for every element in \"optimx.args\"!")
+        break
+      }
+
+    # the names need to match the inputs to optimx
+    optimx.allowed <- formalArgs(getFromNamespace("optimx",ns="optimx"))
+    # optimx.allowed <- c("gr", "hess", "lower", "upper", "method", "itnmax", "hessian")
+    for(n in names(optimx.args))
+      if(!(n %in% optimx.allowed))
+        err.msg <- c(err.msg, paste0("The element ",n," in optimx.args is not a valid input to optimx()!"))
+
+    # only one method allowed
+    if("method" %in% names(optimx.args))
+      if(length(optimx.args$method) > 1)
+        err.msg <- c(err.msg, paste0("Only a single method can be used at a time!"))
+
+  }
+  return(err.msg)
+}

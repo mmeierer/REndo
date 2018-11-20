@@ -166,8 +166,18 @@ test_that("start.params contains no parameter named pi1, pi2, theta5, theta6, th
   expect_error(latentIV(start.params = c("(Intercept)"=2, theta8=1), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
 })
 
+# optimx.args  -----------------------------------------------------------------------------------------------------------
+context("Inputchecks - latentIV - Parameter optimx.args")
+test.optimx.args(function.to.test = latentIV, parameter.name = "optimx.args", formula=y~P,
+                 function.std.data = dataLatentIV)
 
-# verbose ----------------------------------------------------------------------
+test_that("Has default value empty list()",{
+  default.arg <- eval(formals(REndo:::latentIV)[["optimx.args"]])
+  expect_equal(class(default.arg), "list") # S3 class does not work
+})
+
+
+# verbose ----------------------------------------------------------------------------------------------------------------
 context("Inputchecks - latentIV - Parameter verbose")
 test.single.logical(function.to.test = latentIV, parameter.name="verbose",
                     formula=y~P, function.std.data=dataLatentIV)

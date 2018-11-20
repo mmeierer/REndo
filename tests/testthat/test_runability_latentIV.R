@@ -55,6 +55,12 @@ test_that("Works with all endo transformed", {
 })
 
 
+
+test_that("Works with proper optimx.args", {
+  expect_silent(latentIV(optimx.args = list(itnmax = 100), formula = y~P, data = dataLatentIV, verbose = FALSE))
+  expect_silent(latentIV(optimx.args = list(itnmax = 100, control=list(kkttol=0.01)), formula = y~P, data = dataLatentIV, verbose = FALSE))
+})
+
 # Formula transformations ------------------------------------------------------------------------------------------------------------
 context("Runability - latentIV - Formula transformations")
 
