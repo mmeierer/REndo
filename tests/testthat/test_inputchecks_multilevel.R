@@ -1,7 +1,7 @@
 
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataMultilevelIV")
-f.multilevel <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 + X11 | CID) + (1 | SID) | endo(X15)
+f.multilevel <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15)
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - multilevelIV - Parameter formula")
@@ -15,7 +15,7 @@ test_that("Fail if no formula object is passed",  {
 
 
 test_that("Fail if formula contains dot (.)", {
-  expect_error(multilevelIV(formula = y ~ . + (1 + X11 | CID) + (1 | SID),data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ . + (1| CID) + (1 | SID),data = dataMultilevelIV), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if formula contains no random effect parts", {
@@ -120,8 +120,8 @@ test_that("Fail if wrong data type in any of the formula parts", {
   expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=factor(1:10), P=1:10)), regexp = "The above errors were encountered!")
   expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=factor(1:10)), regexp = "The above errors were encountered!"))
   # Characters
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=as.character(1:10), P=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=as.character(1:10), stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=as.character(1:10), P=1:10, stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=as.character(1:10), stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
   # Logicals (as indicate dichotomous variable (=factor))
   expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=as.logical(0:9), P=1:10)), regexp = "The above errors were encountered!")
   expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=1:10, P=as.logical(0:9))), regexp = "The above errors were encountered!")
@@ -132,7 +132,7 @@ test_that("Fail if wrong data type in any of the formula parts", {
 #   # Allow wrong data types in unused columns
 #   expect_silent(multilevelIV(formula = f.multilevel, verbose = FALSE,
 #                          data = cbind(dataMultilevelIV,
-#                                       unused1=as.logical(0:4), unused2=as.character(1:5),unused3=as.factor(1:5), stringsAsFactors = F)))
+#                                       unused1=as.logical(0:4), unused2=as.character(1:5),unused3=as.factor(1:5), stringsAsFactors = FALSE)))
 # })
 
 
