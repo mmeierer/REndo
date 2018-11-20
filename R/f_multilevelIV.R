@@ -37,15 +37,13 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   l4.form    <- lme4::lFormula(formula = f.lmer, data=data)
   num.levels <- lme4formula_get_numberoflevels(l4.form)
 
-  message("Num levels detected: ", num.levels)
-
   if(num.levels == 2)
     res <- multilevel_2levels(cl = cl, f.orig=formula, f.lmer.part=f.lmer, l4.form=l4.form,
-                              data=data, name.endo=name.endo)
+                              data=data, name.endo=name.endo, verbose = verbose)
   else
     if(num.levels == 3)
       res <- multilevel_3levels(cl = cl, f.orig=formula, f.lmer.part=f.lmer, l4.form=l4.form,
-                                data=data, name.endo=name.endo)
+                                data=data, name.endo=name.endo, verbose = verbose)
 
   return(res)
 }

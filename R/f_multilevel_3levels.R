@@ -2,7 +2,7 @@
 #' @importFrom data.table as.data.table setkeyv
 #' @importFrom lme4 lFormula lmer VarCorr
 #' @importFrom corpcor pseudoinverse
-multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo){
+multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo, verbose){
 
   .SD <- .I <- NULL
 
@@ -10,6 +10,7 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   name.group.L2    <- names(l4.form$reTrms$flist)[[1]] # CID
   name.group.L3    <- names(l4.form$reTrms$flist)[[2]] # SID
+  # Splitting names: What is used in DT "by" to form groups
   name.split.by.L3 <- name.group.L3
   name.split.by.L2 <- c(name.group.L3, name.group.L2)
 
@@ -45,6 +46,12 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   X    <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X)
   X1   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X1)
 
+  if(verbose){
+    message("Detected multilevel model with 3 levels.")
+    message("For ", name.group.L2, " (Level 2), ", length(l.L2.X), " groups were found")
+    message("For ", name.group.L3, " (Level 3), ", length(l.L3.X), " groups were found")
+  }
+
   # Build Z2, Z3 --------------------------------------------------------------------------------
   # Only extract names from l4.form and build Z self because of unknown ordering
 
@@ -73,9 +80,8 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   fct.check.all.same.names(l.L3.Z3, l.L3.X, l.L3.X1)
 
   # Fit REML -----------------------------------------------------------------------------------
-  # get D.2 and random error from VarCor
-
-  VC       <- lme4::VarCorr(lme4::lmer(formula=f.lmer.part, data=data))
+  # get D.2, D.3 and random error from VarCor
+  VC       <- lme4::VarCorr(lme4::lmer(formula=f.lmer.part, data=data, REML = TRUE))
   D.2      <- VC[[name.group.L2]]
   D.3      <- VC[[name.group.L3]]
   sigma.sq <- attr(VC, "sc")

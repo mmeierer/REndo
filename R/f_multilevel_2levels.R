@@ -2,11 +2,11 @@
 #' @importFrom Matrix Diagonal crossprod bdiag
 #' @importFrom corpcor pseudoinverse
 #' @importFrom data.table as.data.table setkeyv
-multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo){
+multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo, verbose){
 
   .SD <- .I <- NULL
 
-  # Extract data ---------------------------------------------------------------
+  # Extract data --------------------------------------------------------------------------------
   name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # CID
 
   # Make model variables to data.table to efficiently split into groups
@@ -17,9 +17,10 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   dt.model.frame  <- data.table::as.data.table(l4.form$fr, keep.rownames = TRUE)
 
   data.table::setkeyv(dt.model.matrix, cols = name.group.L2)
-  data.table::setkeyv(dt.model.frame, cols = name.group.L2)
+  data.table::setkeyv(dt.model.frame,  cols = name.group.L2)
 
-  # Build y ------------------------------------------------------------------------------------
+
+  # Build y -------------------------------------------------------------------------------------
   # Only needed for calculating residuals in ommitted var test
 
   name.y <- colnames(l4.form$fr)[[1L]] # always at first position, same as model.response reads out
@@ -39,6 +40,10 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   X    <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X)
   X1   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X1)
 
+  if(verbose){
+    message("Detected multilevel model with 2 levels.")
+    message("For ", name.group.L2, " (Level 2), ", length(l.X), " groups were found")
+  }
 
   # Build Z2 ------------------------------------------------------------------------------------
   # Only extract names from l4.form and build Z self because of unknown ordering
