@@ -159,6 +159,5 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
                             names.main.coefs = names.params.exo.endo, hessian = hessian,
                             res.optimx = res.real.data.optimx,
                             fitted.values = fitted.values, residuals = residuals,
-                            log.likelihood = res.real.data.optimx$value,
-                            vcov.error = matrix(NA_real_)))
+                            log.likelihood = res.real.data.optimx$value))
 }

@@ -253,12 +253,6 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   residuals        <- as.vector(vec.data.y - fitted)
   names(residuals) <- names(vec.data.y)
 
-  vcov.error      <- matrix(c(all.estimated.params["theta5"]^2,
-                              all.estimated.params["theta5"]   * all.estimated.params["theta6"],
-                              all.estimated.params["theta5"]   * all.estimated.params["theta6"],
-                              all.estimated.params["theta6"]^2 + all.estimated.params["theta7"]^2),
-                           nrow=2, ncol=2)
-
 
   # Put together returns ------------------------------------------------------------------
   res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
@@ -268,13 +262,6 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
                             names.main.coefs = names.main.model,
                             res.optimx = res.optimx, log.likelihood=res.optimx$value,
                             hessian = hessian, fitted.values=fitted,
-                            residuals=residuals, vcov.error=vcov.error)
-
-                   # list(coefficients   = estimated.params[names.original.main.coefs],
-                   #      group.means    = estimated.params[c("pi1", "pi2")],
-                   #      prob.group1    = estimated.params[["theta8"]],
-                   #      coefficients.se= param.se[names.original.main.coefs],
-                   #      group.means.se = param.se[c("pi1", "pi2")],
-                   #      prob.group1.se = param.se[["theta8"]]))
+                            residuals=residuals)
   return(res)
 }
