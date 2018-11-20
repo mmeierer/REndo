@@ -5,7 +5,7 @@ de.mean <- function(x){
   if(length(dim(x)) > 1){
     # >1 col (data.frame,...).
     # Use sweep contrary to apply because it again returns data.frame
-    return(sweep(x = x, MARGIN = 2, STATS = colMeans(x=x, na.rm = T), FUN = "-"))
+    return(sweep(x = x, MARGIN = 2, STATS = colMeans(x=x, na.rm = TRUE), FUN = "-"))
     # return(apply(x, MARGIN = 2, FUN = function(x){x-mean(x)}))
   }else{
     # vector

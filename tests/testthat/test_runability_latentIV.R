@@ -86,7 +86,7 @@ test_that("Transformations are correct", {
 test_that("Summary prints about SE unavailable", {
   expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=9999), verbose = FALSE,data = dataLatentIV),
                  regexp = "Hessian cannot be solved for the standard errors")
-  expect_output(print(summary(res.latent)), all = F,
+  expect_output(print(summary(res.latent)), all = FALSE,
                 regexp = "For some parameters the statistics could not be calculated")
   expect_true(anyNA(coef(summary(res.latent))))
 })

@@ -36,17 +36,17 @@ test_that("Works without intercept", {
 #   expect_silent(res.c2.1  <- copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2))
 #   expect_silent(res.dis.1 <- copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2))
 #
-#   expect_silent(res.c2.2  <- copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P2, P1), verbose = T, data=dataCopCont2))
-#   expect_silent(res.dis.2 <- copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P2, P1),   verbose = T, data=dataCopDis2))
+#   expect_silent(res.c2.2  <- copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P2, P1), verbose = TRUE, data=dataCopCont2))
+#   expect_silent(res.dis.2 <- copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P2, P1),   verbose = TRUE, data=dataCopDis2))
 #
 #   expect_setequal(coef(res.c2.1),  coef(res.c2.2))
 #   expect_setequal(coef(res.dis.1), coef(res.dis.2))
 # })
 
-# test_that("No output when verbose = F", {
+# test_that("No output when verbose = FALSE", {
 # })
 
-# test_that("Warning and message when verbose = T", {
+# test_that("Warning and message when verbose = TRUE", {
 #
 # })
 #

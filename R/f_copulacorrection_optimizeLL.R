@@ -74,7 +74,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
 
   # Definition: Optimization function -----------------------------------------------------------------
-  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo, hessian=F){
+  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo, hessian=FALSE){
 
     # Default arguments for optimx
     # Bounds for rho (0,1): LL returns Inf if outside as NelderMead cannot deal with bounds

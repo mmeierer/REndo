@@ -69,7 +69,7 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
   # log(exp(log(pt*pdf1)-max) + exp(log(1-pt)*pdf2()-max))
   # log(exp(log(pt)+log(pdf1)-max) + exp(log(1-pt)+log(pdf2)-max))
   # log(pt*exp(log(pdf1)-max)) + (1-pt)*exp(log(pdf2)-max)))
-  # -> log(pdf1)&log(pdf2) = dmvnorm(..., log=T)
+  # -> log(pdf1)&log(pdf2) = dmvnorm(..., log=TRUE)
   log.pdf1 <- dmvnorm(m.data.mvnorm, mean=mu1, sigma=varcov, log = TRUE)
   log.pdf2 <- dmvnorm(m.data.mvnorm, mean=mu2, sigma=varcov, log = TRUE)
   max.AB   <- pmax(log(pt)+log.pdf1, log(1-pt)+log.pdf2)
