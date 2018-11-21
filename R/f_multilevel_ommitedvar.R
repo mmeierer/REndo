@@ -53,6 +53,7 @@ multilevel_ommitedvartest <- function(IV1, IV2,
                 gammaH.IV1 %*% LambdaHat11 %*% Matrix::t(gammaH.IV1) -
                 gammaH.IV2 %*% LambdaHat21 %*% Matrix::t(gammaH.IV1) -
                 gammaH.IV1 %*% LambdaHat12 %*% Matrix::t(gammaH.IV2)
+  OmegaHat <- OmegaHat / num.groups
   colnames(OmegaHat) <- rownames(OmegaHat) <- names(coef.IV1)
 
 
@@ -64,9 +65,11 @@ multilevel_ommitedvartest <- function(IV1, IV2,
   # diff.coef    <- coef.IV1[names.common] - coef.IV2[names.common]
   #
   # # vcov diff
-  # ** where was that /n from? have not seen anywhere ??
   # common.OmegaHat <- corpcor::make.positive.definite(OmegaHat[names.common, names.common]/num.groups)
   # x2 diff
+
+  # *** RALUCA: where was that OmegaHat/n from? have not seen anywhere ??
+  # *** RALUCA: should it be lambda or lambdaHat - their code calcualtes both and then prints either ??
 
   # Proposition 6:
   # The test statistic TS_robust = (b_2gmm-b_1gmm)' inv(OmegaHat) (b_2gmm-b_1gmm)
