@@ -122,6 +122,9 @@ checkinput_multilevel_verbose <- function(verbose){
 
 
 checkinput_multilevel_model <- function(object, model){
+  # needs this order for match.arg in this function
+  allowed.models <- c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3")
+
   err.msg <- c()
   # Check it is something
   if(missing(model))
@@ -136,22 +139,35 @@ checkinput_multilevel_model <- function(object, model){
   if(!is.vector(x=model, mode = "character"))
     err.msg <- c(err.msg, "Please provide a character string to specify the model.")
 
-  # Check its only a single string
-  if(length(model) != 1)
-    err.msg <- c(err.msg, "Please provide exactly a single character string to specify the model.")
+  # Check its not empty vector
+  if(length(model) < 1)
+    err.msg <- c(err.msg, "Please provide exactly one character string to specify the model.")
 
-  # Return now as could break later checks
+  # Return now as could break later checks if length()=0
   if(length(err.msg)>0)
     return(err.msg)
 
-  # Check its one of the allowed strings
-  allowed.models <- c("REF", "FE_L2", "GMM_L2", "FE_L3","GMM_L3")
-  if(!model %in% allowed.models)
-    return(paste0("Please specify one of the following models:",paste(allowed.models,collapse = ","),"."))
+  # Check that only one model is given, except if it is the default arguments (ie non given)
+  #   which match.arg will reduce to first arg (this is common R behavior)
+  if(length(model) > 1 & !isTRUE(all.equal(model,target = allowed.models)))
+    err.msg <- c(err.msg, "Please provide exactly one character string to specify the model.")
 
+  # Check its one of the allowed strings
+  #   To make sure that match.arg does not fail ungracefully
+  #     "FE_L2", "GMM_L2", "FE_L3","GMM_L3" have to match exactly, also in match.arg because
+  #       they only differ by the last char
+  #   "REF" can be (abreviated with) "R", "RE", "REF"
+  allowed.models.all <- c("R", "RE", allowed.models)
+  if(!all(model %in% allowed.models.all))
+    err.msg <- c(err.msg, paste0("Please (partially) specify one of the following models:",paste(allowed.models,collapse = ","),"."))
+
+  # Could crash the follwing match.arg
+  if(length(err.msg)>0)
+    return(err.msg)
 
   # Check that the named model is actually in the fitted model (ie no L3 name in L2 fitted)
   #   check by names and also grepl, just to be sure
+  model <- match.arg(arg = model, choices = allowed.models, several.ok = FALSE) # in case all default args given (ie >1 model)
   if(!any(grepl(pattern = model, x = colnames(object$coefficients))) ||
      !any(grepl(pattern = model, x = names(object$l.ovt))) ||
      !any(grepl(pattern = model, x = names(object$l.fitted))) ||

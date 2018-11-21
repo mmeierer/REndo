@@ -145,14 +145,14 @@ test.single.logical(function.to.test = multilevelIV, parameter.name="verbose",
 
 # summary model parameter ------------------------------------------------------
 context("Inputchecks - multilevelIV summary - Parameter model")
-# **TODO: expect_silent **
-res.ml <- multilevelIV(formula = f.multilevel, data = dataMultilevelIV, verbose = FALSE)
+# Inputchecks for parameter model are all the same for all S3 methods
+
+expect_silent(res.ml <- multilevelIV(formula = f.multilevel, data = dataMultilevelIV, verbose = FALSE))
 test_that("Fails for forms of no input",{
   expect_error(summary(res.ml, model = NULL), regexp = "The above errors were encountered!")
   expect_error(summary(res.ml, model = NA), regexp = "The above errors were encountered!")
   expect_error(summary(res.ml, model = NA_character_), regexp = "The above errors were encountered!")
 })
-
 
 
 test_that("Fails for non character input",{

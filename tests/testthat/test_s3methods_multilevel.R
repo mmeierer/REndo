@@ -13,6 +13,7 @@ all.L2.models <- c("REF", "FE_L2", "GMM_L2")
 # Summary ----------------------------------------------------------------------------------------------------------------------------------
 
 test_that("Summary works for every model for L3 case",{
+  expect_silent(summary(res.ml.L3)) #non given
   for(m in all.L3.models)
     expect_silent(summary(res.ml.L3, model = m))
 })
@@ -50,12 +51,16 @@ fct.check.vcov.structure <- function(res.model, vcov){
 }
 test_that("summary() - vcov", {
   for(m in all.L3.models)
-    fct.check.vcov.structure(res.model = res.ml.L3, vcov=vcov(summary(res.ml.L3)))
+    fct.check.vcov.structure(res.model = res.ml.L3, vcov=vcov(summary(res.ml.L3, model=m)))
 })
 
-test_that("summary() has default argument REF",{
-  default.arg <- eval(formals(REndo:::summary.rendo.multilevel)[["model"]])
-  expect_equal(default.arg, "REF")
+test_that("S3 functions have all models as default argument model", {
+  for(fct in c("fitted.rendo.multilevel", "residuals.rendo.multilevel",
+               "vcov.rendo.multilevel", "confint.rendo.multilevel",
+               "summary.rendo.multilevel")){
+    default.arg <- eval(formals(get(x=fct, envir = getNamespace("REndo")))[["model"]])
+    expect_equal(default.arg, c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"))
+  }
 })
 
 
@@ -64,11 +69,13 @@ test_that("summary() has default argument REF",{
 
 # vcov ----------------------------------------------------------------------------------------------------------------------------------
 test_that("vcov works for every model for L3 case", {
+  expect_silent(res.vcov <- vcov(res.ml.L3))
   for(m in all.L3.models)
     expect_silent(res.vcov <- vcov(res.ml.L3, m))
 })
 
 test_that("vcov works for every model for L2 case", {
+  expect_silent(res.vcov <- vcov(res.ml.L2)) # no given
   for(m in all.L2.models)
     expect_silent(res.vcov <- vcov(res.ml.L2, m))
 })
@@ -78,28 +85,6 @@ test_that("vcov fails for L3 models in L2 object",{
   expect_error(vcov(res.ml.L2, model = "GMM_L3"), regexp = "The above errors were encountered!")
 })
 
-
-test_that("vcov has default argument REF",{
-  default.arg <- eval(formals(REndo:::vcov.rendo.multilevel)[["model"]])
-  expect_equal(default.arg, "REF")
-})
-
-
-# Structure of list(V, W)
-# fct.check.vcov.structure <- function(vcov){
-#   expect_type(vcov, "list")
-#   expect_true(length(vcov) == 2)
-#   expect_named(vcov, c("V", "W"), ignore.order = TRUE)
-#   V <- vcov$V
-#   W <- vcov$W
-#   # Checks that named sparse matrices
-#   expect_s4_class(V, "dgCMatrix")
-#   expect_true(all(rownames(V) %in% rownames(dataMultilevelIV)))
-#   expect_true(all(colnames(V) %in% rownames(dataMultilevelIV)))
-#   expect_s4_class(W, "dgCMatrix")
-#   expect_true(all(rownames(W) %in% rownames(dataMultilevelIV)))
-#   expect_true(all(colnames(W) %in% rownames(dataMultilevelIV)))
-# }
 
 test_that("vcov structure", {
   expect_silent(res.vcov <- vcov(res.ml.L3))
@@ -122,6 +107,7 @@ test_that("nobs", {
 })
 
 test_that("fitted", {
+  expect_silent(fitted(res.ml.L3)) #non given
   for(m in all.L3.models){
     # Residuals
     expect_silent(res <- fitted(res.ml.L3, model=m))
@@ -137,6 +123,7 @@ test_that("fitted", {
 })
 
 test_that("residuals", {
+  expect_silent(residuals(res.ml.L3)) #non given
   for(m in all.L3.models){
     # Residuals
     expect_silent(res <- residuals(res.ml.L3, model=m))
@@ -212,6 +199,7 @@ test_that("Printing methods", {
 
 
 test_that("confint works for all L2 models", {
+  expect_silent(confint(object = res.ml.L2)) #non given
   for(m in all.L2.models){
     expect_silent(res.ci <- confint(object = res.ml.L2, model=m))
     expect_true(!is.null(res.ci))
@@ -222,6 +210,7 @@ test_that("confint works for all L2 models", {
 })
 
 test_that("confint works for all L3 models", {
+  expect_silent(confint(object = res.ml.L3)) #non given
   for(m in all.L3.models){
     expect_silent(res.ci <- confint(object = res.ml.L3, model=m))
     expect_true(!is.null(res.ci))

@@ -4,16 +4,16 @@ coef.rendo.multilevel <- function(object, ...){
 }
 
 #' @export
-fitted.rendo.multilevel <- function(object, model="REF", ...){
-  # check model input
+fitted.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...){
   check_err_msg(checkinput_multilevel_model(object=object,model=model))
+  model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
   return(object$l.fitted[[model]])
 }
 
 #' @export
-residuals.rendo.multilevel <- function(object, model="REF", ...){
-  # check model input
+residuals.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...){
   check_err_msg(checkinput_multilevel_model(object=object,model=model))
+  model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
   return(object$l.residuals[[model]])
 }
 
@@ -25,9 +25,9 @@ nobs.rendo.multilevel <- function(object, ...){
 
 #' @export
 #' @importFrom stats vcov
-vcov.rendo.multilevel <- function(object, model="REF", ...){
-  # check model input
+vcov.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...){
   check_err_msg(checkinput_multilevel_model(object=object, model=model))
+  model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
 
   # return vcov of respective gmm estimation
   return(object$l.vcov[[model]])
@@ -35,9 +35,10 @@ vcov.rendo.multilevel <- function(object, model="REF", ...){
 
 #' @export
 #' @importFrom stats qnorm confint
-confint.rendo.multilevel <- function(object, parm, level = 0.95,  model="REF", ...){
+confint.rendo.multilevel <- function(object, parm, level = 0.95,  model=c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...){
   # check model input
   check_err_msg(checkinput_multilevel_model(object=object, model=model))
+  model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
 
   # This largely follows stats:::confint.lm to exhibit the exact same behavior
 
@@ -90,10 +91,11 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
 
 #' @importFrom stats pt fitted
 #' @export
-summary.rendo.multilevel <- function(object, model=c("REF"), ...){
+summary.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...){
 
   # check model input
   check_err_msg(checkinput_multilevel_model(object=object,model=model))
+  model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
 
   # Copy from input
   res <- object[c("call","coefficients")]
