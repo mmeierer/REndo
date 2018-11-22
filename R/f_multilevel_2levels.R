@@ -42,7 +42,7 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   if(verbose){
     message("Detected multilevel model with 2 levels.")
-    message("For ", name.group.L2, " (Level 2), ", length(l.X), " groups were found")
+    message("For ", name.group.L2, " (Level 2), ", length(l.X), " groups were found.")
   }
 
   # Build Z2 ------------------------------------------------------------------------------------
@@ -168,10 +168,11 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE,       num.groups.highest.level = n)
 
   # Omitted Var tests ----------------------------------------------------------------------------------
-  # To conduct the OVT correctly, the order of the IVs have to be:
-  #   IV1 is always FE when comparing it with REF and GMM;
-  #   IV1 is FE_L2 when comparing it with FE_L3
-  #   IV1 is GMM when comparing it with REF
+  # To conduct the OVT correctly, the order of the IVs have to be that IV
+  #   is always the efficient estimator:
+  #     IV1 is always FE when comparing it with REF and GMM;
+  #     IV1 is FE_L2 when comparing it with FE_L3
+  #     IV1 is GMM when comparing it with REF
 
   FE_L2_vs_REF   <-  multilevel_ommitedvartest(IV1=HIV.FE_L2, IV2 = HREE,
                                                res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
@@ -189,6 +190,7 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
               call = cl,
               formula = f.orig,
               num.levels = 2,
+              l.group.size = list(L2 = setNames(length(l.X), name.group.L2)),
               dt.mf = dt.model.frame,
               dt.mm = dt.model.matrix,
               V = V,
@@ -196,9 +198,9 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
               # The list names determine the final naming of the coefs
               l.gmm = list(FE_L2  = res.gmm.FE_L2,
                            GMM_L2 = res.gmm.GMM_L2,
-                           REF  = res.gmm.HREE),
-              l.ovt = list(FE_L2_vs_REF  = FE_L2_vs_REF,
-                           GMM_L2_vs_REF  = GMM_L2_vs_REF,
+                           REF    = res.gmm.HREE),
+              l.ovt = list(FE_L2_vs_REF    = FE_L2_vs_REF,
+                           GMM_L2_vs_REF   = GMM_L2_vs_REF,
                            FE_L2_vs_GMM_L2 = FE_L2_vs_GMM_L2),
               y = y,
               X = X))

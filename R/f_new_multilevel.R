@@ -1,7 +1,7 @@
 # Constructor for rendo.multilevel objects
 #   Does the steps shared between L2 and L3
 #' @importFrom stats setNames
-new_rendo_multilevel <- function(call, formula, dt.mf, dt.mm, num.levels,
+new_rendo_multilevel <- function(call, formula, dt.mf, dt.mm, num.levels, l.group.size,
                                  V, W, l.gmm, l.ovt, y, X){
 
   # ** TODO: Remove dt.mm ...??
@@ -23,6 +23,7 @@ new_rendo_multilevel <- function(call, formula, dt.mf, dt.mm, num.levels,
             list(call = call,
                  formula = formula,
                  num.levels = num.levels,
+                 l.group.size = l.group.size,
                  dt.mf = dt.mf,
                  dt.mm = dt.mm,
                  coefficients = coefficients,

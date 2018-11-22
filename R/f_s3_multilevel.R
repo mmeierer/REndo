@@ -60,7 +60,6 @@ confint.rendo.multilevel <- function(object, parm, level = 0.95,  model=c("REF",
     # CI calc ----------------------------------------------------------------------------------------
     req.a <- (1-level) / 2
     req.a <- c(req.a, 1 - req.a)
-# ** RALUCA: SD = 1 correct ???  ***
     zs <- stats::qnorm(p = req.a, mean = 0, sd = 1)
     ci <- estim.coefs[parm] + sqrt(diag(vcov(object, model = model)))[parm] %o% zs
 
@@ -75,11 +74,18 @@ confint.rendo.multilevel <- function(object, parm, level = 0.95,  model=c("REF",
 
 #' @export
 print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L), ...){
-  # Short print similar to lm
+  # Short print similar to lmer
 
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 
-  cat("Number of levels: ", x$num.levels,"\n\n", sep = "")
+  cat("Number of levels: ", x$num.levels,"\n", sep = "")
+  cat("Number of observations: ", nobs(x),"\n", sep = "")
+  if(x$num.levels == 2)
+    cat("Number of groups: L2(",names(x$l.group.size[["L2"]]),"): ",x$l.group.size[["L2"]],"\n\n",sep="")
+  else
+    cat("Number of groups: L2(",names(x$l.group.size[["L2"]]),"): ",x$l.group.size[["L2"]],
+        "  L3(",names(x$l.group.size[["L3"]]),"): ",x$l.group.size[["L3"]],
+        "\n\n",sep="")
 
   # Use zapsmall for printing as some coefs are nearly 0
   cat("Coefficients:\n")
@@ -160,7 +166,8 @@ summary.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "G
   model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
 
   # Copy from input
-  res <- object[c("call")]
+  res <- object[c("call", "l.group.size", "num.levels")]
+  res$nobs <- nobs(object)
   res$vcov <- vcov(object = object, model = model)
   res$summary.model <- model
 
@@ -216,6 +223,16 @@ print.summary.rendo.multilevel <- function(x, digits = max(3L, getOption("digits
                                          signif.stars = getOption("show.signif.stars"), ...){
 
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
+
+  cat("Number of levels: ", x$num.levels,"\n", sep = "")
+  cat("Number of observations: ", x$nobs,"\n", sep = "")
+  if(x$num.levels == 2)
+    cat("Number of groups: L2(",names(x$l.group.size[["L2"]]),"): ",x$l.group.size[["L2"]],"\n\n",sep="")
+  else
+    cat("Number of groups: L2(",names(x$l.group.size[["L2"]]),"): ",x$l.group.size[["L2"]],
+                        "  L3(",names(x$l.group.size[["L3"]]),"): ",x$l.group.size[["L3"]],
+        "\n\n",sep="")
+
 
   # Main model coefficients ----------------------------------------------------------------------
   cat("Coefficients for model ", x$summary.model, ":\n", sep = "")

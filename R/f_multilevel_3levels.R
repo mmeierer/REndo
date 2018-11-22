@@ -48,8 +48,8 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   if(verbose){
     message("Detected multilevel model with 3 levels.")
-    message("For ", name.group.L2, " (Level 2), ", length(l.L2.X), " groups were found")
-    message("For ", name.group.L3, " (Level 3), ", length(l.L3.X), " groups were found")
+    message("For ", name.group.L2, " (Level 2), ", length(l.L2.X), " groups were found.")
+    message("For ", name.group.L3, " (Level 3), ", length(l.L3.X), " groups were found.")
   }
 
   # Build Z2, Z3 --------------------------------------------------------------------------------
@@ -265,10 +265,12 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
 
   # Ommitted Variable ---------------------------------------------------------------------------------
-  # To conduct the OVT correctly, the order of the IVs have to be:
-  #   IV1 is always FE when comparing it with REF and GMM;
-  #   IV1 is FE_L2 when comparing it with FE_L3
-  #   IV1 is GMM when comparing it with REF
+  # To conduct the OVT correctly, the order of the IVs have to be,
+  #   that IV1 is always the efficient estimator:
+  #     IV1 is always FE when comparing it with REF and GMM;
+  #     IV1 is FE_L2 when comparing it with FE_L3
+  #     IV1 is GMM when comparing it with REF
+  #     IV1 is GMM_L2 when comparing it with GMM_L3
 
   # HIVc1 vs HREE
   FE_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HREE,
@@ -312,11 +314,15 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   FE_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L3,
                                                res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # phtest in plmer
+
+  # Return --------------------------------------------------------------------------------------------
+
   return(new_rendo_multilevel(
             call = cl,
             formula = f.orig,
             num.levels = 3,
+            l.group.size = list(L2 = setNames(length(l.L2.X), name.group.L2),
+                                L3 = setNames(length(l.L3.X), name.group.L3)),
             dt.mf = dt.model.frame,
             dt.mm = dt.model.matrix,
             V = V,
