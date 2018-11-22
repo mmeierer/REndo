@@ -16,18 +16,18 @@ multilevelIV(formula, data, verbose = TRUE)
 \value{
 \code{multilevelIV} returns an object of class "\code{rendo.multilevel}".
 
-The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{confint}, and \code{nobs}, are available.
+The generic accessor functions \code{coef}, \code{fitted}, \code{residuals}, \code{vcov}, \code{confint}, and \code{nobs}, are available.
 Note that an additional argument \code{model} with possible values \code{"REF", "FE_L2", "FE_L3", "GMM_L2"}, or \code{"GMM_L3"} is
-available for \code{summary}, \code{fitted.values}, \code{residuals}, \code{confint}, and \code{vcov}
-to extract the features of the specified model.
+available for \code{\link[REndo:summary.multilevel]{summary}}, \code{fitted}, \code{residuals}, \code{confint}, and \code{vcov}
+to extract the features for the specified model.
 
 An object of class \code{rendo.multilevel} is returned that is a list and contains the following components:
 
 \item{formula}{the formula given to specify the model to be fitted.}
 \item{num.levels}{the number of levels detected from the model.}
-\item{dt.mm}{model.matrix as data.table}
-\item{coefficients}{a matrix of coefficients, a column per model.}
-\item{coefficients.se}{a matrix of coefficients' SE, a column per model.}
+\item{dt.mm}{used model.matrix as data.table}
+\item{coefficients}{a matrix of coefficients, one column per model.}
+\item{coefficients.se}{a matrix of coefficients' SE, one column per model.}
 \item{l.fitted}{a list of fitted values, named per model.}
 \item{l.residuals}{a list of residuals, named per model.}
 \item{l.vcov}{a list of variance-covariance matrix, named per model.}

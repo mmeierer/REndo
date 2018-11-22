@@ -89,7 +89,64 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
 }
 
 
-#' @importFrom stats pt fitted
+#' @title Summarizing Multilevel GMM Estimation with Endogenous Regressors Model Fits
+#'
+#' @description
+#'
+#' \code{summary} method for class "\code{rendo.multilevel}".
+#'
+#' @details
+#'
+#' The multilevelIV() function estimates three models, namely: the usual random
+#' effects model (REF), the fixed effects model (FE) and the hierarchial GMM model (GMM) proposed by Kim and Frees (2007).
+#' The fixed effects and the GMM estimators are calculated at each level - so in the case of a three-level model, the function estimates,
+#' besides the random effects, fixed effects models at level two (FE_L2) and at level three (FE_L3).
+#' The same is true for the GMM estimators, the multilevelIV() function will return a GMM estimator
+#' at level-three (GMM_L3) and a GMM estimator at level two (GMM_L2).
+#'
+#' In order to facilitate the choice of estimator to be used, the \code{summary()} function also returns an omitted variable test (OVT).
+#' This test is based on the Hausman test for panel data. The OVT allows the comparison of a robust eatimator and an estimator which is efficient
+#' under the null hypothesis of no omitted variables. Moreover, it allows the comparison of two robust
+#' estimators at different levels.
+#'
+#' For the model specified in  argument \code{model}, the \code{summary()} function returns the
+#' summary statistics of the estimated coefficients, together with the results of the omitted variable test
+#' between the specified model and each other model.
+#'
+#' @return
+#' For the model specified in argument \code{model}, the function \code{summary.rendo.multilevel} computes and returns
+#' a list of summary statistics and the results of the omitted variable tests for the fitted multilevel object given in \code{object}.
+#'
+#' An object of class \code{summary.rendo.multilevel} is returned that is a list using the component \code{call} of argument \code{object}, plus,
+#'
+#' \item{summary.model}{the model parameter with which the sumamry function was called.}
+#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients, its standard error,
+#' the t-statistic and corresponding (two-sided) p-value.}
+#' \item{OVT.table}{results of the Hausman omitted variable test for the specified model compared to all other models.}
+#' \item{vcov}{variance covariance matrix derived from the GMM fit of this model.}
+#'
+#' @seealso The model fitting function \code{\link[REndo:multilevelIV]{multilevelIV}}
+#' @seealso Function \code{coef} will extract the \code{coefficients} matrix and
+#' function \code{vcov} will extract the component \code{vcov}.
+#'
+#' @examples
+#'
+#' data(dataMultilevelIV)
+#' # Fit two levels model
+#' res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
+#'                               X32 + X33 + (1|SID) | endo(X15),
+#'                           data = dataMultilevelIV, verbose = FALSE)
+#'
+#' # Get summary for FE_L2 (does not print)
+#' res.sum <- summary(res.ml.L2, model = "FE_L2)
+#' # extract table with coefficients summary statistics
+#' sum.stat.FE_L2 <- coef(res.sum)
+#' # extract vcov of model FE_L2
+#' FE_L2.vcov <- vcov(res.um)
+#' # same as above
+#' FE_L2.vcov <- vcov(res.ml.L2, model = "FE_L2")
+#'
+#' @importFrom stats pt fitted pnorm
 #' @export
 summary.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...){
 
@@ -98,7 +155,7 @@ summary.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "G
   model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
 
   # Copy from input
-  res <- object[c("call","coefficients")]
+  res <- object[c("call")]
   res$vcov <- vcov(object = object, model = model)
   res$summary.model <- model
 
@@ -127,6 +184,7 @@ summary.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "G
   # Ommited Variable tests ---------------------------------------------------------------
 
   # Make table with row for each test, and statistics
+  #   OVT are stored with names MODEL_vs_MODEL
   #   Only select the ones needed
   n.ovt <- grep(pattern = model, x = names(object$l.ovt), value = TRUE)
   l.ovt <- object$l.ovt[n.ovt]
