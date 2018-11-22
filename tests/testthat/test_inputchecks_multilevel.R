@@ -91,13 +91,20 @@ test_that("Fail if no / misspelled special (endo()) given", {
 test_that("Fail special not in RHS2", {
   expect_error(multilevelIV(formula = y+endo(y) ~ X11 + X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
   expect_error(multilevelIV(formula = endo(y) ~ X11 + X12+(1|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = y ~ endo(X11) + X12 + X15(1|CID) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ endo(X11) + X12 + X15+(1|CID) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
 })
 
-# ** TODO **
-# test_that("Fail if all regressors are endogenous", {
-#   expect_error(multilevelIV(formula = y ~ X11 + X12+(1|CID) | endo(X11,X12), data = dataMultilevelIV), regexp = "The above errors were encountered!")
-# })
+test_that("Fail if level grouping id in model", {
+  # L2
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + X15 + CID (1|CID) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + X15 + (1|X11) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  # L3
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + X15 + SID + (1|CID) + (1|SID) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + X15 + CID + (1|CID) + (1|SID) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + X15 + (1 | X11) + (1|SID) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + X15 + (1 | CID) + (1|X11) | endo(X15), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+})
+
 
 # data ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - multilevelIV - Parameter data")

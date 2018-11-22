@@ -39,11 +39,18 @@ test_that("Works with multiple endos", {
                               data = dataMultilevelIV, verbose = FALSE))
 })
 
+test_that("Works with all endo", {
+  expect_silent(multilevelIV(formula = y ~ X15 + X31 + X32 + (1 | SID) | endo(X15,X31,X32),
+                             data = dataMultilevelIV, verbose = FALSE))
+  expect_silent(multilevelIV(formula = y ~ X15 + X31 + X32 + (1 | CID) + (1 | SID) | endo(X15,X31,X32),
+                             data = dataMultilevelIV, verbose = FALSE))
+})
+
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
 
-
 context("Runability - multilevelIV - Formula transformations L2")
+# ** Transformation in random slope??*
 test_that("Transformations are correct for L2", {
   expect_silent(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1 | SID) | endo(X15, X21),
