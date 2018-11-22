@@ -8,7 +8,7 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   #   where GammaHat(H) = inv(Ghat' inv(M_HH) GHat) Ghat' inv(M_HH)
   #           and Ghat = 1/n H' W X
   #           and M_HH = 1/n H' H
-  #           and n is the number of ***** TODO: n=highest level group (school) or observations??? *****
+  #           and n is the number of highest level group (school)
 
   # p.512: "and s = 1,...,n schools"
   n <- num.groups.highest.level
@@ -18,7 +18,7 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   # GammaHat(H) = inv(Ghat' inv(M_HH) GHat) Ghat' inv(M_HH)
   GHat    <- Matrix::t(HIV) %*% W %*% X / n
   MHH     <- Matrix::crossprod(HIV) / n
-  ginvMHH <- corpcor::pseudoinverse(MHH) # ** use Matrix::solve
+  ginvMHH <- corpcor::pseudoinverse(MHH) # maybe use Matrix::solve? could be faster but not fail save?
   Gamma.H <- corpcor::pseudoinverse( Matrix::t(GHat) %*% ginvMHH %*% GHat) %*% Matrix::t(GHat) %*% ginvMHH
 
   # Actual parameter estimate
@@ -43,10 +43,3 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   rownames(gmm.vcov) <- colnames(gmm.vcov) <- names(bIV)
   return(list(coef=bIV, SE = Mstderr_bIV, Gamma.H=Gamma.H, vcov = gmm.vcov))
 }
-
-
-
-# Model residuals - Gmm (Proposition 2)
-# residW  <- yf - Xf %*% bIV
-# *** tcrossprod(residW, W)?? where is this in the paper??
-# rwrw <- W %*% Matrix::crossprod(W, residW)

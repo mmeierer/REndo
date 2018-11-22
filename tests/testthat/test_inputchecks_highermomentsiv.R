@@ -304,4 +304,3 @@ test.single.logical(function.to.test = higherMomentsIV, parameter.name="verbose"
 
 
 # **TODO Fail if underlying assumptions violated
-# ??*** Data may not be named after iiv or g to avoid confusion when naming. could interfere with unique(list) in readout
