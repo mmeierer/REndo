@@ -91,6 +91,11 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
 
 #' @title Summarizing Multilevel GMM Estimation with Endogenous Regressors Model Fits
 #'
+#' @param object an object of class "rendo.multilevel", usually, a result of a call to \code{multilevelIV}.
+#' @param model character string to indicate which fitted model should be summarized.
+#' Possible values are: \code{"REF", "FE_L2", "FE_L3", "GMM_L2"}, or \code{"GMM_L3"}.
+#' @param ... ignored, for consistency with the generic function.
+#'
 #' @description
 #'
 #' \code{summary} method for class "\code{rendo.multilevel}".
@@ -138,11 +143,11 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
 #'                           data = dataMultilevelIV, verbose = FALSE)
 #'
 #' # Get summary for FE_L2 (does not print)
-#' res.sum <- summary(res.ml.L2, model = "FE_L2)
+#' res.sum <- summary(res.ml.L2, model = "FE_L2")
 #' # extract table with coefficients summary statistics
 #' sum.stat.FE_L2 <- coef(res.sum)
 #' # extract vcov of model FE_L2
-#' FE_L2.vcov <- vcov(res.um)
+#' FE_L2.vcov <- vcov(res.sum)
 #' # same as above
 #' FE_L2.vcov <- vcov(res.ml.L2, model = "FE_L2")
 #'

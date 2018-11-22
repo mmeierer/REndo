@@ -7,6 +7,14 @@
 \method{summary}{rendo.multilevel}(object, model = c("REF", "FE_L2",
   "FE_L3", "GMM_L2", "GMM_L3"), ...)
 }
+\arguments{
+\item{object}{an object of class "rendo.multilevel", usually, a result of a call to \code{multilevelIV}.}
+
+\item{model}{character string to indicate which fitted model should be summarized.
+Possible values are: \code{"REF", "FE_L2", "FE_L3", "GMM_L2"}, or \code{"GMM_L3"}.}
+
+\item{...}{ignored, for consistency with the generic function.}
+}
 \value{
 For the model specified in argument \code{model}, the function \code{summary.rendo.multilevel} computes and returns
 a list of summary statistics and the results of the omitted variable tests for the fitted multilevel object given in \code{object}.
@@ -38,6 +46,24 @@ estimators at different levels.
 For the model specified in  argument \code{model}, the \code{summary()} function returns the
 summary statistics of the estimated coefficients, together with the results of the omitted variable test
 between the specified model and each other model.
+}
+\examples{
+
+data(dataMultilevelIV)
+# Fit two levels model
+res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
+                              X32 + X33 + (1|SID) | endo(X15),
+                          data = dataMultilevelIV, verbose = FALSE)
+
+# Get summary for FE_L2 (does not print)
+res.sum <- summary(res.ml.L2, model = "FE_L2")
+# extract table with coefficients summary statistics
+sum.stat.FE_L2 <- coef(res.sum)
+# extract vcov of model FE_L2
+FE_L2.vcov <- vcov(res.sum)
+# same as above
+FE_L2.vcov <- vcov(res.ml.L2, model = "FE_L2")
+
 }
 \seealso{
 The model fitting function \code{\link[REndo:multilevelIV]{multilevelIV}}

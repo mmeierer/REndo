@@ -92,7 +92,7 @@
 #'
 #' The generic accessor functions \code{coef}, \code{fitted}, \code{residuals}, \code{vcov}, \code{confint}, and \code{nobs}, are available.
 #' Note that an additional argument \code{model} with possible values \code{"REF", "FE_L2", "FE_L3", "GMM_L2"}, or \code{"GMM_L3"} is
-#' available for \code{\link[REndo:summary.multilevel]{summary}}, \code{fitted}, \code{residuals}, \code{confint}, and \code{vcov}
+#' available for \code{\link[REndo:summary.rendo.multilevel]{summary}}, \code{fitted}, \code{residuals}, \code{confint}, and \code{vcov}
 #' to extract the features for the specified model.
 #'
 #' An object of class \code{rendo.multilevel} is returned that is a list and contains the following components:
