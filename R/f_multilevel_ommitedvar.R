@@ -12,7 +12,8 @@ multilevel_ommitedvartest <- function(IV1, IV2,
   gammaH.IV1 <- res.gmm.IV1$Gamma.H
   gammaH.IV2 <- res.gmm.IV2$Gamma.H
 
-  num.groups <- length(l.Lhighest.X) # number groups at highest level (L3:num schools)
+  # n = number of groups at highest level (L3:num schools, L2:num schools)
+  num.groups <- length(l.Lhighest.X)
 
 
   # Proposition 6 ------------------------------------------------------------------------
@@ -53,23 +54,15 @@ multilevel_ommitedvartest <- function(IV1, IV2,
                 gammaH.IV1 %*% LambdaHat11 %*% Matrix::t(gammaH.IV1) -
                 gammaH.IV2 %*% LambdaHat21 %*% Matrix::t(gammaH.IV1) -
                 gammaH.IV1 %*% LambdaHat12 %*% Matrix::t(gammaH.IV2)
+
+  # Proposition 3 and example code by Kim / Frees
+  #  "The asymptotic variance is 1/n * F(...)"
+  #   Hence OmegaHat = 1/n OmegaHat
   OmegaHat <- OmegaHat / num.groups
+
   colnames(OmegaHat) <- rownames(OmegaHat) <- names(coef.IV1)
 
-
   # Results ------------------------------------------------------------------------------------
-  # **** How should they have coefs which are not in common?? ****
-  # names.common  <- intersect(names(coef.IV1), names(coef.IV2))
-  #
-  # # diff of coefs
-  # diff.coef    <- coef.IV1[names.common] - coef.IV2[names.common]
-  #
-  # # vcov diff
-  # common.OmegaHat <- corpcor::make.positive.definite(OmegaHat[names.common, names.common]/num.groups)
-  # x2 diff
-
-  # *** RALUCA: where was that OmegaHat/n from? have not seen anywhere ??
-  # *** RALUCA: should it be lambda or lambdaHat - their code calcualtes both and then prints either ??
 
   # Proposition 6:
   # The test statistic TS_robust = (b_2gmm-b_1gmm)' inv(OmegaHat) (b_2gmm-b_1gmm)

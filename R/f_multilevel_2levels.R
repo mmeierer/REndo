@@ -7,7 +7,7 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   .SD <- .I <- NULL
 
   # Extract data --------------------------------------------------------------------------------
-  name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # CID
+  name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # SID
 
   # Make model variables to data.table to efficiently split into groups
   mm <- model.matrix(object = terms(l4.form$fr), data = l4.form$fr)
@@ -145,8 +145,8 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   # FIXED EFFECT
   # original code for the L2 case only HIVs12, line 318ff
-  # "Consequently, the instruments H consist of QX and PX1" (p.516)
-  # H_2s=(Q(2)_sX_s : P(2)_sX2s)
+  #  "Consequently, the instruments H consist of QX and PX1" (p.516)
+  #  H_2s=(Q(2)_sX_s : P(2)_sX2s)
   HIV.FE_L2 <- Q %*% (W%*%(X))
 
   # End page 517:
@@ -168,16 +168,20 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE,       num.groups.highest.level = n)
 
   # Omitted Var tests ----------------------------------------------------------------------------------
+  # To conduct the OVT correctly, the order of the IVs have to be:
+  #   IV1 is always FE when comparing it with REF and GMM;
+  #   IV1 is FE_L2 when comparing it with FE_L3
+  #   IV1 is GMM when comparing it with REF
 
   FE_L2_vs_REF   <-  multilevel_ommitedvartest(IV1=HIV.FE_L2, IV2 = HREE,
                                                res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
                                                W=W, l.Lhighest.X = l.X, l.Lhighest.y = l.y)
-  GMM_L2_vs_REF  <-  multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2=HREE,
-                                               res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.HREE,
-                                               W=W, l.Lhighest.X = l.X, l.Lhighest.y = l.y)
   FE_L2_vs_GMM_L2  <-  multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L2,
                                                  res.gmm.IV1 = res.gmm.FE_L2,res.gmm.IV2 = res.gmm.GMM_L2,
                                                  W=W, l.Lhighest.X = l.X, l.Lhighest.y = l.y)
+  GMM_L2_vs_REF  <-  multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2=HREE,
+                                               res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.HREE,
+                                               W=W, l.Lhighest.X = l.X, l.Lhighest.y = l.y)
 
   # Return --------------------------------------------------------------------------------
 

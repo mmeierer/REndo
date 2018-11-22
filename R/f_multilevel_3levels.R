@@ -6,7 +6,7 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   .SD <- .I <- NULL
 
-  num.levels <- length(l4.form$reTrms$flist) + 1
+  num.levels <- lme4formula_get_numberoflevels(l4.form=l4.form)
 
   name.group.L2    <- names(l4.form$reTrms$flist)[[1]] # CID
   name.group.L3    <- names(l4.form$reTrms$flist)[[2]] # SID
@@ -57,10 +57,10 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   names.Z2 <- l4.form$reTrms$cnms[[1]]
   names.Z3 <- l4.form$reTrms$cnms[[2]]
-  l.L2.Z2 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z2, name.by = name.split.by.L2)
-  l.L3.Z3 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z3, name.by = name.split.by.L3)
-  Z2   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z2)
-  Z3   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z3)
+  l.L2.Z2  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z2, name.by = name.split.by.L2)
+  l.L3.Z3  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z3, name.by = name.split.by.L3)
+  Z2       <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z2)
+  Z3       <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z3)
 
   # Sorting verification ------------------------------------------------------------
   # Before doing any math, verify that each group contains the same observations in the same order
@@ -173,9 +173,9 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   })
   L3.Q <- Matrix::bdiag(l.L3.Q)
 
-  L3.Q.simple <- Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Matrix::bdiag(l.L3.Z3) %*%
-    corpcor::pseudoinverse(Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W) %*% W %*% Matrix::bdiag(l.L3.Z3)) %*%
-    Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W)
+  # L3.Q.simple <- Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Matrix::bdiag(l.L3.Z3) %*%
+  #   corpcor::pseudoinverse(Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W) %*% W %*% Matrix::bdiag(l.L3.Z3)) %*%
+  #   Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W)
   # print(all.equal(L3.Q,L3.Q.simple)) # TRUE
 
   # NO!
@@ -197,11 +197,11 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   L2.Q <- Matrix::bdiag(l.L2.Q)
 
   # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
-  l.L2.Q.out <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
-    g.w2 %*% g.z2 %*%
-      corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
-  })
-  L2.Q.out <- Matrix::Diagonal(x=1, n=nrow(L2.Q)) - Matrix::bdiag(l.L2.Q.out)
+  # l.L2.Q.out <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
+  #   g.w2 %*% g.z2 %*%
+  #     corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
+  # })
+  # L2.Q.out <- Matrix::Diagonal(x=1, n=nrow(L2.Q)) - Matrix::bdiag(l.L2.Q.out)
   # print(all.equal(Matrix::drop0(L2.Q.out, tol=1e-15), Matrix::drop0(L2.Q, tol = 1e-15))) # TRUE
 
   # too slow...? and wrong size
@@ -265,6 +265,11 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
 
   # Ommitted Variable ---------------------------------------------------------------------------------
+  # To conduct the OVT correctly, the order of the IVs have to be:
+  #   IV1 is always FE when comparing it with REF and GMM;
+  #   IV1 is FE_L2 when comparing it with FE_L3
+  #   IV1 is GMM when comparing it with REF
+
   # HIVc1 vs HREE
   FE_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HREE,
                                             res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
@@ -291,17 +296,17 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   GMM_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.GMM_L3,
                                                 res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc2 vs HIVc1
-  GMM_L2_vs_FE_L2 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.FE_L2,
-                                                res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.FE_L2,
+  # HIVc1 vs HIVc2
+  FE_L2_vs_GMM_L2 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L2,
+                                                res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.GMM_L2,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVs2 vs HIVs1 ** missing?!
-  GMM_L3_vs_FE_L3  <- multilevel_ommitedvartest(IV1 = HIV.GMM_L3, IV2 = HIV.FE_L3,
-                                                res.gmm.IV1 = res.gmm.GMM_L3, res.gmm.IV2 = res.gmm.FE_L3,
+  # HIVs2 vs HIVs1 - was missing in example code!
+  FE_L3_vs_GMM_L3  <- multilevel_ommitedvartest(IV1 = HIV.FE_L3, IV2 = HIV.GMM_L3,
+                                                res.gmm.IV1 = res.gmm.FE_L3, res.gmm.IV2 = res.gmm.GMM_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc2 vs HIVs1
-  GMM_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.FE_L3,
-                                               res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.FE_L3,
+  # HIVc2 vs HIVs1 - was missing in example code!
+  FE_L3_vs_GMM_L2 <- multilevel_ommitedvartest(IV1 = HIV.FE_L3, IV2 = HIV.GMM_L2,
+                                               res.gmm.IV1 = res.gmm.FE_L3, res.gmm.IV2 = res.gmm.GMM_L2,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc1 vs HIVs2
   FE_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L3,
@@ -317,21 +322,21 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
             V = V,
             W = W,
             # The list names determine the final naming of the coefs
-            l.gmm = list(REF = res.gmm.HREE,
-                         FE_L2 = res.gmm.FE_L2,
-                         FE_L3 = res.gmm.FE_L3,
+            l.gmm = list(REF    = res.gmm.HREE,
+                         FE_L2  = res.gmm.FE_L2,
+                         FE_L3  = res.gmm.FE_L3,
                          GMM_L2 = res.gmm.GMM_L2,
                          GMM_L3 = res.gmm.GMM_L3),
-            l.ovt = list(FE_L2_vs_REF   = FE_L2_vs_REF,
-                         FE_L3_vs_REF   = FE_L3_vs_REF,
-                         GMM_L2_vs_REF = GMM_L2_vs_REF,
+            l.ovt = list(GMM_L2_vs_REF = GMM_L2_vs_REF,
                          GMM_L3_vs_REF = GMM_L3_vs_REF,
-                         FE_L2_vs_FE_L3 = FE_L2_vs_FE_L3,
-                         GMM_L2_vs_GMM_L3 = GMM_L2_vs_GMM_L3,
-                         GMM_L2_vs_FE_L2   = GMM_L2_vs_FE_L2,
-                         GMM_L3_vs_FE_L3   = GMM_L3_vs_FE_L3,
-                         GMM_L2_vs_FE_L3  = GMM_L2_vs_FE_L3,
-                         FE_L2_vs_GMM_L3 = FE_L2_vs_GMM_L3),
+                         GMM_L2_vs_GMM_L3= GMM_L2_vs_GMM_L3,
+                         FE_L2_vs_REF    = FE_L2_vs_REF,
+                         FE_L3_vs_REF    = FE_L3_vs_REF,
+                         FE_L2_vs_FE_L3  = FE_L2_vs_FE_L3,
+                         FE_L2_vs_GMM_L2 = FE_L2_vs_GMM_L2,
+                         FE_L2_vs_GMM_L3 = FE_L2_vs_GMM_L3,
+                         FE_L3_vs_GMM_L3 = FE_L3_vs_GMM_L3,
+                         FE_L3_vs_GMM_L2 = FE_L3_vs_GMM_L2),
             y = y,
             X = X))
 }
