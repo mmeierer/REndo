@@ -114,6 +114,13 @@
 #' l4 <- latentIV(y ~ P, optimx.args = list(method = "L-BFGS-B", control=list(trace = 2, REPORT=50)),
 #'                data = dataLatentIV)
 #'
+#' # read out all coefficients, incl auxiliary coefs
+#' lat.all.coefs <- coef(l4)
+#' # same as above
+#' lat.all.coefs <- coef(l4, complete = TRUE)
+#' # only main model coefs
+#' lat.main.coefs <- coef(l4, complete = FALSE)
+#'
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm coef model.frame model.matrix sd update setNames
 #' @importFrom optimx optimx
