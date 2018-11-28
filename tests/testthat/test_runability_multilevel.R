@@ -17,13 +17,15 @@ test_that("Works with 3 levels", {
 
 
 test_that("Works without intercept", {
+  # **** -1 and (1|CID) not allowed
+  # ** this doesnt work but L2 does???
   expect_silent(res.ml <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                X31 + X32 + X33 -1 + (1 | CID) + (1 | SID) | endo(X15),
+                                X31 + X32 + X33 -1 + (X11-1| CID) + (X14-1| SID) | endo(X15),
                               data = dataMultilevelIV, verbose = FALSE))
   expect_false("(Intercept)" %in% rownames(coef(res.ml)))
 
   expect_silent(res.ml <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                          X31 + X32 + X33 - 1 + (1 | SID) | endo(X15),
+                                          X31 + X32 + X33 - 1 + (X11-1 | SID) | endo(X15),
                                         data = dataMultilevelIV, verbose = FALSE))
   expect_false("(Intercept)" %in% rownames(coef(res.ml)))
 })
@@ -46,6 +48,28 @@ test_that("Works with all endo", {
                              data = dataMultilevelIV, verbose = FALSE))
 })
 
+
+test_that("Works with group ids as character", {
+  dataMultilevelIV$charSID <- as.character(dataMultilevelIV$SID)
+  dataMultilevelIV$charCID <- as.character(dataMultilevelIV$CID)
+  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                               X31 + X32 + X33 + (1 | charSID) | endo(X15),
+                             data = dataMultilevelIV, verbose = FALSE))
+  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                               X31 + X32 + X33 + (1 | charCID) + (1 | charSID) | endo(X15),
+                             data = dataMultilevelIV, verbose = FALSE))
+})
+
+test_that("Works with group ids as factor", {
+  dataMultilevelIV$factorSID <- as.factor(as.character(dataMultilevelIV$SID))
+  dataMultilevelIV$factorCID <- as.factor(as.character(dataMultilevelIV$CID))
+  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                               X31 + X32 + X33 + (1 | factorCID) | endo(X15),
+                             data = dataMultilevelIV, verbose = FALSE))
+  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                               X31 + X32 + X33 + (1 | factorCID) + (1 | factorSID) | endo(X15),
+                             data = dataMultilevelIV, verbose = FALSE))
+})
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
 

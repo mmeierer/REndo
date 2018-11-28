@@ -2,43 +2,28 @@
 #' @importFrom Matrix Diagonal crossprod bdiag
 #' @importFrom corpcor pseudoinverse
 #' @importFrom data.table as.data.table setkeyv
-multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo, verbose){
+#' @importFrom stats setNames
+multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
+                               name.group.L2, name.y, names.X, names.X1, names.Z2,
+                               verbose){
 
-  .SD <- .I <- NULL
+  data.table::setkeyv(dt.model.data,  cols = name.group.L2)
 
-  # Extract data --------------------------------------------------------------------------------
-  name.group.L2 <- names(l4.form$reTrms$flist)[[1]] # SID
-
-  # Make model variables to data.table to efficiently split into groups
-  mm <- model.matrix(object = terms(l4.form$fr), data = l4.form$fr)
-  dt.model.matrix <- data.table::as.data.table(mm, keep.rownames = TRUE)
-
-  # to extract response (dv) which is not in model.matrix
-  dt.model.frame  <- data.table::as.data.table(l4.form$fr, keep.rownames = TRUE)
-
-  data.table::setkeyv(dt.model.matrix, cols = name.group.L2)
-  data.table::setkeyv(dt.model.frame,  cols = name.group.L2)
-
+  # Because only 1 level name, the name to split by is the same as the L2 name. Therefore no separate variable name.splitby.L2
 
   # Build y -------------------------------------------------------------------------------------
-  # Only needed for calculating residuals in ommitted var test
-
-  name.y <- colnames(l4.form$fr)[[1L]] # always at first position, same as model.response reads out
-  y   <- multilevel_colstomatrix(dt = dt.model.frame, name.cols = name.y)
-  l.y <- multilevel_splittomatrix(dt = dt.model.frame, name.group = name.y,  name.by = name.group.L2)
+  # Only needed for calculating residuals for final object and in omitted var test
+  y   <- multilevel_colstomatrix(dt = dt.model.data, name.cols = name.y)
+  l.y <- multilevel_splittomatrix(dt = dt.model.data, name.group = name.y,  name.by = name.group.L2)
 
 
   # Build X, X1 --------------------------------------------------------------------------------
-  # Do not use the X component present in l4.form as their ordering is somewhat obscure.
-  # X1 is everything but endogenous
+  # Build lists with per group X matrices, build self because unknown ordering in lFormula
 
-  names.X  <- colnames(l4.form$X)
-  names.X1 <- setdiff(names.X, name.endo)
-
-  l.X  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X,  name.by = name.group.L2)
-  l.X1 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X1, name.by = name.group.L2)
-  X    <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X)
-  X1   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X1)
+  l.X  <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.X,  name.by = name.group.L2)
+  l.X1 <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.X1, name.by = name.group.L2)
+  X    <- multilevel_colstomatrix(dt =  dt.model.data, name.cols = names.X)
+  X1   <- multilevel_colstomatrix(dt =  dt.model.data, name.cols = names.X1)
 
   if(verbose){
     message("Detected multilevel model with 2 levels.")
@@ -46,21 +31,18 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   }
 
   # Build Z2 ------------------------------------------------------------------------------------
-  # Only extract names from l4.form and build Z self because of unknown ordering
+  # Build lists with per group Z matrices, build self because unknown ordering in lFormula
+  l.Z2 <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.Z2, name.by = name.group.L2)
 
-  names.Z2 <- l4.form$reTrms$cnms[[1]]
-  l.Z2 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z2, name.by = name.group.L2)
+  # Extract VarCor ------------------------------------------------------------------------------
+  # get D.2 and variance of residuals from VarCor
+  #  sc is only the the residual standard deviation
 
-  # Fit REML -----------------------------------------------------------------------------------
-  # get D.2 and random error from VarCor
-
-
-  VC       <- lme4::VarCorr(lme4::lmer(formula=f.lmer.part, data=data))
-  D.2      <- VC[[name.group.L2]]
-  sigma.sq <- attr(VC, "sc")
+  D.2      <- res.VC[[name.group.L2]]
+  sigma.sq <- (attr(res.VC, "sc")^2)
 
   # ensure sorting of D cols is same as Z columns
-  D.2 <- D.2[names.Z2, names.Z2]
+  D.2 <- D.2[colnames(l.Z2[[1]]), colnames(l.Z2[[1]]), drop = FALSE]
   if(!all(colnames(D.2) == colnames(l.Z2[[1]])))
     stop("D.2 is wrongly sorted!")
 
@@ -68,17 +50,18 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   # Formula:
   #   p 515: V_s = R_s + Z_2sVar(err(2)_s)Z'_2s+Z_3sVar(err_s(3))Z'_3s
   #          -> For L2 case drop the Z_3 part
-  #          R_s is sigma.sq, Var(err) = D.2/D.3
+  #          R_s is sigma.sq, Var(err) = D.2 and D.3
   # Structure:
   # (18) V=blkdiag(V_s) and V = blkdiag(V1, . . . , Vn)
 
   # Calculate per school (L2) level
   l.V <- lapply(l.Z2, FUN = function(g.z2){
-    Matrix::Diagonal(sigma.sq, n=nrow(g.z2)) + g.z2 %*% D.2 %*% t(g.z2)
+    Matrix::Diagonal(sigma.sq, n=nrow(g.z2)) + g.z2 %*% (D.2) %*% t(g.z2)
   })
 
   # Whole V needed as vcov matrix
   V <- Matrix::bdiag(l.V)
+
   # **TODO** add col/rownames?
 
   # Calc W -------------------------------------------------------------------------------------
@@ -97,11 +80,13 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
     ei$values[ei$values<0] <- 0
     sValS                  <- 1/sqrt(ei$values)
     sValS[ei$values==0]    <- 0
-    ei$vectors %*% (diag(x=sValS,nrow=NROW(sValS)) %*% t(ei$vectors))
+    g.w <- ei$vectors %*% (diag(x=sValS,nrow=NROW(sValS)) %*% t(ei$vectors))
+    rownames(g.w) <- rownames(g.v)
+    g.w
   })
 
   W <- Matrix::bdiag(l.W)
-
+# W <- solve(expm::sqrtm(V))
   # Calc Q -------------------------------------------------------------------------------------
   # Formula:
   #    (8): Q(1)_sc=I_sc-P(Z_2sc) where P(H) = H(H'H)^(-1)H' (p.510)
@@ -125,18 +110,33 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   #
   # Structure:
   #   Where P(1)=blkdiag(P(1)_sc), ie also same as Q
-  P <- Matrix::Diagonal(x=1, n=nrow(data)) - Q
+  P <- Matrix::Diagonal(x=1, n=nrow(Q)) - Q
 
 
   # Drop near zero values ----------------------------------------------------------------------
   # Very small values (ca 0) can cause troubles during inverse caluclation
   #   remove, tolerance same as zapsmall()
 
-  W  <- Matrix::drop0(W, tol=sqrt(.Machine$double.eps))
-  X  <- Matrix::drop0(X, tol=sqrt(.Machine$double.eps))
-  X1 <- Matrix::drop0(X1,tol=sqrt(.Machine$double.eps))
-  Q  <- Matrix::drop0(Q, tol=sqrt(.Machine$double.eps))
-  P  <- Matrix::drop0(P, tol=sqrt(.Machine$double.eps))
+
+  # message("nnzero V: ", Matrix::nnzero(V))
+  # message("nnzero W: ", Matrix::nnzero(W))
+  # message("nnzero X: ", Matrix::nnzero(X))
+  # message("nnzero X1: ", Matrix::nnzero(X1))
+  # message("nnzero Q: ", Matrix::nnzero(Q))
+  # message("nnzero P: ", Matrix::nnzero(P))
+  #
+  # W  <- Matrix::drop0(W, tol=sqrt(.Machine$double.eps))
+  # X  <- Matrix::drop0(X, tol=sqrt(.Machine$double.eps))
+  # X1 <- Matrix::drop0(X1,tol=sqrt(.Machine$double.eps))
+  # Q  <- Matrix::drop0(Q, tol=sqrt(.Machine$double.eps))
+  # P  <- Matrix::drop0(P, tol=sqrt(.Machine$double.eps))
+  #
+  # message("nnzero V: ", Matrix::nnzero(V))
+  # message("nnzero W: ", Matrix::nnzero(W))
+  # message("nnzero X: ", Matrix::nnzero(X))
+  # message("nnzero X1: ", Matrix::nnzero(X1))
+  # message("nnzero Q: ", Matrix::nnzero(Q))
+  # message("nnzero P: ", Matrix::nnzero(P))
 
   # Build instruments --------------------------------------------------------------------------
   # "As noted above, bGMM equals bRE when X = X1, where all variables are assumed to be exogenous.
@@ -160,13 +160,13 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
   HREE   <- W %*% X
 
-
   # Estimate GMMs for IVs ------------------------------------------------------------------------------
   n <- length(l.X) # num schools = num groups
   res.gmm.FE_L2    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L2,  num.groups.highest.level = n)
   res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
   res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE,       num.groups.highest.level = n)
 
+  # return(list(y=y, X=X, W=W, HREE=HREE, n=n, V=V, l.V=l.V, l.W=l.W))
   # Omitted Var tests ----------------------------------------------------------------------------------
   # To conduct the OVT correctly, the order of the IVs have to be that IV
   #   is always the efficient estimator:
@@ -191,8 +191,8 @@ multilevel_2levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
               formula = f.orig,
               num.levels = 2,
               l.group.size = list(L2 = setNames(length(l.X), name.group.L2)),
-              dt.mf = dt.model.frame,
-              dt.mm = dt.model.matrix,
+              dt.mf = dt.model.data,
+              dt.mm = dt.model.data,
               V = V,
               W = W,
               # The list names determine the final naming of the coefs

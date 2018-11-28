@@ -153,7 +153,9 @@
 #' Hausman J (1978). “Specification Tests in Econometrics.” Econometrica, 46(6), 1251–1271.
 #' Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.
 #'
-#' @importFrom lme4 lmer VarCorr lFormula
+#' @importFrom lme4 lmer VarCorr lFormula nobars
+#' @importFrom Formula as.Formula
+#' @importFrom data.table as.data.table
 #' @export
 multilevelIV <- function(formula, data, verbose=TRUE){
 
@@ -167,22 +169,97 @@ multilevelIV <- function(formula, data, verbose=TRUE){
 
 
   # Extract information ---------------------------------------------------------
-  F.formula <- as.Formula(formula)
+  F.formula <- Formula::as.Formula(formula)
   f.lmer    <- formula(F.formula, lhs = 1, rhs = 1)
-  name.endo <- formula_readout_special(F.formula = F.formula, name.special = "endo",
+  names.endo <- formula_readout_special(F.formula = F.formula, name.special = "endo",
                                        from.rhs = 2, params.as.chars.only = TRUE)
 
   # Let lme4 do the formula processing
   l4.form    <- lme4::lFormula(formula = f.lmer, data=data)
   num.levels <- lme4formula_get_numberoflevels(l4.form)
 
-  if(num.levels == 2)
-    res <- multilevel_2levels(cl = cl, f.orig=formula, f.lmer.part=f.lmer, l4.form=l4.form,
-                              data=data, name.endo=name.endo, verbose = verbose)
-  else
-    if(num.levels == 3)
-      res <- multilevel_3levels(cl = cl, f.orig=formula, f.lmer.part=f.lmer, l4.form=l4.form,
-                                data=data, name.endo=name.endo, verbose = verbose)
+  # Build model data ------------------------------------------------------------
+  #
+  # data.table to split into groupwise matrices
+  #
+  # Consists of:
+  #   Response
+  #   Intercept, if needed
+  #   Model variables
+  #   slope variables
+  #   L2 / L3 Group Ids
+  #   rownames, if given
+  #
+  #   model.matrix: intercept + model vars + slope vars
+  #   model.frame:  response + group ids
+
+
+  #
+  # dependent variable
+  dt.response <- as.data.table(l4.form$fr[, 1, drop = FALSE], keep.rownames = "rownames")
+  name.y      <- colnames(l4.form$fr)[1]  # always at first position, same as model.response reads out
+
+  #
+  # FE / X
+  #   X1 is everything but endogenous
+  dt.FE    <- as.data.table(l4.form$X)
+  names.X  <- colnames(dt.FE)
+  names.X1 <- setdiff(names.X, names.endo)
+
+  #
+  # Slopes / Z
+  #   Has to be taken from X (model matrix) in case of factors in slope
+  dt.slp <- as.data.table(l4.form$X[, unique(unlist(l4.form$reTrms$cnms)), drop=FALSE])
+
+  # Z names cannot be read as depends on number of levels
+
+  #
+  # Group ids
+  #   Do not copy from input data but from model.frame because the user could base it on
+  #     transformation (ie y~X+(1|I(id == "abc"))) and because row sorting could be different
+  dt.groudids <- as.data.table(l4.form$fr[, unique(unlist(names(l4.form$reTrms$cnms))), drop=FALSE])
+
+  #
+  # Make single data.table with minimum required cols only
+  names.min.req.cols <- unique(c(colnames(dt.response), colnames(dt.FE),
+                                 colnames(dt.slp), colnames(dt.groudids)))
+  dt.model.data <- cbind(dt.response, dt.FE, dt.slp, dt.groudids)[, .SD, .SDcols = names.min.req.cols]
+  rm(dt.response, dt.FE, dt.slp, dt.groudids)
+
+
+  # Fit REML -----------------------------------------------------------------------------------
+  # Same for both cases and can avoid passing formula in again
+  # Has to use the original data because dt.model.data already contains the data with applied
+  #   transformations
+  res.VC <- lme4::VarCorr(lme4::lmer(formula=f.lmer, data=data, REML = TRUE))
+
+
+  # Fit multilevel model -----------------------------------------------------------------------
+
+  if(num.levels == 2){
+    # Read Z names here as depends on num.levels
+    name.groupid.L2  <- names(l4.form$reTrms$cnms)[[1]]
+    names.Z2         <- l4.form$reTrms$cnms[[name.groupid.L2]]
+
+    res <- multilevel_2levels(cl = cl, f.orig = formula, dt.model.data = dt.model.data, res.VC = res.VC,
+                              name.group.L2 = name.groupid.L2, name.y = name.y, names.X = names.X,
+                              names.X1 = names.X1, names.Z2 = names.Z2,
+                              verbose = verbose)
+  } else{
+
+    # Read out the level names
+    #   cnms is list sorted by cluster size with smalles cluster (=L2) first
+    name.groupid.L2  <- names(l4.form$reTrms$cnms)[[1]]
+    name.groupid.L3  <- names(l4.form$reTrms$cnms)[[2]]
+    names.Z2         <- l4.form$reTrms$cnms[[name.groupid.L2]]
+    names.Z3         <- l4.form$reTrms$cnms[[name.groupid.L3]]
+
+    res <- multilevel_3levels(cl = cl, f.orig = formula, dt.model.data = dt.model.data, res.VC = res.VC,
+                                name.group.L2 = name.groupid.L2, name.group.L3 = name.groupid.L3,
+                                name.y = name.y, names.X = names.X, names.X1 = names.X1,
+                                names.Z2 = names.Z2, names.Z3 = names.Z3,
+                                verbose = verbose)
+    }
 
   return(res)
 }

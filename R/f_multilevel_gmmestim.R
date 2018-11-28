@@ -18,7 +18,7 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   # GammaHat(H) = inv(Ghat' inv(M_HH) GHat) Ghat' inv(M_HH)
   GHat    <- Matrix::t(HIV) %*% W %*% X / n
   MHH     <- Matrix::crossprod(HIV) / n
-  ginvMHH <- corpcor::pseudoinverse(MHH) # maybe use Matrix::solve? could be faster but not fail save?
+  ginvMHH <- corpcor::pseudoinverse(MHH) # maybe use Matrix::solve? could be faster but not failsave?
   Gamma.H <- corpcor::pseudoinverse( Matrix::t(GHat) %*% ginvMHH %*% GHat) %*% Matrix::t(GHat) %*% ginvMHH
 
   # Actual parameter estimate

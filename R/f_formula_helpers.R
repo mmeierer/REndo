@@ -90,6 +90,26 @@ lme4formula_get_numberoflevels <- function(l4.form){
   return(length(l4.form$reTrms$flist)+1)
 }
 
+#' @importFrom lme4 findbars
+formula_readout_slopes <- function(f.lmer.part){
+  #read out brackets (x|s)
+  l.bars        <- lme4::findbars(term = f.lmer.part)
+  # make char, add ~, make Formula
+  l.bars        <- lapply(l.bars, function(b){as.Formula(paste0("~", deparse(b)))})
+  l.before.bars <- lapply(l.bars, function(F.f){all.vars(formula(F.f, rhs=1, lhs=0))})
+  return(unlist(l.before.bars))
+}
+
+#' @importFrom lme4 findbars
+formula_readout_groupids <- function(f.lmer.part){
+  #read out brackets (x|s)
+  l.bars        <- lme4::findbars(term = f.lmer.part)
+  # make char, add ~, make Formula
+  l.bars        <- lapply(l.bars, function(b){as.Formula(paste0("~", deparse(b)))})
+  l.after.bars  <- lapply(l.bars, function(F.f){all.vars(formula(F.f, rhs=2, lhs=0))})
+  return(unlist(l.after.bars))
+}
+
 
 # Builds a formula as input to ivreg
 # In:     response ~ complete model | single endogenous | instructions for IV (| EIV)

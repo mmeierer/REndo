@@ -1,50 +1,42 @@
-#' @importFrom Matrix bdiag Matrix Diagonal crossprod tcrossprod drop0 nnzero
+#' @importFrom Matrix bdiag Matrix Diagonal crossprod tcrossprod drop0
 #' @importFrom data.table as.data.table setkeyv
 #' @importFrom lme4 lFormula lmer VarCorr
 #' @importFrom corpcor pseudoinverse
-multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo, verbose){
+#' @importFrom stats setNames
+multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
+                               name.group.L2, name.group.L3,
+                               name.y, names.X, names.X1, names.Z2, names.Z3,
+                               verbose){
 
+  # cran silence
   .SD <- .I <- NULL
 
-  num.levels <- lme4formula_get_numberoflevels(l4.form=l4.form)
-
-  name.group.L2    <- names(l4.form$reTrms$flist)[[1]] # CID
-  name.group.L3    <- names(l4.form$reTrms$flist)[[2]] # SID
   # Splitting names: What is used in DT "by" to form groups
   name.split.by.L3 <- name.group.L3
   name.split.by.L2 <- c(name.group.L3, name.group.L2)
 
+  data.table::setkeyv(dt.model.data, cols = name.split.by.L2)
 
-  # Extract data ---------------------------------------------------------------
-
-  # Make model variables to data.table to efficiently split into groups
-  mm <- model.matrix(object = terms(l4.form$fr), data = l4.form$fr)
-  dt.model.matrix <- data.table::as.data.table(mm, keep.rownames=TRUE)
-  # to extract response which is not in model.matrix
-  dt.model.frame  <- data.table::as.data.table(l4.form$fr, keep.rownames=TRUE)
-  data.table::setkeyv(dt.model.matrix, cols = name.split.by.L2)
-  data.table::setkeyv(dt.model.frame,  cols = name.split.by.L2)
 
   # Build y ------------------------------------------------------------------------------------
-  # Only needed for calculating residuals in ommitted var test
-  name.y <- colnames(l4.form$fr)[[1L]] # always at first position, same as model.response reads out
-  y      <- multilevel_colstomatrix(dt = dt.model.frame, name.cols = name.y)
-  l.L3.y <- multilevel_splittomatrix(dt = dt.model.frame, name.group = name.y, name.by = name.split.by.L3)
+  # L3.y is only needed for calculating residuals in ommitted var test
+  y      <- multilevel_colstomatrix(dt = dt.model.data, name.cols = name.y)
+  l.L3.y <- multilevel_splittomatrix(dt = dt.model.data, name.group = name.y, name.by = name.split.by.L3)
 
 
   # Build X, X1 --------------------------------------------------------------------------------
   # Do not use the X component present in l4.form as their ordering is somewhat obscure.
   # X1 is everything but endogenous
 
-  names.X  <- colnames(l4.form$X)
-  names.X1 <- setdiff(names.X, name.endo)
+  l.L2.X  <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.X,  name.by = name.split.by.L2)
+  l.L2.X1 <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.X1, name.by = name.split.by.L2)
 
-  l.L2.X  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X,  name.by = name.split.by.L2)
-  l.L2.X1 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X1, name.by = name.split.by.L2)
-  l.L3.X  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X,  name.by = name.split.by.L3)
-  l.L3.X1 <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.X1, name.by = name.split.by.L3)
-  X    <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X)
-  X1   <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.X1)
+  l.L3.X  <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.X,  name.by = name.split.by.L3)
+  l.L3.X1 <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.X1, name.by = name.split.by.L3)
+
+  X    <- multilevel_colstomatrix(dt = dt.model.data, name.cols = names.X)
+  X1   <- multilevel_colstomatrix(dt = dt.model.data, name.cols = names.X1)
+
 
   if(verbose){
     message("Detected multilevel model with 3 levels.")
@@ -55,12 +47,10 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   # Build Z2, Z3 --------------------------------------------------------------------------------
   # Only extract names from l4.form and build Z self because of unknown ordering
 
-  names.Z2 <- l4.form$reTrms$cnms[[1]]
-  names.Z3 <- l4.form$reTrms$cnms[[2]]
-  l.L2.Z2  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z2, name.by = name.split.by.L2)
-  l.L3.Z3  <- multilevel_splittomatrix(dt = dt.model.matrix, name.group = names.Z3, name.by = name.split.by.L3)
-  Z2       <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z2)
-  Z3       <- multilevel_colstomatrix(dt = dt.model.matrix, name.cols = names.Z3)
+  l.L2.Z2  <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.Z2, name.by = name.split.by.L2)
+  l.L3.Z3  <- multilevel_splittomatrix(dt = dt.model.data, name.group = names.Z3, name.by = name.split.by.L3)
+  Z2       <- multilevel_colstomatrix(dt = dt.model.data, name.cols = names.Z2)
+  Z3       <- multilevel_colstomatrix(dt = dt.model.data, name.cols = names.Z3)
 
   # Sorting verification ------------------------------------------------------------
   # Before doing any math, verify that each group contains the same observations in the same order
@@ -80,21 +70,17 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   fct.check.all.same.names(l.L3.Z3, l.L3.X, l.L3.X1)
 
   # Fit REML -----------------------------------------------------------------------------------
-  # get D.2, D.3 and random error from VarCor
-  VC       <- lme4::VarCorr(lme4::lmer(formula=f.lmer.part, data=data, REML = TRUE))
-  D.2      <- VC[[name.group.L2]]
-  D.3      <- VC[[name.group.L3]]
-  sigma.sq <- attr(VC, "sc")
+  # get D.2, D.3 and variance of residuals from VarCor
+  #  sc is only the the residual standard deviation
 
-  # ensure sorting of D cols is same as Z columns
-  D.2 <- D.2[names.Z2, names.Z2]
-  D.3 <- D.3[names.Z3, names.Z3]
-  if(!all(colnames(D.2) == colnames(l.L2.Z2[[1]])) ||
-     !all(rownames(D.2) == colnames(l.L2.Z2[[1]])))
-    stop("D.2 is wrongly sorted!")
-  if(!all(colnames(D.3) == colnames(l.L3.Z3[[1]])) ||
-     !all(rownames(D.3) == colnames(l.L3.Z3[[1]])))
-    stop("D.3 is wrongly sorted!")
+  D.2      <- res.VC[[name.group.L2]]
+  D.3      <- res.VC[[name.group.L3]]
+  sigma.sq <- (attr(res.VC, "sc")^2)
+
+  # ensure sorting of D cols is same as Z columns **maybe replace with colnames() instead of names.Z
+  D.2 <- D.2[colnames(l.L2.Z2[[1]]), colnames(l.L2.Z2[[1]]), drop = FALSE]
+  D.3 <- D.3[colnames(l.L3.Z3[[1]]), colnames(l.L3.Z3[[1]]), drop = FALSE]
+
 
   # Calc V -------------------------------------------------------------------------------------
   # TODO ** L2 or L3 ** add formula from paper
@@ -113,20 +99,20 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   })
 
   # Needed as vcov matrix
-  V <- Matrix::Diagonal(sigma.sq, n=nrow(dt.model.frame)) +
+  V <- Matrix::Diagonal(sigma.sq, n=nrow(X)) +
             Matrix::bdiag(l.L3.V.part) +
             Matrix::bdiag(l.L2.V.part)
-  rownames(V) <- colnames(V) <- dt.model.matrix$rn
+  rownames(V) <- colnames(V) <- dt.model.data$rownames
 
 
   # Calc W -------------------------------------------------------------------------------------
   # Formula:
-  #   p.510: "the weight can be the inverse of the square root of the variance–covariance matrix of the disturbance term"
-  #   W = V_{s}^(-1/2)
-  # **TODO: Is this actually meant to be always at a per school level and not whole V ?? **
+  #   p.510:
+  #    W=blkdiag(W_1,..., W_n)
+  #   "the weight can be the inverse of the square root of the variance–covariance matrix of the disturbance term V_{s}^(-1/2)"
   # Do eigen decomp on each block. Has to be L3 as L2 would omits non-zero vars
 
-  g.L3.idx <- dt.model.matrix[, list(g.idx=list(.I)), by=name.split.by.L3]$g.idx
+  g.L3.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by.L3]$g.idx
   l.L3.V   <- lapply(g.L3.idx, function(g.id) {V[g.id, g.id, drop=FALSE]})
 
   # Do eigen decomp on each block
@@ -139,7 +125,7 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
 
 
   W <- Matrix::bdiag(l.L3.W)
-  rownames(W) <- colnames(W) <- dt.model.matrix$rn
+  rownames(W) <- colnames(W) <- dt.model.data$rownames
 
 
   # Calc Q -------------------------------------------------------------------------------------
@@ -186,7 +172,7 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   # . Q at L2 level ------------------------------------------------------------------------------------
 
   # Split into L2 groups
-  g.L2.idx <- dt.model.matrix[, list(g.idx=list(.I)), by=name.split.by.L2]$g.idx
+  g.L2.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by.L2]$g.idx
   l.L2.W <- lapply(g.L2.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
 
   # Q at L2 only (according to raluca's code, no reference to L3 at all)
@@ -224,8 +210,8 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
   #   L3:
   #   L2:
 
-  L2.P <- Matrix::Diagonal(x=1, n=nrow(data)) - L2.Q
-  L3.P <- Matrix::Diagonal(x=1, n=nrow(data)) - L3.Q
+  L2.P <- Matrix::Diagonal(x=1, n=nrow(L2.Q)) - L2.Q
+  L3.P <- Matrix::Diagonal(x=1, n=nrow(L3.Q)) - L3.Q
 
   # Drop near zero values ----------------------------------------------------------------------
   # Very small values (ca 0) can cause troubles during inverse caluclation
@@ -323,8 +309,8 @@ multilevel_3levels <- function(cl, f.orig, f.lmer.part, l4.form, data, name.endo
             num.levels = 3,
             l.group.size = list(L2 = setNames(length(l.L2.X), name.group.L2),
                                 L3 = setNames(length(l.L3.X), name.group.L3)),
-            dt.mf = dt.model.frame,
-            dt.mm = dt.model.matrix,
+            dt.mf = dt.model.data,
+            dt.mm = dt.model.data,
             V = V,
             W = W,
             # The list names determine the final naming of the coefs

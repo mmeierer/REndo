@@ -71,10 +71,17 @@ checkinput_multilevel_data <- function(data){
 
 #' @importFrom methods is
 #' @importFrom Formula as.Formula
-#' @importFrom lme4 lFormula nobars findbars
+#' @importFrom lme4 lFormula nobars
 checkinput_multilevel_dataVSformula <- function(formula,data){
-  F.formula     <- as.Formula(formula)
-  num.only.cols <- all.vars(F.formula)
+
+  F.formula       <- as.Formula(formula)
+  names.vars.endo <- formula_readout_special(F.formula = F.formula, name.special = "endo",
+                                             from.rhs=2, params.as.chars.only=TRUE)
+  name.group.ids  <- formula_readout_groupids(f.lmer.part= formula(F.formula, rhs=1, lhs=1))
+  name.slopes     <- formula_readout_slopes(f.lmer.part  = formula(F.formula, rhs=1, lhs=1))
+
+  # all but group ids have to be numeric
+  num.only.cols   <- setdiff(all.vars(F.formula), c(name.group.ids, name.slopes))
   err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=formula, data=data,
                                                             rhs.rel.regr = 1,
                                                             num.only.cols = num.only.cols)
@@ -101,20 +108,12 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
     err.msg <- c(err.msg, "Please specify exactly 2 or 3 levels in the formula.")
 
   # Check that no endogenous is in (|) part
-  # Read out the special functions
-  names.vars.endo <- formula_readout_special(F.formula = F.formula, name.special = "endo",
-                                             from.rhs=2, params.as.chars.only=TRUE)
-
-  l.bars       <- lme4::findbars(term = f.lmer) #read out brackets (x|s)
-  l.bars       <- lapply(l.bars, function(b){as.Formula(paste0("~", deparse(b)))}) # make char, add ~, make Formula
-  l.first.bars <- lapply(l.bars, function(F.f){all.vars(formula(F.f, rhs=1, lhs=0))})
-  if(any(names.vars.endo %in% unlist(l.first.bars)))
+  if(any(names.vars.endo %in% c(name.slopes, name.group.ids)))
     err.msg <- c(err.msg, "Please specify no endogenous regressor in the brackets part \'(x|x)\' of the formula.")
 
 
   # Check that no level grouping Id is in model
-  l.second.bars <- lapply(l.bars, function(F.f){all.vars(formula(F.f, rhs=2, lhs=0))})
-  if(any(unlist(l.second.bars) %in% all.vars(lme4::nobars(f.lmer))))
+  if(any(name.group.ids %in% all.vars(lme4::nobars(f.lmer))))
     err.msg <- c(err.msg, "Please specify no level grouping Id in the model part of the formula.")
 
   return(err.msg)
