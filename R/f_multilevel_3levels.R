@@ -52,22 +52,6 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   Z2       <- multilevel_colstomatrix(dt = dt.model.data, name.cols = names.Z2)
   Z3       <- multilevel_colstomatrix(dt = dt.model.data, name.cols = names.Z3)
 
-  # Sorting verification ------------------------------------------------------------
-  # Before doing any math, verify that each group contains the same observations in the same order
-
-  fct.check.all.same.names <- function(...){
-    l.args <- list(...)
-    fct.check <- function(...){
-      l.args <- list(...)
-      l.args.rn <- lapply(l.args, rownames)
-      return(all(sapply(l.args.rn[-1], FUN = identical, l.args.rn[[1]])))
-    }
-    stopifnot(all(do.call(what = mapply, c(list(FUN=fct.check), l.args))))
-  }
-
-  # Every L2 and L3 group has the same obs in exact same order
-  fct.check.all.same.names(l.L2.Z2, l.L2.X, l.L2.X1)
-  fct.check.all.same.names(l.L3.Z3, l.L3.X, l.L3.X1)
 
   # Fit REML -----------------------------------------------------------------------------------
   # get D.2, D.3 and variance of residuals from VarCor
@@ -150,8 +134,6 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
   # ** Exists already but rownames wrong. worth splitting again?
   l.L3.W   <- lapply(g.L3.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
-  fct.check.all.same.names(l.L3.Z3, l.L3.W)
-  fct.check.all.same.names(l.L3.V, l.L3.W)
 
   # Ql3 <- diag(CT) - Wl3 %*% Zl3 %*% corpcor::pseudoinverse(crossprod(Zl3, Wl3) %*% Wl3 %*% Zl3) %*% crossprod(Zl3, Wl3)
   l.L3.Q <- mapply(l.L3.Z3, l.L3.W, FUN = function(g.z3, g.w3){
