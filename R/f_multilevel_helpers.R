@@ -1,19 +1,21 @@
 multilevel_splittomatrix <- function(dt, name.group, name.by){
   .SD <- NULL # cran silence
   if("rownames" %in% colnames(dt)){
-    l.groups <- data.table:::split.data.table(dt[, .SD, .SDcols=c("rownames",name.group, name.by)],
-                                              by = name.by,
-                                              keep.by = FALSE,
-                                              drop = TRUE, # drop unnused factors in group Ids (in case factors or chars given)
-                                              sorted = TRUE) # keep original ordering
+    l.groups <- split(dt[, .SD, .SDcols=c("rownames",name.group, name.by)],
+                      by = name.by,
+                      keep.by = FALSE,
+                      drop = TRUE, # drop unnused factors in group Ids (in case factors or chars given)
+                      sorted = FALSE) # keep original ordering
+
     # take rownames from column rownames which also removes this column from the resulting matrix
     l.groups <- lapply(l.groups, as.matrix, rownames =  "rownames")
+
   }else{
-    l.groups <- data.table:::split.data.table(dt[, .SD, .SDcols=c(name.group, name.by)],
-                                              by = name.by,
-                                              keep.by = FALSE,
-                                              drop = TRUE, # drop unnused factors in group Ids (in case factors or chars given)
-                                              sorted = TRUE) # keep original ordering
+    l.groups <- split(dt[, .SD, .SDcols=c(name.group, name.by)],
+                      by = name.by,
+                      keep.by = FALSE,
+                      drop = TRUE, # drop unnused factors in group Ids (in case factors or chars given)
+                      sorted = FALSE) # keep original ordering
     l.groups <- lapply(l.groups, as.matrix, rownames = FALSE)
   }
 

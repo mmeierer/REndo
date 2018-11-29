@@ -153,7 +153,6 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   fct.check.all.same.names(l.L3.Z3, l.L3.W)
   fct.check.all.same.names(l.L3.V, l.L3.W)
 
-  # Q at L3 only (according to raluca's code, no reference to L2 at all)
   # Ql3 <- diag(CT) - Wl3 %*% Zl3 %*% corpcor::pseudoinverse(crossprod(Zl3, Wl3) %*% Wl3 %*% Zl3) %*% crossprod(Zl3, Wl3)
   l.L3.Q <- mapply(l.L3.Z3, l.L3.W, FUN = function(g.z3, g.w3){
     Matrix::Diagonal(x=1, n=nrow(g.z3)) - g.w3 %*% g.z3 %*%

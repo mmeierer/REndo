@@ -158,6 +158,7 @@
 #' @importFrom data.table as.data.table
 #' @export
 multilevelIV <- function(formula, data, verbose=TRUE){
+  .SD <- NULL # cran silence
 
   cl <- match.call()
 

@@ -7,7 +7,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
                                name.group.L2, name.y, names.X, names.X1, names.Z2,
                                verbose){
 
-  data.table::setkeyv(dt.model.data,  cols = name.group.L2)
+  data.table::setkeyv(x = dt.model.data,  cols = name.group.L2)
 
   # Because only 1 level name, the name to split by is the same as the L2 name. Therefore no separate variable name.splitby.L2
 
