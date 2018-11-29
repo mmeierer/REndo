@@ -77,18 +77,21 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   D.3      <- res.VC[[name.group.L3]]
   sigma.sq <- (attr(res.VC, "sc")^2)
 
-  # ensure sorting of D cols is same as Z columns **maybe replace with colnames() instead of names.Z
+  # ensure sorting of D cols is same as Z columns
   D.2 <- D.2[colnames(l.L2.Z2[[1]]), colnames(l.L2.Z2[[1]]), drop = FALSE]
   D.3 <- D.3[colnames(l.L3.Z3[[1]]), colnames(l.L3.Z3[[1]]), drop = FALSE]
 
 
   # Calc V -------------------------------------------------------------------------------------
-  # TODO ** L2 or L3 ** add formula from paper
   # Relevant Formula:
   #   p 515: V_s = R_s + Z_2sVar(err(2)_s)Z'_2s+Z_3sVar(err_s(3))Z'_3s
   #          -> For L2 case drop the Z_3 part
   # Structure:
-  # (18) V=blkdiag(V_s) and V = blkdiag(V1, . . . , Vn)
+  #   (18) V=blkdiag(V_s) and V = blkdiag(V1, . . . , Vn)
+  #
+  # To ensure the calculations are strictly per L2 and L3, they are done in
+  #   separate blocks and then added "on top of each other"
+  #   -> structure: L3 block with multiple L2 blocks in it
 
   l.L2.V.part <- lapply(l.L2.Z2, FUN = function(g.z2){
     g.z2 %*% D.2 %*% t(g.z2)
@@ -309,8 +312,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
             num.levels = 3,
             l.group.size = list(L2 = setNames(length(l.L2.X), name.group.L2),
                                 L3 = setNames(length(l.L3.X), name.group.L3)),
-            dt.mf = dt.model.data,
-            dt.mm = dt.model.data,
+            dt.model.data = dt.model.data,
             V = V,
             W = W,
             # The list names determine the final naming of the coefs

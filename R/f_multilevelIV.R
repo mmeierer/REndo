@@ -228,10 +228,24 @@ multilevelIV <- function(formula, data, verbose=TRUE){
 
 
   # Fit REML -----------------------------------------------------------------------------------
-  # Same for both cases and can avoid passing formula in again
-  # Has to use the original data because dt.model.data already contains the data with applied
-  #   transformations
-  res.VC <- lme4::VarCorr(lme4::lmer(formula=f.lmer, data=data, REML = TRUE))
+  # p515: "With the transformed data, we may apply any of the usual procedures for
+  #         estimating variance components, including maximum likelihood, restricted maximum likelihood (REML)"
+  #
+  # Same for L2 and L3 cases and doing it here avoids passing and processing the formula in the level
+  #   functions
+  # Has to use the original data because dt.model.data already contains the data
+  #   with applied transformations
+  res.lmer <- tryCatch(lme4::lmer(formula=f.lmer, data=data, REML = TRUE),
+                       error = function(e)return(e))
+  if(is(res.lmer, "error"))
+    stop("lme4::lmer() could not be fitted with error: ",
+        sQuote(res.lmer$message), "\nPlease revise your data and formula.", call. = FALSE)
+
+  res.VC <- tryCatch(lme4::VarCorr(res.lmer),
+                     error = function(e)return(e))
+  if(is(res.VC, "error"))
+    stop("lme4::VarCorr() could not be fitted with error: ",
+         sQuote(res.VC$message), "\nPlease revise your data and formula.", call. = FALSE)
 
 
   # Fit multilevel model -----------------------------------------------------------------------

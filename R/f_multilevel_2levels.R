@@ -86,7 +86,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   })
 
   W <- Matrix::bdiag(l.W)
-# W <- solve(expm::sqrtm(V))
+
   # Calc Q -------------------------------------------------------------------------------------
   # Formula:
   #    (8): Q(1)_sc=I_sc-P(Z_2sc) where P(H) = H(H'H)^(-1)H' (p.510)
@@ -155,7 +155,8 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   #   and   P(1)_sgls = I_sc-Q(1)_sgls
 
   # GMM
-  # ** Where does the W come from then if "by using only the QX part of the instruments" ??
+  # p. X??
+  # ** RALUCA: Where does the W come from then if "by using only the QX part of the instruments"
   HIV.GMM_L2 <- cbind(Q %*% W%*%X, P%*%W%*%X1)
 
   HREE   <- W %*% X
@@ -191,8 +192,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
               formula = f.orig,
               num.levels = 2,
               l.group.size = list(L2 = setNames(length(l.X), name.group.L2)),
-              dt.mf = dt.model.data,
-              dt.mm = dt.model.data,
+              dt.model.data = dt.model.data,
               V = V,
               W = W,
               # The list names determine the final naming of the coefs

@@ -1,10 +1,9 @@
 # Constructor for rendo.multilevel objects
 #   Does the steps shared between L2 and L3
 #' @importFrom stats setNames
-new_rendo_multilevel <- function(call, formula, dt.mf, dt.mm, num.levels, l.group.size,
+new_rendo_multilevel <- function(call, formula, num.levels, l.group.size, dt.model.data,
                                  V, W, l.gmm, l.ovt, y, X){
 
-  # ** TODO: Remove dt.mm ...??
 
   # The list names in l.gmm determine the final naming of the coefs
   # Make coefficient(.se) table from estimated GMMs
@@ -24,8 +23,7 @@ new_rendo_multilevel <- function(call, formula, dt.mf, dt.mm, num.levels, l.grou
                  formula = formula,
                  num.levels = num.levels,
                  l.group.size = l.group.size,
-                 dt.mf = dt.mf,
-                 dt.mm = dt.mm,
+                 dt.model.data = dt.model.data,
                  coefficients = coefficients,
                  coefficients.se = coefficients.se,
                  l.fitted = l.fitted,

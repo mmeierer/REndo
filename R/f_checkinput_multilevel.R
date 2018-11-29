@@ -74,19 +74,11 @@ checkinput_multilevel_data <- function(data){
 #' @importFrom lme4 lFormula nobars
 checkinput_multilevel_dataVSformula <- function(formula,data){
 
+  err.msg <- c()
+
   F.formula       <- as.Formula(formula)
   names.vars.endo <- formula_readout_special(F.formula = F.formula, name.special = "endo",
                                              from.rhs=2, params.as.chars.only=TRUE)
-  name.group.ids  <- formula_readout_groupids(f.lmer.part= formula(F.formula, rhs=1, lhs=1))
-  name.slopes     <- formula_readout_slopes(f.lmer.part  = formula(F.formula, rhs=1, lhs=1))
-
-  # all but group ids have to be numeric
-  num.only.cols   <- setdiff(all.vars(F.formula), c(name.group.ids, name.slopes))
-  err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=formula, data=data,
-                                                            rhs.rel.regr = 1,
-                                                            num.only.cols = num.only.cols)
-  if(length(err.msg) > 0)
-    return(err.msg)
 
   # lmer specific function part
   f.lmer <- formula(F.formula, lhs = 1, rhs = 1)
@@ -100,21 +92,35 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
       return("Please specify a random effects terms in the formula.")
     }else{
       # Some other error
-      return("Please provide a formula interpretable by lme4::lmer.")
+      return(paste0("Please provide a formula interpretable by lme4::lmer. \nError: ",
+                    sQuote(l4.form$message)))
     }
 
   # check number of levels
   if(!(lme4formula_get_numberoflevels(l4.form = l4.form) %in% c(2,3)))
     err.msg <- c(err.msg, "Please specify exactly 2 or 3 levels in the formula.")
 
-  # Check that no endogenous is in (|) part
-  if(any(names.vars.endo %in% c(name.slopes, name.group.ids)))
-    err.msg <- c(err.msg, "Please specify no endogenous regressor in the brackets part \'(x|x)\' of the formula.")
+  # rely on lformula processing
+  names.slopes <- lme4formula_get_namesslopes(l4.form = l4.form)
+  names.groups <- lme4formula_get_namesgroups(l4.form = l4.form)
+  names.model  <- colnames(l4.form$X)
 
+  # Check that no endogenous is in (|) part
+  if(any(names.vars.endo %in% c(names.slopes, names.groups)))
+    err.msg <- c(err.msg, "Please specify no endogenous regressor as slopes nor as group id.")
 
   # Check that no level grouping Id is in model
-  if(any(name.group.ids %in% all.vars(lme4::nobars(f.lmer))))
+  if(any(names.groups %in% all.vars(lme4::nobars(f.lmer))))
     err.msg <- c(err.msg, "Please specify no level grouping Id in the model part of the formula.")
+
+  # Check that no level grouping Id is in slope
+  if(any(names.groups %in% names.slopes))
+    err.msg <- c(err.msg, "Please specify no level grouping Id in the slopes part of the formula.")
+
+  # Check that slopes are exactly like this in model
+  if(!all(names.slopes %in% names.model))
+    err.msg <- c(err.msg, "Please specify all slopes as well in the model part of the formula.")
+
 
   return(err.msg)
 }
