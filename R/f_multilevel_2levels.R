@@ -175,13 +175,13 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   #     IV1 is FE_L2 when comparing it with FE_L3
   #     IV1 is GMM when comparing it with REF
 
-  FE_L2_vs_REF   <-  multilevel_ommitedvartest(IV1=HIV.FE_L2, IV2 = HREE,
+  FE_L2_vs_REF   <-  multilevel_omittedvartest(IV1=HIV.FE_L2, IV2 = HREE,
                                                res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
                                                W=W, l.Lhighest.X = l.X, l.Lhighest.y = l.y)
-  FE_L2_vs_GMM_L2  <-  multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L2,
+  FE_L2_vs_GMM_L2  <-  multilevel_omittedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L2,
                                                  res.gmm.IV1 = res.gmm.FE_L2,res.gmm.IV2 = res.gmm.GMM_L2,
                                                  W=W, l.Lhighest.X = l.X, l.Lhighest.y = l.y)
-  GMM_L2_vs_REF  <-  multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2=HREE,
+  GMM_L2_vs_REF  <-  multilevel_omittedvartest(IV1 = HIV.GMM_L2, IV2=HREE,
                                                res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.HREE,
                                                W=W, l.Lhighest.X = l.X, l.Lhighest.y = l.y)
 

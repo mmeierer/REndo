@@ -193,7 +193,7 @@ summary.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "G
   colnames(res$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
 
 
-  # Ommited Variable tests ---------------------------------------------------------------
+  # Omitted Variable tests ---------------------------------------------------------------
 
   # Make table with row for each test, and statistics
   #   OVT are stored with names MODEL_vs_MODEL
@@ -216,7 +216,7 @@ summary.rendo.multilevel <- function(object, model=c("REF", "FE_L2", "FE_L3", "G
 # Print structure:
 #     Call
 #     Main model coefficient (incl statistics)
-#     Ommited variable tests
+#     Omitted variable tests
 #' @importFrom stats printCoefmat
 #' @export
 print.summary.rendo.multilevel <- function(x, digits = max(3L, getOption("digits")-3L),

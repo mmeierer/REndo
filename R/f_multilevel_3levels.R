@@ -19,7 +19,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
 
   # Build y ------------------------------------------------------------------------------------
-  # L3.y is only needed for calculating residuals in ommitted var test
+  # L3.y is only needed for calculating residuals in omitted var test
   y      <- multilevel_colstomatrix(dt = dt.model.data, name.cols = name.y)
   l.L3.y <- multilevel_splittomatrix(dt = dt.model.data, name.group = name.y, name.by = name.split.by.L3)
 
@@ -253,7 +253,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   res.gmm.FE_L2    <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.FE_L2,  num.groups.highest.level = n)
   res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
 
-  # Ommitted Variable ---------------------------------------------------------------------------------
+  # Omitted Variable ---------------------------------------------------------------------------------
   # To conduct the OVT correctly, the order of the IVs have to be,
   #   that IV1 is always the efficient estimator:
   #     IV1 is always FE when comparing it with REF and GMM;
@@ -262,45 +262,45 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   #     IV1 is GMM_L2 when comparing it with GMM_L3
 
   # HIVc1 vs HREE
-  FE_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HREE,
+  FE_L2_vs_REF <- multilevel_omittedvartest(IV1 = HIV.FE_L2, IV2 = HREE,
                                             res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.HREE,
                                             W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVs1 vs HREE
-  FE_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.FE_L3, IV2 = HREE,
+  FE_L3_vs_REF <- multilevel_omittedvartest(IV1 = HIV.FE_L3, IV2 = HREE,
                                             res.gmm.IV1 = res.gmm.FE_L3, res.gmm.IV2 = res.gmm.HREE,
                                             W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc2 vs HREE
-  GMM_L2_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HREE,
+  GMM_L2_vs_REF <- multilevel_omittedvartest(IV1 = HIV.GMM_L2, IV2 = HREE,
                                              res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.HREE,
                                              W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVs2 vs HREE
-  GMM_L3_vs_REF <- multilevel_ommitedvartest(IV1 = HIV.GMM_L3, IV2 = HREE,
+  GMM_L3_vs_REF <- multilevel_omittedvartest(IV1 = HIV.GMM_L3, IV2 = HREE,
                                               res.gmm.IV1 = res.gmm.GMM_L3, res.gmm.IV2 = res.gmm.HREE,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc1 vs HREE, id=2 ** double but different id ??
 
   # HIVc1 vs HIVs1
-  FE_L2_vs_FE_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.FE_L3,
+  FE_L2_vs_FE_L3 <- multilevel_omittedvartest(IV1 = HIV.FE_L2, IV2 = HIV.FE_L3,
                                               res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.FE_L3,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc2 vs HIVs2
-  GMM_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.GMM_L3,
+  GMM_L2_vs_GMM_L3 <- multilevel_omittedvartest(IV1 = HIV.GMM_L2, IV2 = HIV.GMM_L3,
                                                 res.gmm.IV1 = res.gmm.GMM_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc1 vs HIVc2
-  FE_L2_vs_GMM_L2 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L2,
+  FE_L2_vs_GMM_L2 <- multilevel_omittedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L2,
                                                 res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.GMM_L2,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVs2 vs HIVs1 - was missing in example code!
-  FE_L3_vs_GMM_L3  <- multilevel_ommitedvartest(IV1 = HIV.FE_L3, IV2 = HIV.GMM_L3,
+  FE_L3_vs_GMM_L3  <- multilevel_omittedvartest(IV1 = HIV.FE_L3, IV2 = HIV.GMM_L3,
                                                 res.gmm.IV1 = res.gmm.FE_L3, res.gmm.IV2 = res.gmm.GMM_L3,
                                                 W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc2 vs HIVs1 - was missing in example code!
-  FE_L3_vs_GMM_L2 <- multilevel_ommitedvartest(IV1 = HIV.FE_L3, IV2 = HIV.GMM_L2,
+  FE_L3_vs_GMM_L2 <- multilevel_omittedvartest(IV1 = HIV.FE_L3, IV2 = HIV.GMM_L2,
                                                res.gmm.IV1 = res.gmm.FE_L3, res.gmm.IV2 = res.gmm.GMM_L2,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
   # HIVc1 vs HIVs2
-  FE_L2_vs_GMM_L3 <- multilevel_ommitedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L3,
+  FE_L2_vs_GMM_L3 <- multilevel_omittedvartest(IV1 = HIV.FE_L2, IV2 = HIV.GMM_L3,
                                                res.gmm.IV1 = res.gmm.FE_L2, res.gmm.IV2 = res.gmm.GMM_L3,
                                                W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
 

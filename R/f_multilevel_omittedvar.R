@@ -1,7 +1,7 @@
 #' @importFrom corpcor make.positive.definite
 #' @importFrom Matrix rankMatrix t bdiag
 #' @importFrom stats pchisq
-multilevel_ommitedvartest <- function(IV1, IV2,
+multilevel_omittedvartest <- function(IV1, IV2,
                                       res.gmm.IV1, res.gmm.IV2,
                                       W,
                                       # Have to be highest level blocks (L3:s, L2:c)

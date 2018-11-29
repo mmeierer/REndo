@@ -90,6 +90,7 @@ test_that("Works with slopes as factors and chars", {
 
 
 
+
 # Formula transformations ------------------------------------------------------------------------------------------------------------
 
 context("Runability - multilevelIV - Formula transformations L2")
