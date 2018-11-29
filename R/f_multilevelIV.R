@@ -162,6 +162,24 @@ multilevelIV <- function(formula, data, verbose=TRUE){
 
   cl <- match.call()
 
+  # Model Definitions -----------------------------------------------------------
+  # (1) = level-1 model
+  #   (1)_sc = variability at child level
+  #
+  # (2) = level-2 model
+  #   Z(2)_sc, X(2)_sc=child or school and do not vary over time
+  #
+  # (3) = level-3 model = variability at school level
+  #   X(3)_s = depend on school
+  #
+  # Define:
+  #   Z_2sct = Z(1)_sct
+  #   Z_3sct = Z(1)_sctZ(2)_sc
+  #   Z_3s = stacked Z_3sct
+  #   X_sct = (X(1)_sct:Z_2sct)
+  #
+  #   X(1)=stacked X(1)_sc
+
   # Check input -----------------------------------------------------------------
   check_err_msg(checkinput_multilevel_formula(formula=formula))
   check_err_msg(checkinput_multilevel_data(data=data))
@@ -210,9 +228,9 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   #
   # Slopes / Z
   #   Has to be taken from X (model matrix) in case of factors in slope
+  #   Z names cannot be read as depends on number of levels
   dt.slp <- as.data.table(l4.form$X[, unique(unlist(l4.form$reTrms$cnms)), drop=FALSE])
 
-  # Z names cannot be read as depends on number of levels
 
   #
   # Group ids
@@ -236,6 +254,7 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   #   functions
   # Has to use the original data because dt.model.data already contains the data
   #   with applied transformations
+
   res.lmer <- tryCatch(lme4::lmer(formula=f.lmer, data=data, REML = TRUE),
                        error = function(e)return(e))
   if(is(res.lmer, "error"))

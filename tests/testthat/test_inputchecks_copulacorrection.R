@@ -379,7 +379,6 @@ test_that("start.params fails if transformation missing", {
   expect_error(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, P = -1), formula = y ~ X1 + X2 + I(P/2) |continuous(I(P/2)), data = dataCopCont), regexp = "The above errors were encountered!")
 })
 
-# *** TODO: Check that start.params work with dot in formula
 
 # optimx.args --------------------------------------------------------------------------------------------------------------------------------------------------------------
 context("Inputchecks - copulaCorrection - Parameter optimx.args")

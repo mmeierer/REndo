@@ -30,9 +30,6 @@
     expect_equal(colnames(ci.95), c("2.5 %", "97.5 %"))
     expect_equal(colnames(ci.90), c("5 %", "95 %"))
     expect_equal(colnames(ci.99), c("0.5 %", "99.5 %"))
-
-    # CI have to be larger for higher level (with very high probability)
-    # expect_gt(ci.99[, 2] - ci.99[, 2], ) ***maybe do as well if time
   })
 
   test_that("Confint works with character param", {

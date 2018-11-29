@@ -29,7 +29,7 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   # Standard Error, pval, p.530 --------------------------------------------------------------------------------
   #   b_GMM has an asymptotic (n -> Inf) normal distribution with mean beta
   #     and asymptotic variance Gamma(H) Lambda Gamma(H)'
-  #       where Lambda = ?? *** RALUCA ***
+  #       *** RALUCA *** where Lambda = ??
 
   Lambda  <- MHH
 

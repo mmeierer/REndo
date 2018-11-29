@@ -143,19 +143,11 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   })
   L3.Q <- Matrix::bdiag(l.L3.Q)
 
-  # L3.Q.simple <- Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Matrix::bdiag(l.L3.Z3) %*%
-  #   corpcor::pseudoinverse(Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W) %*% W %*% Matrix::bdiag(l.L3.Z3)) %*%
-  #   Matrix::crossprod(Matrix::bdiag(l.L3.Z3), W)
-  # print(all.equal(L3.Q,L3.Q.simple)) # TRUE
-
-  # NO!
-  # Q.naive <- Matrix::Diagonal(x=1, n=nrow(Z3)) - W %*% Z3 %*%
-  #   corpcor::pseudoinverse(Matrix::crossprod(Z3, W) %*% W %*% Z3) %*%
-  #   Matrix::crossprod(Z3, W)
 
   # . Q at L2 level ------------------------------------------------------------------------------------
+  # Q at L2 only (no reference to L3 at all)
 
-  # Split into L2 groups
+  # Split W into L2 groups
   g.L2.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by.L2]$g.idx
   l.L2.W <- lapply(g.L2.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
 
@@ -173,18 +165,6 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   # })
   # L2.Q.out <- Matrix::Diagonal(x=1, n=nrow(L2.Q)) - Matrix::bdiag(l.L2.Q.out)
   # print(all.equal(Matrix::drop0(L2.Q.out, tol=1e-15), Matrix::drop0(L2.Q, tol = 1e-15))) # TRUE
-
-  # too slow...? and wrong size
-  # L2.Q.simple <- Matrix::Diagonal(x=1, n=nrow(Z2)) - W %*% Matrix::bdiag(l.L2.Z2) %*%
-  #     corpcor::pseudoinverse(t(Matrix::bdiag(l.L2.Z2))%*%(W%*%W)%*%
-  #                              Matrix::bdiag(l.L2.Z2)) %*% Matrix::crossprod(Matrix::bdiag(l.L2.Z2), W)
-  # print(all.equal(L2.Q, L2.Q.simple))
-
-  # Also wrong...??
-  # L2.Q.naive <- Matrix::Diagonal(x=1, n=nrow(Z2)) - W %*% Z2 %*%
-  #     corpcor::pseudoinverse(t(Z2)%*%(W%*%W)%*%Z2) %*% Matrix::crossprod(Z2, W)
-  # print(all.equal(L2.Q, L2.Q.naive))
-
 
   # Calc P -------------------------------------------------------------------------------------
   # Formula:

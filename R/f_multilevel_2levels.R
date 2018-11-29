@@ -68,11 +68,6 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   # Formula:
   #   p.510: "the weight can be the inverse of the square root of the variance–covariance matrix of the disturbance term"
   #   W = V_{s}^(-1/2)
-  #
-  # https://scicomp.stackexchange.com/questions/10375/efficient-computation-of-the-matrix-square-root-inverse
-  # "In many cases you can instead use a Cholesky factor of the inverse of the covariance matrix
-  #   (or practically the same, the Cholesky factor of the covariance matrix itself.)"
-  # inv(sqrtm(BDIAG)) is same as applied on each block but faster and can create a sparse (dgCMatrix) matrix
 
   # Do eigen decomp on each block
   l.W <- lapply(l.V, function(g.v){
@@ -117,7 +112,6 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   # Very small values (ca 0) can cause troubles during inverse caluclation
   #   remove, tolerance same as zapsmall()
 
-
   # message("nnzero V: ", Matrix::nnzero(V))
   # message("nnzero W: ", Matrix::nnzero(W))
   # message("nnzero X: ", Matrix::nnzero(X))
@@ -138,6 +132,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   # message("nnzero Q: ", Matrix::nnzero(Q))
   # message("nnzero P: ", Matrix::nnzero(P))
 
+
   # Build instruments --------------------------------------------------------------------------
   # "As noted above, bGMM equals bRE when X = X1, where all variables are assumed to be exogenous.
   #   At the opposite end, where X1 is empty, we obtain bFE by using only the QX part of the instruments (see Section 3.1).
@@ -155,7 +150,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   #   and   P(1)_sgls = I_sc-Q(1)_sgls
 
   # GMM
-  # p. X??
+  # p. ??
   # ** RALUCA: Where does the W come from then if "by using only the QX part of the instruments"
   HIV.GMM_L2 <- cbind(Q %*% W%*%X, P%*%W%*%X1)
 
@@ -167,7 +162,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   res.gmm.GMM_L2   <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HIV.GMM_L2, num.groups.highest.level = n)
   res.gmm.HREE     <- multilevel_gmmestim(y=y, X=X, W=W, HIV=HREE,       num.groups.highest.level = n)
 
-  # return(list(y=y, X=X, W=W, HREE=HREE, n=n, V=V, l.V=l.V, l.W=l.W))
+
   # Omitted Var tests ----------------------------------------------------------------------------------
   # To conduct the OVT correctly, the order of the IVs have to be that IV
   #   is always the efficient estimator:
@@ -205,22 +200,3 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
               y = y,
               X = X))
 }
-
-
-  # LEAVE FOLLOWING COMMENTS FOR UNDERSTANDING =============================================
-  # (1) = level-1 model
-  #   (1)_sc = variability at child level
-  #
-  # (2) = level-2 model
-  #   Z(2)_sc, X(2)_sc=child or school and do not vary over time
-  #
-  # (3) = level-3 model = variability at school level
-  #   X(3)_s = may depend on school
-  #
-  # Define:
-  #   Z_2sct = Z(1)_sct
-  #   Z_3sct = Z(1)_sctZ(2)_sc
-  #   Z_3s = stacked Z_3sct
-  #   X_sct = (X(1)_sct:Z_2sct)
-  #
-  #   X(1)=stacked X(1)_sc

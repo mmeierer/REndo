@@ -64,8 +64,6 @@ test_that("S3 functions have all models as default argument model", {
 })
 
 
-# ** TODO **
-# test_that("summary() object structure",
 
 # vcov ----------------------------------------------------------------------------------------------------------------------------------
 test_that("vcov works for every model for L3 case", {

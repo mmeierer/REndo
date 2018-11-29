@@ -10,7 +10,7 @@ new_rendo_multilevel <- function(call, formula, num.levels, l.group.size, dt.mod
   coefficients    <- do.call(cbind, lapply(l.gmm, "[[", "coef"))
   coefficients.se <- do.call(cbind, lapply(l.gmm, "[[", "SE"))
 
-  # Calculate fitted and residuals for each estiamted model
+  # Calculate fitted and residuals for each estimated model
   l.fitted    <- lapply(l.gmm, function(gmm){ (X %*% gmm$coef)[,1,drop=TRUE]}) #setNames(as.vector(X %*% gmm$coef), rownames(X))})
   l.residuals <- lapply(l.fitted, function(fitted){ (y - fitted)[,1,drop=TRUE]}) #setNames(as.vector(y - fitted), rownames(y))})
 
