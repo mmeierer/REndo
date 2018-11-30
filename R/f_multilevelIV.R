@@ -207,11 +207,14 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   #   Model variables
   #   slope variables
   #   L2 / L3 Group Ids
-  #   rownames, if given
+  #   rownames, always
   #
   #   model.matrix: intercept + model vars + slope vars
   #   model.frame:  response + group ids
-
+  #
+  #   Rownames: There always are at least the standard rownames in a data.frame and it cannot
+  #               be distinguished between real and standard rownames. Therefore, and to mimic
+  #               stats::lm, rownames are always saved here and then added back to the results
 
   #
   # dependent variable

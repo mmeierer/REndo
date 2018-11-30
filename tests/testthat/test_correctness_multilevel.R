@@ -6,8 +6,28 @@ data("dataMultilevelIV")
 context("Correctness - multilevelIV - Formula transformations L2")
 
 # **correct if levels are given separately: (A|SID) + (B|SID) == (A+B|SID)
-# ** correct/works if no rownames given
 
+context("Correctness - multilevelIV - Sorting")
+
+# ** Also check for W and V?
+
+test_that("Rownames are kept for fitted, residuals", {
+  data.altered <- dataMultilevelIV
+  rownames(data.altered) <- as.character(seq(from=nrow(data.altered)+100000, to=1+100000))
+  expect_silent(res.ml2 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                              X31 + X32 + X33 + (1| SID) | endo(X15, X21),
+                                            data = data.altered, verbose = FALSE))
+  expect_silent(res.ml3 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                          X31 + X32 + X33 + (1|CID) +(1| SID) | endo(X15, X21),
+                                        data = data.altered, verbose = FALSE))
+
+  expect_equal(names(fitted(res.ml2)), rownames(data.altered))
+  expect_equal(names(resid(res.ml2)),  rownames(data.altered))
+  expect_equal(names(fitted(res.ml3)), rownames(data.altered))
+  expect_equal(names(resid(res.ml3)),  rownames(data.altered))
+})
+
+context("Correctness - multilevelIV - Formula transformations L2")
 test_that("Transformations are correct for L2", {
   expect_silent(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),

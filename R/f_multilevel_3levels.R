@@ -15,6 +15,8 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   name.split.by.L3 <- name.group.L3
   name.split.by.L2 <- c(name.group.L3, name.group.L2)
 
+  # Sort data by group to ensure that the groupwise readout (split) and the direct
+  #   column readout has the same order
   data.table::setkeyv(dt.model.data, cols = name.split.by.L2)
 
 
@@ -89,8 +91,6 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   V <- Matrix::Diagonal(sigma.sq, n=nrow(X)) +
             Matrix::bdiag(l.L3.V.part) +
             Matrix::bdiag(l.L2.V.part)
-  rownames(V) <- colnames(V) <- dt.model.data$rownames
-
 
   # Calc W -------------------------------------------------------------------------------------
   # Formula:
@@ -112,7 +112,6 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
 
   W <- Matrix::bdiag(l.L3.W)
-  rownames(W) <- colnames(W) <- dt.model.data$rownames
 
 
   # Calc Q -------------------------------------------------------------------------------------
@@ -131,17 +130,12 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
 
   # . Q at L3 level ------------------------------------------------------------------------------------
-
-  # ** Exists already but rownames wrong. worth splitting again?
-  l.L3.W   <- lapply(g.L3.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
-
-  # Ql3 <- diag(CT) - Wl3 %*% Zl3 %*% corpcor::pseudoinverse(crossprod(Zl3, Wl3) %*% Wl3 %*% Zl3) %*% crossprod(Zl3, Wl3)
+  # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
   l.L3.Q <- mapply(l.L3.Z3, l.L3.W, FUN = function(g.z3, g.w3){
-    Matrix::Diagonal(x=1, n=nrow(g.z3)) - g.w3 %*% g.z3 %*%
-      corpcor::pseudoinverse(Matrix::crossprod(g.z3, g.w3) %*% g.w3 %*% g.z3) %*%
+    g.w3 %*% g.z3 %*% corpcor::pseudoinverse(Matrix::crossprod(g.z3, g.w3) %*% g.w3 %*% g.z3) %*%
       Matrix::crossprod(g.z3, g.w3)
   })
-  L3.Q <- Matrix::bdiag(l.L3.Q)
+  L3.Q <- Matrix::Diagonal(x=1, n=nrow(W)) - Matrix::bdiag(l.L3.Q)
 
 
   # . Q at L2 level ------------------------------------------------------------------------------------
@@ -149,22 +143,14 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
   # Split W into L2 groups
   g.L2.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by.L2]$g.idx
-  l.L2.W <- lapply(g.L2.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
+  l.L2.W   <- lapply(g.L2.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
 
-  # Q at L2 only (according to raluca's code, no reference to L3 at all)
-  l.L2.Q <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
-    Matrix::Diagonal(x=1, n=nrow(g.z2)) - g.w2 %*% g.z2 %*%
-      corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
-  })
-  L2.Q <- Matrix::bdiag(l.L2.Q)
-
+  # Subtract
   # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
-  # l.L2.Q.out <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
-  #   g.w2 %*% g.z2 %*%
-  #     corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
-  # })
-  # L2.Q.out <- Matrix::Diagonal(x=1, n=nrow(L2.Q)) - Matrix::bdiag(l.L2.Q.out)
-  # print(all.equal(Matrix::drop0(L2.Q.out, tol=1e-15), Matrix::drop0(L2.Q, tol = 1e-15))) # TRUE
+  l.L2.Q <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
+    g.w2 %*% g.z2 %*%corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
+  })
+  L2.Q <- Matrix::Diagonal(x=1, n=nrow(W)) - Matrix::bdiag(l.L2.Q)
 
   # Calc P -------------------------------------------------------------------------------------
   # Formula:

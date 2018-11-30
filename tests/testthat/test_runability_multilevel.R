@@ -88,17 +88,3 @@ test_that("Works with slopes as factors and chars", {
                                 X31 + X32 + X33 + factorSLP+(0+factorSLP| SID) | endo(X15),
                               data = dataMultilevelIV, verbose = FALSE), regexp = "singular fit")
 })
-
-
-test_that("Works with and without rownames", {
-  # with rownames
-  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                               X31 + X32 + X33 +(1| SID) | endo(X15),
-                             data = dataMultilevelIV, verbose = FALSE))
-  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                               X31 + X32 + X33 +(1|CID)+(1| SID) | endo(X15),
-                             data = dataMultilevelIV, verbose = FALSE))
-  data.altered <- dataMultilevelIV
-
-})
-

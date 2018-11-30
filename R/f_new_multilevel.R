@@ -11,8 +11,9 @@ new_rendo_multilevel <- function(call, formula, num.levels, l.group.size, dt.mod
   coefficients.se <- do.call(cbind, lapply(l.gmm, "[[", "SE"))
 
   # Calculate fitted and residuals for each estimated model
-  l.fitted    <- lapply(l.gmm, function(gmm){ (X %*% gmm$coef)[,1,drop=TRUE]}) #setNames(as.vector(X %*% gmm$coef), rownames(X))})
-  l.residuals <- lapply(l.fitted, function(fitted){ (y - fitted)[,1,drop=TRUE]}) #setNames(as.vector(y - fitted), rownames(y))})
+  #   Rownames stem from full-length matrices X and y
+  l.fitted    <- lapply(l.gmm, function(gmm){ (X %*% gmm$coef)[,1,drop=TRUE]})
+  l.residuals <- lapply(l.fitted, function(fitted){ (y - fitted)[,1,drop=TRUE]})
 
   # Read out vcov of each model
   l.vcov <- lapply(l.gmm, "[[", "vcov")

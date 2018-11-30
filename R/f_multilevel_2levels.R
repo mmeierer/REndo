@@ -7,6 +7,8 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
                                name.group.L2, name.y, names.X, names.X1, names.Z2,
                                verbose){
 
+  # Sort data by group to ensure that the groupwise readout (split) and the direct
+  #   column readout has the same order
   data.table::setkeyv(x = dt.model.data,  cols = name.group.L2)
 
   # Because only 1 level name, the name to split by is the same as the L2 name. Therefore no separate variable name.splitby.L2
@@ -43,8 +45,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
 
   # ensure sorting of D cols is same as Z columns
   D.2 <- D.2[colnames(l.Z2[[1]]), colnames(l.Z2[[1]]), drop = FALSE]
-  if(!all(colnames(D.2) == colnames(l.Z2[[1]])))
-    stop("D.2 is wrongly sorted!")
+
 
   # Calc V -------------------------------------------------------------------------------------
   # Formula:
@@ -62,8 +63,6 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   # Whole V needed as vcov matrix
   V <- Matrix::bdiag(l.V)
 
-  # **TODO** add col/rownames?
-
   # Calc W -------------------------------------------------------------------------------------
   # Formula:
   #   p.510: "the weight can be the inverse of the square root of the variance–covariance matrix of the disturbance term"
@@ -75,9 +74,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
     ei$values[ei$values<0] <- 0
     sValS                  <- 1/sqrt(ei$values)
     sValS[ei$values==0]    <- 0
-    g.w <- ei$vectors %*% (diag(x=sValS,nrow=NROW(sValS)) %*% t(ei$vectors))
-    rownames(g.w) <- rownames(g.v)
-    g.w
+    ei$vectors %*% (diag(x=sValS,nrow=NROW(sValS)) %*% t(ei$vectors))
   })
 
   W <- Matrix::bdiag(l.W)
