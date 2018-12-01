@@ -62,6 +62,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
 
   # Whole V needed as vcov matrix
   V <- Matrix::bdiag(l.V)
+  rownames(V) <- colnames(V) <- rownames(X)
 
   # Calc W -------------------------------------------------------------------------------------
   # Formula:
@@ -78,6 +79,7 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   })
 
   W <- Matrix::bdiag(l.W)
+  rownames(W) <- colnames(W) <- rownames(X)
 
   # Calc Q -------------------------------------------------------------------------------------
   # Formula:
@@ -85,14 +87,17 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   #
   # Structure:
   #   p.512: Q(1) = blkdiag(Q(1)_sc)
-
+  #
+  # From example code:
+  #   Qsc = i(Tsc) - Wsc*Zsc*ginv(Zsc`*Wsc*Wsc*Zsc)*Zsc`*Wsc;
+  #
+  # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
   l.Q <- mapply(l.Z2, l.W, FUN = function(g.z2, g.w){
-    Matrix::Diagonal(x=1, n=nrow(g.z2)) - g.w %*% g.z2 %*%
-      corpcor::pseudoinverse(Matrix::crossprod(g.z2, g.w) %*% g.w %*% g.z2) %*%
+    g.w %*% g.z2 %*% corpcor::pseudoinverse(Matrix::crossprod(g.z2, g.w) %*% g.w %*% g.z2) %*%
       Matrix::crossprod(g.z2, g.w)
   })
 
-  Q <- Matrix::bdiag(l.Q)
+  Q <- Matrix::Diagonal(x=1, n=nrow(W)) - Matrix::bdiag(l.Q)
 
   # Calc P -------------------------------------------------------------------------------------
   # Formula:
@@ -107,27 +112,12 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
 
   # Drop near zero values ----------------------------------------------------------------------
   # Very small values (ca 0) can cause troubles during inverse caluclation
-  #   remove, tolerance same as zapsmall()
 
-  # message("nnzero V: ", Matrix::nnzero(V))
-  # message("nnzero W: ", Matrix::nnzero(W))
-  # message("nnzero X: ", Matrix::nnzero(X))
-  # message("nnzero X1: ", Matrix::nnzero(X1))
-  # message("nnzero Q: ", Matrix::nnzero(Q))
-  # message("nnzero P: ", Matrix::nnzero(P))
-  #
-  # W  <- Matrix::drop0(W, tol=sqrt(.Machine$double.eps))
-  # X  <- Matrix::drop0(X, tol=sqrt(.Machine$double.eps))
-  # X1 <- Matrix::drop0(X1,tol=sqrt(.Machine$double.eps))
-  # Q  <- Matrix::drop0(Q, tol=sqrt(.Machine$double.eps))
-  # P  <- Matrix::drop0(P, tol=sqrt(.Machine$double.eps))
-  #
-  # message("nnzero V: ", Matrix::nnzero(V))
-  # message("nnzero W: ", Matrix::nnzero(W))
-  # message("nnzero X: ", Matrix::nnzero(X))
-  # message("nnzero X1: ", Matrix::nnzero(X1))
-  # message("nnzero Q: ", Matrix::nnzero(Q))
-  # message("nnzero P: ", Matrix::nnzero(P))
+  W  <- Matrix::drop0(W, tol=sqrt(.Machine$double.eps))
+  X  <- Matrix::drop0(X, tol=sqrt(.Machine$double.eps))
+  X1 <- Matrix::drop0(X1,tol=sqrt(.Machine$double.eps))
+  Q  <- Matrix::drop0(Q, tol=sqrt(.Machine$double.eps))
+  P  <- Matrix::drop0(P, tol=sqrt(.Machine$double.eps))
 
 
   # Build instruments --------------------------------------------------------------------------

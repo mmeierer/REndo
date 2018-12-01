@@ -87,10 +87,11 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
     g.z3 %*% D.3 %*% t(g.z3)
   })
 
-  # Needed as vcov matrix
+  # Needed for return object
   V <- Matrix::Diagonal(sigma.sq, n=nrow(X)) +
             Matrix::bdiag(l.L3.V.part) +
             Matrix::bdiag(l.L2.V.part)
+  colnames(V) <- rownames(V) <- rownames(X)
 
   # Calc W -------------------------------------------------------------------------------------
   # Formula:
@@ -99,8 +100,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   #   "the weight can be the inverse of the square root of the variance–covariance matrix of the disturbance term V_{s}^(-1/2)"
   # Do eigen decomp on each block. Has to be L3 as L2 would omits non-zero vars
 
-  g.L3.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by.L3]$g.idx
-  l.L3.V   <- lapply(g.L3.idx, function(g.id) {V[g.id, g.id, drop=FALSE]})
+  l.L3.V   <- multilevel_splitmatrixtolist(m=V, dt.model.data=dt.model.data, name.split.by=name.split.by.L3)
 
   # Do eigen decomp on each block
   l.L3.W <- lapply(l.L3.V, function(g.v){
@@ -112,6 +112,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
 
   W <- Matrix::bdiag(l.L3.W)
+  colnames(W) <- rownames(W) <- rownames(X)
 
 
   # Calc Q -------------------------------------------------------------------------------------
@@ -128,9 +129,8 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   #       Q(2)=blkdiag(Q(2)_s)
   #   L2: ?
 
-
   # . Q at L3 level ------------------------------------------------------------------------------------
-  # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
+  # Move the diagonal outside as the blocks are all square and therefore the diagonal is the same
   l.L3.Q <- mapply(l.L3.Z3, l.L3.W, FUN = function(g.z3, g.w3){
     g.w3 %*% g.z3 %*% corpcor::pseudoinverse(Matrix::crossprod(g.z3, g.w3) %*% g.w3 %*% g.z3) %*%
       Matrix::crossprod(g.z3, g.w3)
@@ -142,10 +142,9 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   # Q at L2 only (no reference to L3 at all)
 
   # Split W into L2 groups
-  g.L2.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by.L2]$g.idx
-  l.L2.W   <- lapply(g.L2.idx, function(g.id) {W[g.id, g.id, drop=FALSE]})
+  l.L2.W   <- multilevel_splitmatrixtolist(m = W, dt.model.data=dt.model.data,
+                                           name.split.by=name.split.by.L2)
 
-  # Subtract
   # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
   l.L2.Q <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
     g.w2 %*% g.z2 %*%corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)

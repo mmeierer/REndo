@@ -218,7 +218,6 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   check_err_msg(checkinput_copulacorrection_dataVSformula(formula=formula, data=data))
   check_err_msg(checkinput_copulacorrection_verbose(verbose=verbose))
 
-  # **?? TODO: CHECK ASSUMPTION THAT ENDOGENOUS IS NOT NORMAL ??
 
   # Read out specials ------------------------------------------------------------------------------------------
   F.formula <- as.Formula(formula)

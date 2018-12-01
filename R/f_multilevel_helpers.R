@@ -37,14 +37,25 @@ multilevel_colstomatrix <- function(dt, name.cols){
 }
 
 
+multilevel_splitmatrixtolist <- function(m, dt.model.data, name.split.by){
+  # get indices of each group
+  dt.group.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by]
+  # bring to same order as the other lists (shouldnt be required as sorted already)
+  dt.group.idx[order(name.split.by), ]
 
-#' #' Formula:
-#' #'   p510: P(H) = H(H'H)^(-1)H'
-#' #' @importFrom corpcor pseudoinverse
-#' multilevel_projectionP <- function(H){
-#'   # crossprod:  t(x) %*% y
-#'   # tcrossprod: x %*% t(y)
-#'   # Matrix::crossprod returns a dsCMatrix (ie knows its symmetric)
-#'   # return(H %*% Matrix::tcrossprod( Matrix::solve(Matrix::crossprod(H), sparse=TRUE), H))
-#'   return(H %*% Matrix::tcrossprod( corpcor::pseudoinverse(Matrix::crossprod(H), sparse=TRUE), H))
-#' }
+  # Split matrix into groups
+  l.groups <- lapply(dt.group.idx$g.idx, function(g.id) {m[g.id, g.id, drop=FALSE]})
+  return(l.groups)
+}
+
+# Formula:
+#   p510: P(H) = H(H'H)^(-1)H'
+# @importFrom corpcor pseudoinverse
+# ** Example code different from projection in paper **
+# multilevel_projectionP <- function(H){
+#   # crossprod:  t(x) %*% y
+#   # tcrossprod: x %*% t(y)
+#   # Matrix::crossprod returns a dsCMatrix (ie knows its symmetric)
+#   # return(H %*% Matrix::tcrossprod( Matrix::solve(Matrix::crossprod(H), sparse=TRUE), H))
+#   return(H %*% Matrix::tcrossprod( Matrix(corpcor::pseudoinverse(Matrix::crossprod(H)),sparse = TRUE), H))
+# }
