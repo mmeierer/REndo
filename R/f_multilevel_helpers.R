@@ -38,6 +38,9 @@ multilevel_colstomatrix <- function(dt, name.cols){
 
 
 multilevel_splitmatrixtolist <- function(m, dt.model.data, name.split.by){
+  # cran silence
+  .I <- NULL
+
   # get indices of each group
   dt.group.idx <- dt.model.data[, list(g.idx=list(.I)), by=name.split.by]
   # bring to same order as the other lists (shouldnt be required as sorted already)

@@ -2,32 +2,8 @@
 data("dataMultilevelIV")
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
+context("Correctness - multilevelIV - Formula transformations")
 
-context("Correctness - multilevelIV - Formula transformations L2")
-
-# **correct if levels are given separately: (A|SID) + (B|SID) == (A+B|SID)
-
-context("Correctness - multilevelIV - Sorting")
-
-# ** Also check for W and V?
-
-test_that("Rownames are kept for fitted, residuals", {
-  data.altered <- dataMultilevelIV
-  rownames(data.altered) <- as.character(seq(from=nrow(data.altered)+100000, to=1+100000))
-  expect_silent(res.ml2 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                              X31 + X32 + X33 + (1| SID) | endo(X15, X21),
-                                            data = data.altered, verbose = FALSE))
-  expect_silent(res.ml3 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                          X31 + X32 + X33 + (1|CID) +(1| SID) | endo(X15, X21),
-                                        data = data.altered, verbose = FALSE))
-
-  expect_equal(names(fitted(res.ml2)), rownames(data.altered))
-  expect_equal(names(resid(res.ml2)),  rownames(data.altered))
-  expect_equal(names(fitted(res.ml3)), rownames(data.altered))
-  expect_equal(names(resid(res.ml3)),  rownames(data.altered))
-})
-
-context("Correctness - multilevelIV - Formula transformations L2")
 test_that("Transformations are correct for L2", {
   expect_silent(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
@@ -71,7 +47,6 @@ test_that("Transformations are correct for L2", {
 })
 
 
-context("Correctness - multilevelIV - Formula transformations L3")
 
 test_that("Transformations are correct for L3", {
   expect_message(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
@@ -114,4 +89,67 @@ test_that("Transformations are correct for L3", {
   expect_equal(coef(res.trans.slope), coef(correct.res), tolerance = 1e-6, check.attributes = FALSE)
   expect_equal(coef(summary(res.trans.slope)), coef(summary(correct.res)), tolerance = 1e-6, check.attributes = FALSE)
 
+})
+
+
+# Unsorted data ------------------------------------------------------------------------------------------------
+context("Correctness - multilevelIV - Data sorting")
+
+# **correct if levels are given separately: (A|SID) + (B|SID) == (A+B|SID)
+# ** Also check for W and V?
+
+
+test_that("Unsorted data is correct L2", {
+  # Correct = coefs + sorting of residuals / fitted
+
+  # Distinguishable non-standard rownames
+  rownames(dataMultilevelIV) <- as.character(seq(from=nrow(data.altered)+100000, to=1+100000))
+
+  expect_silent(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                            data = dataMultilevelIV, verbose = FALSE))
+  # Can handle transformations in LHS
+  data.altered   <- dataMultilevelIV
+  data.altered   <- data.altered[sample(x=nrow(dataMultilevelIV), size = nrow(dataMultilevelIV), replace = FALSE), ]
+  expect_silent(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                                X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                              data = data.altered, verbose = FALSE))
+
+  # Coefs the same
+  # Have to use tolerance because lmer() provides slightly different results for sorted/unsorted data
+  expect_equal(coef(res.unsorted), coef(res.sorted), tolerance = 10e-5)
+  expect_equal(coef(summary(res.unsorted)), coef(summary(res.sorted)), tolerance = 10e-5)
+
+  # Sorting of fitted / residuals same as input
+  expect_equal(names(fitted(res.sorted)),   rownames(dataMultilevelIV))
+  expect_equal(names(resid(res.sorted)),    rownames(dataMultilevelIV))
+  expect_equal(names(fitted(res.unsorted)), rownames(data.altered))
+  expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
+})
+
+test_that("Unsorted data is correct L3", {
+  # Correct = coefs + sorting of residuals / fitted
+
+  # Distinguishable non-standard rownames
+  rownames(dataMultilevelIV) <- as.character(seq(from=nrow(data.altered)+100000, to=1+100000))
+  expect_message(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                              X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
+                                            data = dataMultilevelIV, verbose = FALSE), regex = "singular fit")
+  # Can handle transformations in LHS
+  data.altered   <- dataMultilevelIV
+  data.altered   <- data.altered[sample(x=nrow(dataMultilevelIV), size = nrow(dataMultilevelIV), replace = FALSE), ]
+  expect_message(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                                X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
+                                              data = data.altered, verbose = FALSE), regex = "singular fit")
+
+  # Coefs the same
+  # Have to use tolerance because lmer() provides slightly different results for sorted/unsorted data
+  expect_equal(coef(res.unsorted), coef(res.sorted), tolerance = 10e-5)
+  expect_equal(coef(summary(res.unsorted)), coef(summary(res.sorted)), tolerance = 10e-5)
+
+  # Sorting of fitted / residuals same as input
+  expect_equal(names(fitted(res.sorted)),   rownames(dataMultilevelIV))
+  expect_equal(names(resid(res.sorted)),    rownames(dataMultilevelIV))
+  expect_equal(names(fitted(res.unsorted)), rownames(data.altered))
+  expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
 })

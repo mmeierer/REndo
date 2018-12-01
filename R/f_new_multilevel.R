@@ -14,6 +14,9 @@ new_rendo_multilevel <- function(call, formula, num.levels, l.group.size, dt.mod
   #   Rownames stem from full-length matrices X and y
   l.fitted    <- lapply(l.gmm, function(gmm){ (X %*% gmm$coef)[,1,drop=TRUE]})
   l.residuals <- lapply(l.fitted, function(fitted){ (y - fitted)[,1,drop=TRUE]})
+  # The fitted and residuals at this point are sorted group-wise to match the groups in V and W.
+  #   Restoring the sorting of the original input data is done in the interface
+  #   function because the sorting (rownames) of the original data is not available here
 
   # Read out vcov of each model
   l.vcov <- lapply(l.gmm, "[[", "vcov")

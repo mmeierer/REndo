@@ -9,7 +9,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
                                verbose){
 
   # cran silence
-  .SD <- .I <- NULL
+  .SD <- NULL
 
   # Splitting names: What is used in DT "by" to form groups
   name.split.by.L3 <- name.group.L3

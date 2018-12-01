@@ -99,11 +99,11 @@
 #'
 #' \item{formula}{the formula given to specify the model to be fitted.}
 #' \item{num.levels}{the number of levels detected from the model.}
-#' \item{dt.mm}{used model.matrix as data.table}
+#' \item{dt.model.data}{model data including data for slopes and level group ids, as data.table}
 #' \item{coefficients}{a matrix of coefficients, one column per model.}
 #' \item{coefficients.se}{a matrix of coefficients' SE, one column per model.}
-#' \item{l.fitted}{a list of fitted values, named per model.}
-#' \item{l.residuals}{a list of residuals, named per model.}
+#' \item{l.fitted}{a named list per model of fitted values sorted as the input data}
+#' \item{l.residuals}{a named list per model of residuals sorted as the input data}
 #' \item{l.vcov}{a list of variance-covariance matrix, named per model.}
 #' \item{V}{the variance–covariance matrix V of the disturbance term.}
 #' \item{W}{the weight matrix W, such that W=V^(-1/2) per highest level group.}
@@ -253,8 +253,8 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   # p515: "With the transformed data, we may apply any of the usual procedures for
   #         estimating variance components, including maximum likelihood, restricted maximum likelihood (REML)"
   #
-  # Same for L2 and L3 cases and doing it here avoids passing and processing the formula in the level
-  #   functions
+  # Same for L2 and L3 cases and doing it here avoids passing and processing the formula and original data
+  #   in the level functions
   # Has to use the original data because dt.model.data already contains the data
   #   with applied transformations
 
@@ -296,7 +296,11 @@ multilevelIV <- function(formula, data, verbose=TRUE){
                                 name.y = name.y, names.X = names.X, names.X1 = names.X1,
                                 names.Z2 = names.Z2, names.Z3 = names.Z3,
                                 verbose = verbose)
-    }
+  }
+
+  # Sort fitted and residuals by original input data (rownames)
+  res$l.fitted    <- lapply(res$l.fitted,    function(fit){fit[rownames(data)]})
+  res$l.residuals <- lapply(res$l.residuals, function(resid){resid[rownames(data)]})
 
   return(res)
 }

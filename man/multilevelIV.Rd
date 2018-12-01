@@ -25,11 +25,11 @@ An object of class \code{rendo.multilevel} is returned that is a list and contai
 
 \item{formula}{the formula given to specify the model to be fitted.}
 \item{num.levels}{the number of levels detected from the model.}
-\item{dt.mm}{used model.matrix as data.table}
+\item{dt.model.data}{model data including data for slopes and level group ids, as data.table}
 \item{coefficients}{a matrix of coefficients, one column per model.}
 \item{coefficients.se}{a matrix of coefficients' SE, one column per model.}
-\item{l.fitted}{a list of fitted values, named per model.}
-\item{l.residuals}{a list of residuals, named per model.}
+\item{l.fitted}{a named list per model of fitted values sorted as the input data}
+\item{l.residuals}{a named list per model of residuals sorted as the input data}
 \item{l.vcov}{a list of variance-covariance matrix, named per model.}
 \item{V}{the variance–covariance matrix V of the disturbance term.}
 \item{W}{the weight matrix W, such that W=V^(-1/2) per highest level group.}
