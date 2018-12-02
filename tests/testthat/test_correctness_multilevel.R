@@ -153,3 +153,47 @@ test_that("Unsorted data is correct L3", {
   expect_equal(names(fitted(res.unsorted)), rownames(data.altered))
   expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
 })
+
+
+# Reproduce results ------------------------------------------------------------------------------
+context("Correctness - multilevelIV - Reproduce results")
+
+test_that("REF is same as lmer()", {
+  # L2
+  expect_silent(res.ml2 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                            data = dataMultilevelIV, verbose = FALSE))
+
+  expect_silent(res.lmer2 <- lmer(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                   X31 + X32 + X33 + (1+X11 | SID),
+                                 data = dataMultilevelIV))
+
+  expect_equal(coef(res.ml2)[, "REF"], coef(summary(res.lmer2))[, "Estimate"])
+
+  expect_silent(res.ml3 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                          X31 + X32 + X33 + (1|CID)+(1+X11 | SID) | endo(X15, X21),
+                                        data = dataMultilevelIV, verbose = FALSE))
+
+  expect_silent(res.lmer3 <- lmer(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                    X31 + X32 + X33 +(1|CID)+ (1+X11 | SID),
+                                  data = dataMultilevelIV))
+  expect_equal(coef(res.ml3)[, "REF"], coef(summary(res.lmer3))[, "Estimate"])
+
+})
+
+# test_that("Reproduce results by Kim and Frees 2007", {
+#   kf.formula <- TLI ~ GRADE_3 +  RETAINED  + SWITCHSC + S_FREELU +
+#                   FEMALE + BLACK + HISPANIC + OTHER+ C_COHORT+
+#                   T_EXPERI + CLASS_SI+ P_MINORI + (1 + GRADE_3|NEWCHILD) | endo(CLASS_SI)
+#
+#   # Is in tests/testthat folder
+#   df.data.kf <- read.csv("dallas2485.csv", header=TRUE)
+#
+#   expect_silent(res.kf <- multilevelIV(formula = kf.formula, data = df.data.kf, verbose = FALSE))
+#
+#   correct.coefs <- cbind(REF = c(3.375, 9.205, -0.365, -0.227, -1.234, -4.745, -3.608, 6.526, 1.497, -0.116, 0.157, 0.069))
+#
+#   # Compare coefs
+#   expect_equal(coef(res.kf) )
+#
+# })
