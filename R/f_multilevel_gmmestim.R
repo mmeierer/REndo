@@ -36,7 +36,8 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   gmm.vcov     <- as.matrix(Gamma.H %*% Matrix::tcrossprod(Lambda, Gamma.H) / n)
   Mstderr_bIV <- sqrt(Matrix::diag(gmm.vcov))
 
-  bIV                <- as.vector(bIV)
+  # round values to "digits". Mostly done to make coefs for FE close to 0 actually 0
+  bIV                <- round(as.vector(bIV), digits = getOption(x = "digits"))
   names(bIV)         <- colnames(X)
   Mstderr_bIV        <- as.vector(Mstderr_bIV)
   names(Mstderr_bIV) <- names(bIV)

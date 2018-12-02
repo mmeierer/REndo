@@ -164,7 +164,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
   # Drop near zero values ----------------------------------------------------------------------
   # Very small values (ca 0) can cause troubles during inverse caluclation
-  #   remove, tolerance same as zapsmall()
+  #   remove
 
   W  <- Matrix::drop0(W, tol=sqrt(.Machine$double.eps))
   X  <- Matrix::drop0(X, tol=sqrt(.Machine$double.eps))

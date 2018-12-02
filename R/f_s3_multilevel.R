@@ -87,9 +87,8 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
         "  L3(",names(x$l.group.size[["L3"]]),"): ",x$l.group.size[["L3"]],
         "\n\n",sep="")
 
-  # Use zapsmall for printing as some coefs are nearly 0
   cat("Coefficients:\n")
-  print.default(format(zapsmall(coef(x)), digits = digits), print.gap = 2L, quote = FALSE)
+  print.default(format(coef(x), digits = digits), print.gap = 2L, quote = FALSE)
 
   invisible(x)
 }
@@ -236,9 +235,8 @@ print.summary.rendo.multilevel <- function(x, digits = max(3L, getOption("digits
 
   # Main model coefficients ----------------------------------------------------------------------
   cat("Coefficients for model ", x$summary.model, ":\n", sep = "")
-  # Use zapsmall for printing as some coefs are nearly 0
+
   coefs <- x$coefficients
-  coefs[,"Estimate"] <- zapsmall(coefs[,"Estimate"])
   printCoefmat(coefs, digits = digits, na.print = "NA",
                has.Pvalue = TRUE, signif.stars = signif.stars,...)
 

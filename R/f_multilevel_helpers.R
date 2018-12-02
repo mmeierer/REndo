@@ -54,7 +54,7 @@ multilevel_splitmatrixtolist <- function(m, dt.model.data, name.split.by){
 # Formula:
 #   p510: P(H) = H(H'H)^(-1)H'
 # @importFrom corpcor pseudoinverse
-# ** Example code different from projection in paper **
+# ** RALUCA: Example code different from projection in paper **
 # multilevel_projectionP <- function(H){
 #   # crossprod:  t(x) %*% y
 #   # tcrossprod: x %*% t(y)
