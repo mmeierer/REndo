@@ -103,7 +103,7 @@ test_that("Unsorted data is correct L2", {
   # Correct = coefs + sorting of residuals / fitted
 
   # Distinguishable non-standard rownames
-  rownames(dataMultilevelIV) <- as.character(seq(from=nrow(data.altered)+100000, to=1+100000))
+  rownames(dataMultilevelIV) <- as.character(seq(from=nrow(dataMultilevelIV)+100000, to=1+100000))
 
   expect_silent(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
@@ -131,7 +131,7 @@ test_that("Unsorted data is correct L3", {
   # Correct = coefs + sorting of residuals / fitted
 
   # Distinguishable non-standard rownames
-  rownames(dataMultilevelIV) <- as.character(seq(from=nrow(data.altered)+100000, to=1+100000))
+  rownames(dataMultilevelIV) <- as.character(seq(from=nrow(dataMultilevelIV)+100000, to=1+100000))
   expect_message(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
                                             data = dataMultilevelIV, verbose = FALSE), regex = "singular fit")
