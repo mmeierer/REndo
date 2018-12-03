@@ -138,19 +138,19 @@ test_that("Fail if EIV not in data", {
 test_that("Fail if wrong data type in endo", {
   # Factor/Chars/ Logicals (as indicate dichotomous variable (=factor))
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=factor(1:10))), regexp = "The above errors were encountered!")
-  expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=as.character(1:10), stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=as.character(1:10), stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=as.logical(0:9))), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if wrong data type in exo used in IIV", {
   # Factor/Chars/ Logicals (as indicate dichotomous variable (=factor))
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
-  expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
 })
 
 # test_that("Fail if wrong data type in exo used in y", {
-# expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data=data.frame(y=as.character(1:10), X1=1:10, X2=1:10, P=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
+# expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data=data.frame(y=as.character(1:10), X1=1:10, X2=1:10, P=1:10, stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
 # expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),data= data.frame(y=as.logical(0:9), X1=1:10, X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
 # })
 
@@ -159,7 +159,7 @@ test_that("Allow wrong data type in irrelevant columns", {
   # Allow wrong data types in unused columns
   expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X2)+IIV(X1), verbose=FALSE,
                                 data = cbind(dataHetIV,
-                                             unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
+                                             unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = FALSE)))
 })
 
 

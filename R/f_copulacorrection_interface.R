@@ -192,10 +192,18 @@
 #'                             optimx.args = list(method = "L-BFGS-B",
 #'                                                control=list(trace = 2, REPORT=50)),
 #'                             data=dataCopCont)
+#'
+#' # for single cont case only:
+#' # read out all coefficients, incl auxiliary coefs
+#' c1.all.coefs <- coef(res.c1)
+#' # same as above
+#' c1.all.coefs <- coef(res.c1, complete = TRUE)
+#' # only main model coefs
+#' c1.main.coefs <- coef(res.c1, complete = FALSE)
+#'
 #'}}
 #'
 #' @importFrom Formula as.Formula
-#' @importFrom methods formalArgs
 #' @export
 copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   # Catch stuff ------------------------------------------------------------------------------------------------
@@ -207,6 +215,7 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   check_err_msg(checkinput_copulacorrection_data(data=data))
   check_err_msg(checkinput_copulacorrection_dataVSformula(formula=formula, data=data))
   check_err_msg(checkinput_copulacorrection_verbose(verbose=verbose))
+
 
   # Read out specials ------------------------------------------------------------------------------------------
   F.formula <- as.Formula(formula)

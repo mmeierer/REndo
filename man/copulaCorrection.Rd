@@ -193,6 +193,15 @@ res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
                             optimx.args = list(method = "L-BFGS-B",
                                                control=list(trace = 2, REPORT=50)),
                             data=dataCopCont)
+
+# for single cont case only:
+# read out all coefficients, incl auxiliary coefs
+c1.all.coefs <- coef(res.c1)
+# same as above
+c1.all.coefs <- coef(res.c1, complete = TRUE)
+# only main model coefs
+c1.main.coefs <- coef(res.c1, complete = FALSE)
+
 }}
 
 }

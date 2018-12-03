@@ -120,6 +120,13 @@ l3 <- latentIV(y ~ P, optimx.args = list(control = list(trace = 6)),
 l4 <- latentIV(y ~ P, optimx.args = list(method = "L-BFGS-B", control=list(trace = 2, REPORT=50)),
                data = dataLatentIV)
 
+# read out all coefficients, incl auxiliary coefs
+lat.all.coefs <- coef(l4)
+# same as above
+lat.all.coefs <- coef(l4, complete = TRUE)
+# only main model coefs
+lat.main.coefs <- coef(l4, complete = FALSE)
+
 }
 \references{
 Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error

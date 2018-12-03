@@ -50,11 +50,6 @@ check_err_msg <- function(err.msg){
   if(any(name.rhs %in% name.lhs))
     err.msg <- c(err.msg, "The independent variables cannot also be a dependent variable.")
 
-  # **IMplmenet separately and remove here
-  # # Check if all regressors are present in the data
-  # if(!all(c(name.lhs, name.rhs) %in% colnames(data)))
-  #   err.msg <- c(err.msg, "Please provide a data object that contains all the formula's variables.")
-
   return(err.msg)
 }
 
@@ -86,14 +81,14 @@ check_err_msg <- function(err.msg){
 #' @importFrom stats .MFclass
 .checkinputhelper_dataVSformula_basicstructure <- function(formula, data, rhs.rel.regr,
                                                            num.only.cols){
-  # here, the basic structure of data and formula are guaranteed to be correct
+  # when here, the basic structure of data and formula are guaranteed to be correct
   err.msg <- c()
   F.formula <- as.Formula(formula)
   # Do not need terms object to expand . (dot) because not yet allowed in formula input.
 
   # Check that every regressor is in the data
   if(!all(all.vars(formula(F.formula, rhs=rhs.rel.regr)) %in% colnames(data)))
-    err.msg <- c(err.msg, "Please provide a data object that contains all the formula's variables.")
+    return("Please provide a data object that contains all the formula's variables.")
 
   # Only allow numeric (real & integer) values in the specified columns
   data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")

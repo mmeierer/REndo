@@ -33,9 +33,9 @@ test_that("Confint works with different alphas", {
   expect_silent(ci.70 <- confint(res.dis.only, level = 0.70))
 
   # Level works and provides different values
-  expect_false(isTRUE(all.equal(ci.99,ci.95,check.attributes=F)))
-  expect_false(isTRUE(all.equal(ci.95,ci.90,check.attributes=F)))
-  expect_false(isTRUE(all.equal(ci.90,ci.70,check.attributes=F)))
+  expect_false(isTRUE(all.equal(ci.99,ci.95,check.attributes=FALSE)))
+  expect_false(isTRUE(all.equal(ci.95,ci.90,check.attributes=FALSE)))
+  expect_false(isTRUE(all.equal(ci.90,ci.70,check.attributes=FALSE)))
 
   # Rightly named, all same
   expect_equal(rownames(ci.99), names(coef(res.dis.only)))

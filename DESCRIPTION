@@ -3,10 +3,10 @@ Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumenta
 Version: 2.0.0
 Date: 2018-10-31
 Authors@R: c(
-    person(given="Raluca", family="Gui", email = "raluca.gui@business.uzh.ch", role = c("cre","aut")),
-    person(given="Markus", family="Meierer", email = "markus.meierer@business.uzh.ch", role = "aut"),
-    person(given="Rene", family="Algesheimer", email = "market-research@business.uzh.ch", role = "aut"),
-    person(given="Patrik", family="Schilter", email = "patrik.schilter@gmail.com",role = "aut"))
+    person(given="Raluca", family="Gui",         email = "raluca.gui@business.uzh.ch", role = c("cre","aut")),
+    person(given="Markus", family="Meierer",     email = "markus.meierer@business.uzh.ch", role = "aut"),
+    person(given="Rene",   family="Algesheimer", email = "market-research@business.uzh.ch", role = "aut"),
+    person(given="Patrik", family="Schilter",    email = "patrik.schilter@gmail.com",role = "aut"))
 Description: Fits linear models with endogenous regressor using latent instrumental variable approaches. 
     The methods included in the package are Lewbel's (1997) <doi:10.2307/2171884> higher moments approach as well as 
     Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroskedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718> joint estimation method 
@@ -29,6 +29,9 @@ Imports:
     optimx (>= 2013.8.7),
     mvtnorm (>= 1.0-8),
     AER (>= 1.2-5),
+    Matrix (>= 1.2-15),
+    lme4 (>= 1.1-18-1),
+    data.table (>= 1.11.8),
     corpcor (>= 1.6.9)
 Suggests:
     testthat,
