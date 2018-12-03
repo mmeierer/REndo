@@ -111,7 +111,8 @@ context("S3methods - copulaCorrection - 1 continuous")
 
 # Test all S3 methods
 c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
-expect_silent(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE))
+expect_warning(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2),
+               regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
 
 test.s3methods.rendooptimLL(res.model=res.c1, input.form=c1.input.form, function.std.data=dataCopCont,
                             req.df=6,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))

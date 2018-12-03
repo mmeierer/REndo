@@ -83,6 +83,8 @@
 #' The function summary can be used to obtain and print a summary of the results.
 #' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
 #'
+#' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
+#'
 #' @references   Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
 #' (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
 #' Quantitative Marketing and Economics, 3:365--392.
@@ -260,12 +262,6 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   residuals        <- as.vector(vec.data.y - fitted)
   names(residuals) <- names(vec.data.y)
 
-  vcov.error      <- matrix(c(all.estimated.params["theta5"]^2,
-                              all.estimated.params["theta5"]   * all.estimated.params["theta6"],
-                              all.estimated.params["theta5"]   * all.estimated.params["theta6"],
-                              all.estimated.params["theta6"]^2 + all.estimated.params["theta7"]^2),
-                           nrow=2, ncol=2)
-
 
   # Put together returns ------------------------------------------------------------------
   res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
@@ -275,13 +271,6 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
                             names.main.coefs = names.main.model,
                             res.optimx = res.optimx, log.likelihood=res.optimx$value,
                             hessian = hessian, fitted.values=fitted,
-                            residuals=residuals, vcov.error=vcov.error)
-
-                   # list(coefficients   = estimated.params[names.original.main.coefs],
-                   #      group.means    = estimated.params[c("pi1", "pi2")],
-                   #      prob.group1    = estimated.params[["theta8"]],
-                   #      coefficients.se= param.se[names.original.main.coefs],
-                   #      group.means.se = param.se[c("pi1", "pi2")],
-                   #      prob.group1.se = param.se[["theta8"]]))
+                            residuals=residuals)
   return(res)
 }

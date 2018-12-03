@@ -175,7 +175,7 @@ test_that("Fails if transformations are not named exactly the same", {
 test_that("Fails if transformations are done for different endo", {
   # C1
   # expect_warning(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/1)), verbose = FALSE, num.boots=2, data=dataCopCont),
-  #                regexp = "It is recommended to run more than", all = TRUE)
+  #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # C2, Dis, DisCont
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P2, I(P1/2)), verbose = FALSE, data=dataCopCont2),regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P2, I(P1/2)),   verbose = FALSE, data=dataCopDis2),regexp = "The above errors were encountered!")
@@ -264,12 +264,10 @@ context("Inputchecks - copulaCorrection - Parameter num.boots")
 # Failure tests
 test.positive.numeric.whole.number(function.to.test = copulaCorrection, parameter.name="num.boots",
                                    formula=y~X1+X2+P|continuous(P), function.std.data=dataCopCont)
-# Start params required for silence
-# additional.args =list(verbose=F, start.params = c("(Intercept)"=1.983, X1=1.507, X2=-3.014, P1=-0.891)
 
-test_that("Warning if num.boots < 10", {
+test_that("Warning if num.boots < 1000", {
   # only for continuous 1
-  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont),all=FALSE, regexp = "It is recommended to run more than")
+  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont),all=FALSE, regexp = "It is recommended to run 1000 or more bootstraps.")
 })
 
 # Warning if num.boots given for any other case
@@ -306,11 +304,12 @@ test_that("start.params is not NA",{
   expect_error(copulaCorrection(start.params = NA_real_, formula = y ~ X1 + X2 + P|continuous(P), data = dataCopCont), regexp = "The above errors were encountered!")
 })
 
-test_that("start.params is NULL or missing but runs with message", {
-  # Does not work with missing start.params in ...
-  # expect_warning(copulaCorrection(start.params =     , formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont, num.boots = 2, verbose=TRUE))
-  expect_message(copulaCorrection(start.params = NULL, formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont, verbose=TRUE),regexp = "The linear model", all = FALSE)
-})
+# Leave out because requires full run with 1000 bootstraps as otherwise also a warning is produced
+# test_that("start.params is NULL or missing but runs with message", {
+#   # Does not work with missing start.params in ...
+#   # expect_warning(copulaCorrection(start.params =     , formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont, num.boots = 2, verbose=TRUE))
+#   expect_message(copulaCorrection(start.params = NULL, formula = y ~ X1 + X2 + P |continuous(P), data = dataCopCont, verbose=TRUE, num.boots=2),regexp = "The linear model", all = FALSE)
+# })
 
 test_that("Fails if start.params cannot be derived with lm", {
   expect_error(copulaCorrection(formula = y ~ X1+X2+X3+P |continuous(P), data = cbind(dataCopCont, X3=dataCopCont$X2*2)),
@@ -396,7 +395,7 @@ test_that("Has default value empty list()",{
 context("Inputchecks - copulaCorrection - Parameter 3-dots")
 test_that("Warning if further unneded params are given", {
   # 1 continuous
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont),all=TRUE, regexp = "are ignored")
+  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont, num.boots=2),all=FALSE, regexp = "are ignored")
   # >1 continuous
   expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopCont2),all=TRUE, regexp = "are ignored")
   # Mixed

@@ -114,8 +114,9 @@ checkinput_copulacorrection_numboots <- function(num.boots){
   if(length(err.msg)>0)
     return(err.msg)
 
-  if(num.boots < 10)
-    warning("It is recommended to run more than 10 bootstrappings.", call. = FALSE, immediate. = TRUE)
+  if(num.boots < 1000)
+    warning("It is recommended to run 1000 or more bootstraps.", call. = F, immediate. = T)
+
   return(c())
 }
 
