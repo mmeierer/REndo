@@ -206,4 +206,6 @@ Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consume
 }
 \seealso{
 \code{\link[REndo:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
+
+\code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 }

@@ -83,6 +83,8 @@
 #' The function summary can be used to obtain and print a summary of the results.
 #' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
 #'
+#' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
+#'
 #' @references   Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
 #' (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
 #' Quantitative Marketing and Economics, 3:365--392.

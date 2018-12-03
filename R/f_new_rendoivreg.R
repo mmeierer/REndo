@@ -4,6 +4,5 @@ new_rendo_ivreg <- function(F.formula, res.ivreg, call){
 
   class(res.ivreg)     <- c("rendo.ivreg",class(res.ivreg))
   res.ivreg$call       <- call
-  res.ivreg$rendo.Form <- F.formula
   return(res.ivreg)
 }

@@ -121,10 +121,8 @@
 #'
 #' All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
 #'
-#** check that this and above link work after package renamed to rendo
 #' @seealso \code{\link[REndo:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
-# @seealso \code{\link[stats]{lm}}
-# @seealso \code{\link[optimx]{optimx}}
+#' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
 #' @references
 #' Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
@@ -209,8 +207,6 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   check_err_msg(checkinput_copulacorrection_data(data=data))
   check_err_msg(checkinput_copulacorrection_dataVSformula(formula=formula, data=data))
   check_err_msg(checkinput_copulacorrection_verbose(verbose=verbose))
-
-  # **?? TODO: CHECK ASSUMPTION THAT ENDOGENOUS IS NOT NORMAL ??
 
   # Read out specials ------------------------------------------------------------------------------------------
   F.formula <- as.Formula(formula)

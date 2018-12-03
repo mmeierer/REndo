@@ -12,7 +12,7 @@ context("Runability - copulaCorrection - Runability")
 test_that("Works with intercept", {
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
-                 regexp = "It is recommended to run more than", all = TRUE)
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # C2, Dis, DisCont
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2))
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2))
@@ -22,7 +22,7 @@ test_that("Works with intercept", {
 test_that("Works without intercept", {
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P-1|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
-                 regexp = "It is recommended to run more than", all = TRUE)
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # C2, Dis, DisCont
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1, P2), verbose = FALSE, data=dataCopCont2))
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2))
@@ -65,13 +65,13 @@ test_that("Non-numerics can be used in exogenous data", {
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
                                  data=cbind(dataCopCont,color=factor(x = c("red", "green", "blue", "white", "yellow")))),
-                                    regexp = "It is recommended to run more than", all = TRUE)
+                                    regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
                                  data=cbind(dataCopCont,color=c("red", "green", "blue", "white", "yellow"))),
-                                    regexp = "It is recommended to run more than", all = TRUE)
+                                    regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
                                  data=cbind(dataCopCont,color=c(TRUE,FALSE))),
-                                  regexp = "It is recommended to run more than", all = TRUE)
+                                  regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # C2
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE,
                                  data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow")))))
@@ -101,17 +101,17 @@ test_that("Start params work with non-numeric", {
                                  data=cbind(dataCopCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))),
                                  start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
                                                   colorgreen=-0.1, colorred=0, colorwhite=0, coloryellow=0)),
-                 regexp = "It is recommended to run more than", all = TRUE)
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
 })
 
 
 test_that("Works with proper optimx.args", {
   expect_warning(copulaCorrection(optimx.args = list(itnmax = 100), formula = y~X1+X2+P|continuous(P),
                                  data = dataCopCont, verbose = FALSE, num.boots = 2),
-                 regexp = "t is recommended to run more than")
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
   expect_warning(copulaCorrection(optimx.args = list(itnmax = 100, control=list(kkttol=0.01)), formula = y~X1+X2+P|continuous(P),
                                   data = dataCopCont, verbose = FALSE, num.boots = 2),
-                 regexp = "t is recommended to run more than")
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
 })
 
 # Transformations in formula ---------------------------------------------------------------------------------------------------
@@ -120,9 +120,9 @@ test_that("Works with function in exogenous", {
   # C1
   # ****TODO optimx warning bounds. Use elsewhere.
   # expect_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
-  #                regexp = "It is recommended to run more than", all = TRUE)
+  #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   expect_warning(copulaCorrection(formula= y ~ I(X1/3)+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
-                                regexp = "It is recommended to run more than", all = TRUE)
+                                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # C2, Dis, DisCont
   expect_silent(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2))
   expect_silent(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2))
@@ -133,7 +133,7 @@ test_that("Works with function in exogenous", {
 test_that("Works with single endo transformation", {
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/2)), verbose = FALSE, num.boots=2, data=dataCopCont),
-                 regexp = "It is recommended to run more than", all = TRUE)
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # C2, Dis, DisCont
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1, I(P2/2)), verbose = FALSE, data=dataCopCont2))
   expect_silent(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P1, I(P2/2)),   verbose = FALSE, data=dataCopDis2))
@@ -147,9 +147,9 @@ test_that("Works with transformed and untransformed endo", {
   # ****TODO: Ask raluca why they are not unequal?
   # C1
   # expect_warning(res.c1.1 <- copulaCorrection(formula= y ~ X1+X2+P+I(P/100)|continuous(I(P/100)), verbose = FALSE, num.boots=2, data=dataCopCont),
-  #                regexp = "It is recommended to run more than", all = TRUE)
+  #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # expect_warning(res.c1.2 <- copulaCorrection(formula= y ~ X1+X2+P+exp(P/100)|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
-  #                regexp = "It is recommended to run more than", all = TRUE)
+  #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # expect_false(isTRUE(all.equal(coef(res.c1.1), coef(res.c1.2))))
 
   # C2
@@ -183,17 +183,20 @@ test_that("Works with all endo transformed", {
 })
 
 test_that("start.params works with transformation", {
-  expect_silent(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
-                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE))
+  expect_warning(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
+                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2),
+                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
 })
 
 test_that("Correct for start.params swapped", {
   set.seed(0xcaffee)
-  expect_silent(res.c1.1 <- copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
-                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE))
+  expect_warning(res.c1.1 <- copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
+                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2),
+                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   set.seed(0xcaffee)
-  expect_silent(res.c1.2 <- copulaCorrection(start.params = c(X2 = -3,"I(P + 1)" = -1, "(Intercept)"=2, X1 = 1.5),
-                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE))
+  expect_warning(res.c1.2 <- copulaCorrection(start.params = c(X2 = -3,"I(P + 1)" = -1, "(Intercept)"=2, X1 = 1.5),
+                                 formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2),
+                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
 
   # Equal, including param orderin
   expect_equal(coef(res.c1.1), coef(res.c1.2))
@@ -206,7 +209,7 @@ test_that("Transformations are correct", {
   # C2, Dis, DisCont
   set.seed(0xcaffee)
   expect_warning(correct.res.c1      <- copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
-                 regexp = "It is recommended to run more than", all = TRUE)
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   expect_silent(correct.res.c2      <- copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2))
   expect_silent(correct.res.dis     <- copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2))
   expect_silent(correct.res.disCont <- copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont))
@@ -217,7 +220,7 @@ test_that("Transformations are correct", {
   data.altered   <- dataCopCont
   data.altered$y <- exp(data.altered$y)
   expect_warning(res.trans.lhs  <- copulaCorrection(formula= log(y) ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=data.altered),
-                 regexp = "It is recommended to run more than", all = TRUE)
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   expect_equal(coef(res.trans.lhs), coef(correct.res.c1))
   expect_equal(coef(summary(res.trans.lhs)), coef(summary(correct.res.c1)))
   # C2
@@ -245,7 +248,7 @@ test_that("Transformations are correct", {
   data.altered    <- dataCopCont
   data.altered$P <- exp(data.altered$P)
   expect_warning(res.trans.rhs  <- copulaCorrection(formula= y ~ X1+X2+log(P)|continuous(log(P)), verbose = FALSE, num.boots=2, data=data.altered),
-                 regexp = "It is recommended to run more than", all = TRUE)
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   expect_equal(coef(res.trans.rhs), coef(correct.res.c1), check.attributes=FALSE)
   expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.c1)), check.attributes=FALSE)
   # C2
