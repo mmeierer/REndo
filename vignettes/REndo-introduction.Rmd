@@ -1,11 +1,15 @@
 ---
-title: "REndo: A Package to Address Endogeneity Without External Instrumental Variables"
+title: 'REndo: A Package to Address Endogeneity Without External Instrumental Variables'
 author: "Raluca Gui"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{REndo: A Package to Address Endogeneity Without External Instrumental Variables}
-  %\VignetteEngine{knitr::rmarkdown}
+output: pdf_document
+vignette: |
+  %\VignetteIndexEntry{REndo-introduction}
+  %\VignetteEngine{R.rsp::asis}
+  %\VignetteKeyword{PDF}
+  %\VignetteKeyword{HTML}
+  %\VignetteKeyword{vignette}
+  %\VignetteKeyword{package}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -13,8 +17,7 @@ vignette: >
 library(bookdown)
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  cache=TRUE
+  comment = "#>"
  )
 ```
 
@@ -130,12 +133,13 @@ The model comes with a set of assumptions such as:
 If the last assumption is not met, additional, external instruments are necessary. 
 
 Consider a hierarchical model with three levels like below:
-
-\begin{eqnarray}
- y_{cst} &=& Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1} +\epsilon^{1}_{cst} \\ 
- \beta^{1}_{cs} &=& Z^{2}_{cs} \beta^{2}_{c} + X^{2}_{cs} \beta_{2} +\epsilon^{2}_{cs} \\
- \beta^{2}_{c} &=& X^{3}_{c} \beta_{3} +\epsilon^{3}_{c}.
-\end{eqnarray}
+$$
+\begin{aligned}
+ y_{cst} &= Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1} +\epsilon^{1}_{cst} \\ 
+ \beta^{1}_{cs} &= Z^{2}_{cs} \beta^{2}_{c} + X^{2}_{cs} \beta_{2} +\epsilon^{2}_{cs} \\
+ \beta^{2}_{c} &= X^{3}_{c} \beta_{3} +\epsilon^{3}_{c}.
+\end{aligned}
+$$
 
 Given the set of disturbance terms at different levels, there exist a couple of possible correlation patterns that could lead to biased results:
 
@@ -248,7 +252,6 @@ In orde to have a reference point, we apply OLS on the above data:
 ```{r, warning=FALSE, message=FALSE}
 library(AER)
 library(REndo)
-library(data.table)
 set.seed(421)
 data("CASchools")
 school <- CASchools
@@ -284,12 +287,14 @@ Indeed, the value retured is equal to **-3.75**. The **latentIV()** function ret
 Next, we call the **copulaCorrection()** function:
 ```{r, message=FALSE}
 set.seed(110)
-m4.cc <-  copulaCorrection(read ~  stratio + english + lunch + calworks + 
-           grades + income + county | continuous(stratio), data= school, 
-           optimx.args = list(method=c("Nelder-Mead"), itnmax= 60000))
+m4.cc <-  copulaCorrection(read ~  stratio + english + lunch + calworks +
+           grades + income + county | continuous(stratio), data= school,
+           optimx.args = list(method=c("Nelder-Mead"), itnmax= 60000),
+           verbose = FALSE)
 
 summary(m4.cc)
 ```
+
 The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge (Converge Code = 1). Therefore, the copulaCorrection\(\) allows the user to specify the desired optimiation algorithm (see the optimx\(\) function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.
 
 In the current case, the algorithm converged, and we see that the coefficient of the student\/teacher ratio returned is equal to **-0.38**.
@@ -309,7 +314,7 @@ Last, but not least, **higher moments approach** returns an estimate in the rang
 ```{r, message=FALSE}
 set.seed(112)
 m6.highMoment <- higherMomentsIV(read ~ stratio + english + lunch + calworks + income + 
-                 grades + county| stratio | IIV(g = x3,iiv = gp, income) , data=school)
+                 grades + county| stratio | IIV(g = x3,iiv = gp, income), data=school)
 
 summary(m6.highMoment)
 
@@ -317,15 +322,13 @@ summary(m6.highMoment)
 
 The **CASchools** dataset has information at the district level, where the districts are clustered into counties. One could be tempted to apply the multilevel GMM method to these data, as implemented in the **multilevelIIV()** function. However, the endogeneity problem solved by the multilevel GMM approach considers only correlations between level-1 variables and level-2 errors, while the endogeneity presented in the example above deals with endogeneity between a level-1 variable and the level-1 error. Therefore, we expect that the **multilevelIIV()** function will indicate the use of *fixed effects* method. In other words, the results should be similar with the ones returned by OLS since we included county dummy variables. Indeed, the omitted variable test between the fixed effects and the GMM model rejects the null hypothesis, therefore indicating an endogeneity problem at level one and the use of fixed effects.
 
- ```{r}
+``` {r, message = FALSE}
  set.seed(113)
- school$cc <- as.numeric(school$county)
- school$gr08 <- 1
- school$gr08[school$grades=="KK-06"] <- 0
+ school$gr08 <- school$grades=="KK-06"
  m7.multilevel <- multilevelIV(read ~ stratio + english + lunch  + income + gr08 + 
-           calworks + (1|cc) | endo(stratio), data=school)
+           calworks + (1|county) | endo(stratio), data=school)
  summary(m7.multilevel)
- ```
+```
 
 However, we can use the simulated data that comes with the package in order to give an example of the workings of the **multilevelIV\(\)** function. 
 
@@ -333,7 +336,7 @@ The dataset has five level-1 regressors,  X11, X12, X13, X14 and X15, where X15 
 
 Having a three-level hierarchy, **multilevelIV\(\)** returns five estimators, from the most robust to omitted variables (FE_L2), to the most efficient  (REF), i.e. lowest mean squared error. The random effects estimator (REF) is efficient assuming no omitted variables, whereas the fixed effects estimator (FE) is unbiased and asymptotically normal even in the presence of omitted variables. Because of the efficiency, one would choose the random effects estimator if confident that no important variables were omitted. On the contrary, the robust estimator would be preferable if there was a concern that important variables were likely to be omitted.
 The estimation result is below:
-``` {r}
+``` {r, message=FALSE}
 data(dataMultilevelIV)
 set.seed(114)
 formula1 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
@@ -362,7 +365,7 @@ In order to test for *level-two omitted effects regardless of the presence of le
  summary(m8.multilevel,"FE_L2")
 ```
 
-The null hypothesis of no omitted level-two effects is rejected (p-value is equal to $1.09e-05$). Therefore, we conclude that there are omitted effects at level-two. This finding is no surprise as we simulated the dataset with the level-two error correlated with X15, which leads to biased FE_L3 coefficients. The omitted variable test between level-two fixed effects and level-two GMM should shows that the null hypothesis of no omitted level-two effects is rejected (p-value is 0). In case of wrongly assuming that an endogenous variable is exogenous, the random effects as well as the GMM estimators will be biased, since the former will be constructed using the wrong set of internal instrumental variables. Consequently, comparing the results of the omitted variable tests when the variable is considered endogenous versus exogenous can indicate whether the variable is indeed endogenous or not. To conclude this example, the test results provide  support that the FE_L2 should be used.
+The null hypothesis of no omitted level-two effects is rejected (p-value is equal to $1.09e-05$). Therefore, we conclude that there are omitted effects at level-two. This finding is no surprise as we simulated the dataset with the level-two error correlated with X15, which leads to biased FE_L3 coefficients. The omitted variable test between level-two fixed effects and level-two GMM should shows that the null hypothesis of no omitted level-two effects is rejected (p-value is 0). In case of wrongly assuming that an endogenous variable is exogenous, the random effects as well as the GMM estimators will be biased, since the former will be constructed using the wrong set of internal instrumental variables. Consequently, comparing the results of the omitted variable tests when the variable is considered endogenous versus exogenous can indicate whether the variable is indeed endogenous or not. To conclude this example, the test results provide support that the FE_L2 should be used.
  
  
 ## References ## 

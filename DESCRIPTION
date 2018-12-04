@@ -36,8 +36,7 @@ Imports:
 Suggests:
     testthat,
     covr,
-    knitr,
-    rmarkdown
+    R.rsp
 Encoding: UTF-8
 RoxygenNote: 6.1.1
-VignetteBuilder: knitr
+VignetteBuilder: R.rsp

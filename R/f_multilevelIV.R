@@ -40,9 +40,11 @@
 #' <br><center> &beta;<sup>1</sup><sub>cs</sub> =  Z<sup>2</sup><sub>cs</sub> &beta;<sup>2</sup><sub>c</sub> + X <sup>2</sup><sub>cs</sub> &beta;<sub>2</sub> &epsilon;<sup>2</sup><sub>cs</sub> </center>
 #' <br><center> &beta;<sup>2</sup><sub>c</sub> = X<sup>3</sup><sub>c</sub>&beta;<sub>3</sub> &epsilon;<sup>3</sup><sub>c</sub> </center>}}{
 #'  \deqn{
-#'  y_{cst} &=& Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1} +\epsilon^{1}_{cst} \\
-#'  \beta^{1}_{cs} &=& Z^{2}_{cs} \beta^{2}_{c} + X^{2}_{cs} \beta_{2} +\epsilon^{2}_{cs} \\
-#'  \beta^{2}_{c} &=& X^{3}_{c} \beta_{3} +\epsilon^{3}_{c}.}}
+#'  y_{cst} = Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1} +\epsilon^{1}_{cst}}
+#'  \deqn{
+#'  \beta^{1}_{cs} = Z^{2}_{cs} \beta^{2}_{c} + X^{2}_{cs} \beta_{2} +\epsilon^{2}_{cs}}
+#'  \deqn{
+#'  \beta^{2}_{c} = X^{3}_{c} \beta_{3} +\epsilon^{3}_{c}}.}
 #'
 #' Like in single-level regression, in multilevel models endogeneity is also a concern. The additional problem is that in multilevel models
 #' there are multiple independent assumptions involving various random components at different levels. Any moderate correlation between some
