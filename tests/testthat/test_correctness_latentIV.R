@@ -21,3 +21,16 @@ test_that("Transformations are correct", {
   expect_equal(coef(summary(res.trans.rhs1)), coef(summary(correct.res)), check.attributes=FALSE)
 })
 
+# Data sorting ------------------------------------------------------------------------------------------------
+context("Correctness - dataLatentIV - Data sorting")
+
+test_that("Differently sorted data produces same results", {
+  data.altered    <- dataLatentIV
+  data.altered[sample(nrow(data.altered), nrow(data.altered), replace = FALSE), ]
+
+  expect_silent(res.orig        <- latentIV(formula = y ~ P, data = dataLatentIV, verbose = FALSE))
+  expect_silent(res.diff.sorted <- latentIV(formula = y ~ P, data = data.altered, verbose = FALSE))
+
+  expect_equal(coef(res.orig), coef(res.diff.sorted))
+  expect_equal(coef(summary(res.orig)), coef(summary(res.diff.sorted)))
+})

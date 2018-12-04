@@ -34,3 +34,18 @@ test_that("Transformations are correct", {
   expect_equal(coef(res.trans.iiv.exo), coef(correct.res), check.attributes=FALSE)
   expect_equal(coef(summary(res.trans.iiv.exo)), coef(summary(correct.res)), check.attributes=FALSE)
 })
+
+# Data sorting ------------------------------------------------------------------------------------------------
+context("Correctness - hetErrorsIV - Data sorting")
+
+test_that("Differently sorted data produces same results", {
+  data.altered    <- dataHetIV
+  data.altered[sample(nrow(data.altered), nrow(data.altered), replace = FALSE), ]
+
+  expect_silent(res.orig        <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
+  expect_silent(res.diff.sorted <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=data.altered, verbose=FALSE))
+
+  expect_equal(coef(res.orig), coef(res.diff.sorted))
+  expect_equal(coef(summary(res.orig)), coef(summary(res.diff.sorted)))
+})
+

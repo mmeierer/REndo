@@ -92,7 +92,7 @@ test_that("Transformations are correct for L3", {
 })
 
 
-# Unsorted data ------------------------------------------------------------------------------------------------
+# Data sorting ------------------------------------------------------------------------------------------------
 context("Correctness - multilevelIV - Data sorting")
 
 # **correct if levels are given separately: (A|SID) + (B|SID) == (A+B|SID)
