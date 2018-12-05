@@ -67,7 +67,7 @@ as I(X), ln(X) are
 
 ### **Higher Moments**
 
-    higherMomentsIV(y ~ X1 + X2 + P | P | IIV (iiv = gp , g= x2, X1, X2) + IIV (iiv = yp) | Z1, data)
+    higherMomentsIV(y ~ X1 + X2 + P | P | IIV(iiv = gp, g= x2, X1, X2) + IIV(iiv = yp) | Z1, data)
 
 Here, **y** is the response; the first RHS of the formula, **X1 + X2 +
 P**, is the model to be estimated; the second part, **P**, specifies the
@@ -87,22 +87,40 @@ three arguments:
 A set of six instruments can be constructed, which should be specified
 in the **iiv** argument of **IIV()**:
 
-  - **g** - for \((G_{t} - \bar{G})\),
-  - **gp** - for \((G_{t} - \bar{G})(P_{t}-\bar{P})\),
-  - **gy** - for \((G_{t} - \bar{G})(Y_{t}-\bar{Y})\),
-  - **yp** - for \((Y_{t} - \bar{Y})(P_{t}-\bar{P})\),
-  - **p2** - for \((P_{t} - \bar{P})^2\),
-  - **y2** - for \((Y_{t} - \bar{Y})^2\).
+  - **g** - for ![(G\_{t} -
+    \\bar{G})](https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29
+    "(G_{t} - \\bar{G})"),
+  - **gp** - for ![(G\_{t} -
+    \\bar{G})(P\_{t}-\\bar{P})](https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29%28P_%7Bt%7D-%5Cbar%7BP%7D%29
+    "(G_{t} - \\bar{G})(P_{t}-\\bar{P})"),
+  - **gy** - for ![(G\_{t} -
+    \\bar{G})(Y\_{t}-\\bar{Y})](https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29%28Y_%7Bt%7D-%5Cbar%7BY%7D%29
+    "(G_{t} - \\bar{G})(Y_{t}-\\bar{Y})"),
+  - **yp** - for ![(Y\_{t} -
+    \\bar{Y})(P\_{t}-\\bar{P})](https://latex.codecogs.com/png.latex?%28Y_%7Bt%7D%20-%20%5Cbar%7BY%7D%29%28P_%7Bt%7D-%5Cbar%7BP%7D%29
+    "(Y_{t} - \\bar{Y})(P_{t}-\\bar{P})"),
+  - **p2** - for ![(P\_{t} -
+    \\bar{P})^2](https://latex.codecogs.com/png.latex?%28P_%7Bt%7D%20-%20%5Cbar%7BP%7D%29%5E2
+    "(P_{t} - \\bar{P})^2"),
+  - **y2** - for ![(Y\_{t} -
+    \\bar{Y})^2](https://latex.codecogs.com/png.latex?%28Y_%7Bt%7D%20-%20%5Cbar%7BY%7D%29%5E2
+    "(Y_{t} - \\bar{Y})^2").
 
-where \(G=G(X_{t})\) can be either \(x^2\), \(x^3\), \(ln(x)\) or
-\(1/x\) and should be specified in the **g** argument of the third RHD
-of the formula, as **x2, x3, lnx** or **1/x**. In case of internal
-instruments built only from the endogenous regressor, e.g. **p2**, or
-from the response and the endogenous regressor, like for example in
-**yp**, there is no need to specify **g** or the set of exogenous
-regressors in the **IIV()** part of the formula. The function returns a
-set of tests for checking the validity of the instruments and the
-endogeneity assumption.
+where
+![G=G(X\_{t})](https://latex.codecogs.com/png.latex?G%3DG%28X_%7Bt%7D%29
+"G=G(X_{t})") can be either
+![x^2](https://latex.codecogs.com/png.latex?x%5E2 "x^2"),
+![x^3](https://latex.codecogs.com/png.latex?x%5E3 "x^3"),
+![ln(x)](https://latex.codecogs.com/png.latex?ln%28x%29 "ln(x)") or
+![\\frac{1}{x}](https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7Bx%7D
+"\\frac{1}{x}") and should be specified in the **g** argument of the
+third RHS of the formula, as **x2, x3, lnx** or **1/x**. In case of
+internal instruments built only from the endogenous regressor, e.g.
+**p2**, or from the response and the endogenous regressor, like for
+example in **yp**, there is no need to specify **g** or the set of
+exogenous regressors in the **IIV()** part of the formula. The function
+returns a set of tests for checking the validity of the instruments and
+the endogeneity assumption.
 
 ### **Heteroskedastic Errors**
 
