@@ -39,7 +39,7 @@ Y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}
 \hspace{0.5cm} (1) 
 \end{equation}
 
-where $t=1,..,T$ indexes either time or cross-sectional units, $Y_{t}$ is a $1$ x $1$ response variable, $X_{t}$ is a $k$ x $n$ exogenous regressor, $P_{t}$ is a $k$ x $1$ continuous *endogenous* regressor, $\epsilon_{t}$ is a structural error term with mean zero and $E(\epsilon^{2})=\sigma^{2}_{\epsilon}$, $\alpha$ and $\beta$ are model parameters. The endogeneity problem
+where $t=1,..,T$ indexes either time or cross-sectional units, $Y_{t}$ is a $k$ x $1$ response variable, $X_{t}$ is a $k$ x $n$ exogenous regressor, $P_{t}$ is a $k$ x $1$ continuous *endogenous* regressor, $\epsilon_{t}$ is a structural error term with mean zero and $E(\epsilon^{2})=\sigma^{2}_{\epsilon}$, $\alpha$ and $\beta$ are model parameters. The endogeneity problem
 arises from the correlation of $P_{t}$ and $\epsilon_{t}$. As such:
 
 \begin{equation}
@@ -69,7 +69,7 @@ Park and Gupta (2012) propose a method that allows for the joint estimation of t
 
 The underlying idea is that using information contained in the observed data, one selects marginal distributions for the endogenous regressor and the structural error term, respectively. Then, the copula model enables the construction of a flexible multivariate joint distribution allowing a wide range of correlations between the two marginals. 
 
-The method allows both continuous and discrete endogenous regressors. In the case of **one continuous endogenous regressor**, the model is estimated using maximum likelihood. Otherwise, an alternative approach, still based on Gaussian copulas, but using an augmented OLS estimation is being used. The assumption of a skewed endogenous regressor is maintained here as well for the  recovery of the correct parameter estimates.
+The method allows both continuous and discrete endogenous regressors. In the case of **one continuous endogenous regressor**, the model is estimated using maximum likelihood. Otherwise, an alternative approach, still based on Gaussian copulas, but using an augmented OLS estimation is being used. The assumption of a skewed endogenous regressor is maintained here as well for the recovery of the correct parameter estimates.
 
 The structural error $\epsilon_{t}$ is assumed to have a normal marginal distribution. The marginal distribution of the endogenous regressor $P_{t}$ is obtained using the Epanechnikov kernel density estimator, as below: 
 
@@ -82,7 +82,7 @@ where $P_{t}$ is the endogenous regressor, $K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|
 
 #### *Higher Moments Approach* #### 
 
-The higher moments approach proposed by Lewbel (1997) helps identify structural parameters in regression models with endogeneity caused by *measurement error*. Identification is achieved by exploiting third moments of the data, with no restrictions imposed on the distribution of hte error terms. 
+The higher moments approach proposed by Lewbel (1997) helps identify structural parameters in regression models with endogeneity caused by *measurement error*. Identification is achieved by exploiting third moments of the data, with no restrictions imposed on the distribution of the error terms. 
 
 The following instruments are constructed and can be used with two-stage least squares estimation to obtain consistent estimates:
 
@@ -118,9 +118,9 @@ Structural parameters are identified by an ordinary two stage least squares regr
 
 The strength of the instrument is proportional to the covariance between $(Z-\bar{Z}) \nu$ and $\nu$, which corresponds to the degree of heteroskedasticity of $\nu$ with respect to $Z$ (Lewbel, 2012). This assumption can be empirically tested. If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors. Under homoskedasticity, the parameters of the model are unidentified. But, identification is achieved in the presence of heteroskedasticity related to at least some elements of $X$. 
 
-### 2.2 Instrument Free Methods for Hierarchial Data (Not cross-classified)###
+### 2.2 Instrument Free Methods for Hierarchial Data (not cross-classified)###
 
-Like in single-level regression, also in multilevel models endogeneity is a concern. The additional problem is that in multilevel models there are multiple independent assumptions involving various random components at different levels. Any moderate correlation between some predictors and a random component or error term, can result in a significant bias of the coefficients and of the variance components.
+Like in single-level regression, also in multilevel models endogeneity is a concern. The additional problem is that in multilevel models there are multiple independent assumptions involving various random components at different levels. Any moderate correlation between some predictors and a random component or error term can result in a significant bias of the coefficients and of the variance components.
 
 Exploiting the hierarchical structure of multilevel data, Kim and Frees (2007) propose a generalized method of moments technique for addressing endogeneity in multilevel models without the need of external instrumental variables. This approach uses both, the between and within variations of the exogenous variables, but only assumes the within variation of the variables to be endogenous.
 
@@ -128,7 +128,7 @@ The model comes with a set of assumptions such as:
 
 * the errors at each level are normally distributed and independent of each other. 
 * the slope variables are exogenous.  
-* level-1 structural error is uncorrelated with any of the regressors. 
+* the level-1 structural error is uncorrelated with any of the regressors. 
 
 If the last assumption is not met, additional, external instruments are necessary. 
 
@@ -176,7 +176,7 @@ The **copula correction** function has the following syntax:
                 data, start.params=c(), num.boots=250, optimx.args=list())
         
 
-The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 250). The fifth argument,** optimx.args**, is used in order to choose the optimisation algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. 
+The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimisation algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. 
 
 3. **higherMomentsIV()** - implements the higher moments approach described in Lewbel (1997) where instruments are constructed by exploiting higher moments of the data, under strong model assumptions. The function allows just one endogenous regressor.
 
@@ -204,7 +204,7 @@ A set of six instruments can be constructed, which should be specified in the **
 * **gy** - for $(G_{t} - \bar{G})(Y_{t}-\bar{Y})$,
 * **yp** - for $(Y_{t} - \bar{Y})(P_{t}-\bar{P})$,
 * **p2** - for $(P_{t} - \bar{P})^2$,
-* **y2** - for $(Y_{t} - \bar{Y})^2$.
+* **y2** - for $(Y_{t} - \bar{Y})^2$,
 
 where $G=G(X_{t})$ can be either $x^2$, $x^3$, $ln(x)$ or $1/x$ and should be specified in the **g** argument of the third RHD of the formula, as **x2, x3, lnx** or **1/x**.
 In case of internal instruments built only from the endogenous regressor, e.g. **p2**, or from the response and the endogenous regressor, like for example in **yp**, there is no need to specify **g** or the set of exogenous regressors in the **IIV()** part of the formula. The function returns a set of tests for checking the validity of the instruments and the endogeneity assumption. Here as well, transformation of explanatory variables, such as I(X), ln(X), are supported. 
@@ -299,7 +299,7 @@ The copula correction with one endogenous continuous regressor, estimates the mo
 
 In the current case, the algorithm converged, and we see that the coefficient of the student\/teacher ratio returned is equal to **-0.38**.
 
-The **heteroskedastic errors** approach returns an estimate of the student\/teacher ratio equal to **0.71**, far away from the coefficients returned by the external instrumental variables or even OLS. As Lewbel(2012) underlined, it is often better to use this approach in order to create additional instruments, which together with external ones, could lead to improved efficiency.
+The **heteroskedastic errors** approach returns an estimate of the student\/teacher ratio equal to **0.71**, far away from the coefficients returned by the external instrumental variables or even OLS. As Lewbel (2012) underlined, it is often better to use this approach in order to create additional instruments, which together with external ones, could lead to improved efficiency.
 
 ```{r, message=FALSE}
 set.seed(111)
@@ -349,12 +349,12 @@ As we have simulated the data, we know that the true parameter value of the endo
 To provide guidance for selecting the appropriate estimator, **multilvelIV\(\)** function performs an omitted variable test. The results are returned by the **summary\(\)** function. For example, in a three-level setting, different estimator comparisons are possible:
 
 * **Fixed effects versus random effects estimators:** To test for omitted level-two and level-three omitted effects, simultaneously, one compares FE_L2 to REF. The test does not indicate the level at which omitted variables might exist.
-* **Fixed effects versus GMM estimators:** Once it was established that there exist omitted effects but not certain at which level (see 1), we test for level-two omitted effects by comparing FE_L2 versus GMM_L3. A rejection of the null hypothesis will imply omitted variables at level-two. The same is accomplished by testing FE_L2 versus GMM_L2, since the latter is consistent only if there are no omitted effects at level two.
+* **Fixed effects versus GMM estimators:** Once the existence of omitted effects is established but not certain at which level (see 1), we test for level-two omitted effects by comparing FE_L2 versus GMM_L3. A rejection of the null hypothesis will imply omitted variables at level-two. The same is accomplished by testing FE_L2 versus GMM_L2, since the latter is consistent only if there are no omitted effects at level two.
 * **Fixed effects versus fixed effects estimators:** We can test for omitted level-two effects, while allowing for omitted level-three effects. This can be done by comparing  FE_L2 versus FE_L3since FE_L2 is robust against both level-two and level-three omitted effects while FE_L3 is only robust to level-three omitted variables.
 
-In general, testing for higher level endogeneity in multilevel settings one would start by looking at the results of the omitted variable test comparing REF and FE_L2. If the null hypothesis if rejected, this means the model suffers from omitted variables, either at level two or level three. Next, test whether there are level-two omitted effects, since testing for omitted level three effects relies on the assumption there are no level-two omitted effects. To this end, rely on one of the following model comparisons: FE_L2 versus FE_L3 or FE_L2 versus GMM_L2. If no omitted variables at level-two are found, proceed with testing for omitted level-three effects by comparing FE_L3 versus GMM_L3 or GMM_L2 versus GMM_L3.
+In general, testing for higher level endogeneity in multilevel settings one would start by looking at the results of the omitted variable test comparing REF and FE_L2. If the null hypothesis if rejected, this means the model suffers from omitted variables, either at level two or level three. Next, test whether there are level-two omitted effects, since testing for omitted level three effects relies on the assumption there are no level-two omitted effects. To this end, one can rely on one of the following model comparisons: FE_L2 versus FE_L3 or FE_L2 versus GMM_L2. If no omitted variables at level-two are found, proceed with testing for omitted level-three effects by comparing FE_L3 versus GMM_L3 or GMM_L2 versus GMM_L3.
 
-The **summary\(\)** function takes two arguments: the name of the model object (here m8.multilevel) and the estimation method (here REF). Without a second argument, the summary displays simultaneously the coefficients obtained with all the different estimation approaches (fixed effects, GMM, random effects). The second parameter can take the following values, depending on the model estimated (two or three levels): REF, GMM_L2, GMM_L3, FE_L2, FE_L3. It returns the estimated coefficients under the model specified in the second argument, together with their standard errors and z-scores, Further, it returns the chi-squared statistic, degrees of freedom and p-value of the omitted variable test between the focal model (here REF) and all the other possible options (here FE_L3, GMM_L2 and GMM_L3). 
+The **summary\(\)** function takes two arguments: the name of the model object (here m8.multilevel) and the estimation method (here REF). Without a second argument, the summary displays simultaneously the coefficients obtained with all the different estimation approaches (fixed effects, GMM, random effects). The second parameter can take the following values, depending on the model estimated (two or three levels): REF, GMM_L2, GMM_L3, FE_L2, FE_L3. It returns the estimated coefficients under the model specified in the second argument, together with their standard errors and z-scores. Further, it returns the chi-squared statistic, degrees of freedom and p-value of the omitted variable test between the focal model (here REF) and all the other possible options (here FE_L3, GMM_L2 and GMM_L3). 
 
 ```{r}
 summary(m8.multilevel, "REF")
