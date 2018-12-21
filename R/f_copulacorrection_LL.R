@@ -6,10 +6,12 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   sigma           <- params["sigma"]
   rho             <- params["rho"]
 
-  # Constrain rho to [0,1]
+  # Constrain rho to [0,1] and sigma to [0, +Inf]
   # (incl bound because can be very large which flips to 0 and 1)
   rho <- exp(rho)
   rho <- rho / (1+rho)
+
+  sigma <- exp(sigma)
 
   # P.star -----------------------------------------------------------------------------------
   p.star <- copulaCorrectionContinuous_pstar(vec.data.endo = vec.data.endo)

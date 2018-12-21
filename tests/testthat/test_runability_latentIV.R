@@ -54,37 +54,20 @@ test_that("Works with all endo transformed", {
   expect_silent(latentIV(formula = y~I(P/2), data = dataLatentIV, verbose = FALSE))
 })
 
-
-# Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Runability - latentIV - Formula transformations")
-
-test_that("Transformations are correct", {
-  expect_silent(correct.res <- latentIV(formula = y ~ P, data = dataLatentIV, verbose = FALSE))
-  # Can handle transformations in LHS
-  data.altered   <- dataLatentIV
-  data.altered$y <- exp(data.altered$y)
-  expect_silent(res.trans.lhs <- latentIV(formula = log(y) ~ P, data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.lhs), coef(correct.res))
-  expect_equal(coef(summary(res.trans.lhs)), coef(summary(correct.res)))
-
-  # Can handle transformations in RHS1
-  data.altered    <- dataLatentIV
-  data.altered$P <- exp(data.altered$P)
-  expect_silent(res.trans.rhs1  <- latentIV(formula = y ~ log(P), data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.rhs1), coef(correct.res), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.rhs1)), coef(summary(correct.res)), check.attributes=FALSE)
+test_that("Works with proper optimx.args", {
+  expect_silent(latentIV(optimx.args = list(itnmax = 100), formula = y~P, data = dataLatentIV, verbose = FALSE))
+  expect_silent(latentIV(optimx.args = list(itnmax = 100, control=list(kkttol=0.01)), formula = y~P, data = dataLatentIV, verbose = FALSE))
 })
 
 
 
-# More stable now :(
-# test_that("Summary prints about SE unavailable", {
-#   expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=2), verbose = FALSE,data = dataLatentIV),
-#                  regexp = "Hessian cannot be solved for the standard errors")
-#   expect_output(print(summary(res.latent)), all = F,
-#                 regexp = "For some parameters the statistics could not be calculated")
-#   expect_true(anyNA(coef(summary(res.latent))))
-# })
+test_that("Summary prints about SE unavailable", {
+  expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=9999), verbose = FALSE,data = dataLatentIV),
+                 regexp = "Hessian cannot be solved for the standard errors")
+  expect_output(print(summary(res.latent)), all = FALSE,
+                regexp = "For some parameters the statistics could not be calculated")
+  expect_true(anyNA(coef(summary(res.latent))))
+})
 
 
 test_that("Stops if lm fails for start",{

@@ -19,6 +19,7 @@ copulaCorrection(formula, data, verbose = TRUE, ...)
 \item{start.params}{A named vector containing a set of parameters to use in the first optimization iteration.
 The names have to correspond exactly to the names of the components specified in the \code{formula} parameter.
 If not provided, a linear model is fitted to derive them.}
+\item{optimx.args}{A named list of arguments which are passed to \code{\link[optimx]{optimx}}. This allows users to tweak optimization settings to their liking.}
 \item{num.boots}{Number of bootstrapping iterations. Defaults to 1000.}
 }}
 }
@@ -152,22 +153,56 @@ c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=500, data=dataCopCont,
 # All following examples fit linear model with Gaussian copulas
 
 # 2 continuous endogenous regressors
-c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2), data=dataCopCont2)
+c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2),
+                       data=dataCopCont2)
 # same as above
-c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1)+continuous(P2), data=dataCopCont2)
+c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1)+continuous(P2),
+                       data=dataCopCont2)
 
 # single discrete endogenous regressor
 d1 <- copulaCorrection(y~X1+X2+P|discrete(P), data=dataCopDis)
 # two discrete endogenous regressor
-d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2), data=dataCopDis2)
+d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2),
+                       data=dataCopDis2)
 # same as above
-d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), data=dataCopDis2)
+d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2),
+                       data=dataCopDis2)
 
 # the discrete only cases have a dedicated confint function
 d2.ci <- confint(d2, num.simulations = 100)
 
 # single discrete, single continuous
-cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), data=dataCopDisCont)
+cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2),
+                       data=dataCopDisCont)
+
+\donttest{
+\dontrun{
+# For single continuous only: use own optimization settings (see optimx())
+# set maximum number of iterations to 50'000
+res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
+                           optimx.args = list(itnmax = 50000),
+                           data=dataCopCont)
+
+# print detailed tracing information on progress
+ res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
+                            optimx.args = list(control = list(trace = 6)),
+                            data=dataCopCont)
+
+# use method L-BFGS-B instead of Nelder-Mead and print report every 50 iterations
+ res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
+                            optimx.args = list(method = "L-BFGS-B",
+                                               control=list(trace = 2, REPORT=50)),
+                            data=dataCopCont)
+
+# for single cont case only:
+# read out all coefficients, incl auxiliary coefs
+c1.all.coefs <- coef(res.c1)
+# same as above
+c1.all.coefs <- coef(res.c1, complete = TRUE)
+# only main model coefs
+c1.main.coefs <- coef(res.c1, complete = FALSE)
+
+}}
 
 }
 \references{
@@ -180,4 +215,6 @@ Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consume
 }
 \seealso{
 \code{\link[REndo:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
+
+\code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 }

@@ -257,19 +257,19 @@ test_that("Fail if EIV not in data", {
 test_that("Fail if wrong data type in endo", {
   # Factor/Chars/ Logicals (as indicate dichotomous variable (=factor))
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=factor(1:10))), regexp = "The above errors were encountered!")
-  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=as.character(1:10), stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=as.character(1:10), stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data= data.frame(y=1:10, X1=1:10, X2=1:10, P=as.logical(0:9))), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if wrong data type in exo used in IIV", {
   # Factor/Chars/ Logicals (as indicate dichotomous variable (=factor))
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
-  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
 })
 
 # test_that("Fail if wrong data type in exo used in y", {
-# expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data=data.frame(y=as.character(1:10), X1=1:10, X2=1:10, P=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
+# expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data=data.frame(y=as.character(1:10), X1=1:10, X2=1:10, P=1:10, stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
 # expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),data= data.frame(y=as.logical(0:9), X1=1:10, X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
 # })
 
@@ -278,7 +278,7 @@ test_that("Allow wrong data type in irrelevant columns", {
   # Allow wrong data types in unused columns
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g,X2)+IIV(iiv=p2)+IIV(iiv=y2)+IIV(iiv=gp,g=x2,X1), verbose=FALSE,
                          data = cbind(dataHigherMoments,
-                                      unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
+                                      unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = FALSE)))
 })
 
 
@@ -302,6 +302,3 @@ context("Inputchecks - higherMomentsIV - Parameter verbose")
 test.single.logical(function.to.test = higherMomentsIV, parameter.name="verbose",
                     formula=y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), function.std.data=dataHigherMoments)
 
-
-# **TODO Fail if underlying assumptions violated
-# ??*** Data may not be named after iiv or g to avoid confusion when naming. could interfere with unique(list) in readout

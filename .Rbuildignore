@@ -1,4 +1,7 @@
 ^cran-comments\.md$
+^README\.Rmd$
+^Meta$
+^doc$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 man-roxygen

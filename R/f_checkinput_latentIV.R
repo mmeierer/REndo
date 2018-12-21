@@ -43,3 +43,10 @@ checkinput_latentIV_startparams <- function(start.params, formula){
                                       forbidden.names = c("pi1", "pi2", "theta5", "theta6", "theta7", "theta8"),
                                       required.names  = required.names))
 }
+
+
+
+checkinput_latentIV_optimxargs <- function(optimx.args){
+  return(checkinputhelper_optimxargs(optimx.args=optimx.args))
+}
+

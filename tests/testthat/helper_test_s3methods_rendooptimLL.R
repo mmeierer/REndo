@@ -4,6 +4,22 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
   .test.s3methods.basic.structure(res.model=res.model, input.form=input.form,
                                   function.std.data=function.std.data, full.coefs=full.coefs)
 
+  test_that("coef has default = TRUE", {
+    expect_equal(eval(formals(REndo:::coef.rendo.optim.LL)[["complete"]]), TRUE)
+  })
+
+  test_that("coef with complete=TRUE", {
+    expect_silent(res.cf <- coef(res.model, complete = TRUE))
+    # equal to all parameters
+    expect_equal(res.cf, expected = res.model$estim.params)
+  })
+
+  test_that("coef with complete=FALSE", {
+    expect_silent(res.cf <- coef(res.model, complete = FALSE))
+    # equal to main parameters only
+    expect_equal(res.cf, expected = res.model$estim.params[res.model$names.main.coefs])
+  })
+
   test_that("logLik", {
     expect_silent(res.loglik <- logLik(res.model))
     expect_s3_class(res.loglik, "logLik")
@@ -25,6 +41,8 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_equal(as.numeric(res.AIC), 2 *                  nparam - 2*as.numeric(logLik(res.model)))
     expect_equal(as.numeric(res.BIC), log(nobs(res.model))*nparam - 2*as.numeric(logLik(res.model)))
   })
+
+
 
   test_that("terms", {
     expect_silent(terms(res.model))
@@ -52,7 +70,7 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_named(res.sum, c("call", "start.params", "KKT1", "KKT2", "AIC", "BIC","conv.code",
                             "log.likelihood", "coefficients", "vcov", "estim.params.se",
                             "names.main.coefs"),
-                 ignore.order = T)
+                 ignore.order = TRUE)
     expect_is(res.sum$call, "call")
     expect_is(res.sum$start.params, "numeric")
     expect_is(res.sum$KKT1, "logical")
@@ -79,7 +97,7 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_silent(sum.coef <- coef(summary(res.model)))
     # right cols
     expect_true(ncol(sum.coef) == 4)
-    expect_true(all(names(sum.coef) != ""))
+    expect_true(all(colnames(sum.coef) != ""))
     # right rows
     expect_true(nrow(sum.coef) == length(coef(res.model)))
     expect_true(all(rownames(sum.coef) == names(coef(res.model))))

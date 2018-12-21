@@ -72,4 +72,7 @@
     expect_equal(res.attr$dimnames[[2]], names(coef(res.model)))
   })
 
+
+  .test.s3methods.confint(res.model)
+  return(invisible(NULL))
 }

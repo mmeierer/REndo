@@ -16,8 +16,6 @@ test_that("Works with 3 IIVs",{
                                 data = dataHigherMoments, verbose = FALSE))
 })
 
-# Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Runability - higherMomentsIV - Formula transformations")
 
 test_that("Works with transformation in IIV",{
   expect_silent(higherMomentsIV(y~X1+log(X2)+P|P|IIV(g=x2, iiv=gp,log(X2))+IIV(iiv=y2),
@@ -31,19 +29,14 @@ test_that("Works with non-numeric in exogenous not in IIV", {
   # Factor/Chars/ Logicals (as indicate dichotomous variable (=factor))
   # No exo used in IIV
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10), verbose=FALSE))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=F), verbose=FALSE))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=FALSE), verbose=FALSE))
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10), verbose=FALSE))
   # Other exo used in IIV
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10), verbose=FALSE))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=F), verbose=FALSE))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=FALSE), verbose=FALSE))
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10), verbose=FALSE))
 })
 
-# test_that("Works with chars for g and iiv", {
-#   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g="x2", iiv=gp, X1)+IIV(iiv=y2), data = dataHigherMoments))
-#   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2, iiv="gp", X1)+IIV(iiv=y2), data = dataHigherMoments))
-#   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g="x2", iiv="gp", X1)+IIV(iiv=y2), data = dataHigherMoments))
-# })
 
 test_that("Multiple exo in single IIV equal single IIV with multiple exo", {
   expect_silent(res.single  <- higherMomentsIV(y~X1+X2+X3+P|P|IIV(g=x2,iiv=g,X1)+IIV(g=x2,iiv=g,X2)+IIV(g=x2,iiv=g,X3),
@@ -105,13 +98,7 @@ test_that("Returns object of class ivreg and rendo.ivreg",{
 
 # ***TODO: CHeck that print are correct for highermoments.
 # ***TODO: check that IIVs columns are named correctly regardless of the order in which they were specified
-# **TODO: remove this, also from input checks
-# test_that("Returns object with data named IIV.NU",{
-#   expect_silent(res.higher <- higherMomentsIV(y~X1+X2+P|P|IIV(g=lnx,iiv=gy,X1)+IIV(iiv=y2)+IIV(iiv=g, g=x3,X2),
-#                                               data = dataHigherMoments))
-#   # Have 3 IIV.xx cols
-#   expect_true(sum(grepl(pattern = "^IIV\\.[0-9]", x=colnames(res.higher$data))) == 3)
-# })
+
 
 test_that("Every g works together with every ivv", {
   allowed.iiv <- c("g", "gp", "gy", "yp", "p2", "y2")

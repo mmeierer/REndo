@@ -166,3 +166,32 @@
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataHetIV"
+
+#' @title Multilevel Simulated Dataset - Three Levels
+#' @description  A dataset simulated to exemplify the use of the \code{multilevelIV()} function.
+#' It has 2645 observations, clustered into 40 level-three variables and 1312 observations at level two. The endogenous regressor is \code{X15} with a true
+#' coefficient value of -1.
+#' @name dataMultilevelIV
+#' @usage dataMultilevelIV
+#' @format A data frame with 2645 observations clustered into 40 level-three variables and 1312 level-two variables.
+#' \describe{
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X11}}{a level-one numeric vector representing a categorical exogenous variable with true parameter value equal to 3.}
+#' \item{\code{X12}}{a level-one numeric vector representing a binomial distributed exogenous variable with true parameter value equal to 9.}
+#' \item{\code{X13}}{a level-one numeric vector representing a binomial distributed exogenous variable with true parameter value equal to -2.}
+#' \item{\code{X14}}{a level-two numeric vector representing a normally distributed exogenous variable with true parameter value equal to 2.}
+#' \item{\code{X15}}{a level-two numeric vector representing a normally distributed endogenous variable, correlated with the level-two errors.
+#' It true parameter value equals to \eqn{-1} and it has a correlation with the level two errors equal to 0.7.}
+#' \item{\code{X21}}{a level-two numeric vector representing a binomial distributed exogenous variable with true parameter value equal to -1.5.}
+#' \item{\code{X22}}{a level-two numeric vector representing a binomial distributed exogenous variable with true parameter value equal to -4.}
+#' \item{\code{X23}}{a level-two numeric vector representing a binomial distributed exogenous variable with true parameter value equal to -3.}
+#' \item{\code{X24}}{a level-teo numeric vector representing a normally distributed exogenous variable with true parameter value equal to 6.}
+#' \item{\code{X31}}{a level-three numeric vector representing a normally distributed exogenous variable with true parameter value equal to 0.5.}
+#' \item{\code{X32}}{a level-three numeric vector representing a truncated normally distributed exogenous variable with true parameter value equal to 0.1.}
+#' \item{\code{X33}}{a level-three numeric vector representing a truncated normally distributed exogenous variable with true parameter value equal to -0.5.}
+#' \item{\code{SID}}{a numeric vector identifying each level-three observations.}
+#' \item{\code{CID}}{a numeric vector identifying each level-two observations.}}
+#'
+#' @docType data
+#' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
+"dataMultilevelIV"

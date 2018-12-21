@@ -109,7 +109,6 @@
 #' @export
 higherMomentsIV <- function(formula, data, verbose=TRUE){
 
-# *** TODO: fail raluca check: underlying assumptions not satisfied - stop()
   cl <- match.call()
 
   # Input checks -------------------------------------------------------------------------------------

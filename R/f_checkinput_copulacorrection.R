@@ -102,7 +102,8 @@ checkinput_copulacorrection_dataVSformula <- function(data, formula, names.cols.
                                                             rhs.rel.regr=c(1,2),
                                                             num.only.cols = names.cols.endo)
 
-  err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data, forbidden.colname="PStar"))
+  err.msg <- c(err.msg, checkinputhelper_data_notnamed(formula=F.formula, data=data,
+                                                       forbidden.colname="PStar"))
 
   return(err.msg)
 }
@@ -113,8 +114,9 @@ checkinput_copulacorrection_numboots <- function(num.boots){
   if(length(err.msg)>0)
     return(err.msg)
 
-  if(num.boots < 10)
-    warning("It is recommended to run more than 10 bootstrappings.", call. = F, immediate. = T)
+  if(num.boots < 1000)
+    warning("It is recommended to run 1000 or more bootstraps.", call. = F, immediate. = T)
+
   return(c())
 }
 
@@ -150,3 +152,7 @@ checkinput_copulacorrection_warnbinomialendodata <- function(data, names.vars.co
   # Nothing to return
 }
 
+
+checkinput_copulacorrection_optimxargs <- function(optimx.args){
+  return(checkinputhelper_optimxargs(optimx.args = optimx.args))
+}

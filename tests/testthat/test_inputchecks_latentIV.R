@@ -79,8 +79,8 @@ test_that("Fail if wrong data type in any of the formula parts", {
   expect_error(latentIV(formula = y ~ P, data = data.frame(y=factor(1:10), P=1:10)), regexp = "The above errors were encountered!")
   expect_error(latentIV(formula = y ~ P, data = data.frame(y=1:10, P=factor(1:10)), regexp = "The above errors were encountered!"))
   # Characters
-  expect_error(latentIV(formula = y ~ P, data = data.frame(y=as.character(1:10), P=1:10, stringsAsFactors=F)), regexp = "The above errors were encountered!")
-  expect_error(latentIV(formula = y ~ P, data = data.frame(y=1:10, P=as.character(1:10), stringsAsFactors=F)), regexp = "The above errors were encountered!")
+  expect_error(latentIV(formula = y ~ P, data = data.frame(y=as.character(1:10), P=1:10, stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
+  expect_error(latentIV(formula = y ~ P, data = data.frame(y=1:10, P=as.character(1:10), stringsAsFactors=FALSE)), regexp = "The above errors were encountered!")
   # Logicals (as indicate dichotomous variable (=factor))
   expect_error(latentIV(formula = y ~ P, data = data.frame(y=as.logical(0:9), P=1:10)), regexp = "The above errors were encountered!")
   expect_error(latentIV(formula = y ~ P, data = data.frame(y=1:10, P=as.logical(0:9)), regexp = "The above errors were encountered!"))
@@ -90,7 +90,7 @@ test_that("Allow wrong data type in irrelevant columns", {
   # Allow wrong data types in unused columns
   expect_silent(latentIV(formula = y ~ P, verbose = FALSE,
                          data = cbind(dataLatentIV,
-                                      unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = F)))
+                                      unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = FALSE)))
 })
 
 
@@ -165,6 +165,24 @@ test_that("start.params contains no parameter named pi1, pi2, theta5, theta6, th
   expect_error(latentIV(start.params = c("(Intercept)"=2, theta7=1), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
   expect_error(latentIV(start.params = c("(Intercept)"=2, theta8=1), formula = y ~ P, data = dataLatentIV), regexp = "The above errors were encountered!")
 })
+
+# optimx.args  -----------------------------------------------------------------------------------------------------------
+context("Inputchecks - latentIV - Parameter optimx.args")
+test.optimx.args(function.to.test = latentIV, parameter.name = "optimx.args", formula=y~P,
+                 function.std.data = dataLatentIV)
+
+test_that("Has default value empty list()",{
+  default.arg <- eval(formals(REndo:::latentIV)[["optimx.args"]])
+  expect_equal(class(default.arg), "list") # S3 class does not work
+})
+
+
+# verbose ----------------------------------------------------------------------------------------------------------------
+context("Inputchecks - latentIV - Parameter verbose")
+test.single.logical(function.to.test = latentIV, parameter.name="verbose",
+                    formula=y~P, function.std.data=dataLatentIV)
+
+
 
 
 # verbose ----------------------------------------------------------------------

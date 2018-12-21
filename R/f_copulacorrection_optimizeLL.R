@@ -3,12 +3,14 @@
 #' @importFrom Formula as.Formula model.part
 #' @importFrom utils txtProgressBar setTxtProgressBar
 copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, verbose,
-                                        start.params=NULL, num.boots=10, cl, ...){
+                                        start.params=NULL, num.boots=1000, optimx.args = list(),
+                                        cl, ...){
   # Catch
   l.ellipsis <- list(...)
 
   # Further checks required for the parameters in copualCorrection's ... ------------------------------
   check_err_msg(checkinput_copulacorrection_numboots(num.boots=num.boots))
+  check_err_msg(checkinput_copulacorrection_optimxargs(optimx.args = optimx.args))
   # start.params are only checked when the model.matrix has been fitted
 
 
@@ -67,25 +69,31 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Add rho and sigma with defaults
   #   Same order as model.matrix/formula. This is done in LL again,
   #   but do here to have consistent output (inputorder to optimx counts for this)
-  start.params <- c(start.params, rho=0, sigma=1) # rho=0 -> rho=0.5 in LL
+  start.params <- c(start.params, rho=0, sigma=log(exp(1))) # rho=0 -> rho=0.5 in LL
   start.params <- start.params[c(names.model.mat, "rho", "sigma")]
 
 
   # Definition: Optimization function -----------------------------------------------------------------
-  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo, hessian=F){
+  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo, hessian=FALSE){
 
+    # Default arguments for optimx
     # Bounds for rho (0,1): LL returns Inf if outside as NelderMead cannot deal with bounds
-    res.optimx <- tryCatch(expr =
-                             optimx(par     = optimx.start.params,
-                                    fn      = copulaCorrection_LL,
-                                    method  = "Nelder-Mead",
-                                    itnmax  = 5000,
-                                    hessian = hessian,
-                                    control = list(trace=0,
-                                                   dowarn = FALSE),
-                                    vec.y   = vec.data.y,
-                                    m.data.exo.endo = m.model.data.exo.endo,
-                                    vec.data.endo   = vec.data.endo),
+    optimx.default.args <- list(par     = optimx.start.params,
+                                fn      = copulaCorrection_LL,
+                                method  = "Nelder-Mead",
+                                itnmax  = 100000,
+                                hessian = hessian,
+                                control = list(trace=0,
+                                               dowarn = FALSE),
+                                vec.y   = vec.data.y,
+                                m.data.exo.endo = m.model.data.exo.endo,
+                                vec.data.endo   = vec.data.endo)
+
+    # Update default args with user given args for optimx
+    optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)
+
+    # Call optimx with assembled args
+    res.optimx <- tryCatch(expr = do.call(what = optimx, args = optimx.call.args),
                            error   = function(e){ return(e)})
 
     if(is(res.optimx, "error"))
@@ -102,9 +110,11 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
                                           vec.data.endo = vec.data.endo, hessian = TRUE)
 
   # bootstrap num.boots times
-  # Bootstrapping for SD ------------------------------------------------------------------------------
-  if(verbose)
+  # Bootstrapping for SE ------------------------------------------------------------------------------
+  if(verbose){
+    message("Running ",num.boots," bootstraps to derive standard errors.")
     pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
+  }
 
   res.boots <-
     sapply(seq(num.boots), USE.NAMES = TRUE, function(i){
@@ -128,11 +138,11 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Prepare data to create a rendo LL optim object
   # Ordering of coefs is same as input to optimx
 
-  # Parameter and sd
+  # Parameter and se
   # Boots results: Rows = per parameter,  Columns = for each boots run
   coefficients          <- coef(res.real.data.optimx)[1,]     # extract parameters from single fit
-  parameter.sd          <- apply(res.boots, 1, sd, na.rm=TRUE)   # SD of bootstrapped parameters
-  names(coefficients)   <- names(parameter.sd) <- names(start.params)
+  parameter.se          <- apply(res.boots, 1, stats::sd, na.rm=TRUE)   # SD of bootstrapped parameters
+  names(coefficients)   <- names(parameter.se) <- names(start.params)
 
   names.params.exo.endo <- setdiff(names(coefficients), c("rho", "sigma"))
 
@@ -147,10 +157,9 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Return data as object -------------------------------------------------------------------------------------
   return(new_rendo_optim_LL(call = cl, F.formula = F.formula, mf = mf,
                             start.params = start.params,
-                            estim.params = coefficients, estim.params.se = parameter.sd,
+                            estim.params = coefficients, estim.params.se = parameter.se,
                             names.main.coefs = names.params.exo.endo, hessian = hessian,
                             res.optimx = res.real.data.optimx,
                             fitted.values = fitted.values, residuals = residuals,
-                            log.likelihood = res.real.data.optimx$value,
-                            vcov.error = matrix(NA_real_)))
+                            log.likelihood = res.real.data.optimx$value))
 }

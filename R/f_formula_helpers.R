@@ -12,15 +12,15 @@
 
 
 
-# params.as.chars.only=T returns a vector of chars with the parameter names in it.
-#                         Used to readout given param name
-#                         Example:  continuous(X1, X2)
+# params.as.chars.only=TRUE returns a vector of chars with the parameter names in it.
+#                           Used to readout given param name
+#                           Example:  continuous(X1, X2)
 #                                   => c("X1", "X2")
-# params.as.chars.only=F returns a list of list. The inner list is named after the arg
-#                         and the element contains the actual input as char. Elements in sub-lists have
-#                         to be named so that they do not get matched to unintended args because of their
-#                         position (ie X2 to g)
-#                         Example:  IIV(g=x2, iiv=gp, X1, X2) + IIV()
+# params.as.chars.only=FALSE returns a list of list. The inner list is named after the arg
+#                            and the element contains the actual input as char. Elements in sub-lists have
+#                            to be named so that they do not get matched to unintended args because of their
+#                            position (ie X2 to g)
+#                            Example:  IIV(g=x2, iiv=gp, X1, X2) + IIV()
 #                                   => list(list(g="x2",iiv="gp", X1="X1",X2="X2"), list(..),..)
 #' @importFrom stats terms
 formula_readout_special <- function(F.formula, name.special, from.rhs, params.as.chars.only = TRUE){
@@ -81,10 +81,22 @@ formula_build_mainmodel_data <- function(F.formula, data){
   F.return <- update(formula(F.formula, lhs=1, rhs=1),
                      reformulate(termlabels = c(".", colnames(data)),
                                  response = NULL,
-                                 intercept = T))
+                                 intercept = TRUE))
   return(F.return)
 }
 
+
+lme4formula_get_numberoflevels <- function(l4.form){
+  return(length(l4.form$reTrms$flist)+1)
+}
+
+lme4formula_get_namesslopes <- function(l4.form){
+  return(unique(unname(unlist(l4.form$reTrms$cnms))))
+}
+
+lme4formula_get_namesgroups <- function(l4.form){
+  return(unique(names(l4.form$reTrms$cnms)))
+}
 
 
 # Builds a formula as input to ivreg
