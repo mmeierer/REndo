@@ -12,10 +12,20 @@ data("dataCopDisCont")
 # Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # Standard S3 methods checks
 context("S3methods - copulaCorrection - 1 discrete")
+
 d.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1, P2)
 expect_silent(res.d <- copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE))
-test.s3methods.lm.models(res.lm.model=res.d, input.form=d.input.form, function.std.data=dataCopDis2,
+
+test_that("Discrete confint placeholder", {
+  # Put in separate test_that to be able to skip it on cran
+  skip_on_cran()
+
+  #include placeholder test as otherwise the whole block will be skipped because it is regarded as empty
+  expect_true(TRUE)
+
+  test.s3methods.lm.models(res.lm.model=res.d, input.form=d.input.form, function.std.data=dataCopDis2,
                          full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
+})
 
 
 
@@ -26,6 +36,7 @@ context("S3methods - copulaCorrection - discrete confint")
 # Get results to work with
 expect_silent(res.dis.only <- copulaCorrection(formula=y~X1+X2+P1+P2|discrete(P1, P2),
                                                data=dataCopDis2, verbose = FALSE))
+
 test_that("Confint works with different alphas", {
   expect_silent(ci.99 <- confint(res.dis.only, level = 0.99))
   expect_silent(ci.95 <- confint(res.dis.only, level = 0.95))

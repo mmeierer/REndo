@@ -1,7 +1,7 @@
 Package: REndo
 Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables
 Version: 2.1.0
-Date: 2018-12-21
+Date: 2019-01-16
 Authors@R: c(
     person(given="Raluca", family="Gui",         email = "raluca.gui@business.uzh.ch", role = c("cre","aut")),
     person(given="Markus", family="Meierer",     email = "markus.meierer@business.uzh.ch", role = "aut"),
@@ -9,7 +9,7 @@ Authors@R: c(
     person(given="Patrik", family="Schilter",    email = "patrik.schilter@gmail.com",role = "aut"))
 Description: Fits linear models with endogenous regressor using latent instrumental variable approaches. 
     The methods included in the package are Lewbel's (1997) <doi:10.2307/2171884> higher moments approach as well as 
-    Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroskedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718> joint estimation method 
+    Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroscedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718> joint estimation method 
     that uses Gaussian copula and Kim and Frees's (2007) <doi:10.1007/s11336-007-9008-1> multilevel generalized
     method of moment approach that deals with endogeneity in a multilevel setting.
     These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.

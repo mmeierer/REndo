@@ -9,7 +9,7 @@
 * Method `confint` was added for methods `latentIV` and `copulaCorrection`
 * Examples and documentation were improved for all methods
 * New data was generated for dataHetIV
-* The default number of iterations for all optimizations was increased to 100000
+* The default number of iterations for all optimizations was increased to 100'000
 
 ## BUG FIXES
 * To avoid infrequent warnings, the parameter `sigma` used in `copualCorrection` was constrained to > 0

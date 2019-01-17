@@ -121,6 +121,7 @@ See the example section for illustrations on how to specify the \code{formula} p
 }
 }
 \examples{
+\donttest{
 data(dataMultilevelIV)
 
 # Two levels
@@ -132,6 +133,7 @@ res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X2
 res.ml.L3 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
                               X32 + X33 + (1| CID) + (1|SID) | endo(X15),
                           data = dataMultilevelIV, verbose = FALSE)
+
 
 # L2 with multiple endogenous regressors
 res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
@@ -159,6 +161,7 @@ L2.FE.var  <- vcov(res.ml.L2, model = "FE_L2")
 L2.GMM.var <- vcov(res.ml.L2, model = "GMM_L2")
 # residuals
 L3.REF.resid <- resid(res.ml.L3, model = "REF")
+}
 
 }
 \references{

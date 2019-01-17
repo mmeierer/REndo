@@ -92,6 +92,7 @@
 #' Ebbes P., Wedel M., Böckenholt U. (2009). “Frugal IV Alternatives to Identify the Parameter for an Endogenous Regressor.” Journal of Applied Econometrics, 24(3), 446–468.
 #'
 #' @examples
+#' \donttest{
 #' data(dataLatentIV)
 #'
 #' # function call without any initial parameter values
@@ -122,6 +123,7 @@
 #' lat.all.coefs <- coef(l4, complete = TRUE)
 #' # only main model coefs
 #' lat.main.coefs <- coef(l4, complete = FALSE)
+#' }
 #'
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm coef model.frame model.matrix sd update setNames

@@ -96,6 +96,7 @@ Additional parameters used during model fitting and printed in \code{summary} ar
 }
 }
 \examples{
+\donttest{
 data(dataLatentIV)
 
 # function call without any initial parameter values
@@ -126,6 +127,7 @@ lat.all.coefs <- coef(l4)
 lat.all.coefs <- coef(l4, complete = TRUE)
 # only main model coefs
 lat.main.coefs <- coef(l4, complete = FALSE)
+}
 
 }
 \references{
