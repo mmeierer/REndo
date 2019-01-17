@@ -5,6 +5,8 @@ data("dataMultilevelIV")
 context("Correctness - multilevelIV - Formula transformations")
 
 test_that("Transformations are correct for L2", {
+  skip_on_cran()
+
   expect_silent(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
                                             data = dataMultilevelIV, verbose = FALSE))
@@ -49,6 +51,7 @@ test_that("Transformations are correct for L2", {
 
 
 test_that("Transformations are correct for L3", {
+  skip_on_cran()
   expect_message(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                                X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15, X21),
                                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular fit")
@@ -100,6 +103,7 @@ context("Correctness - multilevelIV - Data sorting")
 
 
 test_that("Unsorted data is correct L2", {
+  skip_on_cran()
   # Correct = coefs + sorting of residuals / fitted
 
   # Distinguishable non-standard rownames
@@ -128,6 +132,7 @@ test_that("Unsorted data is correct L2", {
 })
 
 test_that("Unsorted data is correct L3", {
+  skip_on_cran()
   # Correct = coefs + sorting of residuals / fitted
 
   # Distinguishable non-standard rownames
@@ -159,6 +164,7 @@ test_that("Unsorted data is correct L3", {
 context("Correctness - multilevelIV - Reproduce results")
 
 test_that("REF is same as lmer()", {
+  skip_on_cran()
   # L2
   expect_silent(res.ml2 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),

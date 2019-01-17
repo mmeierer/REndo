@@ -3,7 +3,6 @@
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataCopCont")
 data("dataCopCont2")
-# data("dataCopDis.rda") #only use the 2 discrete version
 data("dataCopDis2")
 data("dataCopDisCont")
 

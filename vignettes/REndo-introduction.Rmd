@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 The only alternative to **REndo** we could find in **R** is the **ivlewbel** package that implements the heteroskedastic errors method proposed by Lewbel (2012). 
 
 ## 2. Short Description of REndo's Functions ##
-### 2.1 Instrument Free Methods for Non-Hierarchial Data###
+### 2.1 Instrument Free Methods for Non-hierarchical Data###
 The four instrument free methods presented in this section share the same underlying model presented in equations (1) and (2) below. The specific characteristics of each method are discussed in the subsequent sections.
 
 Consider the model: 
@@ -118,7 +118,7 @@ Structural parameters are identified by an ordinary two stage least squares regr
 
 The strength of the instrument is proportional to the covariance between $(Z-\bar{Z}) \nu$ and $\nu$, which corresponds to the degree of heteroskedasticity of $\nu$ with respect to $Z$ (Lewbel, 2012). This assumption can be empirically tested. If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors. Under homoskedasticity, the parameters of the model are unidentified. But, identification is achieved in the presence of heteroskedasticity related to at least some elements of $X$. 
 
-### 2.2 Instrument Free Methods for Hierarchial Data (not cross-classified)###
+### 2.2 Instrument Free Methods for hierarchical Data (not cross-classified)###
 
 Like in single-level regression, also in multilevel models endogeneity is a concern. The additional problem is that in multilevel models there are multiple independent assumptions involving various random components at different levels. Any moderate correlation between some predictors and a random component or error term can result in a significant bias of the coefficients and of the variance components.
 
@@ -176,7 +176,7 @@ The **copula correction** function has the following syntax:
                 data, start.params=c(), num.boots=250, optimx.args=list())
         
 
-The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimisation algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. 
+The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimization algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. 
 
 3. **higherMomentsIV()** - implements the higher moments approach described in Lewbel (1997) where instruments are constructed by exploiting higher moments of the data, under strong model assumptions. The function allows just one endogenous regressor.
 
@@ -282,7 +282,7 @@ summary(m3.liv)
 
 ```
 
-Indeed, the value retured is equal to **-3.75**. The **latentIV()** function returns, besides the coefficient estimates, also the initial parameter values used in the maximum likelihood optimisation and the AIC and BIC. The latter two can also be accessed calling AIC(m3.liv) and BIC(m3.liv). The function also returns the fitted values and the residuals, as well as the confidence interval for the coefficients.
+Indeed, the value returned is equal to **-3.75**. The **latentIV()** function returns, besides the coefficient estimates, also the initial parameter values used in the maximum likelihood optimisation and the AIC and BIC. The latter two can also be accessed calling AIC(m3.liv) and BIC(m3.liv). The function also returns the fitted values and the residuals, as well as the confidence interval for the coefficients.
 
 Next, we call the **copulaCorrection()** function:
 ```{r, message=FALSE}
@@ -295,7 +295,7 @@ m4.cc <-  copulaCorrection(read ~  stratio + english + lunch + calworks +
 summary(m4.cc)
 ```
 
-The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge (Converge Code = 1). Therefore, the copulaCorrection\(\) allows the user to specify the desired optimiation algorithm (see the optimx\(\) function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.
+The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge (Converge Code = 1). Therefore, the copulaCorrection\(\) allows the user to specify the desired optimization algorithm (see the optimx\(\) function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.
 
 In the current case, the algorithm converged, and we see that the coefficient of the student\/teacher ratio returned is equal to **-0.38**.
 
@@ -320,7 +320,7 @@ summary(m6.highMoment)
 
 ```
 
-The **CASchools** dataset has information at the district level, where the districts are clustered into counties. One could be tempted to apply the multilevel GMM method to these data, as implemented in the **multilevelIIV()** function. However, the endogeneity problem solved by the multilevel GMM approach considers only correlations between level-1 variables and level-2 errors, while the endogeneity presented in the example above deals with endogeneity between a level-1 variable and the level-1 error. Therefore, we expect that the **multilevelIIV()** function will indicate the use of *fixed effects* method. In other words, the results should be similar with the ones returned by OLS since we included county dummy variables. Indeed, the omitted variable test between the fixed effects and the GMM model rejects the null hypothesis, therefore indicating an endogeneity problem at level one and the use of fixed effects.
+The **CASchools** dataset has information at the district level, where the districts are clustered into counties. One could be tempted to apply the multilevel GMM method to these data, as implemented in the **multilevelIV()** function. However, the endogeneity problem solved by the multilevel GMM approach considers only correlations between level-1 variables and level-2 errors, while the endogeneity presented in the example above deals with endogeneity between a level-1 variable and the level-1 error. Therefore, we expect that the **multilevelIIV()** function will indicate the use of *fixed effects* method. In other words, the results should be similar with the ones returned by OLS since we included county dummy variables. Indeed, the omitted variable test between the fixed effects and the GMM model rejects the null hypothesis, therefore indicating an endogeneity problem at level one and the use of fixed effects.
 
 ``` {r, message = FALSE}
  set.seed(113)
@@ -346,7 +346,7 @@ summary(m8.multilevel)
 ```
 As we have simulated the data, we know that the true parameter value of the endogenous regressor (X15) is $-1$. Looking at the coefficients of X15 returned by the five models, we see that they form two clusters: one cluster is composed of the level-two fixed effects estimator and the level-two GMM estimator (both return $-0.99$), while the other cluster is composed of the other three estimators, FE_L3, GMM_L3, REF, all three having a value of $-0.59$. The bias of the last three estimators is to be expected since we have simulated the data such that X15 is correlated with the level-two error, to which only FE_L2 and GMM_L2 are robust. 
 
-To provide guidance for selecting the appropriate estimator, **multilvelIV\(\)** function performs an omitted variable test. The results are returned by the **summary\(\)** function. For example, in a three-level setting, different estimator comparisons are possible:
+To provide guidance for selecting the appropriate estimator, **multilevelIV\(\)** function performs an omitted variable test. The results are returned by the **summary\(\)** function. For example, in a three-level setting, different estimator comparisons are possible:
 
 * **Fixed effects versus random effects estimators:** To test for omitted level-two and level-three omitted effects, simultaneously, one compares FE_L2 to REF. The test does not indicate the level at which omitted variables might exist.
 * **Fixed effects versus GMM estimators:** Once the existence of omitted effects is established but not certain at which level (see 1), we test for level-two omitted effects by comparing FE_L2 versus GMM_L3. A rejection of the null hypothesis will imply omitted variables at level-two. The same is accomplished by testing FE_L2 versus GMM_L2, since the latter is consistent only if there are no omitted effects at level two.
@@ -375,9 +375,9 @@ Ebbes P, Wedel M, Boeckenholt U, Steerneman A (2005). “Solving and Testing for
 
 Epanechnikov V (1969). “Nonparametric Estimation of a Multidimensional Probability Den- sity.” Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
 
-Kim S, Frees F (2007). “Multilevel Modeling with Correlated Effects.” Pshychometrika, 72(4), 505–533.
+Kim S, Frees F (2007). “Multilevel Modeling with Correlated Effects.” Psychometrika, 72(4), 505–533.
 
-Lewbel A (1997). “Constructing Instruments for Regressions with Measurement Error When No Additional Data are Available, With an Application to Patents and R and D.” Econo- metrica, 65(5), 1201–1213.
+Lewbel A (1997). “Constructing Instruments for Regressions with Measurement Error When No Additional Data are Available, With an Application to Patents and R and D.” Econometrica, 65(5), 1201–1213.
 
 Lewbel A (2012). “Using Heteroscedasticity to Identify and Estimate Mismeasured and En- dogenous Regressor Models.” Journal of Business and Economic Statistics, 30(1), 67–80.
 

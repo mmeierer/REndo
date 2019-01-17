@@ -13,8 +13,8 @@ sales).
 Instrumental variable estimation is a common treatment when endogeneity
 is of concern. However valid, strong external instruments are difficult
 to find. Consequently, statistical methods to correct for endogeneity
-without external instruments have been advanced.  They are
-called **internal instrumental variable models (IIV)**.
+without external instruments have been advanced. They are called
+**internal instrumental variable models (IIV)**.
 
 REndo implements the following instrument-free methods:
 
@@ -29,8 +29,7 @@ REndo implements the following instrument-free methods:
 
 5)  multilevel GMM (Kim and Frees 2007)
 
-
-## New features and improvements in REndo 2.0
+## The new version - REndo 2.0.0
 
 The new version of **REndo** comes with a lot of improvements in terms
 of code optimization as well as different syntax for all functions.
@@ -158,10 +157,10 @@ and Frees (2007), such that a comparison across models can be done.
 
 ## Installation Instructions
 
-Install stable version from CRAN:
+Install the stable version from CRAN:
 
     install.packages("REndo")
 
-Install development version from GitHub:
+Install the development version from GitHub:
 
     devtools::install_github("mmeierer/REndo", ref = "development")

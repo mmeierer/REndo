@@ -302,4 +302,3 @@ context("Inputchecks - higherMomentsIV - Parameter verbose")
 test.single.logical(function.to.test = higherMomentsIV, parameter.name="verbose",
                     formula=y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), function.std.data=dataHigherMoments)
 
-

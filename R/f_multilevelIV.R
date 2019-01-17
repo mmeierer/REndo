@@ -7,7 +7,7 @@
 #' Estimates multilevel models (max. 3 levels) employing the GMM approach presented in Kim and Frees (2007).
 #' One of the important features is that, using the hierarchical structure of the data, no external instrumental
 #' variables are needed, unlike traditional instrumental variable techniques. Specifically, the approach controls for
-#' endogeneity at higher levels in the data hierarchy. For example, for a three-level model, edogeneity can be handled
+#' endogeneity at higher levels in the data hierarchy. For example, for a three-level model, endogeneity can be handled
 #' either if present at level two, at level three or at both levels. Level one endogeneity, where the regressors are correlated
 #' with the structural errors (errors at level one), is not addressed. Moreover, if considered, random slopes cannot be endogenous.
 #' Also, the dependent variable has to have a continuous distribution.
@@ -114,6 +114,7 @@
 #' \item{l.ovt}{a list of results of the Hausman OVT, named per model.}
 #'
 #' @examples
+#' \donttest{
 #' data(dataMultilevelIV)
 #'
 #' # Two levels
@@ -125,6 +126,7 @@
 #' res.ml.L3 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
 #'                               X32 + X33 + (1| CID) + (1|SID) | endo(X15),
 #'                           data = dataMultilevelIV, verbose = FALSE)
+#'
 #'
 #' # L2 with multiple endogenous regressors
 #' res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
@@ -152,6 +154,7 @@
 #' L2.GMM.var <- vcov(res.ml.L2, model = "GMM_L2")
 #' # residuals
 #' L3.REF.resid <- resid(res.ml.L3, model = "REF")
+#' }
 #'
 #' @references
 #' Hausman J (1978). “Specification Tests in Econometrics.” Econometrica, 46(6), 1251–1271.

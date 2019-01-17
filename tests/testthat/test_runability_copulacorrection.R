@@ -9,6 +9,7 @@ data("dataCopDisCont")
 context("Runability - copulaCorrection - Runability")
 
 test_that("Works with intercept", {
+  skip_on_cran()
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
                  regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
@@ -19,6 +20,7 @@ test_that("Works with intercept", {
 })
 
 test_that("Works without intercept", {
+  skip_on_cran()
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P-1|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
                  regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
@@ -60,6 +62,8 @@ test_that("Works without intercept", {
 
 
 test_that("Non-numerics can be used in exogenous data", {
+  skip_on_cran()
+
   # factors + characters + logicals
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
@@ -115,10 +119,14 @@ test_that("Works with proper optimx.args", {
 
 # Transformations in formula ---------------------------------------------------------------------------------------------------
 context("Runability - copulaCorrection - Formula transformations")
+
 test_that("Works with function in exogenous", {
+  skip_on_cran()
+
   # C1
   # ****TODO optimx warning bounds. Use elsewhere.
   # expect_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
+
   #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   expect_warning(copulaCorrection(formula= y ~ I(X1/3)+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
                                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
@@ -130,6 +138,7 @@ test_that("Works with function in exogenous", {
 
 
 test_that("Works with single endo transformation", {
+  skip_on_cran()
   # C1
   expect_warning(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/2)), verbose = FALSE, num.boots=2, data=dataCopCont),
                  regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
@@ -141,11 +150,14 @@ test_that("Works with single endo transformation", {
 
 
 test_that("Works with transformed and untransformed endo", {
+  skip_on_cran()
+
   # check that not the same are taken by comparing results
 
   # ****TODO: Ask raluca why they are not unequal?
   # C1
   # expect_warning(res.c1.1 <- copulaCorrection(formula= y ~ X1+X2+P+I(P/100)|continuous(I(P/100)), verbose = FALSE, num.boots=2, data=dataCopCont),
+
   #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
   # expect_warning(res.c1.2 <- copulaCorrection(formula= y ~ X1+X2+P+exp(P/100)|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
   #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
@@ -200,7 +212,6 @@ test_that("Correct for start.params swapped", {
   # Equal, including param orderin
   expect_equal(coef(res.c1.1), coef(res.c1.2))
 })
-
 
 test_that("Fails if lm cannot be used to derive start.params", {
   expect_error(res.c1.1 <- copulaCorrection(formula= y ~ X1+X2+P+I(P/1.1)|continuous(I(P/1.1)),data=dataCopCont, verbose=FALSE),

@@ -81,6 +81,7 @@ data("dataCopDisCont")
 context("Correctness - copulaCorrection - Data sorting")
 
 test_that("Differently sorted data produces same results C1", {
+  skip_on_cran()
   data.altered <- dataCopCont
   data.altered <- data.altered[sample(nrow(data.altered), nrow(data.altered), replace = FALSE), ]
 

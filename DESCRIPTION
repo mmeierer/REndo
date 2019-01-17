@@ -1,7 +1,7 @@
 Package: REndo
 Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables
 Version: 2.1.0
-Date: 2018-10-31
+Date: 2019-01-16
 Authors@R: c(
     person(given="Raluca", family="Gui",         email = "raluca.gui@business.uzh.ch", role = c("cre","aut")),
     person(given="Markus", family="Meierer",     email = "markus.meierer@business.uzh.ch", role = "aut"),
@@ -9,27 +9,26 @@ Authors@R: c(
     person(given="Patrik", family="Schilter",    email = "patrik.schilter@gmail.com",role = "aut"))
 Description: Fits linear models with endogenous regressor using latent instrumental variable approaches. 
     The methods included in the package are Lewbel's (1997) <doi:10.2307/2171884> higher moments approach as well as 
-    Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroskedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718> joint estimation method 
+    Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroscedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718> joint estimation method 
     that uses Gaussian copula and Kim and Frees's (2007) <doi:10.1007/s11336-007-9008-1> multilevel generalized
     method of moment approach that deals with endogeneity in a multilevel setting.
     These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
-    Note that with version 2.0.0 sweeping changes were introduced which greatly improve 
-    functionality and usability but break backwards compatibility.
+    Note that with version 2.0.0 sweeping changes were introduced which greatly improve functionality and usability but break backwards compatibility.
 License: GPL-3
 URL: https://github.com/mmeierer/REndo
 BugReports: https://github.com/mmeierer/REndo/issues
 NeedsCompilation: no
 Depends:
-    R (>= 3.5)
+    R (>= 3.4)
 Imports:
-    methods (>= 3.5),
-    stats (>= 3.5),
-    utils (>= 3.5),
+    methods (>= 3.4),
+    stats (>= 3.4),
+    utils (>= 3.4),
     Formula (>= 1.2),
     optimx (>= 2013.8.7),
     mvtnorm (>= 1.0-8),
     AER (>= 1.2-5),
-    Matrix (>= 1.2-15),
+    Matrix (>= 1.2-14),
     lme4 (>= 1.1-18-1),
     data.table (>= 1.11.8),
     corpcor (>= 1.6.9)

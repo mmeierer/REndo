@@ -21,7 +21,7 @@ a list of summary statistics and the results of the omitted variable tests for t
 
 An object of class \code{summary.rendo.multilevel} is returned that is a list using the component \code{call} of argument \code{object}, plus,
 
-\item{summary.model}{the model parameter with which the sumamry function was called.}
+\item{summary.model}{the model parameter with which the summary function was called.}
 \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients, its standard error,
 the t-statistic and corresponding (two-sided) p-value.}
 \item{OVT.table}{results of the Hausman omitted variable test for the specified model compared to all other models.}
@@ -32,14 +32,14 @@ the t-statistic and corresponding (two-sided) p-value.}
 }
 \details{
 The multilevelIV() function estimates three models, namely: the usual random
-effects model (REF), the fixed effects model (FE) and the hierarchial GMM model (GMM) proposed by Kim and Frees (2007).
+effects model (REF), the fixed effects model (FE) and the hierarchical GMM model (GMM) proposed by Kim and Frees (2007).
 The fixed effects and the GMM estimators are calculated at each level - so in the case of a three-level model, the function estimates,
 besides the random effects, fixed effects models at level two (FE_L2) and at level three (FE_L3).
 The same is true for the GMM estimators, the multilevelIV() function will return a GMM estimator
 at level-three (GMM_L3) and a GMM estimator at level two (GMM_L2).
 
 In order to facilitate the choice of estimator to be used, the \code{summary()} function also returns an omitted variable test (OVT).
-This test is based on the Hausman test for panel data. The OVT allows the comparison of a robust eatimator and an estimator which is efficient
+This test is based on the Hausman test for panel data. The OVT allows the comparison of a robust eastimator and an estimator which is efficient
 under the null hypothesis of no omitted variables. Moreover, it allows the comparison of two robust
 estimators at different levels.
 

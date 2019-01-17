@@ -168,7 +168,7 @@
 "dataHetIV"
 
 #' @title Multilevel Simulated Dataset - Three Levels
-#' @description  A dataset simmulated to exemplify the use of the \code{multilevelIV()} function.
+#' @description  A dataset simulated to exemplify the use of the \code{multilevelIV()} function.
 #' It has 2645 observations, clustered into 40 level-three variables and 1312 observations at level two. The endogenous regressor is \code{X15} with a true
 #' coefficient value of -1.
 #' @name dataMultilevelIV
@@ -177,7 +177,7 @@
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X11}}{a level-one numeric vector representing a categorical exogenous variable with true parameter value equal to 3.}
-#' \item{\code{X12}}{a level-one numeric vector representing a binomial distributedexogenous variable with true parameter value equal to 9.}
+#' \item{\code{X12}}{a level-one numeric vector representing a binomial distributed exogenous variable with true parameter value equal to 9.}
 #' \item{\code{X13}}{a level-one numeric vector representing a binomial distributed exogenous variable with true parameter value equal to -2.}
 #' \item{\code{X14}}{a level-two numeric vector representing a normally distributed exogenous variable with true parameter value equal to 2.}
 #' \item{\code{X15}}{a level-two numeric vector representing a normally distributed endogenous variable, correlated with the level-two errors.

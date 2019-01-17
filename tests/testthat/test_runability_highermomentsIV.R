@@ -16,6 +16,7 @@ test_that("Works with 3 IIVs",{
                                 data = dataHigherMoments, verbose = FALSE))
 })
 
+
 test_that("Works with transformation in IIV",{
   expect_silent(higherMomentsIV(y~X1+log(X2)+P|P|IIV(g=x2, iiv=gp,log(X2))+IIV(iiv=y2),
                                 data = dataHigherMoments, verbose = FALSE))
