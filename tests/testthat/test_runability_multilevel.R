@@ -12,8 +12,8 @@ test_that("Works with 2 levels", {
 
 test_that("Works with 3 levels", {
   expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15),
-                              data = dataMultilevelIV, verbose = FALSE))
+                          X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15),
+                        data = dataMultilevelIV, verbose = FALSE))
 })
 
 
@@ -77,7 +77,7 @@ test_that("Works with group ids as factor", {
 
 test_that("Works with slopes as factors and chars", {
   skip_on_cran()
-  dataMultilevelIV$charSLP   <- rep(LETTERS[1:5], nrow(dataMultilevelIV)/5)
+  dataMultilevelIV$charSLP   <- rep(LETTERS[1:4], nrow(dataMultilevelIV)/4)
   dataMultilevelIV$factorSLP <- as.factor(dataMultilevelIV$charSLP)
   # intercept + category slope
   expect_message(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +

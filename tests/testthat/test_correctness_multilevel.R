@@ -137,15 +137,15 @@ test_that("Unsorted data is correct L3", {
 
   # Distinguishable non-standard rownames
   rownames(dataMultilevelIV) <- as.character(seq(from=nrow(dataMultilevelIV)+100000, to=1+100000))
-  expect_message(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+  expect_silent(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                               X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
-                                            data = dataMultilevelIV, verbose = FALSE), regex = "singular fit")
+                                            data = dataMultilevelIV, verbose = FALSE)) #, regex = "singular fit")
   # Can handle transformations in LHS
   data.altered   <- dataMultilevelIV
   data.altered   <- data.altered[sample(x=nrow(dataMultilevelIV), size = nrow(dataMultilevelIV), replace = FALSE), ]
-  expect_message(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+  expect_silent(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                                 X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
-                                              data = data.altered, verbose = FALSE), regex = "singular fit")
+                                              data = data.altered, verbose = FALSE)) #, regex = "singular fit")
 
   # Coefs the same
   # Have to use tolerance because lmer() provides slightly different results for sorted/unsorted data
