@@ -42,9 +42,9 @@ labels.rendo.optim.LL <- function(object, ...){
 #' @export
 coef.rendo.optim.LL <- function(object, complete = TRUE, ...){
   if(complete)
-    return(object$estim.params)
+    return(object$coefficients)
   else
-    return(object$estim.params[object$names.main.coefs])
+    return(object$coefficients[object$names.main.coefs])
 }
 
 

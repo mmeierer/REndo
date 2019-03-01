@@ -11,13 +11,13 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
   test_that("coef with complete=TRUE", {
     expect_silent(res.cf <- coef(res.model, complete = TRUE))
     # equal to all parameters
-    expect_equal(res.cf, expected = res.model$estim.params)
+    expect_equal(res.cf, expected = res.model$coefficients)
   })
 
   test_that("coef with complete=FALSE", {
     expect_silent(res.cf <- coef(res.model, complete = FALSE))
     # equal to main parameters only
-    expect_equal(res.cf, expected = res.model$estim.params[res.model$names.main.coefs])
+    expect_equal(res.cf, expected = res.model$coefficients[res.model$names.main.coefs])
   })
 
   test_that("logLik", {

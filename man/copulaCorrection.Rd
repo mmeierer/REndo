@@ -28,7 +28,7 @@ For the case of a single continuous endogenous regressor, an object of class \co
 It is a list and contains the following components:
 \item{formula}{The formula given to specify the model to be fitted.}
 \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
-\item{estim.params}{A named vector of all coefficients used during model fitting.}
+\item{coefficients}{A named vector of all coefficients resulting from model fitting.}
 \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
 \item{res.optimx}{The result object returned by the function \code{optimx}.}
 \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}

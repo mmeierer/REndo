@@ -69,7 +69,7 @@
 #' @return An object of class \code{rendo.optim.LL} is returned that is a list and contains the following components:
 #' \item{formula}{The formula given to specify the model to be fitted.}
 #' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
-#' \item{estim.params}{A named vector of all coefficients used during model fitting.}
+#' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
 #' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
 #' \item{res.optimx}{The result object returned by the function \code{optimx}.}
 #' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
@@ -267,7 +267,7 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   # Put together returns ------------------------------------------------------------------
   res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
                             start.params     = optimx.start.params,
-                            estim.params     = all.estimated.params,
+                            coefficients     = all.estimated.params,
                             m.delta.diag     = m.delta.diag,
                             names.main.coefs = names.main.model,
                             res.optimx = res.optimx, log.likelihood=res.optimx$value,

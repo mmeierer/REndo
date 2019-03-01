@@ -162,7 +162,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Return data as object -------------------------------------------------------------------------------------
   return(new_rendo_optim_LL(call = cl, F.formula = F.formula, mf = mf,
                             start.params = start.params,
-                            estim.params = coefficients,
+                            coefficients = coefficients,
                             m.delta.diag     = m.delta.diag,
                             names.main.coefs = names.params.exo.endo, hessian = hessian,
                             res.optimx = res.real.data.optimx,
