@@ -1,6 +1,6 @@
 #' @importFrom Formula as.Formula
-new_rendo_optim_LL <- function(call, F.formula, mf, start.params, estim.params, estim.params.se,
-                               names.main.coefs,
+new_rendo_optim_LL <- function(call, F.formula, mf, start.params, estim.params,
+                               m.delta.diag, names.main.coefs,
                                res.optimx, log.likelihood, hessian,
                                fitted.values, residuals) {
 
@@ -12,7 +12,7 @@ new_rendo_optim_LL <- function(call, F.formula, mf, start.params, estim.params, 
                  terms   = terms(mf),
                  start.params = start.params,
                  estim.params = estim.params,
-                 estim.params.se = estim.params.se,
+                 m.delta.diag = m.delta.diag,
                  names.main.coefs = names.main.coefs,
                  res.optimx = res.optimx,
                  log.likelihood = log.likelihood,

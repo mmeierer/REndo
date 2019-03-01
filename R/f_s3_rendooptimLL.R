@@ -85,11 +85,23 @@ confint.rendo.optim.LL <- function(object, parm, level = 0.95, ...){
 #' @importFrom stats vcov
 #' @importFrom corpcor pseudoinverse
 vcov.rendo.optim.LL <- function(object, ...){
+
+  # check hessian
   if(any(!is.finite(object$hessian)))
     stop("The vcov matrix cannot be calulated because the hessian contains non-finite values!", call. = FALSE)
 
-  m.vcov <- corpcor::pseudoinverse(object$hessian)
+  # invert hessian
+  hessian.inv <- corpcor::pseudoinverse(object$hessian)
+
+  # ensure the ordering is correct
+  m.delta.diag <- object$m.delta.diag
+  m.delta.diag <- m.delta.diag[rownames(object$hessian), colnames(object$hessian)]
+  # m.delta.diag <- m.delta.diag[,]
+
+  # to get vcov, do deltamethod with diag matrix saved when first fitting the model
+  m.vcov <- m.delta.diag %*% hessian.inv %*% m.delta.diag
   rownames(m.vcov) <- colnames(m.vcov) <- colnames(object$hessian)
+
   return(m.vcov)
 }
 
@@ -114,21 +126,40 @@ print.rendo.optim.LL <- function(x, digits = max(3L, getOption("digits") - 3L), 
 summary.rendo.optim.LL <- function(object, ...){
 
   # Copy from input
-  res <- object[c("call","start.params", "log.likelihood", "estim.params.se",
-                  "names.main.coefs")]
+  res <- object[c("call","start.params", "log.likelihood", "names.main.coefs")]
 
   # Coefficient table --------------------------------------------------------------------
   # Return the full coefficient table. The subset is to relevant rows is done in the
   #   printing
 
-  all.est.params <- object$estim.params # get all coefs
+  all.est.params <- coef(object) # get all coefs
+
+
+  # If the SEs cannot be calculated because
+  #   the vcov contains non-numerics: warn + put NAs
+  #   the diag(vcov) is negative: warn + use SEs anyway (they contain NAs then)
+  #   the warnings are printed here already and not in the printing because result could
+  #     be used directly as object
+  se <- tryCatch(suppressWarnings(sqrt(diag(vcov(object)))),
+                 error = function(e)return(e))
+
+
+  if(is(object = se, class2 = "simpleError")){
+    warning("The standard errors could not be calculated because the vcov contains non-numeric elements.", call. = FALSE)
+    se <- rep(NA, times=length(all.est.params))
+  }else{
+    # only check if not error
+    if(anyNA(se))
+      warning("For some parameters the standard error could not be calculated.", call. = FALSE)
+  }
+
   # z-score
-  z.val <- all.est.params/object$estim.params.se
+  z.val <- all.est.params/se
   # p-values
   p.val <- 2*pt(q=(-abs(z.val)), df=NROW(fitted(object))-1)
 
   res$coefficients <- cbind(all.est.params,
-                            object$estim.params.se,
+                            se,
                             z.val,
                             p.val)
   rownames(res$coefficients) <- names(all.est.params)
@@ -187,7 +218,7 @@ print.summary.rendo.optim.LL <- function(x, digits=max(3L, getOption("digits")-3
   printCoefmat(x$coefficients[x$names.main.coefs, ,drop=FALSE], digits = digits, na.print = "NA",
                has.Pvalue = TRUE, signif.stars = signif.stars,...)
 
-  if(anyNA(x$estim.params.se))
+  if(anyNA(x$coefficients[x$names.main.coefs,2]))
     cat("\n",paste0(strwrap("For some parameters the statistics could not be calculated because the Std. Errors are unavailable.",
                             width = max.width),
                     collapse = "\n"), "\n",sep = "")

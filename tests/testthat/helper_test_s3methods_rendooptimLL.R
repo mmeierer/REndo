@@ -68,7 +68,7 @@ test.s3methods.rendooptimLL <- function(res.model, input.form, function.std.data
     expect_is(res.sum, "summary.rendo.optim.LL")
     expect_true(is.list(res.sum))
     expect_named(res.sum, c("call", "start.params", "KKT1", "KKT2", "AIC", "BIC","conv.code",
-                            "log.likelihood", "coefficients", "vcov", "estim.params.se",
+                            "log.likelihood", "coefficients", "vcov",
                             "names.main.coefs"),
                  ignore.order = TRUE)
     expect_is(res.sum$call, "call")

@@ -70,11 +70,11 @@
 #' \item{formula}{The formula given to specify the model to be fitted.}
 #' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 #' \item{estim.params}{A named vector of all coefficients used during model fitting.}
-#' \item{estim.params.se}{A named vector of the standard error of all coefficients used during model fitting.}
 #' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
 #' \item{res.optimx}{The result object returned by the function \code{optimx}.}
 #' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
 #' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
+#' \item{m.delta.diag}{A diagonal matrix needed to apply the delta method when deriving the vcov.}
 #' \item{fitted.values}{Fitted values at the found solution.}
 #' \item{residuals}{The residuals.}
 #' \item{model}{The model.frame used for model fitting.}
@@ -233,24 +233,23 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   # rename main coefficients in correct order to original parameter names
   all.estimated.params   <- setNames(optimx.estimated.params[c(make.names(names.main.model),names.support.params)],
                                      c(names.main.model, names.support.params))
-  estim.param.main.model <- all.estimated.params[names.main.model]
-  estim.param.support    <- all.estimated.params[names.support.params]
+  all.estimated.params["theta5"] <- exp(all.estimated.params["theta5"]) / (1 + exp(all.estimated.params["theta5"]))
+  # estim.param.main.model <- all.estimated.params[names.main.model]
+  # estim.param.support    <- all.estimated.params[names.support.params]
 
-  # Hessian and SE ------------------------------------------------------------------------------
   # Read out hessian.
   hessian <- extract.hessian(res.optimx = res.optimx, names.hessian = names(all.estimated.params))
 
-  fct.se.warn.error <- function(ew){
-                              warning("Hessian cannot be solved for the standard errors: ",
-                                      ew$message,". All SEs set to NA.",
-                                      call. = FALSE, immediate. = TRUE)
-                              return(rep(NA_real_,length(all.estimated.params)))}
-
-  all.param.se <- tryCatch(expr = sqrt(diag(corpcor::pseudoinverse(hessian))),
-                       # Return same NAs vector if failed to solve so can still read-out results
-                       warning = fct.se.warn.error,
-                       error   = fct.se.warn.error)
-  names(all.param.se)         <- names(all.estimated.params)
+  # To derive the vcov, the delta method is used for which the diagonal matrix is
+  #   already calculated here because the same class is used for copulaCorrection C1 but the diag matrix
+  #   depends on the model
+  vec.diag <- rep(1,times=length(all.estimated.params))
+  names(vec.diag) <- names(all.estimated.params)
+  # use the original coef from fitting the model with optimx because theta5 in all.estimated.params is
+  #   already transformed to probabilities (same transformation as in LL)
+  vec.diag["theta5"] <- 1 / (coef(res.optimx)[1,"theta5"] - (coef(res.optimx)[1,"theta5"]^2))
+  m.delta.diag <- diag(vec.diag)
+  rownames(m.delta.diag) <- colnames(m.delta.diag) <- names(vec.diag)
 
   # Fitted and residuals
   if(use.intercept)
@@ -269,7 +268,7 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
                             start.params     = optimx.start.params,
                             estim.params     = all.estimated.params,
-                            estim.params.se  = all.param.se,
+                            m.delta.diag     = m.delta.diag,
                             names.main.coefs = names.main.model,
                             res.optimx = res.optimx, log.likelihood=res.optimx$value,
                             hessian = hessian, fitted.values=fitted,

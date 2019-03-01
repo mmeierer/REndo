@@ -84,8 +84,5 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
 
   # logLL <-  sum(log(pt*pdf1 + (1-pt)*pdf2))
   # print(isTRUE(all.equal(logLL, logLL.lse))) # TRUE
-  print(params)
-  print(logLL.lse)
-
   return(-1*logLL.lse)
 }

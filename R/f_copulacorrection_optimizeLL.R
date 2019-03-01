@@ -154,10 +154,16 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   residuals             <- vec.data.y - fitted.values
   names(residuals)      <- rownames(m.model.data.exo.endo)
 
+  # delta method diag matrix
+  #   no transformations were performed, hence the matrix consists simply of ones
+  m.delta.diag <- diag(rep.int(1, times = length(coefficients)))
+  rownames(m.delta.diag) <- colnames(m.delta.diag) <- rownames(hessian)
+
   # Return data as object -------------------------------------------------------------------------------------
   return(new_rendo_optim_LL(call = cl, F.formula = F.formula, mf = mf,
                             start.params = start.params,
-                            estim.params = coefficients, estim.params.se = parameter.se,
+                            estim.params = coefficients,
+                            m.delta.diag     = m.delta.diag,
                             names.main.coefs = names.params.exo.endo, hessian = hessian,
                             res.optimx = res.real.data.optimx,
                             fitted.values = fitted.values, residuals = residuals,
