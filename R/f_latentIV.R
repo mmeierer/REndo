@@ -179,8 +179,8 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
 
   start.vals.support.params <- c(pi1 = mean(vec.data.endo),
                                  pi2 = mean(vec.data.endo) + sd(vec.data.endo),
-                                 theta5 = 1, theta6 = 1, theta7 = 1,
-                                 theta8 = 0) # 0 -> will be 0.5 in LL
+                                 theta5 = 0.5, theta6 = 1, theta7 = 0.5,
+                                 theta8 = 1)
   names.support.params      <- names(start.vals.support.params)
 
   # Append support params to start params
@@ -201,17 +201,17 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   optimx.name.intercept  <- make.names(name.intercept)
 
   # Default arguments for optimx
-  optimx.default.args <- list(par = optimx.start.params,
-                              fn  = latentIV_LL,
-                              m.data.mvnorm = m.data.mvnorm,
-                              use.intercept = use.intercept,
-                              name.intercept  = name.intercept,
-                              name.endo.param = name.endo.param,
-                              method = "Nelder-Mead",
-                              hessian = TRUE,
-                              itnmax  = 5000,
-                              control = list(trace = 0,
-                                             dowarn = FALSE))
+  optimx.default.args <- alist(par = optimx.start.params,
+                               fn  = latentIV_LL,
+                               m.data.mvnorm = m.data.mvnorm,
+                               use.intercept = use.intercept,
+                               name.intercept  = name.intercept,
+                               name.endo.param = name.endo.param,
+                               method = "Nelder-Mead",
+                               hessian = TRUE,
+                               itnmax  = 10000,
+                               control = list(trace = 0,
+                                              dowarn = FALSE))
   # Update default args with user given args for optimx
   optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)
 
