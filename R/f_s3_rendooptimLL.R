@@ -21,7 +21,7 @@ logLik.rendo.optim.LL <- function(object, ...){
   return(structure(nall  = nobs(object),
                    object$log.likelihood,
                    nobs  = nobs(object),
-                   df    = length(coef(object$res.optimx)),
+                   df    = ncol(coef(object$res.optimx)),
                    class ="logLik"))
 }
 
