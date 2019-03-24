@@ -82,15 +82,15 @@ test_that("Works with slopes as factors and chars", {
   # intercept + category slope
   expect_message(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                 X31 + X32 + X33 + charSLP+(1+charSLP| SID) | endo(X15),
-                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular fit")
+                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular")
   expect_message(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                 X31 + X32 + X33 + factorSLP+(1+factorSLP| SID) | endo(X15),
-                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular fit")
+                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular")
   # category slope only
   expect_message(multilevelIV(formula = y ~ 0+X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                 X31 + X32 + X33 + charSLP+(0+charSLP| SID) | endo(X15),
-                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular fit")
+                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular")
   expect_message(multilevelIV(formula = y ~ 0+X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                 X31 + X32 + X33 + factorSLP+(0+factorSLP| SID) | endo(X15),
-                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular fit")
+                              data = dataMultilevelIV, verbose = FALSE), regexp = "singular")
 })
