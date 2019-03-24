@@ -5,6 +5,7 @@
 #' The important assumption of the model is that the endogenous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
 #'
 #' @template template_param_formuladataverbose
+#' @param num.boots Number of bootstrapping iterations. Defaults to 1000.
 #' @param ... Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
 #'  regressor. Ignored with a warning otherwise.
 #' \describe{
@@ -12,7 +13,6 @@
 #' The names have to correspond exactly to the names of the components specified in the \code{formula} parameter.
 #' If not provided, a linear model is fitted to derive them.}
 #' \item{optimx.args}{A named list of arguments which are passed to \code{\link[optimx]{optimx}}. This allows users to tweak optimization settings to their liking.}
-#' \item{num.boots}{Number of bootstrapping iterations. Defaults to 1000.}
 #' }
 #'
 #' @details
@@ -97,18 +97,20 @@
 #' For the case of a single continuous endogenous regressor, an object of class \code{rendo.optim.LL} is returned.
 #' It is a list and contains the following components:
 #' \item{formula}{The formula given to specify the model to be fitted.}
-#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
-#' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
-#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
-#' \item{res.optimx}{The result object returned by the function \code{optimx}.}
-#' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
-#' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
-#' \item{m.delta.diag}{A diagonal matrix needed to apply the delta method when deriving the vcov.}
-#' \item{fitted.values}{Fitted values at the found solution.}
-#' \item{residuals}{The residuals.}
 #' \item{model}{The model.frame used for model fitting.}
 #' \item{terms}{The terms object used for model fitting.}
-#'
+#' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
+#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
+#' \item{fitted.values}{Fitted values at the found solution.}
+#' \item{residuals}{The residuals.}
+#' \item{boots.params}{The bootstrapped coefficients.}
+#' The , additionally contains:
+#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
+#' , addtionally contains:
+#' \item{res.lm.real.data}{Fitted linear model with }
+#' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
+#' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
 #' The function summary can be used to obtain and print a summary of the results.
 #' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
 #'
@@ -205,7 +207,7 @@
 #'
 #' @importFrom Formula as.Formula
 #' @export
-copulaCorrection <- function(formula, data, verbose=TRUE, ...){
+copulaCorrection <- function(formula, data, num.boots=1000, verbose=TRUE, ...){
   # Catch stuff ------------------------------------------------------------------------------------------------
   cl <- quote(match.call())
   l.ellipsis <- list(...)
@@ -214,6 +216,7 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   check_err_msg(checkinput_copulacorrection_formula(formula=formula))
   check_err_msg(checkinput_copulacorrection_data(data=data))
   check_err_msg(checkinput_copulacorrection_dataVSformula(formula=formula, data=data))
+  check_err_msg(checkinput_copulacorrection_numboots(num.boots=num.boots))
   check_err_msg(checkinput_copulacorrection_verbose(verbose=verbose))
 
 
@@ -236,6 +239,7 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
     # Single continuous - copula method 1 (optimize LL)
     res <- do.call(what = copulaCorrection_optimizeLL,
                    args = c(list(F.formula=F.formula, data=data,
+                                 num.boots = num.boots,
                                  name.var.continuous =names.vars.continuous,
                                  verbose=verbose, cl=cl), # cl supplied to create return object
                             l.ellipsis))
@@ -244,6 +248,7 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
     res <- do.call(copulaCorrection_linearmodel,
                    c(list(F.formula = F.formula, data = data,verbose=verbose,
                           cl=cl, # cl supplied to create return object
+                          num.boots = num.boots,
                           names.vars.continuous = names.vars.continuous,
                           names.vars.discrete   = names.vars.discrete),
                    l.ellipsis))

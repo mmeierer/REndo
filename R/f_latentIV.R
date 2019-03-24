@@ -71,7 +71,7 @@
 #' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 #' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
 #' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
-#' \item{res.optimx}{The result object returned by the function \code{optimx}.}
+#' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
 #' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
 #' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
 #' \item{m.delta.diag}{A diagonal matrix needed to apply the delta method when deriving the vcov.}
@@ -243,7 +243,7 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   # To derive the vcov, the delta method is used for which the diagonal matrix is
   #   already calculated here because the same class is used for copulaCorrection C1 but the diag matrix
   #   depends on the model
-  vec.diag <- rep(1,times=length(all.estimated.params))
+  vec.diag        <- rep(1,times=length(all.estimated.params))
   names(vec.diag) <- names(all.estimated.params)
   # use the original coef from fitting the model with optimx because theta5 in all.estimated.params is
   #   already transformed to probabilities (same transformation as in LL)
@@ -265,13 +265,15 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
 
 
   # Put together returns ------------------------------------------------------------------
-  res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
-                            start.params     = optimx.start.params,
-                            coefficients     = all.estimated.params,
-                            m.delta.diag     = m.delta.diag,
-                            names.main.coefs = names.main.model,
-                            res.optimx = res.optimx, log.likelihood=res.optimx$value,
-                            hessian = hessian, fitted.values=fitted,
-                            residuals=residuals)
+  res <- new_rendo_latent_IV(call = cl,
+                             F.formula=F.formula,
+                             mf  = mf,
+                             start.params     = optimx.start.params,
+                             coefficients     = all.estimated.params,
+                             m.delta.diag     = m.delta.diag,
+                             names.main.coefs = names.main.model,
+                             res.optimx = res.optimx,
+                             hessian = hessian, fitted.values=fitted,
+                             residuals=residuals)
   return(res)
 }

@@ -1,5 +1,5 @@
 #' @importFrom stats pnorm qnorm dnorm
-copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
+copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo.pstar){
 
   # Extract params from optimx inputs --------------------------------------------------------
   params.endo.exo <- params[setdiff(names(params), c("sigma", "rho"))]
@@ -7,14 +7,13 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   rho             <- params["rho"]
 
   # Constrain rho to [0,1] and sigma to [0, +Inf]
-  # (incl bound because can be very large which flips to 0 and 1)
-  rho <- exp(rho)
-  rho <- rho / (1+rho)
+  #   Because the vcov is not derived from the hessian, the hessian is not caluclated and
+  #     returning NA is not a problem
+  if(rho > 1 | rho < 0)
+    return(NA_real_)
 
-  sigma <- exp(sigma)
-
-  # P.star -----------------------------------------------------------------------------------
-  p.star <- copulaCorrectionContinuous_pstar(vec.data.endo = vec.data.endo)
+  if(sigma < 0)
+    return(NA_real_)
 
   # epsilon, incl. endo regressor ------------------------------------------------------------
 
@@ -26,7 +25,7 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   # PPnorm -----------------------------------------------------------------------------------
   # residulas - epsilon should be normally distributed
   ppnorm <- pnorm(eps.1, mean=0, sd=sigma)
-  ppnorm[ppnorm >= 0.999998]   <- 0.999888
+  ppnorm[ppnorm >= 0.999998]   <- 0.999998
   ppnorm[ppnorm <= 0.0001]     <- 0.0001
 
   # epsilon star -----------------------------------------------------------------------------
@@ -37,7 +36,8 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo){
   l.eps <- sum(dnorm(eps.1,mean=0,sd=sigma, log = TRUE))
 
   # s
-  s <- sum((p.star^2 + eps.star^2)/(2*(1-rho^2)) - (rho*p.star*eps.star)/(1-rho^2))
+  s <- sum((vec.data.endo.pstar^2 + eps.star^2)/(2*(1-rho^2)) -
+             (rho*vec.data.endo.pstar*eps.star)/(1-rho^2))
   # mm
   mm <- (length(vec.y)/2)* log(1-rho^2)
   # LL
