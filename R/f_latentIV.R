@@ -66,22 +66,21 @@
 #' }
 #'
 #'
-#' @return An object of class \code{rendo.optim.LL} is returned that is a list and contains the following components:
-#' \item{formula}{The formula given to specify the model to be fitted.}
-#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' @return An object of classes \code{rendo.latent.IV} and \code{rendo.base} is returned which is a list and contains the following components:
+#' \item{formula}{The formula given to specify the fitted model.}
+#' \item{terms}{The terms object used for model fitting.}
+#' \item{model}{The model.frame used for model fitting.}
 #' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
 #' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
+#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 #' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
-#' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
 #' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
 #' \item{m.delta.diag}{A diagonal matrix needed to apply the delta method when deriving the vcov.}
-#' \item{fitted.values}{Fitted values at the found solution.}
-#' \item{residuals}{The residuals.}
-#' \item{model}{The model.frame used for model fitting.}
-#' \item{terms}{The terms object used for model fitting.}
+#' \item{fitted.values}{Fitted values at the found optimal solution.}
+#' \item{residuals}{The residuals at the found optimal solution.}
 #'
-#' The function summary can be used to obtain and print a summary of the results.
-#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+#' The function \code{summary} can be used to obtain and print a summary of the results.
+#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{confint}, \code{logLik}, \code{AIC}, \code{BIC}, \code{case.names}, and \code{nobs} are available.
 #'
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
@@ -234,8 +233,6 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   all.estimated.params   <- setNames(optimx.estimated.params[c(make.names(names.main.model),names.support.params)],
                                      c(names.main.model, names.support.params))
   all.estimated.params["theta5"] <- exp(all.estimated.params["theta5"]) / (1 + exp(all.estimated.params["theta5"]))
-  # estim.param.main.model <- all.estimated.params[names.main.model]
-  # estim.param.support    <- all.estimated.params[names.support.params]
 
   # Read out hessian.
   hessian <- extract.hessian(res.optimx = res.optimx, names.hessian = names(all.estimated.params))

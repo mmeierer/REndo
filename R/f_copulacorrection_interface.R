@@ -94,34 +94,34 @@
 #' See the example section for illustrations on how to specify the \code{formula} parameter.
 #'}
 #' @return
-#' For the case of a single continuous endogenous regressor, an object of class \code{rendo.optim.LL} is returned.
-#' It is a list and contains the following components:
-#' \item{formula}{The formula given to specify the model to be fitted.}
-#' \item{model}{The model.frame used for model fitting.}
+#' For all cases, an object of classes \code{rendo.base} and \code{rendo.boots} is returned which is a list and contains
+#' the following components:
+#' \item{formula}{The formula given to specify the fitted model.}
 #' \item{terms}{The terms object used for model fitting.}
+#' \item{model}{The model.frame used for model fitting.}
 #' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
 #' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
 #' \item{fitted.values}{Fitted values at the found solution.}
-#' \item{residuals}{The residuals.}
+#' \item{residuals}{The residuals at the found solution.}
 #' \item{boots.params}{The bootstrapped coefficients.}
-#' The , additionally contains:
+#'
+#'
+#' For the case of a single continuous endogenous regressor, the returned object is additionally of
+#' class \code{rendo.copula.c1} and further contains the following components:
 #' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 #' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
-#' , addtionally contains:
-#' \item{res.lm.real.data}{Fitted linear model with }
-#' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
-#' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
-#' The function summary can be used to obtain and print a summary of the results.
-#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
 #'
-#' For all other cases, an object of classes \code{rendo.pstar.lm} and \code{lm} is returned.
-#' It extends the object returned from \code{lm} of package \code{stats} to additionally include the
-#' following components:
+#' For all other cases, the returned object is additionally of class \code{rendo.copula.c2} and
+#' further contains the following components:
+#' \item{res.lm.real.data}{The linear model fitted on the original data together with generated p.star data.}
 #' \item{original.data}{The original data used to fit the model.}
 #' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
 #' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
 #'
-#' All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
+#' The function \code{summary} can be used to obtain and print a summary of the results.
+#' Depending on the returned object, the generic accessor functions \code{coefficients}, \code{fitted.values},
+#' \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+#'
 #'
 #' @seealso \code{\link[REndo:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
@@ -149,7 +149,6 @@
 #' # same as above, with start.parameters and number of bootstrappings
 #' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=500, data=dataCopCont,
 #'                        start.params = c("(Intercept)"=1, X1=1, X2=-2, P=-1))
-#' }}
 #'
 #' # All following examples fit linear model with Gaussian copulas
 #'
@@ -162,11 +161,12 @@
 #'
 #' # single discrete endogenous regressor
 #' d1 <- copulaCorrection(y~X1+X2+P|discrete(P), data=dataCopDis)
+#'
 #' # two discrete endogenous regressor
 #' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2),
 #'                        data=dataCopDis2)
-#' # same as above
-#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2),
+#' # same as above but less bootstrap runs
+#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 400,
 #'                        data=dataCopDis2)
 #'
 #' # the discrete only cases have a dedicated confint function
@@ -176,8 +176,6 @@
 #' cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2),
 #'                        data=dataCopDisCont)
 #'
-#'\donttest{
-#'\dontrun{
 #' # For single continuous only: use own optimization settings (see optimx())
 #' # set maximum number of iterations to 50'000
 #' res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
@@ -195,13 +193,18 @@
 #'                                                control=list(trace = 2, REPORT=50)),
 #'                             data=dataCopCont)
 #'
-#' # for single cont case only:
-#' # read out all coefficients, incl auxiliary coefs
-#' c1.all.coefs <- coef(res.c1)
+#' # For coef(), the parameter "complete" determines if only the
+#' # main model parameters or also the auxiliary coefficients are returned
+#'
+#' c1.all.coefs <- coef(res.c1) # also returns rho and sigma
+#' c2.all.coefs  <- coef(res.c2) # also returns pstar parameters
 #' # same as above
 #' c1.all.coefs <- coef(res.c1, complete = TRUE)
+#' c2.all.coefs  <- coef(res.c2, complete = TRUE)
+#'
 #' # only main model coefs
 #' c1.main.coefs <- coef(res.c1, complete = FALSE)
+#' c2.main.coefs <- coef(res.c2, complete = FALSE)
 #'
 #'}}
 #'
