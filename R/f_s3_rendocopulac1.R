@@ -11,6 +11,7 @@ logLik.rendo.copula.c1 <- function(object, ...){
 # Essentially the exact same summary function as the parent class
 #   but also add GOF measures and convergence stuff
 #' @export
+#' @importFrom stats AIC BIC logLik
 summary.rendo.copula.c1 <- function(object, ...){
   # Get the normal summary from the rendo.boots parent class
   res <- NextMethod()

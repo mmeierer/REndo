@@ -34,7 +34,7 @@ vcov.rendo.latent.IV <- function(object, ...){
 
 
 
-#' @importFrom stats pt AIC BIC fitted
+#' @importFrom stats pt AIC BIC logLik fitted
 #' @export
 summary.rendo.latent.IV <- function(object, ...){
 

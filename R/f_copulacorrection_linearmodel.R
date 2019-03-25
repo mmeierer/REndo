@@ -94,5 +94,6 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
                              res.lm.real.data = res.lm.real.data,
                              boots.params     = boots.params,
                              names.vars.continuous = names.vars.continuous,
-                             names.vars.discrete   = names.vars.discrete))
+                             names.vars.discrete   = names.vars.discrete,
+                             original.data    = data))
 }
