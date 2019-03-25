@@ -45,14 +45,6 @@
     expect_length(res.cases, nrow(function.std.data))
   })
 
-  test_that("labels", {
-    # Equal to names of main-coefs - intercept
-    expect_silent(res.labels <- labels(res.model))
-    expect_type(res.labels, "character")
-    message(res.labels)
-    expect_setequal(res.labels, setdiff(names(coef(res.model, complete = FALSE)), "(Intercept)"))
-  })
-
 
   test_that("summary() - vcov", {
     expect_silent(res.vcov <- vcov(summary(res.model)))

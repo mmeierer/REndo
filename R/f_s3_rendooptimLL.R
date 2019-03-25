@@ -33,13 +33,6 @@ case.names.rendo.optim.LL <- function(object, ...){
 
 
 #' @export
-labels.rendo.optim.LL <- function(object, ...){
-  # Because terms() is from model.frame, the labels do not include the specials
-  # (contraray to when using labels(terms(formula)))
-  return(labels(terms(object$model)))
-}
-
-#' @export
 coef.rendo.optim.LL <- function(object, complete = TRUE, ...){
   if(complete)
     return(object$coefficients)
