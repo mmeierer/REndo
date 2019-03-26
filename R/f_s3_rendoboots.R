@@ -19,9 +19,58 @@ vcov.rendo.boots <- function(object, ...){
   return(m.vcov)
 }
 
-
-#' @importFrom stats pt AIC BIC fitted
 #' @export
+confint.rendo.boots <- function(object, parm, level=0.95, ...){
+
+  if(ncol(object$boots.params) < 100)
+    stop("Cannot calculate confidence intervals with less than 100 bootstrapped estimates!", call. = FALSE)
+
+  # This largely follows stats:::confint.lm to exhibit the exact same behavior
+
+  # Only to get names
+  estim.coefs <- coef(object, complete = TRUE)
+
+  # Param selection --------------------------------------------------------------------------------
+  if(missing(parm))
+    # Use all by default
+    parm <- names(estim.coefs)
+  else
+    if(is.numeric(parm))# Make numbers to respective names
+      parm <- names(estim.coefs)[parm]
+
+
+  # Select CI ---------------------------------------------------------------------------------------
+  # Percentile confidence intervals from bootstrapped parameter estimates
+  #   For the given level, search the corresponding coefficients in
+  #     the sorted bootstrapped params
+
+  # Sort bootstrapped params by size
+  #   Apply returns with params colwise!
+  sorted.boots.params <- apply(object$boots.params, 1, sort)
+
+  # sorted low values on top -> lower = first values (=1-level)
+  lower.cut <- nrow(sorted.boots.params) * (1-level)
+  upper.cut <- nrow(sorted.boots.params) * level
+
+  # t() because apply transposed it first
+  #   apply t() first to access inexistent parms graciously and return NA (does not work if in columns)
+  ci <- t(sorted.boots.params)[parm, c(lower.cut, upper.cut), drop=FALSE]
+
+  # Return ----------------------------------------------------------------------------------------
+  req.a <- (1-level) / 2
+  req.a <- c(req.a, 1 - req.a)
+  # from stats:::format.perc - cannot call with ::: as gives CRAN note
+  names.perc <- paste(format(100 * req.a, trim = TRUE, scientific = FALSE, digits = 3), "%")
+  res <- array(data = NA, dim = c(length(parm), 2L), dimnames = list(parm, names.perc))
+  res[] <- ci
+  return(res)
+}
+
+
+
+#' @export
+#' @importFrom stats coef confint vcov
+#' @importFrom methods is
 summary.rendo.boots <- function(object, ...){
 
   # Copy from input
@@ -31,24 +80,27 @@ summary.rendo.boots <- function(object, ...){
   # Return the full coefficient table. The subset is to relevant rows is done in the
   #   printing
 
-  all.est.params <- coef(object, complete = TRUE) # get main coefs
+  all.coefs <- coef(object,complete = TRUE)
 
+  # If confint is not available because not enough bootstraps, show NA
+  ci <- tryCatch(confint(object=object, level = 0.95), error=function(e)return(e))
+  if(is(ci, "error"))
+    ci <- array(data = NA, dim = c(length(all.coefs), 2L))
 
-  # ** BOOTSTRAP p-value **
-  se <- sqrt(diag(vcov(object = object)))
+  se <-  tryCatch(sqrt(diag(vcov(object))), error=function(e)return(e))
+  if(is(se, "error"))
+    se <- rep(NA_real_, length(all.coefs))
 
-  # z-score
-  z.val <- all.est.params/se
-  # p-values
-  p.val <- 2*pt(q=(-abs(z.val)), df=NROW(fitted(object))-1)
-
-  res$coefficients <- cbind(all.est.params,
+  res$coefficients <- cbind(all.coefs,
                             se,
-                            z.val,
-                            p.val)
+                            ci)
 
-  rownames(res$coefficients) <- names(all.est.params)
-  colnames(res$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
+  rownames(res$coefficients) <- names(all.coefs)
+  # alternative nameing: "Boots CI 97.5%"
+  colnames(res$coefficients) <- c("Point Estimate", "Boots SE",
+                                  "Lower Boots CI (95%)", "Upper Boots CI (95%)")
+
+  res$num.boots <- ncol(object$boots.params)
 
   # Return object ------------------------------------------------------------------------
   # return NA_ placeholder if cannot calculate vcov
@@ -70,7 +122,6 @@ vcov.summary.rendo.boots <- function(object, ...){
 }
 
 
-
 #' @importFrom stats printCoefmat
 #' @export
 print.summary.rendo.boots <- function(x, digits=max(3L, getOption("digits")-3L),
@@ -82,31 +133,25 @@ print.summary.rendo.boots <- function(x, digits=max(3L, getOption("digits")-3L),
 
   cat("\nCall:\n", paste(deparse(x$call), sep = "\n", collapse = "\n"), "\n\n", sep = "")
 
-  # Main model coefficients
+  # Main model coefficients of original data point estimate
   cat("Coefficients:\n")
-  printCoefmat(x$coefficients[x$names.main.coefs, ,drop=FALSE], digits = digits, na.print = "NA",
-               has.Pvalue = TRUE, signif.stars = signif.stars,...)
-
-  if(anyNA(x$coefficients[x$names.main.coefs,2]))
-    cat("\n",paste0(strwrap("For some parameters the statistics could not be calculated because the Std. Errors are unavailable.",
-                            width = max.width),
-                    collapse = "\n"), "\n",sep = "")
-  cat("\n")
+  # Treat all params as coef/se type for printing
+  printCoefmat(x$coefficients[x$names.main.coefs, ,drop=FALSE],
+               na.print = "-", digits = digits, cs.ind = 1:4, tst.ind = numeric(),...)
+  cat(paste0("Number of bootstraps: ", x$num.boots))
+  cat("\n\n")
 
   # Non main model coefs - only show the values, not the statistcs
   cat("Further parameters estimated during model fitting:\n")
 
   names.non.main.coefs <- setdiff(rownames(x$coefficients), x$names.main.coefs)
   # For single non main coef the vec will lose its name, regardless of drop=FALSE. Therefore always add names
-  coefs.non.main <- x$coefficients[names.non.main.coefs, "Estimate", drop = TRUE]
+  coefs.non.main <- x$coefficients[names.non.main.coefs, "Point Estimate", drop = TRUE]
   names(coefs.non.main) <- names.non.main.coefs
   print.default(format(coefs.non.main, digits = digits), print.gap = 1L, quote = FALSE)
   cat("(see help file for details)\n")
 
   invisible(x)
 }
-
-
-
 
 

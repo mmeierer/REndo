@@ -115,7 +115,7 @@ coefficient estimates because the marginal distribution function of the endogeno
 By being a step function, the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} lies between 2 values,
 \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
-Since the exact value is not known, when the \code{\link[REndo:confint.rendo.pstar.lm]{confint}} functions is applied to a fitted model,
+Since the exact value is not known, when the \code{\link[REndo:confint.rendo.boots]{confint}} functions is applied to a fitted model,
 it runs a set of 250 simulations and returns the estimated coefficients.
 
 }
@@ -219,7 +219,7 @@ Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC M
 Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consumer Choice Models." Journal of Marketing Research, 47(1), 3–13.
 }
 \seealso{
-\code{\link[REndo:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
+\code{\link[REndo:confint.rendo.boots]{confint}} for the case of only discrete endogenous regressors
 
 \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 }

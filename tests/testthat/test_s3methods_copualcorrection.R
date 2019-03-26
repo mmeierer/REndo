@@ -9,12 +9,13 @@ data("dataCopCont")
 data("dataCopCont2")
 data("dataCopDisCont")
 #
-# # Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# # Standard S3 methods checks
-# context("S3methods - copulaCorrection - 1 discrete")
-#
+# Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Standard S3 methods checks
+context("S3methods - copulaCorrection - 1 discrete")
+
 # d.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1, P2)
-# expect_silent(res.d <- copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE))
+# expect_warning(res.d <- copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE, num.boots=2),
+#                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
 #
 # test_that("Discrete confint placeholder", {
 #   # Put in separate test_that to be able to skip it on cran
@@ -23,12 +24,12 @@ data("dataCopDisCont")
 #   #include placeholder test as otherwise the whole block will be skipped because it is regarded as empty
 #   expect_true(TRUE)
 #
-#   test.s3methods.lm.models(res.lm.model=res.d, input.form=d.input.form, function.std.data=dataCopDis2,
+#   test.s3methods.rendoboots(res.model =res.d, input.form=d.input.form, function.std.data=dataCopDis2,
 #                             full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 # })
 #
 #
-#
+
 # # Discrete case confint --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # context("S3methods - copulaCorrection - discrete confint")
 # # Do not use .S3.helper.confint because also num.sumulations can be supplied
@@ -107,7 +108,7 @@ data("dataCopDisCont")
 # })
 #
 # test_that("num.simulations has integer default value", {
-#   expect_is(eval(formals(REndo:::confint.rendo.pstar.lm)[["num.simulations"]]), "integer")
+#   expect_is(eval(formals(REndo:::confint.rendo.boots)[["num.simulations"]]), "integer")
 # })
 #
 #
@@ -124,12 +125,19 @@ context("S3methods - copulaCorrection - 1 continuous")
 
 c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
 
-expect_warning(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2),
-               regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
+# Put in separate test_that to be able to skip it on cran
+test_that("skip on cran placeholder", {
+  # need to fit 100 boots
+  skip_on_cran()
 
-# Basic rendo.boots part
-test.s3methods.rendoboots(res.model=res.c1, input.form=c1.input.form, function.std.data=dataCopCont,
-                            req.df=6,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))
+  expect_warning(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 100),
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
+
+  # Basic rendo.boots part
+  test.s3methods.rendoboots(res.model=res.c1, input.form=c1.input.form, function.std.data=dataCopCont,
+                              req.df=6,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))
+
+})
 
 # Case 1 specific methods
 
@@ -155,7 +163,7 @@ test_that("C1 case summary structure", {
 context("S3methods - copulaCorrection - 2 continuous")
 
 c2.input.form <- y ~ X1 + X2 + P1+P2|continuous(P1, P2)
-expect_warning(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCopCont2, verbose=FALSE, num.boots=2),
+expect_warning(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCopCont2, verbose=FALSE, num.boots=100),
                regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
 test.s3methods.rendoboots(res.model=res.c2, input.form=c2.input.form, function.std.data=dataCopCont2,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
@@ -172,7 +180,7 @@ test_that("C2 case - summary structure", {
 context("S3methods - copulaCorrection - 1 continuous, 1 discrete")
 
 cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
-expect_warning(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE, num.boots = 2),
+expect_warning(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE, num.boots = 100),
                regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
 test.s3methods.rendoboots(res.model =res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
@@ -187,9 +195,9 @@ test_that("C2 case - summary structure", {
 
 
 # confint for all other than discrete ---------------------------------------------------------------------------------
-test_that("Throws warning if num.simulations not needed", {
-  expect_warning(confint(res.c2, num.simulations = 100), regexp = "is ignored because this model")
-  expect_warning(confint(res.cd, num.simulations = 100), regexp = "is ignored because this model")
-})
+# test_that("Throws warning if num.simulations not needed", {
+#   expect_warning(confint(res.c2, num.simulations = 100), regexp = "is ignored because this model")
+#   expect_warning(confint(res.cd, num.simulations = 100), regexp = "is ignored because this model")
+# })
 
 

@@ -144,6 +144,11 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Ordering of coefs is same as input to optimx
   names(coefficients)   <- names(start.params)
 
+  # Also rename the bootstrapped params coef names to original names as they are likely
+  #   changed by optimx
+  rownames(boots.params) <- names(coefficients)
+
+
   names.params.exo.endo <- setdiff(names(coefficients), c("rho", "sigma"))
 
   fitted.values         <- as.vector(coefficients[names.params.exo.endo] %*% t(m.model.data.exo.endo))
