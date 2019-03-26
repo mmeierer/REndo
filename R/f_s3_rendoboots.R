@@ -80,7 +80,7 @@ summary.rendo.boots <- function(object, ...){
   # Return the full coefficient table. The subset is to relevant rows is done in the
   #   printing
 
-  all.coefs <- coef(object,complete = TRUE)
+  all.coefs <- coef(object, complete = TRUE)
 
   # If confint is not available because not enough bootstraps, show NA
   ci <- tryCatch(confint(object=object, level = 0.95), error=function(e)return(e))
@@ -111,6 +111,7 @@ summary.rendo.boots <- function(object, ...){
   return(res)
 }
 
+# Not really needed because coef.default already but for clarity
 #' @export
 coef.summary.rendo.boots <- function(object, ...){
   return(object$coefficients)

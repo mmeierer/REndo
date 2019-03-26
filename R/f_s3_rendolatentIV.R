@@ -99,7 +99,7 @@ summary.rendo.latent.IV <- function(object, ...){
 
 
 
-# Read out full coefficients table from summary, including the non-main model params
+# Not really needed because coef.default already works but for clarity
 #' @export
 coef.summary.rendo.latent.IV <- function(object, ...){
   return(object$coefficients)
