@@ -19,7 +19,7 @@
   })
 
   test_that("coef has default = TRUE", {
-    expect_equal(eval(formals(REndo:::coef.rendo.optim.LL)[["complete"]]), TRUE)
+    expect_equal(eval(formals(REndo:::coef.rendo.base)[["complete"]]), TRUE)
   })
 
   test_that("coef with complete=TRUE", {

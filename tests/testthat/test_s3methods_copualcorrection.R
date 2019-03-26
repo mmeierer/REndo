@@ -124,23 +124,23 @@ context("S3methods - copulaCorrection - 1 discrete")
 context("S3methods - copulaCorrection - 1 continuous")
 
 c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
+expect_warning(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2),
+               regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
 
+test_that("Test S3 methods only off cran because needs 100bootstraps for confint", {
 # Put in separate test_that to be able to skip it on cran
-test_that("skip on cran placeholder", {
-  # need to fit 100 boots
+  # need to fit 100 boots for confint
   skip_on_cran()
 
-  expect_warning(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 100),
+  expect_warning(res.c1.many <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 100),
                  regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
 
   # Basic rendo.boots part
-  test.s3methods.rendoboots(res.model=res.c1, input.form=c1.input.form, function.std.data=dataCopCont,
+  test.s3methods.rendoboots(res.model=res.c1.many, input.form=c1.input.form, function.std.data=dataCopCont,
                               req.df=6,full.coefs=c("(Intercept)", "X1", "X2", "P", "rho","sigma"))
-
 })
 
 # Case 1 specific methods
-
 test_that("case 1 specific S3 methods work", {
   expect_silent(logLik(res.c1))
   expect_silent(AIC(res.c1))
@@ -148,18 +148,26 @@ test_that("case 1 specific S3 methods work", {
   expect_s3_class(res.c1$res.optimx, "optimx")
 })
 
-
-test_that("C1 case summary structure", {
+# Case 1 summary
+test_that("Case 1 summary has additional specific structure", {
   expect_silent(res.sum <- summary(res.c1))
   expect_s3_class(res.sum, "summary.rendo.copula.c1")
-  expect_true(is.list(res.sum))
-  expect_true(all(c("start.params", "log.likelihood", "AIC", "BIC", "conv.code",
-                    "KKT1", "KKT2") %in% names(res.sum)))
-  expect_true(length(res.sum$start.params) == nrow(res.sum$coefficients))
+  expect_true(all(c("start.params","KKT1", "KKT2", "AIC", "BIC", "log.likelihood", "conv.code") %in%
+                    names(res.sum)))
+  expect_is(res.sum$start.params, "numeric")
+  expect_named(object = res.sum$start.params, expected = names(coef(res.c1, complete = TRUE)),
+               ignore.order = TRUE)
+  expect_is(res.sum$KKT1, "logical")
+  expect_is(res.sum$KKT2, "logical")
+  expect_is(res.sum$AIC, "numeric")
+  expect_is(res.sum$BIC, "numeric")
+  expect_is(res.sum$log.likelihood, "numeric")
+  expect_is(res.sum$conv.code, "numeric")
 })
 
 
-# C2 case -------------------------------------------------------------------------------------------------------------
+
+# C2 2 continuous case -------------------------------------------------------------------------------------------------------------
 context("S3methods - copulaCorrection - 2 continuous")
 
 c2.input.form <- y ~ X1 + X2 + P1+P2|continuous(P1, P2)
@@ -168,15 +176,18 @@ expect_warning(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCo
 test.s3methods.rendoboots(res.model=res.c2, input.form=c2.input.form, function.std.data=dataCopCont2,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
-test_that("C2 case - summary structure", {
+test_that("Case 2 summary has additional specific structure", {
   expect_silent(res.sum <- summary(res.c2))
   expect_s3_class(res.sum, "summary.rendo.copula.c2")
   expect_true(is.list(res.sum))
-  expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in% names(res.sum)))
+  expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
+                    names(res.sum)))
+  expect_is(res.sum$names.vars.continuous, "character")
+  expect_is(res.sum$names.vars.discrete, "character")
+
 })
 
-
-# Mixed case -------------------------------------------------------------------------------------------------------------
+# C2 Mixed case -------------------------------------------------------------------------------------------------------------
 context("S3methods - copulaCorrection - 1 continuous, 1 discrete")
 
 cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
@@ -185,19 +196,13 @@ expect_warning(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCo
 test.s3methods.rendoboots(res.model =res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
-test_that("C2 case - summary structure", {
+test_that("Case 2 summary has additional specific structure", {
   expect_silent(res.sum <- summary(res.cd))
   expect_s3_class(res.sum, "summary.rendo.copula.c2")
   expect_true(is.list(res.sum))
-  expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in% names(res.sum)))
+  expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
+                    names(res.sum)))
+  expect_is(res.sum$names.vars.continuous, "character")
+  expect_is(res.sum$names.vars.discrete, "character")
+
 })
-
-
-
-# confint for all other than discrete ---------------------------------------------------------------------------------
-# test_that("Throws warning if num.simulations not needed", {
-#   expect_warning(confint(res.c2, num.simulations = 100), regexp = "is ignored because this model")
-#   expect_warning(confint(res.cd, num.simulations = 100), regexp = "is ignored because this model")
-# })
-
-
