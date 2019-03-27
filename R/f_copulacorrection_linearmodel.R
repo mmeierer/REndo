@@ -84,13 +84,8 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
     close(pb)
 
   # Return object ------------------------------------------------------------------------------------------------
-  names.main.coefs <- setdiff(names(coef(res.lm.real.data)),
-                              make.names(c(paste0("PStar.", names.vars.discrete,   sep=""),
-                                           paste0("PStar.", names.vars.continuous, sep=""))))
-
   return(new_rendo_copula_c2(call             = cl,
                              F.formula        = F.formula,
-                             names.main.coefs = names.main.coefs,
                              res.lm.real.data = res.lm.real.data,
                              boots.params     = boots.params,
                              names.vars.continuous = names.vars.continuous,

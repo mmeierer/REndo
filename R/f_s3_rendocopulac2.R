@@ -57,7 +57,7 @@ print.summary.rendo.copula.c2 <- function(x, digits=max(3L, getOption("digits")-
   # Max width to not exceed the fixed width of some prints (printCoef/call)
   max.width <- min(65, 0.9 * getOption("width"))
 
-  cat("\n")
+  cat("\n\n")
 
   if(length(x$names.vars.continuous)>0)
     cat("Continuous endogenous variables: ",

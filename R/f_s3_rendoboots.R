@@ -1,3 +1,6 @@
+#' @title Calculate Variance-Covariance Matrix for Fitted Object
+#' @description
+#' Derive the vcov matrix based on the bootstrapped parameter estimates.
 #' @export
 #' @importFrom stats vcov
 vcov.rendo.boots <- function(object, ...){
@@ -78,20 +81,20 @@ summary.rendo.boots <- function(object, ...){
   # Copy from input
   res <- object[c("call", "names.main.coefs")]
 
+
   # Coefficient table --------------------------------------------------------------------
   # Return the full coefficient table. The subset is to relevant rows is done in the
   #   printing
 
   all.coefs <- coef(object, complete = TRUE)
 
+  res$vcov <- vcov(object)
+  se       <- sqrt(diag(res$vcov))
+
   # If confint is not available because not enough bootstraps, show NA
   ci <- tryCatch(confint(object=object, level = 0.95), error=function(e)return(e))
   if(is(ci, "error"))
     ci <- array(data = NA, dim = c(length(all.coefs), 2L))
-
-  se <-  tryCatch(sqrt(diag(vcov(object))), error=function(e)return(e))
-  if(is(se, "error"))
-    se <- rep(NA_real_, length(all.coefs))
 
   res$coefficients <- cbind(all.coefs,
                             se,
@@ -105,9 +108,6 @@ summary.rendo.boots <- function(object, ...){
   res$num.boots <- ncol(object$boots.params)
 
   # Return object ------------------------------------------------------------------------
-  # return NA_ placeholder if cannot calculate vcov
-  res$vcov <- vcov(object)
-
   class(res)    <- "summary.rendo.boots"
 
   return(res)
@@ -142,17 +142,19 @@ print.summary.rendo.boots <- function(x, digits=max(3L, getOption("digits")-3L),
   printCoefmat(x$coefficients[x$names.main.coefs, ,drop=FALSE],
                na.print = "-", digits = digits, cs.ind = 1:4, tst.ind = numeric(),...)
   cat(paste0("Number of bootstraps: ", x$num.boots))
-  cat("\n\n")
 
-  # Non main model coefs - only show the values, not the statistcs
-  cat("Further parameters estimated during model fitting:\n")
-
+  # Non main model coefs - only show the values, not the statistics
+  #   Only if there are any
   names.non.main.coefs <- setdiff(rownames(x$coefficients), x$names.main.coefs)
-  # For single non main coef the vec will lose its name, regardless of drop=FALSE. Therefore always add names
-  coefs.non.main <- x$coefficients[names.non.main.coefs, "Point Estimate", drop = TRUE]
-  names(coefs.non.main) <- names.non.main.coefs
-  print.default(format(coefs.non.main, digits = digits), print.gap = 1L, quote = FALSE)
-  cat("(see help file for details)\n")
+  if(length(names.non.main.coefs)>0){
+    cat("\n\n")
+    cat("Further parameters estimated during model fitting:\n")
+    # For single non main coef the vec will lose its name, regardless of drop=FALSE. Therefore always add names
+    coefs.non.main <- x$coefficients[names.non.main.coefs, "Point Estimate", drop = TRUE]
+    names(coefs.non.main) <- names.non.main.coefs
+    print.default(format(coefs.non.main, digits = digits), print.gap = 1L, quote = FALSE)
+    cat("(see help file for details)\n")
+  }
 
   invisible(x)
 }

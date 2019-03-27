@@ -2,7 +2,6 @@
 #' @importFrom stats fitted
 new_rendo_copula_c2 <- function(call, F.formula,
                                 res.lm.real.data,
-                                names.main.coefs,
                                 boots.params,
                                 names.vars.continuous,
                                 names.vars.discrete){
@@ -12,7 +11,7 @@ new_rendo_copula_c2 <- function(call, F.formula,
     call             = call,
     F.formula        = as.Formula(F.formula), # to be sure its a Formula
     mf               = model.frame(res.lm.real.data),
-    names.main.coefs = names.main.coefs,
+    names.main.coefs = names(coef(res.lm.real.data)),
     coefficients     = coef(res.lm.real.data),
     residuals        = residuals(res.lm.real.data),
     fitted.values    = fitted(res.lm.real.data),
