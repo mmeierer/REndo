@@ -55,6 +55,39 @@ test_that("Case 1 summary has additional specific structure", {
 })
 
 
+test_that("Case 1 summary prints", {
+  expect_silent(res.sum <- summary(res.c1))
+  expect_output(res <- show(res.sum))
+  expect_null(res)
+
+  expect_output(res <- print(res.sum))
+  expect_identical(res, res.sum)
+})
+
+
+
+
+fct.helper.check.copula.c2.summary <- function(res.c2){
+  test_that("Case 2 summary has additional specific structure", {
+    expect_silent(res.sum <- summary(res.c2))
+    expect_s3_class(res.sum, "summary.rendo.copula.c2")
+    expect_true(is.list(res.sum))
+    expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
+                      names(res.sum)))
+    expect_is(res.sum$names.vars.continuous, "character")
+    expect_is(res.sum$names.vars.discrete, "character")
+
+  })
+  # mainly for covr coverage
+  test_that("Case 2 summary prints", {
+    expect_silent(res.sum <- summary(res.c2))
+    expect_output(res <- show(res.sum))
+    expect_null(res)
+
+    expect_output(res <- print(res.sum))
+    expect_identical(res, res.sum)
+  })
+}
 
 # C2 2 continuous case -------------------------------------------------------------------------------------------------------------
 context("S3methods - copulaCorrection - 2 continuous")
@@ -65,18 +98,11 @@ expect_warning(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCo
 test.s3methods.rendoboots(res.model=res.c2, input.form=c2.input.form, function.std.data=dataCopCont2,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
-test_that("Case 2 summary has additional specific structure", {
-  expect_silent(res.sum <- summary(res.c2))
-  expect_s3_class(res.sum, "summary.rendo.copula.c2")
-  expect_true(is.list(res.sum))
-  expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
-                    names(res.sum)))
-  expect_is(res.sum$names.vars.continuous, "character")
-  expect_is(res.sum$names.vars.discrete, "character")
-
-})
+fct.helper.check.copula.c2.summary(res.c2 = res.c2)
 
 # C2 Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 context("S3methods - copulaCorrection - 2 discrete")
 
@@ -87,16 +113,8 @@ expect_warning(res.d <- copulaCorrection(formula = d.input.form, data = dataCopD
 test.s3methods.rendoboots(res.model =res.d, input.form=d.input.form, function.std.data=dataCopDis2,
                             full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
-test_that("Case 2 summary has additional specific structure", {
-  expect_silent(res.sum <- summary(res.d))
-  expect_s3_class(res.sum, "summary.rendo.copula.c2")
-  expect_true(is.list(res.sum))
-  expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
-                    names(res.sum)))
-  expect_is(res.sum$names.vars.continuous, "character")
-  expect_is(res.sum$names.vars.discrete, "character")
+fct.helper.check.copula.c2.summary(res.c2 = res.d)
 
-})
 
 
 # C2 Mixed case -------------------------------------------------------------------------------------------------------------
@@ -108,13 +126,4 @@ expect_warning(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCo
 test.s3methods.rendoboots(res.model =res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 
-test_that("Case 2 summary has additional specific structure", {
-  expect_silent(res.sum <- summary(res.cd))
-  expect_s3_class(res.sum, "summary.rendo.copula.c2")
-  expect_true(is.list(res.sum))
-  expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
-                    names(res.sum)))
-  expect_is(res.sum$names.vars.continuous, "character")
-  expect_is(res.sum$names.vars.discrete, "character")
-
-})
+fct.helper.check.copula.c2.summary(res.c2 = res.cd)

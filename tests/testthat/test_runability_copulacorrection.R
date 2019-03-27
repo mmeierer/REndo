@@ -41,6 +41,21 @@ test_that("Works without intercept", {
 })
 
 
+test_that("Produces output", {
+  # C1
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P-1|continuous(P), verbose = TRUE, num.boots=2, data=dataCopCont),
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+  # C2, Dis, DisCont
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1, P2), verbose = TRUE, data=dataCopCont2, num.boots = 2),
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|discrete(P1, P2),   verbose = TRUE, data=dataCopDis2, num.boots = 2),
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+  expect_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1)+discrete(P2), verbose = TRUE, data=dataCopDisCont, num.boots = 2),
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+
+})
+
+
 # Does not work because of the randomness - which ever is called first
 # test_that("Same results with swapped endos", {
 #   # C1 only has single endo, discont are fixed by type
