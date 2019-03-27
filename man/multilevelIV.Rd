@@ -169,7 +169,7 @@ Hausman J (1978). “Specification Tests in Econometrics.” Econometrica, 46(6)
 Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.
 }
 \seealso{
-\code{\link[lme4]{lmer}}
+\code{\link[lme4]{lmer}} for more details on how to specify the \code{formula} parameter
 
-\code{\link[REndo:summary.rendo.multilevel]{summary}}
+\code{\link[REndo:summary.rendo.multilevel]{summary}} for how fitted models are summarized
 }

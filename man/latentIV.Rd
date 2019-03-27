@@ -137,5 +137,7 @@ Quantitative Marketing and Economics, 3:365--392.
 Ebbes P., Wedel M., Böckenholt U. (2009). “Frugal IV Alternatives to Identify the Parameter for an Endogenous Regressor.” Journal of Applied Econometrics, 24(3), 446–468.
 }
 \seealso{
+\code{\link[REndo:summary.rendo.latent.IV]{summary}} for how fitted models are summarized
+
 \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 }

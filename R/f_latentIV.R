@@ -82,6 +82,8 @@
 #' The function \code{summary} can be used to obtain and print a summary of the results.
 #' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{confint}, \code{logLik}, \code{AIC}, \code{BIC}, \code{case.names}, and \code{nobs} are available.
 #'
+#'
+#' @seealso \code{\link[REndo:summary.rendo.latent.IV]{summary}} for how fitted models are summarized
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
 #' @references   Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error

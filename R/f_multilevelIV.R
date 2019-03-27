@@ -86,8 +86,8 @@
 #' See the example section for illustrations on how to specify the \code{formula} parameter.
 #' }
 #'
-#' @seealso \code{\link[lme4]{lmer}}
-#' @seealso \code{\link[REndo:summary.rendo.multilevel]{summary}}
+#' @seealso \code{\link[lme4]{lmer}} for more details on how to specify the \code{formula} parameter
+#' @seealso \code{\link[REndo:summary.rendo.multilevel]{summary}} for how fitted models are summarized
 #'
 #' @return
 #' \code{multilevelIV} returns an object of class "\code{rendo.multilevel}".
