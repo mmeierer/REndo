@@ -1,20 +1,20 @@
-#' @title Confidence Interval for copula correction models fitted with augmented OLS.
-#' @description
-#' In the case of only discrete endogenous regressors, the model is re-fitted multiple times
-#' and the confidence interval is obtained for each fitted model. The mean of all simulated confidence
-#' intervals per parameter is reported.
-#'
-#' In all other cases, the standard method for a fitted linear model \code{\link[stats]{lm}} is applied.
-#'
-#' @inheritParams stats::confint
-#' @param num.simulations the number of times the model is re-fitted to obtain confidence intervals in case of discrete endogenous regressors only. Ignored with a warning otherwise.
-#' @param ... ignored, for consistency with the generic function.
-#'
-#' @seealso \code{\link[stats]{confint}} for the standard method for linear models
-#' @seealso \code{\link{copulaCorrection}} for more information about the model's background
-#'
-#' @importFrom stats confint confint.lm
-#' @export
+# @title Confidence Interval for copula correction models fitted with augmented OLS.
+# @description
+# In the case of only discrete endogenous regressors, the model is re-fitted multiple times
+# and the confidence interval is obtained for each fitted model. The mean of all simulated confidence
+# intervals per parameter is reported.
+#
+# In all other cases, the standard method for a fitted linear model \code{\link[stats]{lm}} is applied.
+#
+# @inheritParams stats::confint
+# @param num.simulations the number of times the model is re-fitted to obtain confidence intervals in case of discrete endogenous regressors only. Ignored with a warning otherwise.
+# @param ... ignored, for consistency with the generic function.
+#
+# @seealso \code{\link[stats]{confint}} for the standard method for linear models
+# @seealso \code{\link{copulaCorrection}} for more information about the model's background
+#
+# @importFrom stats confint confint.lm
+# @export
 # confint.rendo.copula.c2 <- function(object, parm, level=0.95, num.simulations=250L, ...){
 #
 #   # Read out needed stuff -------------------------------------------------------------------------------
@@ -76,11 +76,40 @@
 
 
 
-
-# Essentially the exact same summary function as the parent class
-#   but also add the names of the continuous and discrete variables
+#' @title Summarizing Bootstrapped copulaCorrection Model Fits
+#' @param object an object of class \code{rendo.copula.c2}, a result of a call to \code{copulaCorrection}.
+#' @param ... ignored, for consistency with the generic function.
+#'
+#' @description
+#'
+#' \code{summary} method for a model of class \code{rendo.copula.c2} resulting from fitting \code{copulaCorrection}
+#'
+#' @details
+#' Some details
+# @details
+# The for the model fitted.  The reported confidence intervals.
+#'
+#' @return
+#' The function \code{summary.rendo.copula.c2} computes and returns a list of summary statistics
+#' which contains the following components:
+#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients for the the original data, the standard error of the bootstrapped parameters, and the lower and upper boundaries of the 95\% bootstrap confidence interval.}
+#' \item{num.boots}{the number of bootstraps performed.}
+#' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
+#' \item{vcov}{variance covariance matrix derived from the bootstrapped parameters.}
+#' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
+#' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
+#'
+#' @seealso The model fitting function \code{\link[REndo:copulaCorrection]{copulaCorrection}}
+#' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how the confidence intervals are derived
+#' @seealso \code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived
+#' @seealso Function \code{coef} will extract the \code{coefficients} matrix and
+#' function \code{vcov} will extract the component \code{vcov} from the returned summary object.
+#'
 #' @export
 summary.rendo.copula.c2 <- function(object, ...){
+# Essentially the exact same summary function as the parent class
+#   but also add the names of the continuous and discrete variables
+
   # Get the normal summary from the rendo.boots parent class
   res <- NextMethod()
 
@@ -102,7 +131,7 @@ print.summary.rendo.copula.c2 <- function(x, digits=max(3L, getOption("digits")-
   NextMethod()
 
 
-  # Print copula C1 specific part -------------------------------------------------------------------------
+  # Print copula C2 specific part -------------------------------------------------------------------------
   # Max width to not exceed the fixed width of some prints (printCoef/call)
   max.width <- min(65, 0.9 * getOption("width"))
 

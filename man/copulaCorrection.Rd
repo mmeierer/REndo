@@ -31,7 +31,7 @@ the following components:
 \item{terms}{The terms object used for model fitting.}
 \item{model}{The model.frame used for model fitting.}
 \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
-\item{names.main.coefs}{A vector specifying which coefficients are from the model.}
+\item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
 \item{fitted.values}{Fitted values at the found solution.}
 \item{residuals}{The residuals at the found solution.}
 \item{boots.params}{The bootstrapped coefficients.}
@@ -51,7 +51,7 @@ further contains the following components:
 
 The function \code{summary} can be used to obtain and print a summary of the results.
 Depending on the returned object, the generic accessor functions \code{coefficients}, \code{fitted.values},
-\code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+\code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, and \code{nobs} are available.
 }
 \description{
 Fits linear models with continuous or discrete endogenous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
@@ -167,11 +167,8 @@ d1 <- copulaCorrection(y~X1+X2+P|discrete(P), data=dataCopDis)
 d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2),
                        data=dataCopDis2)
 # same as above but less bootstrap runs
-d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 400,
+d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 250,
                        data=dataCopDis2)
-
-# the discrete only cases have a dedicated confint function
-d2.ci <- confint(d2, num.simulations = 100)
 
 # single discrete, single continuous
 cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2),
@@ -198,14 +195,11 @@ res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
 # main model parameters or also the auxiliary coefficients are returned
 
 c1.all.coefs <- coef(res.c1) # also returns rho and sigma
-c2.all.coefs  <- coef(res.c2) # also returns pstar parameters
 # same as above
 c1.all.coefs <- coef(res.c1, complete = TRUE)
-c2.all.coefs  <- coef(res.c2, complete = TRUE)
 
 # only main model coefs
 c1.main.coefs <- coef(res.c1, complete = FALSE)
-c2.main.coefs <- coef(res.c2, complete = FALSE)
 
 }}
 
@@ -219,7 +213,13 @@ Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC M
 Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consumer Choice Models." Journal of Marketing Research, 47(1), 3–13.
 }
 \seealso{
-\code{\link[REndo:confint.rendo.boots]{confint}} for the case of only discrete endogenous regressors
+\code{\link[REndo:summary.rendo.copula.c1]{summary}} for how fitted model for a single continuous endogenous variable are summarized
+
+\code{\link[REndo:summary.rendo.copula.c2]{summary}} for how fitted model for a all other cases of endogenous variables are summarized
+
+\code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived
+
+\code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 
 \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 }

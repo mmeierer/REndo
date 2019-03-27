@@ -8,11 +8,47 @@ logLik.rendo.copula.c1 <- function(object, ...){
                    class ="logLik"))
 }
 
+
+#' @title Summarizing Bootstrapped copulaCorrection Model Fits for Single Continuous Endogenous variables
+#' @param object an object of class \code{rendo.copula.c1}, a result of a call to \code{copulaCorrection}.
+#' @param ... ignored, for consistency with the generic function.
+#'
+#' @description
+#'
+#' \code{summary} method for a model of class \code{rendo.copula.c1} resulting from fitting \code{copulaCorrection}
+#' with only a single continuous endogenous variable.
+#'
+#' @details
+#' Because the model was fitted using maximum likelihood optimization,
+#' related goodness of fit measures and convergence indicators are also reported.
+#'
+#' @return
+#' The function \code{summary.rendo.copula.c1} computes and returns a list of summary statistics
+#' which contains the following components:
+#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients for the the original data, the standard error of the bootstrapped parameters, and the lower and upper boundaries of the 95\% bootstrap confidence interval.}
+#' \item{num.boots}{the number of bootstraps performed.}
+#' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
+#' \item{start.params}{a named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' \item{vcov}{variance covariance matrix derived from the bootstrapped parameters.}
+#' \item{AIC}{Akaike's An Information Criterion for the model fitted on the provided data.}
+#' \item{BIC}{Schwarz's Bayesian Criterion for the model fitted on the provided data.}
+#' \item{KKT1}{first Kuhn, Karush, Tucker optimality condition as returned by optimx.}
+#' \item{KKT2}{second Kuhn, Karush, Tucker optimality condition as returned by optimx.}
+#' \item{conv.code}{the convergence code as returned by optimx.}
+#' \item{log.likelihood}{the value of the log-likelihood function at the found solution for the provided data.}
+#'
+#' @seealso The model fitting function \code{\link[REndo:copulaCorrection]{copulaCorrection}}
+#' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how the confidence intervals are derived
+#' @seealso \code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived
+#' @seealso \code{\link[optimx:optimx]{optimx}} for explanations about the returned \code{conv.code} and \code{KKT}.
+#' @seealso Function \code{coef} will extract the \code{coefficients} matrix and
+#' function \code{vcov} will extract the component \code{vcov} from the returned summary object.
+#'
+#' @importFrom stats AIC BIC logLik
+#' @export
+summary.rendo.copula.c1 <- function(object, ...){
 # Essentially the exact same summary function as the parent class
 #   but also add GOF measures and convergence stuff
-#' @export
-#' @importFrom stats AIC BIC logLik
-summary.rendo.copula.c1 <- function(object, ...){
   # Get the normal summary from the rendo.boots parent class
   res <- NextMethod()
 

@@ -33,7 +33,38 @@ vcov.rendo.latent.IV <- function(object, ...){
 }
 
 
-
+#' @title Summarizing latentIV Model Fits
+#' @param object an object of class \code{rendo.latent.IV}, a result of a call to \code{latentIV}.
+#' @param ... ignored, for consistency with the generic function.
+#'
+#' @description
+#'
+#' \code{summary} method for a model of class \code{rendo.latent.IV} resulting from fitting \code{latentIV}
+#'
+# @details
+# The for the model fitted.  The reported confidence intervals.
+#'
+#' @return
+#' The function \code{summary.rendo.latent.IV} computes and returns a list of summary statistics
+#' which contains the following components:
+#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients, its standard error,
+#' the t-statistic and corresponding (two-sided) p-value.}
+#' \item{start.params}{a named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
+#' \item{vcov}{variance covariance matrix derived from the hessian.}
+#' \item{AIC}{Akaike's An Information Criterion for the model fitted on the provided data.}
+#' \item{BIC}{Schwarz's Bayesian Criterion for the model fitted on the provided data.}
+#' \item{KKT1}{first Kuhn, Karush, Tucker optimality condition as returned by optimx.}
+#' \item{KKT2}{second Kuhn, Karush, Tucker optimality condition as returned by optimx.}
+#' \item{conv.code}{the convergence code as returned by optimx.}
+#' \item{log.likelihood}{the value of the log-likelihood function at the found solution for the provided data.}
+#'
+#' @seealso The model fitting function \code{\link[REndo:latentIV]{latentIV}}
+#' @seealso \code{\link[REndo:confint.rendo.base]{confint}} for how the confidence intervals are derived
+#' @seealso \code{\link[REndo:vcov.rendo.base]{vcov}} for how the variance-covariance matrix is derived
+#' @seealso Function \code{coef} will extract the \code{coefficients} matrix and
+#' function \code{vcov} will extract the component \code{vcov} from the returned summary object.
+#'
 #' @importFrom stats pt AIC BIC logLik fitted
 #' @export
 summary.rendo.latent.IV <- function(object, ...){

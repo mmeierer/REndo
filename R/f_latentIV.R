@@ -71,11 +71,11 @@
 #' \item{terms}{The terms object used for model fitting.}
 #' \item{model}{The model.frame used for model fitting.}
 #' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
-#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
+#' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
 #' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 #' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
 #' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
-#' \item{m.delta.diag}{A diagonal matrix needed to apply the delta method when deriving the vcov.}
+#' \item{m.delta.diag}{A diagonal matrix needed when deriving the vcov to apply the delta method on theta5 which was transformed during the LL optimization.}
 #' \item{fitted.values}{Fitted values at the found optimal solution.}
 #' \item{residuals}{The residuals at the found optimal solution.}
 #'

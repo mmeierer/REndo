@@ -93,6 +93,7 @@
 #'
 #' See the example section for illustrations on how to specify the \code{formula} parameter.
 #'}
+#'
 #' @return
 #' For all cases, an object of classes \code{rendo.base} and \code{rendo.boots} is returned which is a list and contains
 #' the following components:
@@ -100,7 +101,7 @@
 #' \item{terms}{The terms object used for model fitting.}
 #' \item{model}{The model.frame used for model fitting.}
 #' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
-#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
+#' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
 #' \item{fitted.values}{Fitted values at the found solution.}
 #' \item{residuals}{The residuals at the found solution.}
 #' \item{boots.params}{The bootstrapped coefficients.}
@@ -120,10 +121,12 @@
 #'
 #' The function \code{summary} can be used to obtain and print a summary of the results.
 #' Depending on the returned object, the generic accessor functions \code{coefficients}, \code{fitted.values},
-#' \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+#' \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, and \code{nobs} are available.
 #'
-#'
-#' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for the case of only discrete endogenous regressors
+#' @seealso \code{\link[REndo:summary.rendo.copula.c1]{summary}} for how fitted model for a single continuous endogenous variable are summarized
+#' @seealso \code{\link[REndo:summary.rendo.copula.c2]{summary}} for how fitted model for a all other cases of endogenous variables are summarized
+#' @seealso \code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived
+#' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
 #' @references
@@ -166,11 +169,8 @@
 #' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2),
 #'                        data=dataCopDis2)
 #' # same as above but less bootstrap runs
-#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 400,
+#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 250,
 #'                        data=dataCopDis2)
-#'
-#' # the discrete only cases have a dedicated confint function
-#' d2.ci <- confint(d2, num.simulations = 100)
 #'
 #' # single discrete, single continuous
 #' cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2),
@@ -197,14 +197,11 @@
 #' # main model parameters or also the auxiliary coefficients are returned
 #'
 #' c1.all.coefs <- coef(res.c1) # also returns rho and sigma
-#' c2.all.coefs  <- coef(res.c2) # also returns pstar parameters
 #' # same as above
 #' c1.all.coefs <- coef(res.c1, complete = TRUE)
-#' c2.all.coefs  <- coef(res.c2, complete = TRUE)
 #'
 #' # only main model coefs
 #' c1.main.coefs <- coef(res.c1, complete = FALSE)
-#' c2.main.coefs <- coef(res.c2, complete = FALSE)
 #'
 #'}}
 #'
@@ -243,7 +240,7 @@ copulaCorrection <- function(formula, data, num.boots=1000, verbose=TRUE, ...){
     res <- do.call(what = copulaCorrection_optimizeLL,
                    args = c(list(F.formula=F.formula, data=data,
                                  num.boots = num.boots,
-                                 name.var.continuous =names.vars.continuous,
+                                 name.var.continuous = names.vars.continuous,
                                  verbose=verbose, cl=cl), # cl supplied to create return object
                             l.ellipsis))
   }else{
