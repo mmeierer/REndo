@@ -19,11 +19,22 @@ vcov.rendo.boots <- function(object, ...){
   return(m.vcov)
 }
 
+
+#' @details
+#' From package bootBCa:
+#' "Like the ordinary percentile interval, the BCa interval becomes inaccurate when the number of
+#' bootstrap replications is not much larger than 1/min(alpha,1-alpha) because there are not enough
+#' theta* values from which to extract the desired quantile
+#' (e.g., one cannot plausibly estimate a 99 % quantile given fewer than 100 values)."
+#'
+#' corresponding percentile using quantile() of standard type
+#'
+#' @importFrom stats quantile
 #' @export
 confint.rendo.boots <- function(object, parm, level=0.95, ...){
 
-  if(ncol(object$boots.params) < 100)
-    stop("Cannot calculate confidence intervals with less than 100 bootstrapped estimates!", call. = FALSE)
+  if(ncol(object$boots.params) < 1/(1-level))
+    stop("Not enough bootstraps (<1/(1-level)) were performed to derive the confidence interval!", call. = FALSE)
 
   # This largely follows stats:::confint.lm to exhibit the exact same behavior
 
@@ -41,28 +52,19 @@ confint.rendo.boots <- function(object, parm, level=0.95, ...){
 
   # Select CI ---------------------------------------------------------------------------------------
   # Percentile confidence intervals from bootstrapped parameter estimates
-  #   For the given level, search the corresponding coefficients in
-  #     the sorted bootstrapped params
+  #   For the given level, search the corresponding quantiles per parameter (=row-wise)
 
-  # Sort bootstrapped params by size
-  #   Apply returns with params colwise!
-  sorted.boots.params <- apply(object$boots.params, 1, sort)
-
-  # sorted low values on top -> lower = first values (=1-level)
-  lower.cut <- nrow(sorted.boots.params) * (1-level)
-  upper.cut <- nrow(sorted.boots.params) * level
-
-  # t() because apply transposed it first
-  #   apply t() first to access inexistent parms graciously and return NA (does not work if in columns)
-  ci <- t(sorted.boots.params)[parm, c(lower.cut, upper.cut), drop=FALSE]
-
-  # Return ----------------------------------------------------------------------------------------
   req.a <- (1-level) / 2
   req.a <- c(req.a, 1 - req.a)
+
+  ci <- t(apply(object$boots.params, MARGIN = 1, FUN = quantile, probs=req.a, na.rm=TRUE))
+
+  # Return ----------------------------------------------------------------------------------------
+
   # from stats:::format.perc - cannot call with ::: as gives CRAN note
   names.perc <- paste(format(100 * req.a, trim = TRUE, scientific = FALSE, digits = 3), "%")
   res <- array(data = NA, dim = c(length(parm), 2L), dimnames = list(parm, names.perc))
-  res[] <- ci
+  res[] <- ci[parm, ]
   return(res)
 }
 
@@ -111,7 +113,7 @@ summary.rendo.boots <- function(object, ...){
   return(res)
 }
 
-# Not really needed because coef.default already but for clarity
+# Not really needed because coef.default already works but for clarity
 #' @export
 coef.summary.rendo.boots <- function(object, ...){
   return(object$coefficients)
