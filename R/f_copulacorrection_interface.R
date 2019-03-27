@@ -115,7 +115,6 @@
 #' For all other cases, the returned object is additionally of class \code{rendo.copula.c2} and
 #' further contains the following components:
 #' \item{res.lm.real.data}{The linear model fitted on the original data together with generated p.star data.}
-#' \item{original.data}{The original data used to fit the model.}
 #' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
 #' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
 #'
