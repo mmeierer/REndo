@@ -1,13 +1,11 @@
-#' @title Confidence Interval for copula correction models fitted with augmented OLS.
+#' @title Confidence Interval for copula correction models
 #' @description
-#' In the case of only discrete endogenous regressors, the model is re-fitted multiple times
-#' and the confidence interval is obtained for each fitted model. The mean of all simulated confidence
-#' intervals per parameter is reported.
+#' For all models fitted with the copualCorrection method, the model is re-fitted multiple times (num.simulations times)
+#' and the percentile confidence interval is reported, due to the high skeweness of the parameters.
 #'
-#' In all other cases, the standard method for a fitted linear model \code{\link[stats]{lm}} is applied.
 #'
 #' @inheritParams stats::confint
-#' @param num.simulations the number of times the model is re-fitted to obtain confidence intervals in case of discrete endogenous regressors only. Ignored with a warning otherwise.
+#' @param num.simulations the number of times the model is re-fitted to obtain confidence intervals.
 #' @param ... ignored, for consistency with the generic function.
 #'
 #' @seealso \code{\link[stats]{confint}} for the standard method for linear models
@@ -26,7 +24,7 @@ confint.rendo.pstar.lm <- function(object, parm, level=0.95, num.simulations=250
   names.vars.discrete   <- object$names.vars.discrete
 
   # Determine case --------------------------------------------------------------------------------------
-  # Forward to lm's confint function for all except "discrete only" which needs simulation
+  # Forward to lm's confint function for all except "discrete only" which needs simulation  !!! THIS NOT ANYMORE
   if(length(names.vars.discrete)>0 & length(names.vars.continuous) == 0){
 
     # Simulations: Discrete only case
