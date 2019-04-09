@@ -78,13 +78,19 @@ summary.rendo.latent.IV <- function(object, ...){
 
   all.est.params <- coef(object) # get all coefs
 
+  # return NA_ placeholder if cannot calculate vcov
+  res$vcov <- tryCatch(vcov(object), error = function(e){
+    h <- object$hessian
+    h[,] <- NA_real_
+    return(h)})
+
 
   # If the SEs cannot be calculated because
   #   the vcov contains non-numerics: warn + put NAs
   #   the diag(vcov) is negative: warn + use SEs anyway (they contain NAs then)
   #   the warnings are printed here already and not in the printing because result could
   #     be used directly as object
-  se <- tryCatch(suppressWarnings(sqrt(diag(vcov(object)))),
+  se <- tryCatch(suppressWarnings(sqrt(diag(res$vcov))),
                  error = function(e)return(e))
 
 
@@ -109,12 +115,6 @@ summary.rendo.latent.IV <- function(object, ...){
   rownames(res$coefficients) <- names(all.est.params)
   colnames(res$coefficients) <- c("Estimate","Std. Error", "z-score", "Pr(>|z|)")
 
-  # Return object ------------------------------------------------------------------------
-  # return NA_ placeholder if cannot calculate vcov
-  res$vcov <- tryCatch(vcov(object), error = function(e){
-    h <- object$hessian
-    h[,] <- NA_real_
-    return(h)})
 
   # optimx conf stuff
   res$log.likelihood <- as.numeric(logLik(object))
@@ -123,6 +123,8 @@ summary.rendo.latent.IV <- function(object, ...){
   res$conv.code      <- object$res.optimx$convcode
   res$KKT1           <- object$res.optimx[1, "kkt1"]
   res$KKT2           <- object$res.optimx[1, "kkt2"]
+
+  # Return object ------------------------------------------------------------------------
   class(res)         <- "summary.rendo.latent.IV"
 
   return(res)
