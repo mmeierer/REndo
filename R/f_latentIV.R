@@ -246,7 +246,10 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   names(vec.diag) <- names(all.estimated.params)
   # use the original coef from fitting the model with optimx because theta5 in all.estimated.params is
   #   already transformed to probabilities (same transformation as in LL)
-  vec.diag["theta5"] <- 1 / (coef(res.optimx)[1,"theta5"] - (coef(res.optimx)[1,"theta5"]^2))
+  # vec.diag["theta5"] <- 1 / (coef(res.optimx)[1,"theta5"] - (coef(res.optimx)[1,"theta5"]^2))
+  # opt.t5 <- all.estimated.params["theta5"]
+  opt.t5 <- optimx.estimated.params["theta5"]
+  vec.diag["theta5"] <- exp(opt.t5) / ((exp(opt.t5) +1)^2)
   m.delta.diag <- diag(vec.diag)
   rownames(m.delta.diag) <- colnames(m.delta.diag) <- names(vec.diag)
 

@@ -68,15 +68,22 @@
 #' In all other cases, augmented OLS based on Gaussian copula is applied. This includes cases of multiple endogenous regressors
 #' of both discrete and continuous distributions.
 #'
-#' If all endogenous regressors are discrete, it is important to also have a look at the confidence interval of the
+#' If all endogenous regressors are discrete, it is important to look at the confidence intervals of the
 #' coefficient estimates because the marginal distribution function of the endogenous regressor is a step function in this case.
 #' By being a step function, the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} lies between 2 values,
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
 #' Since the exact value is not known, when the \code{\link[REndo:confint.rendo.boots]{confint}} functions is applied to a fitted model,
 #' it runs a set of 250 simulations and returns the estimated coefficients.
-#'
 #'}
+#'
+#' Since the inference procedure in both cases, augmented OLS and maximum likelihood, occurs in two stages (first the empirical distribution of the endogenous
+#' regressor is computed and then used in constructing the likelihood function), the standard errors are not correct. Therefore, in both cases, the standard errors
+#' and the confidence intervals are obtained based on the sampling distributions resulted from bootstraping. Since the distribution of the bootstraped parameters
+#' is highly skewed, we report the percentile confidence intervals. Moreover, the variance-covariance matrix is also computed based on the bootstraped
+#' parameters, and not based on the Hessian.
+#'
+#'
 #'
 #'\subsection{Formula parameter}{
 #' The \code{formula} argument follows a two part notation:
