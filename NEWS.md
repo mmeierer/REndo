@@ -30,7 +30,7 @@
 * The default number of iterations for all optimizations was increased to 100'000
 
 ## BUG FIXES
-* To avoid infrequent warnings, the parameter `sigma` used in `copualCorrection` was constrained to > 0
+* To avoid infrequent warnings, the parameter `sigma` used in `copulaCorrection` was constrained to > 0
 * Various spelling mistakes were fixed
 
 
