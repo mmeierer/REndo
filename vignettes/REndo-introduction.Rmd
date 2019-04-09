@@ -80,6 +80,8 @@ The structural error $\epsilon_{t}$ is assumed to have a normal marginal distrib
 
 where $P_{t}$ is the endogenous regressor, $K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|<=1)$ and the bandwidth $b$ is equal to $b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)$, as proposed by Silvermann (1969). $IQR$ is the interquartile range while $s$ is the data sample standard deviation and $T$ is the number of time periods observed in the data. 
 
+In both cases, maximum likelihood estimation and augmented OLS, the reported standard errors are the bootstrapped standard errors, due to the inference being done in two steps. The confidence intervals are also the bootstrapped confidence intervals, due to the non-normality of the bootstrapped parameters.
+
 #### *Higher Moments Approach* #### 
 
 The higher moments approach proposed by Lewbel (1997) helps identify structural parameters in regression models with endogeneity caused by *measurement error*. Identification is achieved by exploiting third moments of the data, with no restrictions imposed on the distribution of the error terms. 

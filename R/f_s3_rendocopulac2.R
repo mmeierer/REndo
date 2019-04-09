@@ -7,20 +7,22 @@
 #' \code{summary} method for a model of class \code{rendo.copula.c2} resulting from fitting \code{copulaCorrection}
 #'
 #' @details
-#' Some details
-# @details
-# The for the model fitted.  The reported confidence intervals.
+#' Since the estimation is realized in two steps, the standard errors reported by the ordinary least squares are not correct.
+#' Therefore, the standard errors and the confidence intervals are obtained using boostraping with replacement, as described 
+#' in Effron (1979). The confidence intervals are the lower and upper bounderies of the 95% boostrapped confidence interval. 
 #'
 #' @return
 #' The function \code{summary.rendo.copula.c2} computes and returns a list of summary statistics
 #' which contains the following components:
-#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients for the the original data, the standard error of the bootstrapped parameters, and the lower and upper boundaries of the 95\% bootstrap confidence interval.}
+#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients for the the original data, the standard error of the bootstrapped parameters, 
+#' and the lower and upper boundaries of the 95\% bootstrap confidence interval.}
 #' \item{num.boots}{the number of bootstraps performed.}
 #' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
 #' \item{vcov}{variance covariance matrix derived from the bootstrapped parameters.}
 #' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
 #' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
-#'
+#' @references
+#' Effron, B.(1979). "Bootstrap Methods: Another Look at the Jackknife", The Annals of Statistics, 7(1), 1-26.
 #' @seealso The model fitting function \code{\link[REndo:copulaCorrection]{copulaCorrection}}
 #' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how the confidence intervals are derived
 #' @seealso \code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived

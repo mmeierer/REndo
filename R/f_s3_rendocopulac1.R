@@ -20,12 +20,16 @@ logLik.rendo.copula.c1 <- function(object, ...){
 #'
 #' @details
 #' Because the model was fitted using maximum likelihood optimization,
-#' related goodness of fit measures and convergence indicators are also reported.
+#' related goodness of fit measures and convergence indicators are also reported. 
+#' Since the estimation is realized in two steps, first the empirical distribution of the endogenous regressor is
+#' obtained and then the likelihood function is built, the standard errors are not correct and need to be bootstrapped. Due to the 
+#' non-normality of the bootrapped parameters, the confidence intervals reported are the upper and lower bounds of the 95% bootstrapped confidence interval.
 #'
 #' @return
 #' The function \code{summary.rendo.copula.c1} computes and returns a list of summary statistics
 #' which contains the following components:
-#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients for the the original data, the standard error of the bootstrapped parameters, and the lower and upper boundaries of the 95\% bootstrap confidence interval.}
+#' \item{coefficients}{a \code{px4} matrix with columns for the estimated coefficients for the the original data, the standard error of the bootstrapped parameters, 
+#' and the lower and upper boundaries of the 95\% bootstrap confidence interval.}
 #' \item{num.boots}{the number of bootstraps performed.}
 #' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
 #' \item{start.params}{a named vector with the initial set of parameters used to optimize the log-likelihood function.}
