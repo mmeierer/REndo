@@ -131,33 +131,33 @@ test_that("Unsorted data is correct L2", {
   expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
 })
 
-test_that("Unsorted data is correct L3", {
-  skip_on_cran()
-  # Correct = coefs + sorting of residuals / fitted
-
-  # Distinguishable non-standard rownames
-  rownames(dataMultilevelIV) <- as.character(seq(from=nrow(dataMultilevelIV)+100000, to=1+100000))
-  expect_silent(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                              X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
-                                            data = dataMultilevelIV, verbose = FALSE)) #, regex = "singular")
-  # Can handle transformations in LHS
-  data.altered   <- dataMultilevelIV
-  data.altered   <- data.altered[sample.int(n=nrow(dataMultilevelIV), replace = FALSE), ]
-  expect_silent(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                                X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
-                                              data = data.altered, verbose = FALSE)) #, regex = "singular")
-
-  # Coefs the same
-  # Have to use tolerance because lmer() provides slightly different results for sorted/unsorted data
-  expect_equal(coef(res.unsorted), coef(res.sorted), tolerance = 10e-5)
-  expect_equal(coef(summary(res.unsorted)), coef(summary(res.sorted)), tolerance = 10e-5)
-
-  # Sorting of fitted / residuals same as input
-  expect_equal(names(fitted(res.sorted)),   rownames(dataMultilevelIV))
-  expect_equal(names(resid(res.sorted)),    rownames(dataMultilevelIV))
-  expect_equal(names(fitted(res.unsorted)), rownames(data.altered))
-  expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
-})
+# test_that("Unsorted data is correct L3", {
+#   skip_on_cran()
+#   # Correct = coefs + sorting of residuals / fitted
+#
+#   # Distinguishable non-standard rownames
+#   rownames(dataMultilevelIV) <- as.character(seq(from=nrow(dataMultilevelIV)+100000, to=1+100000))
+#   expect_silent(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+#                                               X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
+#                                             data = dataMultilevelIV, verbose = FALSE)) #, regex = "singular")
+#   # Can handle transformations in LHS
+#   data.altered   <- dataMultilevelIV
+#   data.altered   <- data.altered[sample.int(n=nrow(dataMultilevelIV), replace = FALSE), ]
+#   expect_silent(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+#                                                 X31 + X32 + X33 + (1+X12|CID)+(1+X11 | SID) | endo(X15, X21),
+#                                               data = data.altered, verbose = FALSE)) #, regex = "singular")
+#
+#   # Coefs the same
+#   # Have to use tolerance because lmer() provides slightly different results for sorted/unsorted data
+#   expect_equal(coef(res.unsorted), coef(res.sorted), tolerance = 10e-5)
+#   expect_equal(coef(summary(res.unsorted)), coef(summary(res.sorted)), tolerance = 10e-5)
+#
+#   # Sorting of fitted / residuals same as input
+#   expect_equal(names(fitted(res.sorted)),   rownames(dataMultilevelIV))
+#   expect_equal(names(resid(res.sorted)),    rownames(dataMultilevelIV))
+#   expect_equal(names(fitted(res.unsorted)), rownames(data.altered))
+#   expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
+# })
 
 
 # Reproduce results ------------------------------------------------------------------------------
