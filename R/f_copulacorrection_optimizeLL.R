@@ -157,11 +157,19 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   names(residuals)      <- rownames(m.model.data.exo.endo)
 
   # Return data as object --------------------------------------------------------------------------
-  return(new_rendo_copula_c1(call = cl, F.formula = F.formula, mf = mf,
-                             start.params = start.params,
-                             coefficients = coefficients,
-                             boots.params = boots.params,
-                             names.main.coefs = names.params.exo.endo,
-                             fitted.values = fitted.values, residuals = residuals,
-                             res.optimx = res.real.data.optimx))
+  return(new_rendo_copula_correction(call         = cl,
+                                     F.formula    = F.formula,
+                                     mf           = mf,
+                                     coefficients = coefficients,
+                                     names.main.coefs = names.params.exo.endo,
+                                     fitted.values = fitted.values,
+                                     residuals = residuals,
+
+                                     boots.params = boots.params,
+                                     copula.case  = 1,
+                                     names.vars.continuous = name.var.continuous,
+                                     names.vars.discrete   = character(),
+
+                                     res.optimx   = res.real.data.optimx,
+                                     start.params = start.params))
 }

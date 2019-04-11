@@ -143,19 +143,6 @@ print.summary.rendo.boots <- function(x, digits=max(3L, getOption("digits")-3L),
                na.print = "-", digits = digits, cs.ind = 1:4, tst.ind = numeric(),...)
   cat(paste0("Number of bootstraps: ", x$num.boots))
 
-  # Non main model coefs - only show the values, not the statistics
-  #   Only if there are any
-  names.non.main.coefs <- setdiff(rownames(x$coefficients), x$names.main.coefs)
-  if(length(names.non.main.coefs)>0){
-    cat("\n\n")
-    cat("Further parameters estimated during model fitting:\n")
-    # For single non main coef the vec will lose its name, regardless of drop=FALSE. Therefore always add names
-    coefs.non.main <- x$coefficients[names.non.main.coefs, "Point Estimate", drop = TRUE]
-    names(coefs.non.main) <- names.non.main.coefs
-    print.default(format(coefs.non.main, digits = digits), print.gap = 1L, quote = FALSE)
-    cat("(see help file for details)\n")
-  }
-
   invisible(x)
 }
 

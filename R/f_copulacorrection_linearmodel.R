@@ -84,10 +84,18 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
     close(pb)
 
   # Return object ------------------------------------------------------------------------------------------------
-  return(new_rendo_copula_c2(call             = cl,
-                             F.formula        = F.formula,
-                             res.lm.real.data = res.lm.real.data,
-                             boots.params     = boots.params,
-                             names.vars.continuous = names.vars.continuous,
-                             names.vars.discrete   = names.vars.discrete))
+  return(new_rendo_copula_correction(call             = cl,
+                                     F.formula        = F.formula,
+                                     mf               = model.frame(res.lm.real.data),
+                                     names.main.coefs = names(coef(res.lm.real.data)),
+                                     coefficients     = coef(res.lm.real.data),
+                                     residuals        = residuals(res.lm.real.data),
+                                     fitted.values    = fitted(res.lm.real.data),
+
+                                     boots.params     = boots.params,
+                                     copula.case      = 2,
+                                     names.vars.continuous = names.vars.continuous,
+                                     names.vars.discrete   = names.vars.discrete,
+
+                                     res.lm.real.data  = res.lm.real.data))
 }
