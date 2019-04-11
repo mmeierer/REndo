@@ -60,8 +60,6 @@ vcov.rendo.latent.IV <- function(object, ...){
 #' \item{log.likelihood}{the value of the log-likelihood function at the found solution for the provided data.}
 #'
 #' @seealso The model fitting function \code{\link[REndo:latentIV]{latentIV}}
-#' @seealso \code{\link[REndo:confint.rendo.base]{confint}} for how the confidence intervals are derived
-#' @seealso \code{\link[REndo:vcov.rendo.base]{vcov}} for how the variance-covariance matrix is derived
 #' @seealso Function \code{coef} will extract the \code{coefficients} matrix and
 #' function \code{vcov} will extract the component \code{vcov} from the returned summary object.
 #'

@@ -31,7 +31,7 @@ logLik.rendo.copula.correction <- function(object, ...){
 #'
 #' The standard errors and the confidence intervals are therefore obtained using bootstraping with replacement as
 #' described in Effron (1979). The reported lower and upper boundaries are from the 95\% boostrapped percentile
-#' confidence interval.
+#' confidence interval. If there are too few bootstrapped estimates, no boundaries are reported.
 #'
 #' For a single continuous endogenous regressor the model was fitted using maximum likelihood optimization. The
 #' related goodness of fit measures and convergence indicators are also reported here.

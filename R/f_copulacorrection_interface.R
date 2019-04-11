@@ -68,8 +68,8 @@
 #' In all other cases, augmented OLS based on Gaussian copula is applied. This includes cases of multiple endogenous regressors
 #' of both discrete and continuous distributions.
 #'
-#' In the case of discrete endogenous regressors, a random seed needs to be assigned because the marginal distribution function of 
-#' the endogenous regressor is a step function in this case. This means that the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} 
+#' In the case of discrete endogenous regressors, a random seed needs to be assigned because the marginal distribution function of
+#' the endogenous regressor is a step function in this case. This means that the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}}
 #' lies between 2 values, \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
 #' However, the reported upper and lower bounds of the 95\% bootstrapped confidence interval gives indication of the variance of the estimates.
@@ -99,35 +99,32 @@
 #'}
 #'
 #' @return
-#' For all cases, an object of classes \code{rendo.base} and \code{rendo.boots} is returned which is a list and contains
-#' the following components:
+#' For all cases, an object of classes \code{rendo.copula.correction}, \code{rendo.boots}, and \code{rendo.base} is returned
+#' which is a list and contains the following components:
 #' \item{formula}{The formula given to specify the fitted model.}
 #' \item{terms}{The terms object used for model fitting.}
 #' \item{model}{The model.frame used for model fitting.}
 #' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
 #' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
+#' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
+#' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
 #' \item{fitted.values}{Fitted values at the found solution.}
 #' \item{residuals}{The residuals at the found solution.}
 #' \item{boots.params}{The bootstrapped coefficients.}
 #'
-#'
-#' For the case of a single continuous endogenous regressor, the returned object is additionally of
-#' class \code{rendo.copula.c1} and further contains the following components:
+#' For the case of a single continuous endogenous regressor, the returned object further
+#' contains the following components:
 #' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 #' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
 #'
-#' For all other cases, the returned object is additionally of class \code{rendo.copula.c2} and
-#' further contains the following components:
+#' For all other cases, the returned object further contains the following components:
 #' \item{res.lm.real.data}{The linear model fitted on the original data together with generated p.star data.}
-#' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
-#' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
 #'
 #' The function \code{summary} can be used to obtain and print a summary of the results.
 #' Depending on the returned object, the generic accessor functions \code{coefficients}, \code{fitted.values},
 #' \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, and \code{nobs} are available.
 #'
-#' @seealso \code{\link[REndo:summary.rendo.copula.c1]{summary}} for how fitted model for a single continuous endogenous variable are summarized
-#' @seealso \code{\link[REndo:summary.rendo.copula.c2]{summary}} for how fitted model for a all other cases of endogenous variables are summarized
+#' @seealso \code{\link[REndo:summary.rendo.copula.correction]{summary}} for how fitted models are summarized
 #' @seealso \code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived
 #' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}

@@ -32,10 +32,6 @@ the t-statistic and corresponding (two-sided) p-value.}
 \seealso{
 The model fitting function \code{\link[REndo:latentIV]{latentIV}}
 
-\code{\link[REndo:confint.rendo.base]{confint}} for how the confidence intervals are derived
-
-\code{\link[REndo:vcov.rendo.base]{vcov}} for how the variance-covariance matrix is derived
-
 Function \code{coef} will extract the \code{coefficients} matrix and
 function \code{vcov} will extract the component \code{vcov} from the returned summary object.
 }

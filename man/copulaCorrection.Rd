@@ -25,28 +25,26 @@ If not provided, a linear model is fitted to derive them.}
 }}
 }
 \value{
-For all cases, an object of classes \code{rendo.base} and \code{rendo.boots} is returned which is a list and contains
-the following components:
+For all cases, an object of classes \code{rendo.copula.correction}, \code{rendo.boots}, and \code{rendo.base} is returned
+which is a list and contains the following components:
 \item{formula}{The formula given to specify the fitted model.}
 \item{terms}{The terms object used for model fitting.}
 \item{model}{The model.frame used for model fitting.}
 \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
 \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
+\item{names.vars.continuous}{The names of the continuous endogenous regressors.}
+\item{names.vars.discrete}{The names of the discrete endogenous regressors.}
 \item{fitted.values}{Fitted values at the found solution.}
 \item{residuals}{The residuals at the found solution.}
 \item{boots.params}{The bootstrapped coefficients.}
 
-
-For the case of a single continuous endogenous regressor, the returned object is additionally of
-class \code{rendo.copula.c1} and further contains the following components:
+For the case of a single continuous endogenous regressor, the returned object further
+contains the following components:
 \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
 
-For all other cases, the returned object is additionally of class \code{rendo.copula.c2} and
-further contains the following components:
+For all other cases, the returned object further contains the following components:
 \item{res.lm.real.data}{The linear model fitted on the original data together with generated p.star data.}
-\item{names.vars.continuous}{The names of the continuous endogenous regressors.}
-\item{names.vars.discrete}{The names of the discrete endogenous regressors.}
 
 The function \code{summary} can be used to obtain and print a summary of the results.
 Depending on the returned object, the generic accessor functions \code{coefficients}, \code{fitted.values},
@@ -109,15 +107,12 @@ Hence, only in the case of a single continuous endogenous regressor maximum like
 In all other cases, augmented OLS based on Gaussian copula is applied. This includes cases of multiple endogenous regressors
 of both discrete and continuous distributions.
 
-If all endogenous regressors are discrete, it is important to look at the confidence intervals of the
-coefficient estimates because the marginal distribution function of the endogenous regressor is a step function in this case.
-By being a step function, the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} lies between 2 values,
-\ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
+In the case of discrete endogenous regressors, a random seed needs to be assigned because the marginal distribution function of
+the endogenous regressor is a step function in this case. This means that the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}}
+lies between 2 values, \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
-Since the exact value is not known, when the \code{\link[REndo:confint.rendo.boots]{confint}} functions is applied to a fitted model,
-it runs a set of 250 simulations and returns the estimated coefficients.
+However, the reported upper and lower bounds of the 95\% bootstrapped confidence interval gives indication of the variance of the estimates.
 }
-
 Since the inference procedure in both cases, augmented OLS and maximum likelihood, occurs in two stages (first the empirical distribution of the endogenous
 regressor is computed and then used in constructing the likelihood function), the standard errors are not correct. Therefore, in both cases, the standard errors
 and the confidence intervals are obtained based on the sampling distributions resulted from bootstraping. Since the distribution of the bootstraped parameters
@@ -219,9 +214,7 @@ Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC M
 Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consumer Choice Models." Journal of Marketing Research, 47(1), 3–13.
 }
 \seealso{
-\code{\link[REndo:summary.rendo.copula.c1]{summary}} for how fitted model for a single continuous endogenous variable are summarized
-
-\code{\link[REndo:summary.rendo.copula.c2]{summary}} for how fitted model for a all other cases of endogenous variables are summarized
+\code{\link[REndo:summary.rendo.copula.correction]{summary}} for how fitted models are summarized
 
 \code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived
 
