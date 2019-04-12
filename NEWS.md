@@ -13,7 +13,7 @@
 * In the `latentIV`, the parameter for group membership (`theta5`) is  transformed back and now reported correctly.
 * The vcov matrix for `latentIV` is corrected for the transformation in `theta5`.
 * The bootstrapping in `copulaCorrection` case 1 now creates samples of the same length as the original data
-* The (percentile) confidence intervals and vcov for results from `copulaCorrection` now rely on bootstraping
+* The (percentile) confidence intervals and vcov for results from `copulaCorrection` now rely on bootstrapping
 
 
 # CHANGES IN REndo 2.1.0

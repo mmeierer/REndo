@@ -76,8 +76,8 @@
 #'}
 #' Since the inference procedure in both cases, augmented OLS and maximum likelihood, occurs in two stages (first the empirical distribution of the endogenous
 #' regressor is computed and then used in constructing the likelihood function), the standard errors are not correct. Therefore, in both cases, the standard errors
-#' and the confidence intervals are obtained based on the sampling distributions resulted from bootstraping. Since the distribution of the bootstraped parameters
-#' is highly skewed, we report the percentile confidence intervals. Moreover, the variance-covariance matrix is also computed based on the bootstraped
+#' and the confidence intervals are obtained based on the sampling distributions resulted from bootstrapping. Since the distribution of the bootstrapped parameters
+#' is highly skewed, we report the percentile confidence intervals. Moreover, the variance-covariance matrix is also computed based on the bootstrapped
 #' parameters, and not based on the Hessian.
 #'
 #'
