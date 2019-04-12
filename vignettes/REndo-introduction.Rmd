@@ -80,8 +80,6 @@ The structural error $\epsilon_{t}$ is assumed to have a normal marginal distrib
 
 where $P_{t}$ is the endogenous regressor, $K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|<=1)$ and the bandwidth $b$ is equal to $b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)$, as proposed by Silvermann (1969). $IQR$ is the interquartile range while $s$ is the data sample standard deviation and $T$ is the number of time periods observed in the data. 
 
-In both cases,augmented OLS and maximum likelihood, the inference procedure occurs in two stages (first the empirical distribution of the endogenous regressor is computed and then used in constructing the likelihood function), the standard errors are not correct. Therefore, in both cases, the standard errors and the confidence intervals are obtained based on the sampling distributions resulted from bootstraping. Since the distribution of the bootstraped parameters is highly skewed, we report the percentile confidence intervals. The variance-covariance matrix is also computed based on the bootstraped parameters, and not based on the Hessian.
-
 #### *Higher Moments Approach* #### 
 
 The higher moments approach proposed by Lewbel (1997) helps identify structural parameters in regression models with endogeneity caused by *measurement error*. Identification is achieved by exploiting third moments of the data, with no restrictions imposed on the distribution of the error terms. 
@@ -169,7 +167,7 @@ The first argument is the formula of the model to be estimated, **y ~ P**, where
 
 2. **copulaCorrection()** - models the correlation between the endogenous regressor and the structural error with the use of Gaussian copula (Park and Gupta, 2012). The endogenous regressor can be continuous or discrete. The method also allows estimating a model with more than one endogenous regressor, either continuous, discrete or a mixture of the two. However, the endogenous regressors cannot have a binomial distribution, due to parameter identification problems.
 
-In the case of only one, continuous endogenous regressor, the method uses maximum likelihood estimation. In the case of a discrete endogenous regressor, or when several endogenous regressors are suspected, the estimation is carried out using an augmented OLS estimation which is nonetheless based on Gaussian copulas.
+In the case of only one, continuous endogenous regressor, the method uses maximum likelihood  estimation. In the case of a discrete endogenous regressor, or when several endogenous regressors are suspected, the estimation is carried out using an augmented OLS estimation which is nonetheless based on Gaussian copulas.
 
 The **copula correction** function has the following syntax: 
 
@@ -178,7 +176,7 @@ The **copula correction** function has the following syntax:
                 data, start.params=c(), num.boots=250, optimx.args=list())
         
 
-The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimization algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. The standard errors reported are obtained through bootstraping, sice in both cases, the inference is done in two stages. Due to the skewness of the boostrapped parameters, the confidence intervals reported are the percentile confidence intervals. The variance-covariance matrix is also based on the boostrapped values.
+The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimization algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. 
 
 3. **higherMomentsIV()** - implements the higher moments approach described in Lewbel (1997) where instruments are constructed by exploiting higher moments of the data, under strong model assumptions. The function allows just one endogenous regressor.
 
