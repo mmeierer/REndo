@@ -1,3 +1,21 @@
+# CHANGES IN REndo 2.2.0
+
+## SIGNIFICANT USER-VISIBLE CHANGES
+* The summary output for results from `copulaCorrection` was adapted to reflect that standard errors are bootstrapped
+* Removed support for the S3 method `labels` because of inconsistent behavior across methods
+
+## NEW FEATURES
+* Bootstrapping for `copulaCorrection` case 1 is now considerably faster
+* New data was generated for `dataMultilevelIV`
+
+## BUG FIXES
+* The sigma matrix in `latentIV` is constructed as in the paper by Ebbes what improves results. Special thanks to Jordan Henderson for investigating and pointing this out!
+* In the `latentIV`, the parameter for group membership (`theta5`) is  transformed back and now reported correctly.
+* The vcov matrix for `latentIV` is corrected for the transformation in `theta5`.
+* The bootstrapping in `copulaCorrection` case 1 now creates samples of the same length as the original data
+* The (percentile) confidence intervals and vcov for results from `copulaCorrection` now rely on bootstraping
+
+
 # CHANGES IN REndo 2.1.0
 
 ## SIGNIFICANT USER-VISIBLE CHANGES
@@ -8,11 +26,11 @@
 ## NEW FEATURES
 * Method `confint` was added for methods `latentIV` and `copulaCorrection`
 * Examples and documentation were improved for all methods
-* New data was generated for dataHetIV
+* New data was generated for `dataHetIV`
 * The default number of iterations for all optimizations was increased to 100'000
 
 ## BUG FIXES
-* To avoid infrequent warnings, the parameter `sigma` used in `copualCorrection` was constrained to > 0
+* To avoid infrequent warnings, the parameter `sigma` used in `copulaCorrection` was constrained to > 0
 * Various spelling mistakes were fixed
 
 

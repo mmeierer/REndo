@@ -18,10 +18,11 @@ test_that("Works without intercept", {
   # Has no intercept in coefs
   expect_false("(Intercept)" %in% coef(res.no.i))
   # Also not in summary
-  expect_false("(Intercept)" %in% rownames(coef(summary(res.no.i))))
+  expect_false("(Intercept)" %in% rownames(coef(suppressWarnings(summary(res.no.i)))))
 
   # Different result from with intercept
   expect_silent(res.w.i <- latentIV(formula = y~P, data = dataLatentIV, verbose=FALSE))
+  expect_false(isTRUE(all.equal(coef(res.no.i)["P"], coef(res.w.i)["P"])))
   expect_false(isTRUE(all.equal(coef(res.no.i), coef(res.w.i))))
 })
 
@@ -55,18 +56,20 @@ test_that("Works with all endo transformed", {
 })
 
 test_that("Works with proper optimx.args", {
-  expect_silent(latentIV(optimx.args = list(itnmax = 100), formula = y~P, data = dataLatentIV, verbose = FALSE))
-  expect_silent(latentIV(optimx.args = list(itnmax = 100, control=list(kkttol=0.01)), formula = y~P, data = dataLatentIV, verbose = FALSE))
+  expect_silent(latentIV(optimx.args = list(itnmax = 1000), formula = y~P, data = dataLatentIV, verbose = FALSE))
+  expect_silent(latentIV(optimx.args = list(itnmax = 1000, control=list(kkttol=0.01)), formula = y~P, data = dataLatentIV, verbose = FALSE))
 })
 
 
 
 test_that("Summary prints about SE unavailable", {
-  expect_warning(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=9999), verbose = FALSE,data = dataLatentIV),
-                 regexp = "Hessian cannot be solved for the standard errors")
-  expect_output(print(summary(res.latent)), all = FALSE,
-                regexp = "For some parameters the statistics could not be calculated")
-  expect_true(anyNA(coef(summary(res.latent))))
+  # model fitting possible without warnings
+  expect_silent(res.latent <- latentIV(formula = y~P, start.params = c("(Intercept)"=1, P=9999), verbose = FALSE,data = dataLatentIV))
+
+  expect_warning(res.sum <- summary(res.latent), regexp = "For some parameters the standard error could not be calculated.")
+  expect_output(print(res.sum), all = FALSE,
+                regexp = "because the Std. Errors are unavailable")
+  expect_true(anyNA(coef(res.sum)))
 })
 
 

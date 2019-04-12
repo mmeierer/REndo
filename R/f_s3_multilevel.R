@@ -249,6 +249,7 @@ print.summary.rendo.multilevel <- function(x, digits = max(3L, getOption("digits
   return(invisible(x))
 }
 
+# Not really needed because coef.default already works but for clarity
 #' @export
 coef.summary.rendo.multilevel <- function(object, ...){
   return(object$coefficients)

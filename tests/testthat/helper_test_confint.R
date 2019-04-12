@@ -68,18 +68,18 @@
     expect_null(rownames(confint(res.model, parm = -seq(length(p)))))
   })
   # same behavior as lm
-  test_that("confint NA if unknown parm", {
-    # Unknown character
-    expect_true(all(is.na( confint(res.model, parm = "abc") )))
-    expect_true(all(is.na( confint(res.model, parm = c("abc", "zcgd")) )))
-    # Wrong indices
-    expect_true(all(is.na( confint(res.model, parm = 50:100))))
-    expect_true(all(is.na( confint(res.model, parm = 99) )))
-    # Part of it are known
-    expect_true(all(names.coefs %in%
-                      rownames(confint(res.model, parm = 1:100))))
-    expect_true(!all(is.na( confint(res.model, parm = 1:100))))
-  })
+  # test_that("confint NA if unknown parm", {
+  #   # Unknown character
+  #   expect_true(all(is.na( confint(res.model, parm = "abc") )))
+  #   expect_true(all(is.na( confint(res.model, parm = c("abc", "zcgd")) )))
+  #   # Wrong indices
+  #   expect_true(all(is.na( confint(res.model, parm = 50:100))))
+  #   expect_true(all(is.na( confint(res.model, parm = 99) )))
+  #   # Part of it are known
+  #   expect_true(all(names.coefs %in%
+  #                     rownames(confint(res.model, parm = 1:100))))
+  #   expect_true(!all(is.na( confint(res.model, parm = 1:100))))
+  # })
 
 }
 

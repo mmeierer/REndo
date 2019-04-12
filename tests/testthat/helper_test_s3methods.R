@@ -67,9 +67,10 @@
     res.attr <- attributes(res.vcov)
     expect_named(res.attr, c("dim", "dimnames"))
     expect_length(res.attr$dimnames, 2)
-    expect_equal(res.attr$dim, c(length(full.coefs), length(full.coefs)) )
+    expect_equal(res.attr$dim, c(length(full.coefs), length(full.coefs)))
     expect_equal(res.attr$dimnames[[1]], names(coef(res.model)))
     expect_equal(res.attr$dimnames[[2]], names(coef(res.model)))
+    expect_false(anyNA(res.vcov))
   })
 
 

@@ -1,17 +1,13 @@
 # Comment from the authors
-This is version 2.1.0 which adds the previously removed method multilevelIV back to the package. 
-Further changes are described in the NEWS.md file.
+This is version 2.2.0 which substantially improves the previous version 2.1.0 with better and corrected math (`latentIV`), bootstrapped vcov and confints (`copulaCorrection`), a number of bug fixes, and new example data for method `multilevelIV`.
 
 ## Test environments
-* local install on OS X 10.13.6, R 3.5.1
+* local install on OS X 10.14.4, R 3.5.3, devtools 2.0.1
 * win-builder (rdevel, release, oldrelease)
+* linux (ubuntu-16.04-release)
 
-## R CMD check results (devtools 2.0.1)
+## R CMD check results (all)
 There were 0 ERRORs, 0 WARNINGs, and 0 NOTEs.
-
-## R CMD check results (win_devel, win_release, win_oldrelease)
-There were 0 ERRORs, 0 WARNINGs, and 2 NOTEs. 
-All NOTEs on win-builder referred to the runtime of the examples being > 10s.
 
 ## Downstream dependencies
 We are not aware of any downstream dependencies.

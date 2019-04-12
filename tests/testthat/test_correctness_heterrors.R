@@ -49,3 +49,13 @@ test_that("Differently sorted data produces same results", {
   expect_equal(coef(summary(res.orig)), coef(summary(res.diff.sorted)))
 })
 
+
+
+
+context("Correctness - hetErrorsIV - Example data")
+#
+# test_that("Retrieve correct parameters", {
+#   expect_silent(res.het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
+#   expect_equal(coef(res.het), c("(Intercept)" = 2, X1=-1.5, X2=-3, P=-1), tolerance = 0.01)
+# })
+

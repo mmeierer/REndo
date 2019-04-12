@@ -66,23 +66,24 @@
 #' }
 #'
 #'
-#' @return An object of class \code{rendo.optim.LL} is returned that is a list and contains the following components:
-#' \item{formula}{The formula given to specify the model to be fitted.}
-#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
-#' \item{estim.params}{A named vector of all coefficients used during model fitting.}
-#' \item{estim.params.se}{A named vector of the standard error of all coefficients used during model fitting.}
-#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
-#' \item{res.optimx}{The result object returned by the function \code{optimx}.}
-#' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
-#' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
-#' \item{fitted.values}{Fitted values at the found solution.}
-#' \item{residuals}{The residuals.}
-#' \item{model}{The model.frame used for model fitting.}
+#' @return An object of classes \code{rendo.latent.IV} and \code{rendo.base} is returned which is a list and contains the following components:
+#' \item{formula}{The formula given to specify the fitted model.}
 #' \item{terms}{The terms object used for model fitting.}
+#' \item{model}{The model.frame used for model fitting.}
+#' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
+#' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
+#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
+#' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
+#' \item{m.delta.diag}{A diagonal matrix needed when deriving the vcov to apply the delta method on theta5 which was transformed during the LL optimization.}
+#' \item{fitted.values}{Fitted values at the found optimal solution.}
+#' \item{residuals}{The residuals at the found optimal solution.}
 #'
-#' The function summary can be used to obtain and print a summary of the results.
-#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+#' The function \code{summary} can be used to obtain and print a summary of the results.
+#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{confint}, \code{logLik}, \code{AIC}, \code{BIC}, \code{case.names}, and \code{nobs} are available.
 #'
+#'
+#' @seealso \code{\link[REndo:summary.rendo.latent.IV]{summary}} for how fitted models are summarized
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
 #' @references   Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
@@ -179,8 +180,8 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
 
   start.vals.support.params <- c(pi1 = mean(vec.data.endo),
                                  pi2 = mean(vec.data.endo) + sd(vec.data.endo),
-                                 theta5 = 1, theta6 = 1, theta7 = 1,
-                                 theta8 = 0) # 0 -> will be 0.5 in LL
+                                 theta5 = 0.5, theta6 = 1, theta7 = 0.5,
+                                 theta8 = 1)
   names.support.params      <- names(start.vals.support.params)
 
   # Append support params to start params
@@ -201,17 +202,17 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   optimx.name.intercept  <- make.names(name.intercept)
 
   # Default arguments for optimx
-  optimx.default.args <- list(par = optimx.start.params,
-                              fn  = latentIV_LL,
-                              m.data.mvnorm = m.data.mvnorm,
-                              use.intercept = use.intercept,
-                              name.intercept  = name.intercept,
-                              name.endo.param = name.endo.param,
-                              method = "Nelder-Mead",
-                              hessian = TRUE,
-                              itnmax  = 5000,
-                              control = list(trace = 0,
-                                             dowarn = FALSE))
+  optimx.default.args <- alist(par = optimx.start.params,
+                               fn  = latentIV_LL,
+                               m.data.mvnorm = m.data.mvnorm,
+                               use.intercept = use.intercept,
+                               name.intercept  = name.intercept,
+                               name.endo.param = name.endo.param,
+                               method = "Nelder-Mead",
+                               hessian = TRUE,
+                               itnmax  = 10000,
+                               control = list(trace = 0,
+                                              dowarn = FALSE))
   # Update default args with user given args for optimx
   optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)
 
@@ -233,24 +234,24 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   # rename main coefficients in correct order to original parameter names
   all.estimated.params   <- setNames(optimx.estimated.params[c(make.names(names.main.model),names.support.params)],
                                      c(names.main.model, names.support.params))
-  estim.param.main.model <- all.estimated.params[names.main.model]
-  estim.param.support    <- all.estimated.params[names.support.params]
+  all.estimated.params["theta5"] <- exp(all.estimated.params["theta5"]) / (1 + exp(all.estimated.params["theta5"]))
 
-  # Hessian and SE ------------------------------------------------------------------------------
   # Read out hessian.
   hessian <- extract.hessian(res.optimx = res.optimx, names.hessian = names(all.estimated.params))
 
-  fct.se.warn.error <- function(ew){
-                              warning("Hessian cannot be solved for the standard errors: ",
-                                      ew$message,". All SEs set to NA.",
-                                      call. = FALSE, immediate. = TRUE)
-                              return(rep(NA_real_,length(all.estimated.params)))}
+  # To derive the vcov, the delta method is used for which the diagonal matrix is
+  #   already calculated here because the same class is used for copulaCorrection C1 but the diag matrix
+  #   depends on the model
+  vec.diag        <- rep(1,times=length(all.estimated.params))
+  names(vec.diag) <- names(all.estimated.params)
 
-  all.param.se <- tryCatch(expr = sqrt(diag(corpcor::pseudoinverse(hessian))),
-                       # Return same NAs vector if failed to solve so can still read-out results
-                       warning = fct.se.warn.error,
-                       error   = fct.se.warn.error)
-  names(all.param.se)         <- names(all.estimated.params)
+  # use the original coef from fitting the model with optimx because theta5 in all.estimated.params is
+  #   already transformed to probabilities (same transformation as in LL)
+  opt.t5 <- optimx.estimated.params["theta5"]
+  vec.diag["theta5"] <- exp(opt.t5) / ((exp(opt.t5) +1)^2)
+
+  m.delta.diag <- diag(vec.diag)
+  rownames(m.delta.diag) <- colnames(m.delta.diag) <- names(vec.diag)
 
   # Fitted and residuals
   if(use.intercept)
@@ -266,13 +267,15 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
 
 
   # Put together returns ------------------------------------------------------------------
-  res <- new_rendo_optim_LL(call=cl, F.formula=F.formula, mf  = mf,
-                            start.params     = optimx.start.params,
-                            estim.params     = all.estimated.params,
-                            estim.params.se  = all.param.se,
-                            names.main.coefs = names.main.model,
-                            res.optimx = res.optimx, log.likelihood=res.optimx$value,
-                            hessian = hessian, fitted.values=fitted,
-                            residuals=residuals)
+  res <- new_rendo_latent_IV(call = cl,
+                             F.formula=F.formula,
+                             mf  = mf,
+                             start.params     = optimx.start.params,
+                             coefficients     = all.estimated.params,
+                             m.delta.diag     = m.delta.diag,
+                             names.main.coefs = names.main.model,
+                             res.optimx = res.optimx,
+                             hessian = hessian, fitted.values=fitted,
+                             residuals=residuals)
   return(res)
 }

@@ -5,6 +5,7 @@
 #' The important assumption of the model is that the endogenous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
 #'
 #' @template template_param_formuladataverbose
+#' @param num.boots Number of bootstrapping iterations. Defaults to 1000.
 #' @param ... Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
 #'  regressor. Ignored with a warning otherwise.
 #' \describe{
@@ -12,7 +13,6 @@
 #' The names have to correspond exactly to the names of the components specified in the \code{formula} parameter.
 #' If not provided, a linear model is fitted to derive them.}
 #' \item{optimx.args}{A named list of arguments which are passed to \code{\link[optimx]{optimx}}. This allows users to tweak optimization settings to their liking.}
-#' \item{num.boots}{Number of bootstrapping iterations. Defaults to 1000.}
 #' }
 #'
 #' @details
@@ -68,15 +68,19 @@
 #' In all other cases, augmented OLS based on Gaussian copula is applied. This includes cases of multiple endogenous regressors
 #' of both discrete and continuous distributions.
 #'
-#' If all endogenous regressors are discrete, it is important to also have a look at the confidence interval of the
-#' coefficient estimates because the marginal distribution function of the endogenous regressor is a step function in this case.
-#' By being a step function, the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}} lies between 2 values,
-#' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
+#' In the case of discrete endogenous regressors, a random seed needs to be assigned because the marginal distribution function of
+#' the endogenous regressor is a step function in this case. This means that the value of \ifelse{html}{\out{P&#42;}}{\eqn{P^{*}}}
+#' lies between 2 values, \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>-1))}}{\eqn{\Phi^{-1}(H(P_{t}-1))}} and
 #' \ifelse{html}{\out{&Phi;<sup>-1</sup>(H(P<sub>t</sub>))}}{\eqn{\Phi^{-1}(H(P_{t}))}}.
-#' Since the exact value is not known, when the \code{\link[REndo:confint.rendo.pstar.lm]{confint}} functions is applied to a fitted model,
-#' it runs a set of 250 simulations and returns the estimated coefficients.
-#'
+#' However, the reported upper and lower bounds of the 95\% bootstrapped confidence interval gives indication of the variance of the estimates.
 #'}
+#' Since the inference procedure in both cases, augmented OLS and maximum likelihood, occurs in two stages (first the empirical distribution of the endogenous
+#' regressor is computed and then used in constructing the likelihood function), the standard errors are not correct. Therefore, in both cases, the standard errors
+#' and the confidence intervals are obtained based on the sampling distributions resulted from bootstraping. Since the distribution of the bootstraped parameters
+#' is highly skewed, we report the percentile confidence intervals. Moreover, the variance-covariance matrix is also computed based on the bootstraped
+#' parameters, and not based on the Hessian.
+#'
+#'
 #'
 #'\subsection{Formula parameter}{
 #' The \code{formula} argument follows a two part notation:
@@ -93,35 +97,36 @@
 #'
 #' See the example section for illustrations on how to specify the \code{formula} parameter.
 #'}
+#'
 #' @return
-#' For the case of a single continuous endogenous regressor, an object of class \code{rendo.optim.LL} is returned.
-#' It is a list and contains the following components:
-#' \item{formula}{The formula given to specify the model to be fitted.}
-#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
-#' \item{estim.params}{A named vector of all coefficients used during model fitting.}
-#' \item{estim.params.se}{A named vector of the standard error of all coefficients used during model fitting.}
-#' \item{names.main.coefs}{A vector specifying which coefficients are from the model.}
-#' \item{res.optimx}{The result object returned by the function \code{optimx}.}
-#' \item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
-#' \item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
-#' \item{fitted.values}{Fitted values at the found solution.}
-#' \item{residuals}{The residuals.}
-#' \item{model}{The model.frame used for model fitting.}
+#' For all cases, an object of classes \code{rendo.copula.correction}, \code{rendo.boots}, and \code{rendo.base} is returned
+#' which is a list and contains the following components:
+#' \item{formula}{The formula given to specify the fitted model.}
 #' \item{terms}{The terms object used for model fitting.}
-#'
-#' The function summary can be used to obtain and print a summary of the results.
-#' The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
-#'
-#' For all other cases, an object of classes \code{rendo.pstar.lm} and \code{lm} is returned.
-#' It extends the object returned from \code{lm} of package \code{stats} to additionally include the
-#' following components:
-#' \item{original.data}{The original data used to fit the model.}
+#' \item{model}{The model.frame used for model fitting.}
+#' \item{coefficients}{A named vector of all coefficients resulting from model fitting.}
+#' \item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
 #' \item{names.vars.continuous}{The names of the continuous endogenous regressors.}
 #' \item{names.vars.discrete}{The names of the discrete endogenous regressors.}
+#' \item{fitted.values}{Fitted values at the found solution.}
+#' \item{residuals}{The residuals at the found solution.}
+#' \item{boots.params}{The bootstrapped coefficients.}
 #'
-#' All generic accessor functions for \code{lm} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
+#' For the case of a single continuous endogenous regressor, the returned object further
+#' contains the following components:
+#' \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
+#' \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
 #'
-#' @seealso \code{\link[REndo:confint.rendo.pstar.lm]{confint}} for the case of only discrete endogenous regressors
+#' For all other cases, the returned object further contains the following components:
+#' \item{res.lm.real.data}{The linear model fitted on the original data together with generated p.star data.}
+#'
+#' The function \code{summary} can be used to obtain and print a summary of the results.
+#' Depending on the returned object, the generic accessor functions \code{coefficients}, \code{fitted.values},
+#' \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, and \code{nobs} are available.
+#'
+#' @seealso \code{\link[REndo:summary.rendo.copula.correction]{summary}} for how fitted models are summarized
+#' @seealso \code{\link[REndo:vcov.rendo.boots]{vcov}} for how the variance-covariance matrix is derived
+#' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
 #' @references
@@ -147,7 +152,6 @@
 #' # same as above, with start.parameters and number of bootstrappings
 #' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=500, data=dataCopCont,
 #'                        start.params = c("(Intercept)"=1, X1=1, X2=-2, P=-1))
-#' }}
 #'
 #' # All following examples fit linear model with Gaussian copulas
 #'
@@ -160,22 +164,18 @@
 #'
 #' # single discrete endogenous regressor
 #' d1 <- copulaCorrection(y~X1+X2+P|discrete(P), data=dataCopDis)
+#'
 #' # two discrete endogenous regressor
 #' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2),
 #'                        data=dataCopDis2)
-#' # same as above
-#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2),
+#' # same as above but less bootstrap runs
+#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 250,
 #'                        data=dataCopDis2)
-#'
-#' # the discrete only cases have a dedicated confint function
-#' d2.ci <- confint(d2, num.simulations = 100)
 #'
 #' # single discrete, single continuous
 #' cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2),
 #'                        data=dataCopDisCont)
 #'
-#'\donttest{
-#'\dontrun{
 #' # For single continuous only: use own optimization settings (see optimx())
 #' # set maximum number of iterations to 50'000
 #' res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
@@ -193,11 +193,13 @@
 #'                                                control=list(trace = 2, REPORT=50)),
 #'                             data=dataCopCont)
 #'
-#' # for single cont case only:
-#' # read out all coefficients, incl auxiliary coefs
-#' c1.all.coefs <- coef(res.c1)
+#' # For coef(), the parameter "complete" determines if only the
+#' # main model parameters or also the auxiliary coefficients are returned
+#'
+#' c1.all.coefs <- coef(res.c1) # also returns rho and sigma
 #' # same as above
 #' c1.all.coefs <- coef(res.c1, complete = TRUE)
+#'
 #' # only main model coefs
 #' c1.main.coefs <- coef(res.c1, complete = FALSE)
 #'
@@ -205,7 +207,7 @@
 #'
 #' @importFrom Formula as.Formula
 #' @export
-copulaCorrection <- function(formula, data, verbose=TRUE, ...){
+copulaCorrection <- function(formula, data, num.boots=1000, verbose=TRUE, ...){
   # Catch stuff ------------------------------------------------------------------------------------------------
   cl <- quote(match.call())
   l.ellipsis <- list(...)
@@ -214,6 +216,7 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
   check_err_msg(checkinput_copulacorrection_formula(formula=formula))
   check_err_msg(checkinput_copulacorrection_data(data=data))
   check_err_msg(checkinput_copulacorrection_dataVSformula(formula=formula, data=data))
+  check_err_msg(checkinput_copulacorrection_numboots(num.boots=num.boots))
   check_err_msg(checkinput_copulacorrection_verbose(verbose=verbose))
 
 
@@ -236,7 +239,8 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
     # Single continuous - copula method 1 (optimize LL)
     res <- do.call(what = copulaCorrection_optimizeLL,
                    args = c(list(F.formula=F.formula, data=data,
-                                 name.var.continuous =names.vars.continuous,
+                                 num.boots = num.boots,
+                                 name.var.continuous = names.vars.continuous,
                                  verbose=verbose, cl=cl), # cl supplied to create return object
                             l.ellipsis))
   }else{
@@ -244,6 +248,7 @@ copulaCorrection <- function(formula, data, verbose=TRUE, ...){
     res <- do.call(copulaCorrection_linearmodel,
                    c(list(F.formula = F.formula, data = data,verbose=verbose,
                           cl=cl, # cl supplied to create return object
+                          num.boots = num.boots,
                           names.vars.continuous = names.vars.continuous,
                           names.vars.discrete   = names.vars.discrete),
                    l.ellipsis))

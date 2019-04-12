@@ -5,6 +5,7 @@ data("dataCopDis2")
 data("dataCopDisCont")
 
 
+# ** Now rho / sigma range check is done in runability but should be here
 # Transformations in formula ---------------------------------------------------------------------------------------------------
 # context("Correctness - copulaCorrection - Formula transformations")
 #
@@ -78,26 +79,29 @@ data("dataCopDisCont")
 #
 
 # Data sorting ------------------------------------------------------------------------------------------------
-context("Correctness - copulaCorrection - Data sorting")
+# context("Correctness - copulaCorrection - Data sorting")
 
-test_that("Differently sorted data produces same results C1", {
-  skip_on_cran()
-  data.altered <- dataCopCont
-  data.altered <- data.altered[sample(nrow(data.altered), nrow(data.altered), replace = FALSE), ]
-
-  set.seed(0xcaffee) #bootstrap
-  expect_warning(res.orig  <- copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2,
-                                               data=dataCopCont), regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
-  set.seed(0xcaffee) #bootstrap
-  expect_warning(res.diff.sorted  <- copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2,
-                                                      data=data.altered), regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
-
-  expect_equal(coef(res.orig), coef(res.diff.sorted))
+# test_that("Differently sorted data produces same results C1", {
+# ** Does not work anymore because bootstrapping is used every run now.
+#     sample() does return same indices with set.seed but there are other elements there now after diff.sorting.
+#   More bootstraps would be needed now
+  # skip_on_cran()
+  # data.altered <- dataCopCont
+  # data.altered <- data.altered[sample(nrow(data.altered), nrow(data.altered), replace = FALSE), ]
+  #
+  # set.seed(0xcaffee) #bootstrap
+  # expect_warning(res.orig  <- copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=20,
+  #                                              data=dataCopCont), regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+  # set.seed(0xcaffee) #bootstrap
+  # expect_warning(res.diff.sorted  <- copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=20,
+  #                                                     data=data.altered), regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+  #
+  # expect_equal(coef(res.orig), coef(res.diff.sorted), tolerance=0.01)
 
   # Cannot check because random sampling for bootstrapping results in different
   #   selected sub-samples and therefore different SEs (- summary statistics)
   # expect_equal(coef(summary(res.orig)), coef(summary(res.diff.sorted)))
-})
+# })
 
 # Does not work: Sorting and random vars does result in different pstar data
 # test_that("Differently sorted data produces same results C2", {

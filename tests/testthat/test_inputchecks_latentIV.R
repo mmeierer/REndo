@@ -183,13 +183,3 @@ test.single.logical(function.to.test = latentIV, parameter.name="verbose",
                     formula=y~P, function.std.data=dataLatentIV)
 
 
-
-
-# verbose ----------------------------------------------------------------------
-context("Inputchecks - latentIV - Parameter verbose")
-test.single.logical(function.to.test = latentIV, parameter.name="verbose",
-                    formula=y~P, function.std.data=dataLatentIV)
-
-
-
-

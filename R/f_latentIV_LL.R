@@ -17,20 +17,26 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
 
   # Probability for group 1 - constraint to [0,1]
   # (incl bound because can be very large which flips to 0 and 1)
-  pt <- exp(params["theta8"])
+  pt <- exp(params["theta5"])
   pt <- pt / (1+pt)
 
 
   # Sigma ----------------------------------------------------------------------
-  m.sigma.tmp <- matrix(c(params["theta5"], 0,
-                          params["theta6"], params["theta7"]),
+  # Previous code:
+  # m.sigma.tmp <- matrix(c(params["theta8"], 0,
+  #                         params["theta6"], params["theta7"]),
+  #                       byrow = TRUE, ncol = 2, nrow = 2)
+  # m.sigma     <- m.sigma.tmp %*% t(m.sigma.tmp)
+
+  m.sigma  <- matrix(c(params["theta6"], params["theta7"],
+                       params["theta7"], params["theta8"]),
                         byrow = TRUE, ncol = 2, nrow = 2)
-  m.sigma     <- m.sigma.tmp %*% t(m.sigma.tmp)
+
 
   # Varcov matrix reduced form -------------------------------------------------
-  s2e     <- m.sigma[1,1]
-  s2v     <- m.sigma[2,2]
-  sev     <- m.sigma[1,2]
+  s2e     <- m.sigma[1,1] # theta6
+  s2v     <- m.sigma[2,2] # theta8
+  sev     <- m.sigma[1,2] # theta7
 
   varcov      <- matrix(0,2,2)
   varcov[1,1] <- a1*a1*s2v+2*a1*sev+s2e
@@ -72,12 +78,11 @@ latentIV_LL<- function(params, m.data.mvnorm, use.intercept,
   # -> log(pdf1)&log(pdf2) = dmvnorm(..., log=TRUE)
   log.pdf1 <- dmvnorm(m.data.mvnorm, mean=mu1, sigma=varcov, log = TRUE)
   log.pdf2 <- dmvnorm(m.data.mvnorm, mean=mu2, sigma=varcov, log = TRUE)
+
   max.AB   <- pmax(log(pt)+log.pdf1, log(1-pt)+log.pdf2)
   logLL.lse<- sum(max.AB+log(pt*exp(log.pdf1-max.AB) + (1-pt)*exp(log.pdf2-max.AB)))
 
   # logLL <-  sum(log(pt*pdf1 + (1-pt)*pdf2))
   # print(isTRUE(all.equal(logLL, logLL.lse))) # TRUE
-
-
   return(-1*logLL.lse)
 }

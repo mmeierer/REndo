@@ -21,22 +21,21 @@ If not provided, a linear model is fitted to derive them.}
 \item{verbose}{Show details about the running of the function.}
 }
 \value{
-An object of class \code{rendo.optim.LL} is returned that is a list and contains the following components:
-\item{formula}{The formula given to specify the model to be fitted.}
-\item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
-\item{estim.params}{A named vector of all coefficients used during model fitting.}
-\item{estim.params.se}{A named vector of the standard error of all coefficients used during model fitting.}
-\item{names.main.coefs}{A vector specifying which coefficients are from the model.}
-\item{res.optimx}{The result object returned by the function \code{optimx}.}
-\item{log.likelihood}{The value of the log-likelihood function corresponding to the optimal parameters.}
-\item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
-\item{fitted.values}{Fitted values at the found solution.}
-\item{residuals}{The residuals.}
-\item{model}{The model.frame used for model fitting.}
+An object of classes \code{rendo.latent.IV} and \code{rendo.base} is returned which is a list and contains the following components:
+\item{formula}{The formula given to specify the fitted model.}
 \item{terms}{The terms object used for model fitting.}
+\item{model}{The model.frame used for model fitting.}
+\item{coefficients}{A named vector of all coefficients resulting from model fitting.}
+\item{names.main.coefs}{a vector specifying which coefficients are from the model. For internal usage.}
+\item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
+\item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
+\item{hessian}{A named, symmetric matrix giving an estimate of the Hessian at the found solution.}
+\item{m.delta.diag}{A diagonal matrix needed when deriving the vcov to apply the delta method on theta5 which was transformed during the LL optimization.}
+\item{fitted.values}{Fitted values at the found optimal solution.}
+\item{residuals}{The residuals at the found optimal solution.}
 
-The function summary can be used to obtain and print a summary of the results.
-The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{logLik}, \code{AIC}, \code{BIC}, \code{nobs}, and \code{labels} are available.
+The function \code{summary} can be used to obtain and print a summary of the results.
+The generic accessor functions \code{coefficients}, \code{fitted.values}, \code{residuals}, \code{vcov}, \code{confint}, \code{logLik}, \code{AIC}, \code{BIC}, \code{case.names}, and \code{nobs} are available.
 }
 \description{
 Fits linear models with one endogenous regressor and no additional explanatory variables using the latent instrumental variable approach
@@ -138,5 +137,7 @@ Quantitative Marketing and Economics, 3:365--392.
 Ebbes P., Wedel M., Böckenholt U. (2009). “Frugal IV Alternatives to Identify the Parameter for an Endogenous Regressor.” Journal of Applied Econometrics, 24(3), 446–468.
 }
 \seealso{
+\code{\link[REndo:summary.rendo.latent.IV]{summary}} for how fitted models are summarized
+
 \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 }

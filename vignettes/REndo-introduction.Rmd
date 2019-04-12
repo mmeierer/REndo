@@ -79,6 +79,10 @@ The structural error $\epsilon_{t}$ is assumed to have a normal marginal distrib
 \end{equation}
 
 where $P_{t}$ is the endogenous regressor, $K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|<=1)$ and the bandwidth $b$ is equal to $b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)$, as proposed by Silvermann (1969). $IQR$ is the interquartile range while $s$ is the data sample standard deviation and $T$ is the number of time periods observed in the data. 
+In both cases, augmented OLS and maximum likelihood, the inference procedure occurs in two stages (first the empirical distribution of the endogenous regressor is computed and then used in constructing the likelihood function), the standard errors are not correct. Therefore, in both cases, the standard errors and the confidence intervals are obtained based on the sampling distributions resulted from bootstrapping. Since the distribution of the bootstraped parameters is highly skewed, we report the percentile confidence intervals. The variance-covariance matrix is also computed based on the bootstraped parameters, and not based on the Hessian.
+
+
+In both cases, maximum likelihood estimation and augmented OLS, the reported standard errors are the bootstrapped standard errors, due to the inference being done in two steps. The confidence intervals are also the bootstrapped confidence intervals, due to the non-normality of the bootstrapped parameters.
 
 #### *Higher Moments Approach* #### 
 
@@ -149,7 +153,7 @@ Given the set of disturbance terms at different levels, there exist a couple of 
 
 The ingenious approach proposed by Kim and Frees (2007) lies in the fact that when all variables are assumed exogenous, the proposed estimator equals the random effects estimator. When all covariates are assumed endogenous, it equals the fixed effects estimator. 
 
-In facilitating the choice of the estimator to be used for the given data, Kim and Frees (2007) also propose an omitted variable test (which is reported by the summary function after the estimation using multilevelIV() function in **REndo**). This test is based on the Hausman-test (Hausmann, 1978) for panel data. The omitted variable test allows the comparison of a robust estimator and an estimator that is efficient under the null hypothesis of no omitted variables, and also the comparison of two robust estimators at different levels.
+In facilitating the choice of the estimator to be used for the given data, Kim and Frees (2007) also propose an omitted variable test (which is reported by the summary function after the estimation using multilevelIV() function in **REndo**). This test is based on the Hausman-test (Hausman, 1978) for panel data. The omitted variable test allows the comparison of a robust estimator and an estimator that is efficient under the null hypothesis of no omitted variables, and also the comparison of two robust estimators at different levels.
 
 ## 3. Using **REndo** ##
 
@@ -167,7 +171,7 @@ The first argument is the formula of the model to be estimated, **y ~ P**, where
 
 2. **copulaCorrection()** - models the correlation between the endogenous regressor and the structural error with the use of Gaussian copula (Park and Gupta, 2012). The endogenous regressor can be continuous or discrete. The method also allows estimating a model with more than one endogenous regressor, either continuous, discrete or a mixture of the two. However, the endogenous regressors cannot have a binomial distribution, due to parameter identification problems.
 
-In the case of only one, continuous endogenous regressor, the method uses maximum likelihood  estimation. In the case of a discrete endogenous regressor, or when several endogenous regressors are suspected, the estimation is carried out using an augmented OLS estimation which is nonetheless based on Gaussian copulas.
+In the case of only one, continuous endogenous regressor, the method uses maximum likelihood estimation. In the case of a discrete endogenous regressor, or when several endogenous regressors are suspected, the estimation is carried out using an augmented OLS estimation which is nonetheless based on Gaussian copulas.
 
 The **copula correction** function has the following syntax: 
 
@@ -176,7 +180,7 @@ The **copula correction** function has the following syntax:
                 data, start.params=c(), num.boots=250, optimx.args=list())
         
 
-The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimization algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. 
+The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimization algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. The standard errors reported are obtained through bootstrapping, sice in both cases, the inference is done in two stages. Due to the skewness of the bootstrapped parameters, the confidence intervals reported are the percentile confidence intervals. The variance-covariance matrix is also based on the boostrapped values.
 
 3. **higherMomentsIV()** - implements the higher moments approach described in Lewbel (1997) where instruments are constructed by exploiting higher moments of the data, under strong model assumptions. The function allows just one endogenous regressor.
 
@@ -217,7 +221,7 @@ The function **hetErrorsIV()** has a four-part formula specification:
                 hetErrorsIV(y ~ X1 + X2 + X3 + P | P | IIV(X1,X2) | Z1, data)
 
 
-where: **y** is the response variable, **X1 + X2 + X3 + P** represents the model to be estimated; the second part, **P**, specifies the endogenous regressors, the third part, **IIV(X1, X2)**, specifies the exogenous  heteroskedastic variables from which the instruments are derived, while the final part **Z1** is optional,  allowing the user to include additional external instrumental variables. Like in the higher moments  approach, allowing the inclusion of additional external variables is a convenient feature of the function, since it increases the efficiency of the estimates. Transformation of the expalnatory variables, such as I(X), ln(X) are possible both in the model specification as well as in the IIV() specification.
+where: **y** is the response variable, **X1 + X2 + X3 + P** represents the model to be estimated; the second part, **P**, specifies the endogenous regressors, the third part, **IIV(X1, X2)**, specifies the exogenous  heteroskedastic variables from which the instruments are derived, while the final part **Z1** is optional,  allowing the user to include additional external instrumental variables. Like in the higher moments  approach, allowing the inclusion of additional external variables is a convenient feature of the function, since it increases the efficiency of the estimates. Transformation of the explanatory variables, such as I(X), ln(X) are possible both in the model specification as well as in the IIV() specification.
 
 5. **multilevelIV()** - implements the instrument free multilevel GMM method proposed by Kim and Frees (2007) where identification is possible due to the different levels of the data. Endogenous regressors at different levels can be present. The function comes along a built in omitted variable test, which helps in deciding which model is robust to omitted variables at different levels.
 
@@ -282,7 +286,7 @@ summary(m3.liv)
 
 ```
 
-Indeed, the value returned is equal to **-3.75**. The **latentIV()** function returns, besides the coefficient estimates, also the initial parameter values used in the maximum likelihood optimisation and the AIC and BIC. The latter two can also be accessed calling AIC(m3.liv) and BIC(m3.liv). The function also returns the fitted values and the residuals, as well as the confidence interval for the coefficients.
+Indeed, the value returned is equal to **-3.75**. The **latentIV()** function returns, besides the coefficient estimates, also the initial parameter values used in the maximum likelihood optimization and the AIC and BIC. The latter two can also be accessed calling AIC(m3.liv) and BIC(m3.liv). The function also returns the fitted values and the residuals, as well as the confidence interval for the coefficients.
 
 Next, we call the **copulaCorrection()** function:
 ```{r, message=FALSE}
