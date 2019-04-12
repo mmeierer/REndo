@@ -1,6 +1,7 @@
 # CHANGES IN REndo 2.2.0
 
 ## SIGNIFICANT USER-VISIBLE CHANGES
+* The augmented OLS method in `copulaCorrection` also bootstraps parameter estimates
 * The summary output for results from `copulaCorrection` was adapted to reflect that standard errors are bootstrapped
 * Removed support for the S3 method `labels` because of inconsistent behavior across methods
 
@@ -9,11 +10,11 @@
 * New data was generated for `dataMultilevelIV`
 
 ## BUG FIXES
-* The sigma matrix in `latentIV` is constructed as in the paper by Ebbes what improves results. Special thanks to Jordan Henderson for investigating and pointing this out!
+* The sigma matrix in `latentIV` is constructed as in the paper by Ebbes what improves results. Special thanks to Jordan Lawson for investigating and pointing this out!
 * In the `latentIV`, the parameter for group membership (`theta5`) is  transformed back and now reported correctly.
 * The vcov matrix for `latentIV` is corrected for the transformation in `theta5`.
 * The bootstrapping in `copulaCorrection` case 1 now creates samples of the same length as the original data
-* The (percentile) confidence intervals and vcov for results from `copulaCorrection` now rely on bootstrapping
+* The (percentile) confidence intervals and vcov for results from `copulaCorrection` now are derived with bootstrapping
 
 
 # CHANGES IN REndo 2.1.0
