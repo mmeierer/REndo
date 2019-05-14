@@ -10,6 +10,29 @@ test.s3methods.rendoboots <- function(res.model, input.form, function.std.data, 
 
   # rendo.boots specific parts
 
+  test_that("confint stops if too many NAs in one parameter", {
+    boots.params.bck <- res.model$boots.params
+
+    # All NAs fails
+    num.boots.used <- ncol(res.model$boots.params)
+    res.model$boots.params[1, ] <- rep(x = NA_real_, times=num.boots.used)
+    expect_error(confint(res.model), regexp = "Not enough bootstraps")
+    res.model$boots.params <- boots.params.bck # write back needed again
+
+    # 85% NAs fails for 0.95 level
+    res.model$boots.params[1,seq(num.boots.used*0.85)] <- rep(NA_real_, num.boots.used*0.85)
+    expect_error(confint(res.model, level = 0.95), regexp = "Not enough bootstraps")
+    res.model$boots.params <- boots.params.bck # write back if needed later on
+
+    # 10% NAs works with warning
+    res.model$boots.params[1,seq(num.boots.used*0.1)] <- rep(NA_real_, num.boots.used*0.1)
+    expect_warning(confint(res.model), regexp = "Confidence intervals might be unreliable")
+    #   summary also works but with warning
+    expect_warning(summary(res.model), regexp = "Confidence intervals might be unreliable")
+    res.model$boots.params <- boots.params.bck # write back if needed later on
+  })
+
+
   test_that("rendo.boots object structure", {
     expect_is(res.model, "rendo.boots")
     expect_true(is.list(res.model))
