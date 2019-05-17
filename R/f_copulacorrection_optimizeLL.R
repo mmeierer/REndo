@@ -68,7 +68,9 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Add rho and sigma with defaults
   #   Same order as model.matrix/formula. This is done in LL again,
   #   but do here to have consistent output (inputorder to optimx counts for this)
-  start.params <- c(start.params, rho=0.5, sigma=1)
+  #     rho=0 -> rho=0.5 in LL
+  #     sigma=0 -> sigma=1 in LL
+  start.params <- c(start.params, rho=0, sigma=0)
   start.params <- start.params[c(names.model.mat, "rho", "sigma")]
 
 
@@ -82,7 +84,10 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
     # Default arguments for optimx
     # Bounds for rho [0,1] and sigma (0, Inf):
-    #   LL returns Inf if outside as NelderMead cannot deal with bounds
+    #   LL transforms rho/(1+rho) and exp(sigma) because NelderMead does not accept bounds
+    #   and returning Inf/NA breaks L-BFGS-B. Hence these transformations.
+    #   This implies that the same transformations need to be applied to the found solution
+    #     to report the values that are really used in the LL
     optimx.default.args <- list(par     = optimx.start.params,
                                 fn      = copulaCorrection_LL,
                                 method  = "Nelder-Mead",
@@ -104,6 +109,12 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
     if(is(res.optimx, "error"))
       stop("Failed to optimize the log-likelihood function with error \'", res.optimx$message,
            "\'. Please revise your start parameter and data.", call. = FALSE)
+
+    # Apply the boundary transformation for rho/sigma
+    #   to report results as the coefs were really used in the LL
+    #   apply here because the same function is used for bootstrapping
+    res.optimx$sigma <- exp(res.optimx$sigma)
+    res.optimx$rho   <- exp(res.optimx$rho)/(1+exp(res.optimx$rho))
 
     return(res.optimx)
   }
