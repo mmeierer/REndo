@@ -1,6 +1,7 @@
 # CHANGES IN REndo 2.2.0
 
 ## SIGNIFICANT USER-VISIBLE CHANGES
+* The augmented OLS method in `copulaCorrection` also bootstraps parameter estimates
 * The summary output for results from `copulaCorrection` was adapted to reflect that standard errors are bootstrapped
 * Removed support for the S3 method `labels` because of inconsistent behavior across methods
 

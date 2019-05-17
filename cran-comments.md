@@ -4,9 +4,9 @@ This is version 2.2.0 which substantially improves the previous version 2.1.0 wi
 ## Test environments
 * local install on OS X 10.14.4, R 3.5.3, devtools 2.0.1
 * win-builder (rdevel, release, oldrelease)
-* linux (ubuntu-16.04-release)
+* rhub (all)
 
-## R CMD check results (all)
+## R CMD check results (all test environments)
 There were 0 ERRORs, 0 WARNINGs, and 0 NOTEs.
 
 ## Downstream dependencies

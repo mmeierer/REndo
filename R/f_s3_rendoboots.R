@@ -63,6 +63,7 @@ confint.rendo.boots <- function(object, parm, level=0.95, ...){
   # bootstrap replications is not much larger than 1/min(alpha,1-alpha) because there are not enough
   # theta* values from which to extract the desired quantile
   # (e.g., one cannot plausibly estimate a 99 % quantile given fewer than 100 values)."
+
   if(any(rowSums(!is.na(object$boots.params)) < 1/(1-level)))
     stop("Not enough bootstraps (<1/(1-level)) were performed to derive the confidence interval or too many estimates were NA!", call. = FALSE)
 

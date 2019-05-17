@@ -41,8 +41,8 @@ empirical distribution of the endogenous regressor and then the likelihood funct
 other cases the estimation is realized in two steps and hence the standard errors reported by the
 fitted OLS model are not correct.
 
-The standard errors and the confidence intervals are therefore obtained using bootstraping with replacement as
-described in Effron (1979). The reported lower and upper boundaries are from the 95\% boostrapped percentile
+The standard errors and the confidence intervals are therefore obtained using bootstrapping with replacement as
+described in Effron (1979). The reported lower and upper boundaries are from the 95\% bootstrapped percentile
 confidence interval. If there are too few bootstrapped estimates, no boundaries are reported.
 
 For a single continuous endogenous regressor the model was fitted using maximum likelihood optimization. The
