@@ -273,6 +273,33 @@ test_that("Fails if lm cannot be used to derive start.params", {
 })
 
 
+test_that("Works for L-BFGS-B", {
+  skip_on_cran()
+
+  expect_warning(res.bfgs <- copulaCorrection(y~X1+X2+P|continuous(P), data = dataCopCont, num.boots = 20, verbose=FALSE,
+                                              optimx.args = list(control = list(trace = 0), method="L-BFGS-B")),
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+
+  expect_false(anyNA(res.bfgs$boots.params))
+  expect_silent(confint(res.bfgs))
+  expect_silent(vcov(res.bfgs))
+})
+
+
+test_that("Works for Nelder-Mead", {
+  skip_on_cran()
+
+  expect_warning(res.nm <- copulaCorrection(y~X1+X2+P|continuous(P), data = dataCopCont, num.boots = 20, verbose=FALSE,
+                                              optimx.args = list(control = list(trace = 0), method="Nelder-Mead")),
+                 regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+
+  expect_false(anyNA(res.nm$boots.params))
+  expect_silent(confint(res.nm))
+  expect_silent(vcov(res.nm))
+})
+
+
+
 
 # test_that("Works for multivar transformations",{
 #   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1+P2),data=dataCopCont2), regexp = "The above errors were encountered!")
