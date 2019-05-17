@@ -9,8 +9,8 @@
 * New data was generated for `dataMultilevelIV`
 
 ## BUG FIXES
-* The sigma matrix in `latentIV` is constructed as in the paper by Ebbes what improves results. Special thanks to Jordan Henderson for investigating and pointing this out!
-* In the `latentIV`, the parameter for group membership (`theta5`) is  transformed back and now reported correctly.
+* The sigma matrix in `latentIV` is constructed as in the paper by Ebbes et al. what improves results. Special thanks to Jordan Henderson for investigating and pointing this out!
+* In `latentIV`, the parameter for group membership (`theta5`) is now transformed back and reported correctly.
 * The vcov matrix for `latentIV` is corrected for the transformation in `theta5`.
 * The bootstrapping in `copulaCorrection` case 1 now creates samples of the same length as the original data
 * The (percentile) confidence intervals and vcov for results from `copulaCorrection` now rely on bootstraping
