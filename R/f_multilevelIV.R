@@ -160,7 +160,7 @@
 #' Hausman J (1978). “Specification Tests in Econometrics.” Econometrica, 46(6), 1251–1271.
 #' Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.
 #'
-#' @importFrom lme4 lmer VarCorr lFormula nobars
+#' @importFrom lme4 lmer VarCorr lFormula nobars lmerControl
 #' @importFrom Formula as.Formula
 #' @importFrom data.table as.data.table
 #' @export
@@ -265,7 +265,12 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   # Has to use the original data because dt.model.data already contains the data
   #   with applied transformations
 
-  res.lmer <- tryCatch(lme4::lmer(formula=f.lmer, data=data, REML = TRUE),
+  if(verbose)
+    message("Fitting linear mixed-effects model.")
+
+  res.lmer <- tryCatch(lme4::lmer(formula=f.lmer, data=data, REML = TRUE,
+                                  control = lmerControl(optimizer = "Nelder_Mead",
+                                                        optCtrl=list(maxfun=100000))),
                        error = function(e)return(e))
   if(is(res.lmer, "error"))
     stop("lme4::lmer() could not be fitted with error: ",
