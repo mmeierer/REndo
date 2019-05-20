@@ -16,12 +16,13 @@ multilevelIV(formula, data, verbose = TRUE)
 \value{
 \code{multilevelIV} returns an object of class "\code{rendo.multilevel}".
 
-Note that the obtained coefficients are rounded with \code{round(x, digits=getOption("digits"))}.
-
 The generic accessor functions \code{coef}, \code{fitted}, \code{residuals}, \code{vcov}, \code{confint}, and \code{nobs}, are available.
 Note that an additional argument \code{model} with possible values \code{"REF", "FE_L2", "FE_L3", "GMM_L2"}, or \code{"GMM_L3"} is
 available for \code{\link[REndo:summary.rendo.multilevel]{summary}}, \code{fitted}, \code{residuals}, \code{confint}, and \code{vcov}
 to extract the features for the specified model.
+
+Note that the obtained coefficients are rounded with \code{round(x, digits=getOption("digits"))}.
+
 
 An object of class \code{rendo.multilevel} is returned that is a list and contains the following components:
 
@@ -166,6 +167,7 @@ L3.REF.resid <- resid(res.ml.L3, model = "REF")
 }
 \references{
 Hausman J (1978). “Specification Tests in Econometrics.” Econometrica, 46(6), 1251–1271.
+
 Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.
 }
 \seealso{
