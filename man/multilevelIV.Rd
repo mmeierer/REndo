@@ -4,12 +4,16 @@
 \alias{multilevelIV}
 \title{Fitting Multilevel GMM Estimation with Endogenous Regressors}
 \usage{
-multilevelIV(formula, data, verbose = TRUE)
+multilevelIV(formula, data, lmer.control = lmerControl(optimizer =
+  "Nelder_Mead", optCtrl = list(maxfun = 1e+05)), verbose = TRUE)
 }
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
 \item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
+
+\item{lmer.control}{An output from \code{lmerControl} that will be used to fit the \code{lmer} model from which the variance and
+correlation are obtained.}
 
 \item{verbose}{Show details about the running of the function.}
 }
@@ -146,6 +150,15 @@ res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X2
                               X32 + X33 + (1|SID) | endo(X15, X21) + endo(X22),
                           data = dataMultilevelIV, verbose = FALSE)
 
+# Fit above model with different settings for lmer()
+lmer.control <- lme4::lmerControl(optimizer="nloptwrap",
+                                  optCtrl=list(algorithm="NLOPT_LN_COBYLA",
+                                               xtol_rel=1e-6))
+res.ml.L2.cob <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                  X31 + X32 + X33 + (1|SID) | endo(X15, X21) + endo(X22),
+                              data = dataMultilevelIV, verbose = FALSE,
+                              lmer.control = lmer.control) # use different controls for lmer
+
 
 # specify argument "model" in the S3 methods to obtain results for the respective model
 # default is "REF" for all methods
@@ -172,6 +185,8 @@ Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated 
 }
 \seealso{
 \code{\link[lme4]{lmer}} for more details on how to specify the \code{formula} parameter
+
+\code{\link[lme4]{lmerControl}} for more details on how to provide the \code{lmer.control} parameter
 
 \code{\link[REndo:summary.rendo.multilevel]{summary}} for how fitted models are summarized
 }
