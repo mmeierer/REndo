@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![Coverage Status](https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg)](https://codecov.io/github/mmeierer/REndo?branch=development)
 [![CRAN Status](http://www.r-pkg.org/badges/version/REndo)](https://cran.r-project.org/package=REndo)
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/REndo)](https://cran.rstudio.com/web/packages/REndo/index.html)
-
+[![Repo Status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 # The REndo Package
 Endogeneity arises when the independence assumption between an explanatory variable and the error in a statistical model is violated. Among its most common causes are omitted variable bias (e.g. like ability in the returns to education estimation), measurement error (e.g. survey response bias), or simultaneity (e.g. advertising and sales). 
