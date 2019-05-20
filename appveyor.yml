@@ -6,9 +6,14 @@ init:
         $ErrorActionPreference = "Stop"
         Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
         Import-Module '..\appveyor-tool.ps1'
-
-install:   # this is needed.  Don't remove it. Don't know what it does, though.  It is not Bootstrap CSS it seems.
-  ps: Bootstrap
+install:
+  - ps: Bootstrap
+  - cmd: Rscript -e "writeLines('options(repos = \'https://cloud.r-project.org\')', '~/.Rprofile')"
+  - cmd: Rscript -e "getOption('repos')"
+  # The following line is different from the template:
+  # we need to install tic from our local source!
+  - cmd: Rscript -e "install.packages('remotes')"
+  - cmd: Rscript -e "remotes::install_local(getwd(), force = TRUE)"
 
 skip_branch_with_pr: true
 
