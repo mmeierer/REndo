@@ -19,17 +19,7 @@ skip_branch_with_pr: true
 
 environment:
   global:
-    CRAN: http://cloud.r-project.org/
-    WARNINGS_ARE_ERRORS: 1
-    R_CHECK_ARGS: --no-manual
-# R_CHECK_ARGS specified in order to turn off --as-cran (on by default) as that can be slow
-    R_ARCH: x64
-# multiarch is on by default which runs tests on both 32bit R and 64bit R in one x64 job; i.e. very nice and convenient for all.
-# The default for R_ARCH is i386, though, for which multiarch would just compile and test 32bit, hence setting R_ARCH to x64
-    GCC_PATH: mingw_64
-# Default GCC_PATH appears to be gcc-4.6.3 which is now unsupported as from Rtools.exe v3.4.
-    _R_CHECK_NO_STOP_ON_TEST_ERROR_: true
-# continue tests even if some script failed
+    USE_RTOOLS: true
 
   matrix:
 
@@ -37,18 +27,8 @@ environment:
 
   - R_VERSION: devel
 
-before_build:
-  - cmd: ECHO no Revision metadata added to DESCRIPTION
-  #translate from unix: - cmd: ECHO "Revision:" $CI_BUILD_REF >> ./DESCRIPTION
-
 build_script:
-  - set _R_CHECK_FORCE_SUGGESTS_=false
-# Include the subset of Suggests that test.data.table() has tests for :
-  - travis-tool.sh r_install bit64
-  - travis-tool.sh r_install xts
-  - travis-tool.sh r_install nanotime
-  - travis-tool.sh r_install R.utils
-  - travis-tool.sh r_install yaml
+  - travis-tool.sh install_deps
 
 test_script:
   - travis-tool.sh run_tests
