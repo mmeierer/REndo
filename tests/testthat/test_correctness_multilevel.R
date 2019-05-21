@@ -1,6 +1,10 @@
 # Required data ----------------------------------------------------------------------------------------------------------------------
 data("dataMultilevelIV")
 
+all.L3.models <- c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3")
+all.L2.models <- c("REF", "FE_L2", "GMM_L2")
+
+
 # Formula transformations ------------------------------------------------------------------------------------------------------------
 context("Correctness - multilevelIV - Formula transformations")
 
@@ -17,7 +21,8 @@ test_that("Transformations are correct for L2", {
                                                 X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
                                               data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.lhs), coef(correct.res))
-  expect_equal(coef(summary(res.trans.lhs)), coef(summary(correct.res)))
+  for(m in all.L2.models)
+    expect_equal(coef(summary(res.trans.lhs, model = m)), coef(summary(correct.res, model = m)))
 
   # Can handle transformations in exo
   data.altered   <- dataMultilevelIV
@@ -26,7 +31,8 @@ test_that("Transformations are correct for L2", {
                                                 X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
                                               data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.exo), coef(correct.res), check.attributes = FALSE)
-  expect_equal(coef(summary(res.trans.exo)), coef(summary(correct.res)), check.attributes = FALSE)
+  for(m in all.L2.models)
+    expect_equal(coef(summary(res.trans.exo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
 
 
   # Can handle transformations in endo
@@ -36,7 +42,8 @@ test_that("Transformations are correct for L2", {
                                                  X31 + X32 + X33 + (1+X11 | SID) | endo(log(X15), X21),
                                                data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.endo), coef(correct.res), check.attributes = FALSE)
-  expect_equal(coef(summary(res.trans.endo)), coef(summary(correct.res)), check.attributes = FALSE)
+  for(m in all.L2.models)
+    expect_equal(coef(summary(res.trans.endo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
 
   # Can handle transformations in slope
   data.altered   <- dataMultilevelIV
@@ -45,7 +52,8 @@ test_that("Transformations are correct for L2", {
                                                   X31 + X32 + X33 + (1+log(X11) | SID) | endo(X15, X21),
                                                 data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.slope), coef(correct.res), check.attributes = FALSE)
-  expect_equal(coef(summary(res.trans.slope)), coef(summary(correct.res)), check.attributes = FALSE)
+  for(m in all.L2.models)
+    expect_equal(coef(summary(res.trans.slope, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
 })
 
 
@@ -62,7 +70,8 @@ test_that("Transformations are correct for L3", {
                                                  X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15, X21),
                                                data = data.altered, verbose = FALSE), regexp = "singular")
   expect_equal(coef(res.trans.lhs), coef(correct.res), check.attributes = FALSE)
-  expect_equal(coef(summary(res.trans.lhs)), coef(summary(correct.res)), check.attributes = FALSE)
+  for(m in all.L3.models)
+    expect_equal(coef(summary(res.trans.lhs, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
 
   # Can handle transformations in exo
   data.altered   <- dataMultilevelIV
@@ -71,7 +80,8 @@ test_that("Transformations are correct for L3", {
                                                  X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15, X21),
                                                data = data.altered, verbose = FALSE), regexp = "singular")
   expect_equal(coef(res.trans.exo), coef(correct.res), check.attributes = FALSE)
-  expect_equal(coef(summary(res.trans.exo)), coef(summary(correct.res)), check.attributes = FALSE)
+  for(m in all.L3.models)
+    expect_equal(coef(summary(res.trans.exo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
 
 
   # Can handle transformations in endo
@@ -81,7 +91,8 @@ test_that("Transformations are correct for L3", {
                                                   X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(log(X15), X21),
                                                 data = data.altered, verbose = FALSE), regexp = "singular")
   expect_equal(coef(res.trans.endo), coef(correct.res),  check.attributes = FALSE)
-  expect_equal(coef(summary(res.trans.endo)), coef(summary(correct.res)), check.attributes = FALSE)
+  for(m in all.L3.models)
+    expect_equal(coef(summary(res.trans.endo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
 
   # Can handle transformations in slope
   data.altered   <- dataMultilevelIV
@@ -90,7 +101,8 @@ test_that("Transformations are correct for L3", {
                                                    X31 + X32 + X33 + (1+log(X11) | CID) + (1 | SID) | endo(X15, X21),
                                                  data = data.altered, verbose = FALSE), regexp = "singular")
   expect_equal(coef(res.trans.slope), coef(correct.res), check.attributes = FALSE)
-  expect_equal(coef(summary(res.trans.slope)), coef(summary(correct.res)), check.attributes = FALSE)
+  for(m in all.L3.models)
+    expect_equal(coef(summary(res.trans.slope, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
 
 })
 
@@ -121,13 +133,15 @@ test_that("Unsorted data is correct L2", {
 
   # Coefs + summary statistics the same
   expect_equal(coef(res.unsorted), coef(res.sorted))
-  expect_equal(coef(summary(res.unsorted)), coef(summary(res.sorted)))
 
-  # Sorting of fitted / residuals same as input
-  expect_equal(names(fitted(res.sorted)),   rownames(dataMultilevelIV))
-  expect_equal(names(resid(res.sorted)),    rownames(dataMultilevelIV))
-  expect_equal(names(fitted(res.unsorted)), rownames(data.altered))
-  expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
+  for(m in all.L2.models){
+    expect_equal(coef(summary(res.unsorted, model = m)), coef(summary(res.sorted, model = m)))
+    # Sorting of fitted / residuals same as input
+    expect_equal(names(fitted(res.sorted, model = m)),   rownames(dataMultilevelIV))
+    expect_equal(names(resid(res.sorted, model = m)),    rownames(dataMultilevelIV))
+    expect_equal(names(fitted(res.unsorted, model = m)), rownames(data.altered))
+    expect_equal(names(resid(res.unsorted, model = m)),  rownames(data.altered))
+  }
 })
 
 test_that("Unsorted data is correct L3", {
@@ -149,13 +163,15 @@ test_that("Unsorted data is correct L3", {
 
   # Coefs + summary statistics the same
   expect_equal(coef(res.unsorted), coef(res.sorted))
-  expect_equal(coef(summary(res.unsorted)), coef(summary(res.sorted)))
+  for(m in all.L3.models){
+    expect_equal(coef(summary(res.unsorted, model = m)), coef(summary(res.sorted, model = m)))
 
-  # Sorting of fitted / residuals same as input
-  expect_equal(names(fitted(res.sorted)),   rownames(dataMultilevelIV))
-  expect_equal(names(resid(res.sorted)),    rownames(dataMultilevelIV))
-  expect_equal(names(fitted(res.unsorted)), rownames(data.altered))
-  expect_equal(names(resid(res.unsorted)),  rownames(data.altered))
+    # Sorting of fitted / residuals same as input
+    expect_equal(names(fitted(res.sorted, model = m)),   rownames(dataMultilevelIV))
+    expect_equal(names(resid(res.sorted, model = m)),    rownames(dataMultilevelIV))
+    expect_equal(names(fitted(res.unsorted, model = m)), rownames(data.altered))
+    expect_equal(names(resid(res.unsorted, model = m)),  rownames(data.altered))
+  }
 })
 
 

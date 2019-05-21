@@ -193,6 +193,21 @@ test_that("Fail if wrong data type in any of the formula parts", {
 })
 
 
+
+# lmer.control -----------------------------------------------------------------
+context("Inputchecks - multilevelIV - Parameter lmer.control")
+test_that("lmer.control fails for NULL and NA", {
+  expect_error(multilevelIV(formula = f.multilevel, data = dataMultilevelIV, lmer.control = NULL), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = dataMultilevelIV, lmer.control = NA), regexp = "The above errors were encountered!")
+})
+
+test_that("lmer.control fails for other input than from lmerControl", {
+  expect_error(multilevelIV(formula = f.multilevel, data = dataMultilevelIV, lmer.control = list(optimizer="Nelder_Mead")), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = dataMultilevelIV, lmer.control = data.frame(optimizer="Nelder_Mead")), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = f.multilevel, data = dataMultilevelIV, lmer.control = c(optimizer="Nelder_Mead")), regexp = "The above errors were encountered!")
+})
+
+
 # verbose ----------------------------------------------------------------------
 context("Inputchecks - multilevelIV - Parameter verbose")
 test.single.logical(function.to.test = multilevelIV, parameter.name="verbose",
