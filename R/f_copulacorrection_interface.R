@@ -148,50 +148,50 @@
 #' \donttest{
 #' \dontrun{
 #' # Single continuous: log-likelihood optimization
-#' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), data=dataCopCont)
+#' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=10, data=dataCopCont)
 #' # same as above, with start.parameters and number of bootstrappings
-#' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=500, data=dataCopCont,
+#' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=10, data=dataCopCont,
 #'                        start.params = c("(Intercept)"=1, X1=1, X2=-2, P=-1))
 #'
 #' # All following examples fit linear model with Gaussian copulas
 #'
 #' # 2 continuous endogenous regressors
 #' c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2),
-#'                        data=dataCopCont2)
+#'                         num.boots=10, data=dataCopCont2)
 #' # same as above
 #' c2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1)+continuous(P2),
-#'                        data=dataCopCont2)
+#'                         num.boots=10, data=dataCopCont2)
 #'
 #' # single discrete endogenous regressor
-#' d1 <- copulaCorrection(y~X1+X2+P|discrete(P), data=dataCopDis)
+#' d1 <- copulaCorrection(y~X1+X2+P|discrete(P), num.boots=10, data=dataCopDis)
 #'
 #' # two discrete endogenous regressor
 #' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+discrete(P2),
-#'                        data=dataCopDis2)
+#'                         num.boots=10, data=dataCopDis2)
 #' # same as above but less bootstrap runs
-#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 250,
+#' d2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots = 10,
 #'                        data=dataCopDis2)
 #'
 #' # single discrete, single continuous
 #' cd <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2),
-#'                        data=dataCopDisCont)
+#'                         num.boots=10, data=dataCopDisCont)
 #'
 #' # For single continuous only: use own optimization settings (see optimx())
 #' # set maximum number of iterations to 50'000
 #' res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
 #'                            optimx.args = list(itnmax = 50000),
-#'                            data=dataCopCont)
+#'                             num.boots=10, data=dataCopCont)
 #'
 #' # print detailed tracing information on progress
 #'  res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
 #'                             optimx.args = list(control = list(trace = 6)),
-#'                             data=dataCopCont)
+#'                              num.boots=10, data=dataCopCont)
 #'
 #' # use method L-BFGS-B instead of Nelder-Mead and print report every 50 iterations
 #'  res.c1 <- copulaCorrection(y~X1+X2+P|continuous(P),
 #'                             optimx.args = list(method = "L-BFGS-B",
 #'                                                control=list(trace = 2, REPORT=50)),
-#'                             data=dataCopCont)
+#'                              num.boots=10, data=dataCopCont)
 #'
 #' # For coef(), the parameter "complete" determines if only the
 #' # main model parameters or also the auxiliary coefficients are returned

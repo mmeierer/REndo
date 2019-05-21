@@ -177,7 +177,7 @@ The **copula correction** function has the following syntax:
 
 
                 copulaCorrection( y ~ X1 + X2 + P1 + P2 | continuous(P1) + discrete(P2), 
-                data, start.params=c(), num.boots=250, optimx.args=list())
+                data, start.params=c(), num.boots=10, optimx.args=list())
         
 
 The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimization algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. The standard errors reported are obtained through bootstrapping, sice in both cases, the inference is done in two stages. Due to the skewness of the bootstrapped parameters, the confidence intervals reported are the percentile confidence intervals. The variance-covariance matrix is also based on the boostrapped values.
@@ -294,7 +294,7 @@ set.seed(110)
 m4.cc <-  copulaCorrection(read ~  stratio + english + lunch + calworks +
            grades + income + county | continuous(stratio), data= school,
            optimx.args = list(method=c("Nelder-Mead"), itnmax= 60000),
-           verbose = FALSE)
+            num.boots=10, verbose = FALSE)
 
 summary(m4.cc)
 ```
