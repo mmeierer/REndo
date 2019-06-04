@@ -22,7 +22,7 @@ test.optimx.args <- function(function.to.test, parameter.name, formula, function
 
 
   test_that("Fails if optimx.args contains arguments not in optimx", {
-    # Missspelled
+    # Misspelled
     expect_error(do.call(function.to.test, c(setNames(alist(p=list(itmax = 5000)), parameter.name),std.args)), regexp = "The above errors were encountered!")
     expect_error(do.call(function.to.test, c(setNames(alist(p=list(kktol = 0.01)), parameter.name),std.args)), regexp = "The above errors were encountered!")
     expect_error(do.call(function.to.test, c(setNames(alist(p=list(itnmax = 5000, kktol = 0.01)), parameter.name),std.args)), regexp = "The above errors were encountered!")

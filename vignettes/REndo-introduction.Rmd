@@ -122,7 +122,7 @@ Structural parameters are identified by an ordinary two stage least squares regr
 
 The strength of the instrument is proportional to the covariance between $(Z-\bar{Z}) \nu$ and $\nu$, which corresponds to the degree of heteroskedasticity of $\nu$ with respect to $Z$ (Lewbel, 2012). This assumption can be empirically tested. If it is zero or close to zero, the instrument is weak, producing imprecise estimates, with large standard errors. Under homoskedasticity, the parameters of the model are unidentified. But, identification is achieved in the presence of heteroskedasticity related to at least some elements of $X$. 
 
-### 2.2 Instrument Free Methods for hierarchical Data (not cross-classified)###
+### 2.2 Instrument Free Methods for Hierarchical Data (not cross-classified)###
 
 Like in single-level regression, also in multilevel models endogeneity is a concern. The additional problem is that in multilevel models there are multiple independent assumptions involving various random components at different levels. Any moderate correlation between some predictors and a random component or error term can result in a significant bias of the coefficients and of the variance components.
 
@@ -177,7 +177,7 @@ The **copula correction** function has the following syntax:
 
 
                 copulaCorrection( y ~ X1 + X2 + P1 + P2 | continuous(P1) + discrete(P2), 
-                data, start.params=c(), num.boots=250, optimx.args=list())
+                data, start.params=c(), num.boots=10, optimx.args=list())
         
 
 The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here **continuous(P1) + discrete(P2)**. The second argument is the name of the data, the third argument of the function, **start.params**, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); the fourth argument, **num.boots**, also optional, is the number of bootstraps to be performed (the default is 1000). The fifth argument,**optimx.args**, is used in order to choose the optimization algorithm and the maximum number of iterations for the selected algorithm. The default is the Nelder-Mead algorithm with 100.000 iterations. Transformation of explanatory variables, such as I(X), ln(X) are supported. The standard errors reported are obtained through bootstrapping, sice in both cases, the inference is done in two stages. Due to the skewness of the bootstrapped parameters, the confidence intervals reported are the percentile confidence intervals. The variance-covariance matrix is also based on the boostrapped values.
@@ -229,10 +229,11 @@ The **multilevelIV()** function allows the estimation of a multilevel model with
 
 
                 multilevelIV(y ~ X11 + X12 + X21 + X22 + X23 + X31 + X33 + X34 + 
-                (1|CID) + (1|SID) | endo(X12), data)  
+                (1|CID) + (1|SID) | endo(X12), data, lmer.control = lmerControl(list()))  
 
 
-The call has a two-part formula and an argument for data specification. In the formula, the first part is the model specification, with fixed and random parameter specification, and the second part which specifies the regressors assumed endogenous, here **X12**. The function returns the parameter estimates obtained with fixed effects, random effects and the GMM estimator proposed by Kim and Frees (2007), such that a comparison across  models can be done.
+The call has a two-part formula and an argument for data specification. In the formula, the first part is the model specification, with fixed and random parameter specification, and the second part which specifies the regressors assumed endogenous, here **X12**. The function returns the parameter estimates obtained with fixed effects, random effects and the GMM estimator proposed by Kim and Frees (2007), such that a comparison across  models can be done. 
+The user has the possibility to choose the optimization algorithm by specifying it in the **lmer.control** argument. The default is the Nelder Mead algorithm.
 
 ## 4. Examples using Real Data ##
  
@@ -282,21 +283,21 @@ Next, we estimate the same model using the instrument-free methods from **REndo*
 ```{r}
 
 m3.liv <- latentIV(read ~ stratio, data=school)
-summary(m3.liv)
+summary(m3.liv)$coefficients[1:7,]
 
 ```
 
-Indeed, the value returned is equal to **-3.75**. The **latentIV()** function returns, besides the coefficient estimates, also the initial parameter values used in the maximum likelihood optimization and the AIC and BIC. The latter two can also be accessed calling AIC(m3.liv) and BIC(m3.liv). The function also returns the fitted values and the residuals, as well as the confidence interval for the coefficients.
+Indeed, the value returned is equal to **-2.273**. The **latentIV()** function returns, besides the coefficient estimates, also the initial parameter values used in the maximum likelihood optimization and the AIC and BIC. The latter two can also be accessed calling AIC(m3.liv) and BIC(m3.liv). The function also returns the fitted values and the residuals, as well as the confidence interval for the coefficients (the bootstrapped confidence intervals will not be reported here, since we used only 2 bootstraps, and 1000 are needed for reporting standard errors).
 
 Next, we call the **copulaCorrection()** function:
-```{r, message=FALSE}
+```{r, message=FALSE, cache=TRUE}
 set.seed(110)
 m4.cc <-  copulaCorrection(read ~  stratio + english + lunch + calworks +
            grades + income + county | continuous(stratio), data= school,
            optimx.args = list(method=c("Nelder-Mead"), itnmax= 60000),
-           verbose = FALSE)
+            num.boots=2, verbose = FALSE)
 
-summary(m4.cc)
+summary(m4.cc)$coefficients[1:7,]
 ```
 
 The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge (Converge Code = 1). Therefore, the copulaCorrection\(\) allows the user to specify the desired optimization algorithm (see the optimx\(\) function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.
@@ -310,7 +311,7 @@ set.seed(111)
 m5.hetEr <- hetErrorsIV(read ~ stratio + english + lunch + calworks  + income  +
         grades+ county | stratio | IIV(income, english), data=school)
 
-summary(m5.hetEr)
+summary(m5.hetEr)$coefficients[1:7,]
 
 ```
 
@@ -320,7 +321,7 @@ set.seed(112)
 m6.highMoment <- higherMomentsIV(read ~ stratio + english + lunch + calworks + income + 
                  grades + county| stratio | IIV(g = x3,iiv = gp, income), data=school)
 
-summary(m6.highMoment)
+summary(m6.highMoment)$coefficients[1:7,]
 
 ```
 
@@ -331,7 +332,7 @@ The **CASchools** dataset has information at the district level, where the distr
  school$gr08 <- school$grades=="KK-06"
  m7.multilevel <- multilevelIV(read ~ stratio + english + lunch  + income + gr08 + 
            calworks + (1|county) | endo(stratio), data=school)
- summary(m7.multilevel)
+ summary(m7.multilevel)$coefficients[1:7,]
 ```
 
 However, we can use the simulated data that comes with the package in order to give an example of the workings of the **multilevelIV\(\)** function. 
@@ -346,9 +347,9 @@ set.seed(114)
 formula1 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
 X31 + X32 + X33 +  (1 | CID) + (1 | SID) | endo(X15)
 m8.multilevel <- multilevelIV(formula = formula1, data = dataMultilevelIV)
-summary(m8.multilevel)
+coef(m8.multilevel)
 ```
-As we have simulated the data, we know that the true parameter value of the endogenous regressor (X15) is $-1$. Looking at the coefficients of X15 returned by the five models, we see that they form two clusters: one cluster is composed of the level-two fixed effects estimator and the level-two GMM estimator (both return $-0.99$), while the other cluster is composed of the other three estimators, FE_L3, GMM_L3, REF, all three having a value of $-0.59$. The bias of the last three estimators is to be expected since we have simulated the data such that X15 is correlated with the level-two error, to which only FE_L2 and GMM_L2 are robust. 
+As we have simulated the data, we know that the true parameter value of the endogenous regressor (X15) is $-1$. Looking at the coefficients of X15 returned by the five models, we see that they form two clusters: one cluster is composed of the level-two fixed effects estimator and the level-two GMM estimator (both return $-0.975$), while the other cluster is composed of the other three estimators, FE_L3, GMM_L3, REF, all three having a value of $-0.564$. The bias of the last three estimators is to be expected since we have simulated the data such that X15 is correlated with the level-two error, to which only FE_L2 and GMM_L2 are robust. 
 
 To provide guidance for selecting the appropriate estimator, **multilevelIV\(\)** function performs an omitted variable test. The results are returned by the **summary\(\)** function. For example, in a three-level setting, different estimator comparisons are possible:
 
@@ -358,18 +359,19 @@ To provide guidance for selecting the appropriate estimator, **multilevelIV\(\)*
 
 In general, testing for higher level endogeneity in multilevel settings one would start by looking at the results of the omitted variable test comparing REF and FE_L2. If the null hypothesis if rejected, this means the model suffers from omitted variables, either at level two or level three. Next, test whether there are level-two omitted effects, since testing for omitted level three effects relies on the assumption there are no level-two omitted effects. To this end, one can rely on one of the following model comparisons: FE_L2 versus FE_L3 or FE_L2 versus GMM_L2. If no omitted variables at level-two are found, proceed with testing for omitted level-three effects by comparing FE_L3 versus GMM_L3 or GMM_L2 versus GMM_L3.
 
-The **summary\(\)** function takes two arguments: the name of the model object (here m8.multilevel) and the estimation method (here REF). Without a second argument, the summary displays simultaneously the coefficients obtained with all the different estimation approaches (fixed effects, GMM, random effects). The second parameter can take the following values, depending on the model estimated (two or three levels): REF, GMM_L2, GMM_L3, FE_L2, FE_L3. It returns the estimated coefficients under the model specified in the second argument, together with their standard errors and z-scores. Further, it returns the chi-squared statistic, degrees of freedom and p-value of the omitted variable test between the focal model (here REF) and all the other possible options (here FE_L3, GMM_L2 and GMM_L3). 
+In order to have a quick overview of the coefficients returned by each of the possible estimation approaches (fixed effects, GMM, random effects), one should use the **coef\(\)** function, with the name of the estimated model as parameter (here m8.multilevel). 
+For a detailed summary of each estimated model, the **summary\(\)** function should be used, which takes two arguments: the name of the model object (here m8.multilevel) and the estimation method (here REF). The second parameter can take the following values, depending on the model estimated (two or three levels): REF, GMM_L2, GMM_L3, FE_L2, FE_L3. It returns the estimated coefficients under the model specified in the second argument, together with their standard errors and z-scores. Further, it returns the chi-squared statistic, degrees of freedom and p-value of the omitted variable test between the focal model (here REF) and all the other possible options (here FE_L3, GMM_L2 and GMM_L3). 
 
 ```{r}
 summary(m8.multilevel, "REF")
 ``` 
-In the example above, we compare the random effects (REF) with all the other estimators. Testing REF, the most efficient estimator, against the level-two fixed effects estimator, FE_L2, which is the most robust estimator, we are actually testing simultaneously for level-2 and level-3 omitted effects. Since the null hypothesis is rejected with a p-value of $7.28e-05$, the test indicates severe bias in the random effects estimator. 
+In the example above, we compare the random effects (REF) with all the other estimators. Testing REF, the most efficient estimator, against the level-two fixed effects estimator, FE_L2, which is the most robust estimator, we are actually testing simultaneously for level-2 and level-3 omitted effects. Since the null hypothesis is rejected with a p-value of $0.000139$, the test indicates severe bias in the random effects estimator. 
 In order to test for *level-two omitted effects regardless of the presence of level-three omitted effects*, we have to compare the two fixed effects estimators, FE_L2 versus FE_L3: 
 ```{r}
- summary(m8.multilevel,"FE_L2")
+summary(m8.multilevel,"FE_L2")
 ```
 
-The null hypothesis of no omitted level-two effects is rejected (p-value is equal to $1.09e-05$). Therefore, we conclude that there are omitted effects at level-two. This finding is no surprise as we simulated the dataset with the level-two error correlated with X15, which leads to biased FE_L3 coefficients. The omitted variable test between level-two fixed effects and level-two GMM should shows that the null hypothesis of no omitted level-two effects is rejected (p-value is 0). In case of wrongly assuming that an endogenous variable is exogenous, the random effects as well as the GMM estimators will be biased, since the former will be constructed using the wrong set of internal instrumental variables. Consequently, comparing the results of the omitted variable tests when the variable is considered endogenous versus exogenous can indicate whether the variable is indeed endogenous or not. To conclude this example, the test results provide support that the FE_L2 should be used.
+The null hypothesis of no omitted level-two effects is rejected (p-value is equal to $3.92e-05$). Therefore, we conclude that there are omitted effects at level-two. This finding is no surprise as we simulated the dataset with the level-two error correlated with X15, which leads to biased FE_L3 coefficients. The omitted variable test between level-two fixed effects and level-two GMM should shows that the null hypothesis of no omitted level-two effects is rejected (p-value is 0). In case of wrongly assuming that an endogenous variable is exogenous, the random effects as well as the GMM estimators will be biased, since the former will be constructed using the wrong set of internal instrumental variables. Consequently, comparing the results of the omitted variable tests when the variable is considered endogenous versus exogenous can indicate whether the variable is indeed endogenous or not. To conclude this example, the test results provide support that the FE_L2 should be used.
  
  
 ## References ## 

@@ -2,6 +2,8 @@
 #' @title Fitting Multilevel GMM Estimation with Endogenous Regressors
 #'
 #' @template template_param_formuladataverbose
+#' @param lmer.control An output from \code{lmerControl} that will be used to fit the \code{lmer} model from which the variance and
+#' correlation are obtained.
 #'
 #' @description
 #' Estimates multilevel models (max. 3 levels) employing the GMM approach presented in Kim and Frees (2007).
@@ -87,17 +89,19 @@
 #' }
 #'
 #' @seealso \code{\link[lme4]{lmer}} for more details on how to specify the \code{formula} parameter
+#' @seealso \code{\link[lme4]{lmerControl}} for more details on how to provide the \code{lmer.control} parameter
 #' @seealso \code{\link[REndo:summary.rendo.multilevel]{summary}} for how fitted models are summarized
 #'
 #' @return
 #' \code{multilevelIV} returns an object of class "\code{rendo.multilevel}".
 #'
-#' Note that the obtained coefficients are rounded with \code{round(x, digits=getOption("digits"))}.
-#'
 #' The generic accessor functions \code{coef}, \code{fitted}, \code{residuals}, \code{vcov}, \code{confint}, and \code{nobs}, are available.
 #' Note that an additional argument \code{model} with possible values \code{"REF", "FE_L2", "FE_L3", "GMM_L2"}, or \code{"GMM_L3"} is
 #' available for \code{\link[REndo:summary.rendo.multilevel]{summary}}, \code{fitted}, \code{residuals}, \code{confint}, and \code{vcov}
 #' to extract the features for the specified model.
+#'
+#' Note that the obtained coefficients are rounded with \code{round(x, digits=getOption("digits"))}.
+#'
 #'
 #' An object of class \code{rendo.multilevel} is returned that is a list and contains the following components:
 #'
@@ -138,6 +142,15 @@
 #'                               X32 + X33 + (1|SID) | endo(X15, X21) + endo(X22),
 #'                           data = dataMultilevelIV, verbose = FALSE)
 #'
+#' # Fit above model with different settings for lmer()
+#' lmer.control <- lme4::lmerControl(optimizer="nloptwrap",
+#'                                   optCtrl=list(algorithm="NLOPT_LN_COBYLA",
+#'                                                xtol_rel=1e-6))
+#' res.ml.L2.cob <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+#'                                   X31 + X32 + X33 + (1|SID) | endo(X15, X21) + endo(X22),
+#'                               data = dataMultilevelIV, verbose = FALSE,
+#'                               lmer.control = lmer.control) # use different controls for lmer
+#'
 #'
 #' # specify argument "model" in the S3 methods to obtain results for the respective model
 #' # default is "REF" for all methods
@@ -158,13 +171,16 @@
 #'
 #' @references
 #' Hausman J (1978). “Specification Tests in Econometrics.” Econometrica, 46(6), 1251–1271.
+#'
 #' Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.
 #'
-#' @importFrom lme4 lmer VarCorr lFormula nobars
+#' @importFrom lme4 lmer VarCorr lFormula nobars lmerControl
 #' @importFrom Formula as.Formula
 #' @importFrom data.table as.data.table
 #' @export
-multilevelIV <- function(formula, data, verbose=TRUE){
+multilevelIV <- function(formula, data, lmer.control=lmerControl(optimizer = "Nelder_Mead", optCtrl=list(maxfun=100000)), verbose=TRUE){
+  # As default optimizer for consistent estimates use NelderMead (100k evals to be sure)
+
   .SD <- NULL # cran silence
 
   cl <- match.call()
@@ -191,6 +207,7 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   check_err_msg(checkinput_multilevel_formula(formula=formula))
   check_err_msg(checkinput_multilevel_data(data=data))
   check_err_msg(checkinput_multilevel_dataVSformula(formula=formula, data=data))
+  check_err_msg(checkinput_multilevel_lmercontrol(lmer.control=lmer.control))
   check_err_msg(checkinput_multilevel_verbose(verbose = verbose))
 
 
@@ -265,7 +282,11 @@ multilevelIV <- function(formula, data, verbose=TRUE){
   # Has to use the original data because dt.model.data already contains the data
   #   with applied transformations
 
-  res.lmer <- tryCatch(lme4::lmer(formula=f.lmer, data=data, REML = TRUE),
+  if(verbose)
+    message("Fitting linear mixed-effects model.")
+
+  res.lmer <- tryCatch(lme4::lmer(formula = f.lmer, data=data, REML = TRUE,
+                                  control = lmer.control),
                        error = function(e)return(e))
   if(is(res.lmer, "error"))
     stop("lme4::lmer() could not be fitted with error: ",

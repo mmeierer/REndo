@@ -15,6 +15,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+[![Travis Build Status](https://travis-ci.org/mmeierer/REndo.svg?branch=development)](https://travis-ci.org/mmeierer/REndo)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/mmeierer/REndo?branch=development&svg=true)](https://ci.appveyor.com/project/mmeierer/REndo)
+[![Coverage Status](https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg)](https://codecov.io/github/mmeierer/REndo?branch=development)
+[![CRAN Status](http://www.r-pkg.org/badges/version/REndo)](https://cran.r-project.org/package=REndo)
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/REndo)](https://cran.r-project.org/package=REndo)
+[![Repo Status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
 # The REndo Package
 Endogeneity arises when the independence assumption between an explanatory variable and the error in a statistical model is violated. Among its most common causes are omitted variable bias (e.g. like ability in the returns to education estimation), measurement error (e.g. survey response bias), or simultaneity (e.g. advertising and sales). 
 
@@ -37,7 +44,10 @@ REndo implements the following instrument-free methods:
 
 The new version of **REndo** comes with a lot of improvements in terms of code optimization as well as different syntax for all functions. 
 
-Below, we present the new syntax for each function call:
+
+## Walk-Through
+
+Below, we present the syntax for each of the 5 implemented instrument-free methods:
 
 ### **Latent Instrumental Variables** 
 

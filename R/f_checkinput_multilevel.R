@@ -186,3 +186,20 @@ checkinput_multilevel_model <- function(object, model){
 
   return(err.msg)
 }
+
+
+#' @importFrom methods is
+checkinput_multilevel_lmercontrol <- function(lmer.control){
+  # Not checked in detail, expect it to be an output from lmerControl
+
+  # Check it is something
+  if(missing(lmer.control))
+    return("Please provide an ouput from lmerControl() for lmer.control.")
+  if(is.null(lmer.control))
+    return("Please provide an ouput from lmerControl() for lmer.control.")
+
+  if(!is(lmer.control, "lmerControl"))
+    return("Please provide an ouput from lmerControl() for lmer.control.")
+
+  return(c())
+}

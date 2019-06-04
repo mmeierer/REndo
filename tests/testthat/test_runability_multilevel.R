@@ -5,16 +5,50 @@ data("dataMultilevelIV")
 context("Runability - multilevelIV - Runability")
 
 test_that("Works with 2 levels", {
-  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                X31 + X32 + X33 + (1 | SID) | endo(X15),
-                              data = dataMultilevelIV, verbose = FALSE))
+  res.ml2 <- expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                           X31 + X32 + X33 + (1 | SID) | endo(X15),
+                                         data = dataMultilevelIV, verbose = FALSE))
 })
 
 test_that("Works with 3 levels", {
-  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                          X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15),
-                        data = dataMultilevelIV, verbose = FALSE))
+  res.ml3 <- expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                          X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15),
+                                        data = dataMultilevelIV, verbose = FALSE))
+  assign("res.ml3", res.ml3, envir = parent.frame())
 })
+
+
+test_that("Works with user given lmer.control and provides different results", {
+  skip_on_cran()
+  # 2 levels
+  expect_silent(res.cobyla.l2 <-
+                  multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                               X31 + X32 + X33 + (1 | SID) | endo(X15),
+                               data = dataMultilevelIV, verbose = FALSE,
+                               lmer.control = lmerControl(optimizer="nloptwrap",
+                                                          optCtrl=list(algorithm="NLOPT_LN_COBYLA",
+                                                                       xtol_rel=1e-6))))
+  # different estimates
+  expect_silent(res.ml2 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                          X31 + X32 + X33 + (1 | SID) | endo(X15),
+                                        data = dataMultilevelIV, verbose = FALSE))
+  expect_false(isTRUE(all.equal(coef(res.ml2), coef(res.cobyla.l2))))
+
+  # 3 levels
+  expect_silent(res.cobyla.l3 <-
+                  multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                 X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15),
+                               data = dataMultilevelIV, verbose = FALSE,
+                               lmer.control = lmerControl(optimizer="nloptwrap",
+                                                          optCtrl=list(algorithm="NLOPT_LN_COBYLA",
+                                                                       xtol_rel=1e-6))))
+  # different estimates
+  expect_silent(res.ml3 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
+                                          X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15),
+                                        data = dataMultilevelIV, verbose = FALSE))
+  expect_false(isTRUE(all.equal(coef(res.ml3), coef(res.cobyla.l3))))
+})
+
 
 
 test_that("Works without intercept", {
@@ -77,7 +111,7 @@ test_that("Works with group ids as factor", {
 
 test_that("Works with slopes as factors and chars", {
   skip_on_cran()
-  dataMultilevelIV$charSLP   <- rep(LETTERS[1:4], nrow(dataMultilevelIV)/4)
+  dataMultilevelIV$charSLP   <- rep(LETTERS[1:2], nrow(dataMultilevelIV)/2)
   dataMultilevelIV$factorSLP <- as.factor(dataMultilevelIV$charSLP)
   # intercept + category slope
   expect_message(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +

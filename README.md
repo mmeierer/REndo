@@ -1,6 +1,19 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![Travis Build
+Status](https://travis-ci.org/mmeierer/REndo.svg?branch=development)](https://travis-ci.org/mmeierer/REndo)
+[![AppVeyor Build
+Status](https://ci.appveyor.com/api/projects/status/github/mmeierer/REndo?branch=development&svg=true)](https://ci.appveyor.com/project/mmeierer/REndo)
+[![Coverage
+Status](https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg)](https://codecov.io/github/mmeierer/REndo?branch=development)
+[![CRAN
+Status](http://www.r-pkg.org/badges/version/REndo)](https://cran.r-project.org/package=REndo)
+[![CRAN
+Downloads](https://cranlogs.r-pkg.org/badges/REndo)](https://cran.r-project.org/package=REndo)
+[![Repo
+Status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+
 # The REndo Package
 
 Endogeneity arises when the independence assumption between an
@@ -34,7 +47,10 @@ REndo implements the following instrument-free methods:
 The new version of **REndo** comes with a lot of improvements in terms
 of code optimization as well as different syntax for all functions.
 
-Below, we present the new syntax for each function call:
+## Walk-Through
+
+Below, we present the syntax for each of the 5 implemented
+instrument-free methods:
 
 ### **Latent Instrumental Variables**
 
@@ -62,8 +78,7 @@ argument, **num.boots**, also optional, is the number of bootstraps to
 be performed (the default is 1000). Of course, defining the endogenous
 regressors depends on the number of endogenous regressors and their
 assumed distribution. Transformations of the explanatory variables, such
-as I(X), ln(X) are
-    supported.
+as I(X), ln(X) are supported.
 
 ### **Higher Moments**
 
@@ -115,9 +130,9 @@ where
 ![\\frac{1}{x}](https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7Bx%7D
 "\\frac{1}{x}") and should be specified in the **g** argument of the
 third RHS of the formula, as **x2, x3, lnx** or **1/x**. In case of
-internal instruments built only from the endogenous regressor, e.g.
-**p2**, or from the response and the endogenous regressor, like for
-example in **yp**, there is no need to specify **g** or the set of
+internal instruments built only from the endogenous regressor,
+e.g. **p2**, or from the response and the endogenous regressor, like
+for example in **yp**, there is no need to specify **g** or the set of
 exogenous regressors in the **IIV()** part of the formula. The function
 returns a set of tests for checking the validity of the instruments and
 the endogeneity assumption.
@@ -138,8 +153,7 @@ moments approach, allowing the inclusion of additional external
 variables is a convenient feature of the function, since it increases
 the efficiency of the estimates. Transformation of the explanatory
 variables, such as I(X), ln(X) are possible both in the model
-specification as well as in the IIV()
-specification.
+specification as well as in the IIV() specification.
 
 ### **Multilevel GMM**
 

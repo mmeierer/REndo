@@ -7,13 +7,13 @@ copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo.ps
   rho             <- params["rho"]
 
   # Constrain rho to [0,1] and sigma to [0, +Inf]
-  #   Because the vcov is not derived from the hessian, the hessian is not caluclated and
-  #     returning NA is not a problem
-  if(rho > 1 | rho < 0)
-    return(NA_real_)
+  #   (incl bound because can be very large which flips to 0 and 1)
+  #   The vcov is not derived from the hessian anymore, but BFGS still does not accept
+  #     NA/Inf
+  rho <- exp(rho)
+  rho <- rho / (1+rho)
 
-  if(sigma < 0)
-    return(NA_real_)
+  sigma <- exp(sigma)
 
   # epsilon, incl. endo regressor ------------------------------------------------------------
 
