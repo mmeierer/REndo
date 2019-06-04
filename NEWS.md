@@ -1,3 +1,17 @@
+# CHANGES IN REndo 2.2.1
+
+## SIGNIFICANT USER-VISIBLE CHANGES
+* To tweak the lmer model fit in `multilevelIV` to their linking, users can supply a parameter `lmer.control`
+
+## NEW FEATURES
+* Warning in `confint` if there are NAs in the bootstrapped estimates for `copulaCorrection`
+* Updated vignette
+
+## BUG FIXES
+* The coefficient estimates for `multilevelIV` are more consistent and independent of data sorting due to different standard settings for fitting `lmer`
+* Bootstrapped parameter estimates for `copualCorrection` result in fewer NAs when using L-BFGS-B as optimization method
+
+
 # CHANGES IN REndo 2.2.0
 
 ## SIGNIFICANT USER-VISIBLE CHANGES
