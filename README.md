@@ -10,7 +10,7 @@ Status](https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg)]
 [![CRAN
 Status](http://www.r-pkg.org/badges/version/REndo)](https://cran.r-project.org/package=REndo)
 [![CRAN
-Downloads](https://cranlogs.r-pkg.org/badges/REndo)](https://cran.rstudio.com/web/packages/REndo/index.html)
+Downloads](https://cranlogs.r-pkg.org/badges/REndo)](https://cran.r-project.org/package=REndo)
 [![Repo
 Status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
