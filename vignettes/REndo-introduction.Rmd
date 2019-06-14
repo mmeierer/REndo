@@ -265,7 +265,7 @@ school$stratio <- with(CASchools, students/teachers)
 m1.ols <- lm(read ~ stratio +  english + lunch + grades + income + calworks + county,
              data=school)
 
-summary(m1.ols)
+summary(m1.ols)$coefficients[1:7,]
 ```
 The OLS coefficient estimate for the student\/teacher ratio is **-0.30**. Now, using **expenditure** as external IV, we can estimate a two-stage least squares model, using **ivreg()**:
  
@@ -274,7 +274,7 @@ m2.2sls <- ivreg(read ~ stratio +  english + lunch + grades + income + calworks 
            county| expenditure +  english + lunch + grades + income + calworks + 
            county , data=school)
 
-summary(m2.2sls)
+summary(m2.2sls)$coefficients[1:7,]
 ``` 
 
 The external IV method returns an estimate for the assumed endogenous regressor equal to **-1.13**, very different from the OLS estimate.
