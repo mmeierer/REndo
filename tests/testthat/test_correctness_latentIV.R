@@ -43,6 +43,8 @@ test_that("Differently sorted data produces same results", {
               coef(res.orig, complete = TRUE)["theta5"] <= 1)
 })
 
+
+# Predict ----------------------------------------------------------------------------------------------------
 context("Correctness - latentIV - Predict")
 
 test_that("No newdata results in fitted values", {

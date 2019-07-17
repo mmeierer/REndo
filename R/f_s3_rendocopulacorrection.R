@@ -156,3 +156,55 @@ print.summary.rendo.copula.correction <- function(x, digits=max(3L, getOption("d
   invisible(x)
 }
 
+#' @title Predict method for Models using the Gaussian Copula Approach
+#'
+#' @description
+#'
+#' Predicted values based on linear models with endogenous regressors estimated using
+#' the gaussian copula.
+#'
+#' @param object Object of class inheriting from "rendo.copula.correction"
+#' @param newdata An optional data frame in which to look for variables with which to predict.
+#' If omitted, the fitted values are returned.
+#' @param ... ignored, for consistency with the generic function.
+#'
+#' @return
+#' \code{predict.copula.correction} produces a vector of predictions
+#'
+#' @seealso The model fitting function \code{\link[REndo:copulaCorrection]{copulaCorrection}}
+#'
+#' @examples
+#' data("dataCopCont")
+#'
+#' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=10,
+#'                        data=dataCopCont)
+#'
+#' # returns the fitted values
+#' predict(c1)
+#'
+#' # using the data used for fitting also for predicting,
+#' # correctly results in fitted values
+#' all.equal(predict(c1, dataCopCont), fitted(c1)) # TRUE
+#'
+#' @importFrom stats model.frame model.matrix coef
+#' @export
+predict.rendo.copula.correction <- function(object, newdata,...){
+
+  if(length(list(...)))
+    warning("The arguments in ... are ignored.", call. = FALSE, immediate. = TRUE)
+
+  if(missing(newdata)){
+    return(fitted(object))
+  }else{
+    if(object$copula.case == 1){
+      # MLE fitted
+      F.main <- formula(formula(object), rhs=1, lhs=0)
+      mf <- model.frame(formula = F.main, newdata)
+      X  <- model.matrix(object = F.main, mf)
+      # complete=FALSE - only use main model params w/o rho & sigma
+      return(drop(X %*% coef(object, complete = FALSE)))
+    }else{
+      stop("Not yet implemented!", call. = FALSE)
+    }
+  }
+}
