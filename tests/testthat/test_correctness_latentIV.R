@@ -72,7 +72,12 @@ test_that("Correct structure of predictions", {
   expect_true(all(names(pred.1) == rownames(dataLatentIV)))
 })
 
+test_that("Correct when using transformations in the formula", {
+  expect_silent(lat.1 <- latentIV(y~I((P+10)/3), data=dataLatentIV, verbose=FALSE))
+  expect_equal(predict(lat.1, newdata=dataLatentIV), fitted(lat.1))
+})
 
+# Example data ---------------------------------------------------------------------------------
 context("Correctness - latentIV - Example data")
 
 test_that("Retrieve correct parameters", {

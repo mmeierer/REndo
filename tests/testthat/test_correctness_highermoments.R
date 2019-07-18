@@ -59,5 +59,14 @@ test_that("Correct structure of predictions", {
   expect_true(all(names(pred.1) == rownames(dataHigherMoments)))
 })
 
+test_that("Correct when using transformations in the formula", {
+  # transformation in regressor
+  expect_silent(higher.1 <- higherMomentsIV(y~I((X1+1)/2)+X2+P|P|IIV(iiv=gp, g=x2, I((X1+1)/2)), data=dataHigherMoments, verbose=FALSE))
+  expect_equal(predict(higher.1, newdata=dataHigherMoments), fitted(higher.1))
+  # transformation in endogenous
+  expect_silent(higher.1 <- higherMomentsIV(y~X1+X2+I((P+14)/3)|I((P+14)/3)|IIV(iiv=gp, g=x2, X1), data=dataHigherMoments, verbose=FALSE))
+  expect_equal(predict(higher.1, newdata=dataHigherMoments), fitted(higher.1))
+})
+
 
 # ** iiv built correctly

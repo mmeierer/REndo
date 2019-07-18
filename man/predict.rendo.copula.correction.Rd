@@ -22,6 +22,8 @@ Predicted values based on linear models with endogenous regressors estimated usi
 the gaussian copula.
 }
 \examples{
+\donttest{
+\dontrun{
 data("dataCopCont")
 
 c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=10,
@@ -33,6 +35,7 @@ predict(c1)
 # using the data used for fitting also for predicting,
 # correctly results in fitted values
 all.equal(predict(c1, dataCopCont), fitted(c1)) # TRUE
+}}
 
 }
 \seealso{
