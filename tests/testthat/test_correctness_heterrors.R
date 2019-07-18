@@ -50,10 +50,57 @@ test_that("Differently sorted data produces same results", {
 })
 
 
+# Predict ------------------------------------------------------------------------------------------------
+context("Correctness - hetErrorsIV - Predict")
+
+test_that("No newdata results in fitted values", {
+  expect_silent(het.1 <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.1), fitted(het.1))
+
+  expect_silent(het.2 <- hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.2), fitted(het.2))
+})
+
+test_that("Same prediction data as for fitting results in fitted values", {
+  expect_silent(het.1 <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.1, newdata=dataHetIV), fitted(het.1))
+
+  expect_silent(het.2 <- hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.2, newdata=dataHetIV), fitted(het.2))
+})
+
+test_that("Same results as ivreg with useless iiv dummies", {
+  expect_silent(het.1 <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.1, newdata=dataHetIV),
+               AER:::predict.ivreg(het.1, newdata = cbind(dataHetIV,IIV.X1=-11)))
+
+  expect_silent(het.2 <- hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.2, newdata=dataHetIV),
+               AER:::predict.ivreg(het.2, newdata = cbind(dataHetIV,IIV.X1=1.23, IIV.X2=2.34)))
+})
+
+test_that("Correct structure of predictions", {
+  expect_silent(het.1 <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
+  expect_silent(pred.1 <- predict(het.1, dataHetIV))
+  expect_true(is.numeric(pred.1))
+  expect_true(length(pred.1) == nrow(dataHetIV))
+  expect_true(all(names(pred.1) == names(fitted(het.1))))
+  expect_true(all(names(pred.1) == rownames(dataHetIV)))
+})
+
+test_that("Correct when using transformations in the formula", {
+  # transformation in regressor
+  expect_silent(het.1 <- hetErrorsIV(y~I((X1+14)/3)+X2+P|P|IIV(I((X1+14)/3)), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.1, newdata=dataHetIV), fitted(het.1))
+  # transformation in endogenous
+  expect_silent(het.1 <- hetErrorsIV(y~X1+X2+I((P+14)/3)|I((P+14)/3)|IIV(X1), data=dataHetIV, verbose=FALSE))
+  expect_equal(predict(het.1, newdata=dataHetIV), fitted(het.1))
+})
 
 
-context("Correctness - hetErrorsIV - Example data")
-#
+# Example data ---------------------------------------------------------------------------------
+# context("Correctness - hetErrorsIV - Example data")
+# **TODO: data docu wrong?
 # test_that("Retrieve correct parameters", {
 #   expect_silent(res.het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
 #   expect_equal(coef(res.het), c("(Intercept)" = 2, X1=-1.5, X2=-3, P=-1), tolerance = 0.01)

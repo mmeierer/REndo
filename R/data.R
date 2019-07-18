@@ -7,7 +7,7 @@
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
 #' @name dataCopCont
 #' @usage dataCopCont
-#' @format A data frame with 2500 observations on 5 variables:
+#' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -29,7 +29,7 @@
 #'  of \code{P2} is equal to \code{a2 = 0.8}.
 #' @name dataCopCont2
 #' @usage dataCopCont2
-#' @format A data frame with 2500 observations on 6 variables:
+#' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -51,7 +51,7 @@
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor \code{P1} is set to \code{a1 = -1} and of \code{P2} is set to \code{a2=0.8}.
 #' @name dataCopDisCont
 #' @usage dataCopDisCont
-#' @format A data frame with 2500 observations on 6 variables:
+#' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -72,7 +72,7 @@
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
 #' @name dataCopDis
 #' @usage dataCopDis
-#' @format A data frame with 2500 observations on 5 variables:
+#' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -93,7 +93,7 @@
 #'  \code{a2 = 0.8} for \code{P2}.
 #' @name dataCopDis2
 #' @usage dataCopDis2
-#' @format A data frame with 2500 observations on 6 variables:
+#' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -114,7 +114,7 @@
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
 #' @name dataHigherMoments
 #' @usage dataHigherMoments
-#' @format A data frame with 2500 observations on 5 variables:
+#' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -139,7 +139,7 @@
 #'  and \code{a1 = -1} for \code{P}.
 #' @name dataLatentIV
 #' @usage dataLatentIV
-#' @format A data frame with 2500 observations on 4 variables:
+#' @format A data frame with 2500 observations on 3 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{P}}{a numeric vector representing the endogenous variable.}

@@ -194,5 +194,51 @@ print.summary.rendo.latent.IV <- function(x, digits=max(3L, getOption("digits")-
 }
 
 
+#' @title Predict method for Models using the Latent Instrumental Variables approach
+#'
+#' @description
+#' Predicted values based on linear models estimated using the latent instrumental
+#' variables approach for a single endogenous regressor.
+#'
+#' @param object Object of class inheriting from "rendo.latent.IV"
+#' @param newdata An optional data frame in which to look for variables with which to predict.
+#' If omitted, the fitted values are returned.
+#' @param ... ignored, for consistency with the generic function.
+#'
+#' @return
+#' \code{predict.rendo.latent.IV} produces a vector of predictions
+#'
+#' @seealso The model fitting function \code{\link[REndo:latentIV]{latentIV}}
+#'
+#' @examples
+#' data("dataLatentIV")
+#'
+#' lat  <- latentIV(y ~ P, data = dataLatentIV)
+#'
+#' # returns the fitted values
+#' predict(lat)
+#'
+#' # using the data used for fitting also for predicting,
+#' # correctly results in fitted values
+#' all.equal(predict(lat, dataLatentIV), fitted(lat)) # TRUE
+#'
+#' @importFrom stats delete.response model.frame model.matrix coef
+#' @export
+predict.rendo.latent.IV <- function(object, newdata, ...){
+  if(length(list(...)))
+    warning("The arguments in ... are ignored.", call. = FALSE, immediate. = TRUE)
+
+  if(missing(newdata)){
+    return(fitted(object))
+  }else{
+    mf <- model.frame(formula = delete.response(object$formula), newdata)
+    X  <- model.matrix(object = delete.response(object$formula), mf)
+    # complete=FALSE - only use main model params w/o pi and thetas
+    return(drop(X %*% coef(object, complete = FALSE)))
+  }
+}
+
+
+
 
 

@@ -4,7 +4,7 @@
 \name{dataLatentIV}
 \alias{dataLatentIV}
 \title{Simulated Dataset with One Endogenous Continuous Regressor}
-\format{A data frame with 2500 observations on 4 variables:
+\format{A data frame with 2500 observations on 3 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}
 \item{\code{P}}{a numeric vector representing the endogenous variable.}
