@@ -174,6 +174,8 @@ print.summary.rendo.copula.correction <- function(x, digits=max(3L, getOption("d
 #' @seealso The model fitting function \code{\link[REndo:copulaCorrection]{copulaCorrection}}
 #'
 #' @examples
+#' \donttest{
+#' \dontrun{
 #' data("dataCopCont")
 #'
 #' c1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=10,
@@ -185,6 +187,7 @@ print.summary.rendo.copula.correction <- function(x, digits=max(3L, getOption("d
 #' # using the data used for fitting also for predicting,
 #' # correctly results in fitted values
 #' all.equal(predict(c1, dataCopCont), fitted(c1)) # TRUE
+#' }}
 #'
 #' @importFrom stats model.frame model.matrix coef
 #' @export
@@ -196,15 +199,14 @@ predict.rendo.copula.correction <- function(object, newdata,...){
   if(missing(newdata)){
     return(fitted(object))
   }else{
-    if(object$copula.case == 1){
       # MLE fitted
       F.main <- formula(formula(object), rhs=1, lhs=0)
       mf <- model.frame(formula = F.main, newdata)
       X  <- model.matrix(object = F.main, mf)
       # complete=FALSE - only use main model params w/o rho & sigma
-      return(drop(X %*% coef(object, complete = FALSE)))
-    }else{
-      stop("Not yet implemented!", call. = FALSE)
-    }
+      #   unfortunately, for the c2 case this does not work, because the pstars are always part
+      #   of coef (because they should be printed in summary). Therefore, subset the coefs by names.
+      coefs <- coef(object, complete = FALSE)[colnames(X)]
+      return(drop(X %*% coefs))
   }
 }
