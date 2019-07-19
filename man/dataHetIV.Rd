@@ -18,7 +18,7 @@ dataHetIV
 A dataset with two exogenous regressors,
  \code{X1},\code{X2}, one endogenous, continuous regressor \code{P}, and the dependent variable \code{y}.
  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
- \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+ \code{b2 = 3} and the coefficient of the endogenous regressor, \code{P}, is equal to \code{a1 = -1}.
 }
 \author{
 Raluca Gui \email{raluca.gui@business.uzh.ch}

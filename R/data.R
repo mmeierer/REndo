@@ -111,7 +111,15 @@
 #'  \code{X1},\code{X2}, and one endogenous, continuous regressor \code{P}.
 #'  An intercept and a dependent variable, \code{y}, are also included.
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
-#'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+#'  \code{b2 = 3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+#'
+#' @examples
+#' data("dataHigherMoments")
+#' # to recover the parameters,
+#' #   on average over many simulations
+#' higherMomentsIV(formula = y ~ X1 + X2 + P|P|IIV(iiv=yp),
+#'                data=dataHigherMoments)
+#'
 #' @name dataHigherMoments
 #' @usage dataHigherMoments
 #' @format A data frame with 2500 observations on 4 variables:
@@ -124,13 +132,6 @@
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataHigherMoments"
-
-# All the other datasets dont have it either
-# @example
-# data("dataHigherMoments")
-# resultsHM <- higherMoments(y ~ X1 + X2 + P| IIV(X1+X2), data=dataHigherMoments)
-# summary(resultsHM)
-
 
 #' @title Simulated Dataset with One Endogenous Continuous Regressor
 #' @description A dataset with one endogenous regressor \code{P}, an instrument \code{Z}
@@ -153,7 +154,7 @@
 #' @description A dataset with two exogenous regressors,
 #'  \code{X1},\code{X2}, one endogenous, continuous regressor \code{P}, and the dependent variable \code{y}.
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
-#'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+#'  \code{b2 = 3} and the coefficient of the endogenous regressor, \code{P}, is equal to \code{a1 = -1}.
 #' @name dataHetIV
 #' @usage dataHetIV
 #' @format A data frame with 2500 observations on 4 variables:
