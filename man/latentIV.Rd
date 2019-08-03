@@ -96,7 +96,7 @@ Additional parameters used during model fitting and printed in \code{summary} ar
 }
 \examples{
 \donttest{
-data(dataLatentIV)
+data("dataLatentIV")
 
 # function call without any initial parameter values
 l  <- latentIV(y ~ P, data = dataLatentIV)

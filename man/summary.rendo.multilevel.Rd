@@ -49,7 +49,7 @@ between the specified model and each other model.
 }
 \examples{
 
-data(dataMultilevelIV)
+data("dataMultilevelIV")
 # Fit two levels model
 res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
                               X32 + X33 + (1|SID) | endo(X15),

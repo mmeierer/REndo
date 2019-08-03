@@ -119,7 +119,7 @@
 #'
 #' @examples
 #' \donttest{
-#' data(dataMultilevelIV)
+#' data("dataMultilevelIV")
 #'
 #' # Two levels
 #' res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
