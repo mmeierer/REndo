@@ -12,7 +12,7 @@
 \item{\code{P}}{a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}
 }}
 \usage{
-dataCopCont
+data("dataCopCont")
 }
 \description{
 A dataset with two exogenous regressors,

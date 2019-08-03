@@ -12,7 +12,7 @@
 \item{\code{P}}{a numeric vector, continuous and endogenous regressor, normally distributed.}
 }}
 \usage{
-dataHetIV
+data("dataHetIV")
 }
 \description{
 A dataset with two exogenous regressors,

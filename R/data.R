@@ -6,7 +6,7 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
 #' @name dataCopCont
-#' @usage dataCopCont
+#' @usage data("dataCopCont")
 #' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -28,7 +28,7 @@
 #'  \code{b2 = -3}. The coefficient of the endogenous regressor \code{P1} is equal to \code{a1 = -1} and
 #'  of \code{P2} is equal to \code{a2 = 0.8}.
 #' @name dataCopCont2
-#' @usage dataCopCont2
+#' @usage data("dataCopCont2")
 #' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -50,7 +50,7 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor \code{P1} is set to \code{a1 = -1} and of \code{P2} is set to \code{a2=0.8}.
 #' @name dataCopDisCont
-#' @usage dataCopDisCont
+#' @usage data("dataCopDisCont")
 #' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -71,7 +71,7 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
 #' @name dataCopDis
-#' @usage dataCopDis
+#' @usage data("dataCopDis")
 #' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -92,7 +92,7 @@
 #'  \code{b2 = -3}. The true parameter values for the coefficients of the endogenous regressors are \code{a1 = -1} for \code{P1} and
 #'  \code{a2 = 0.8} for \code{P2}.
 #' @name dataCopDis2
-#' @usage dataCopDis2
+#' @usage data("dataCopDis2")
 #' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -121,7 +121,7 @@
 #'                data=dataHigherMoments)
 #'
 #' @name dataHigherMoments
-#' @usage dataHigherMoments
+#' @usage data("dataHigherMoments")
 #' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -139,7 +139,7 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 3} for the intercept
 #'  and \code{a1 = -1} for \code{P}.
 #' @name dataLatentIV
-#' @usage dataLatentIV
+#' @usage data("dataLatentIV")
 #' @format A data frame with 2500 observations on 3 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -156,7 +156,7 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = 3} and the coefficient of the endogenous regressor, \code{P}, is equal to \code{a1 = -1}.
 #' @name dataHetIV
-#' @usage dataHetIV
+#' @usage data("dataHetIV")
 #' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -173,7 +173,7 @@
 #' It has 2645 observations, clustered into 40 level-three variables and 1312 observations at level two. The endogenous regressor is \code{X15} with a true
 #' coefficient value of -1.
 #' @name dataMultilevelIV
-#' @usage dataMultilevelIV
+#' @usage data("dataMultilevelIV")
 #' @format A data frame with 2645 observations clustered into 40 level-three variables and 1312 level-two variables.
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}

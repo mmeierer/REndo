@@ -13,7 +13,7 @@
 \item{\code{P2}}{a numeric vector, having a Poisson distribution with parameter lambda equal to 3, and endogenous.}
 }}
 \usage{
-dataCopDis2
+data("dataCopDis2")
 }
 \description{
 A dataset with two exogenous regressors,

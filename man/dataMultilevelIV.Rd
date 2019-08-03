@@ -23,7 +23,7 @@ It true parameter value equals to \eqn{-1} and it has a correlation with the lev
 \item{\code{SID}}{a numeric vector identifying each level-three observations.}
 \item{\code{CID}}{a numeric vector identifying each level-two observations.}}}
 \usage{
-dataMultilevelIV
+data("dataMultilevelIV")
 }
 \description{
 A dataset simulated to exemplify the use of the \code{multilevelIV()} function.

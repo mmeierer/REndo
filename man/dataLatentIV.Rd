@@ -11,7 +11,7 @@
 \item{\code{Z}}{a numeric vector used in the construction of the endogenous variable, P.}
 }}
 \usage{
-dataLatentIV
+data("dataLatentIV")
 }
 \description{
 A dataset with one endogenous regressor \code{P}, an instrument \code{Z}

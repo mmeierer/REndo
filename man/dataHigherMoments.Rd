@@ -12,7 +12,7 @@
 \item{\code{P}}{a numeric vector, continuous and endogenous regressor, normally distributed.}
 }}
 \usage{
-dataHigherMoments
+data("dataHigherMoments")
 }
 \description{
 A dataset with two exogenous regressors,
