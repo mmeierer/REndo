@@ -1,9 +1,8 @@
 # Comment from the authors
-This is version 2.2.1 which improves the previous version 2.2.0 with better estimation behavior when using BFGS in `copulaCorrection` (fewer NAs), possibility for the user to control the `lmer` estimation in `multilevelIV`, more consistent parameter estimates of `multilevelIV`, corrected documentation (vignette), and other minor bug fixes.
-
+This is version 2.3.0 which improves the previous version 2.2.1 with support for predictions through method `predict()` for all models in this package. Wrongly calculated fitted values and residuals for the enhanced OLS case of method `copulaCorrection` were fixed, and the documentation improved.
 
 ## Test environments
-* local install on OS X 10.14.5, R 3.6.0, devtools 2.0.2
+* local install on OS X 10.14.6, R 3.6.0, devtools 2.1.0
 * win-builder (rdevel, release, oldrelease)
 * rhub (all)
 
