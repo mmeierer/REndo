@@ -84,13 +84,29 @@ copulaCorrection_linearmodel <- function(F.formula, data, names.vars.continuous,
     close(pb)
 
   # Return object ------------------------------------------------------------------------------------------------
+  # Coefs to calculate fitted and residuals are withouth pstar
+  #   however, pstar names are part of names.main.coefs so that they are shown in the coef table in summary()
+  names.main.coefs <- setdiff(names(coef(res.lm.real.data)),
+                              make.names(c(paste0("PStar.", names.vars.discrete,   sep=""),
+                                           paste0("PStar.", names.vars.continuous, sep=""))))
+
+  # Only coefs and data without pstar
+  X <- model.matrix(res.lm.real.data)[, names.main.coefs, drop=FALSE]
+  main.coefs <- coef(res.lm.real.data)[names.main.coefs]
+
+  res.lm.mf  <- model.frame(res.lm.real.data)
+  y <- model.response(res.lm.mf)
+
+  fitted.vals   <- drop(X %*% main.coefs)
+  residual.vals <- drop(y - fitted.vals)
+
   return(new_rendo_copula_correction(call             = cl,
                                      F.formula        = F.formula,
-                                     mf               = model.frame(res.lm.real.data),
+                                     mf               = res.lm.mf,
                                      names.main.coefs = names(coef(res.lm.real.data)),
                                      coefficients     = coef(res.lm.real.data),
-                                     residuals        = residuals(res.lm.real.data),
-                                     fitted.values    = fitted(res.lm.real.data),
+                                     residuals        = residual.vals,
+                                     fitted.values    = fitted.vals,
 
                                      boots.params     = boots.params,
                                      copula.case      = 2,

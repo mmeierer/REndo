@@ -4,7 +4,7 @@
 \name{dataHigherMoments}
 \alias{dataHigherMoments}
 \title{Simulated Dataset with One Endogenous Regressor}
-\format{A data frame with 2500 observations on 5 variables:
+\format{A data frame with 2500 observations on 4 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}
 \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -12,14 +12,22 @@
 \item{\code{P}}{a numeric vector, continuous and endogenous regressor, normally distributed.}
 }}
 \usage{
-dataHigherMoments
+data("dataHigherMoments")
 }
 \description{
 A dataset with two exogenous regressors,
  \code{X1},\code{X2}, and one endogenous, continuous regressor \code{P}.
  An intercept and a dependent variable, \code{y}, are also included.
  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
- \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+ \code{b2 = 3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+}
+\examples{
+data("dataHigherMoments")
+# to recover the parameters,
+#   on average over many simulations
+higherMomentsIV(formula = y ~ X1 + X2 + P|P|IIV(iiv=yp),
+               data=dataHigherMoments)
+
 }
 \author{
 Raluca Gui \email{raluca.gui@business.uzh.ch}

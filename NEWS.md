@@ -1,3 +1,14 @@
+# CHANGES IN REndo 2.3.0
+
+## SIGNIFICANT USER-VISIBLE CHANGES
+* Add support for predictions through method `predict` for every model
+
+## BUG FIXES
+* Fix wrong calculations for the fitted values and residuals in the enhanced OLS cases of `copulaCorrection`
+* Improved documentation
+
+
+
 # CHANGES IN REndo 2.2.1
 
 ## SIGNIFICANT USER-VISIBLE CHANGES
@@ -10,6 +21,7 @@
 ## BUG FIXES
 * The coefficient estimates for `multilevelIV` are more consistent and independent of data sorting due to different standard settings for fitting `lmer`
 * Bootstrapped parameter estimates for `copualCorrection` result in fewer NAs when using L-BFGS-B as optimization method
+
 
 
 # CHANGES IN REndo 2.2.0
@@ -29,6 +41,7 @@
 * The vcov matrix for `latentIV` is corrected for the transformation in `theta5`.
 * The bootstrapping in `copulaCorrection` case 1 now creates samples of the same length as the original data
 * The (percentile) confidence intervals and vcov for results from `copulaCorrection` now rely on bootstraping
+
 
 
 # CHANGES IN REndo 2.1.0

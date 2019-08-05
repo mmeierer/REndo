@@ -4,7 +4,7 @@
 \name{dataCopCont2}
 \alias{dataCopCont2}
 \title{Simulated Dataset with Two Endogenous Continuous Regressor}
-\format{A data frame with 2500 observations on 6 variables:
+\format{A data frame with 2500 observations on 5 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}
 \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -13,7 +13,7 @@
 \item{\code{P2}}{a numeric vector, continuous and endogenous having T-distribution with 3 degrees of freedom.}
 }}
 \usage{
-dataCopCont2
+data("dataCopCont2")
 }
 \description{
 A dataset with two exogenous regressors,

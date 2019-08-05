@@ -124,6 +124,124 @@ test_that("Differently sorted data produces same results C2", {
 })
 
 
+# Predict ----------------------------------------------------------------------------------------------------
+context("Correctness - copulaCorrection - Predict")
+
+# * C1 --------------------------------------------------------------------------------------------------------
+test_that("No newdata results in fitted values C1", {
+  expect_warning(c1.1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=2, data=dataCopCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c1.1), fitted(c1.1))
+
+  expect_warning(c1.2 <- copulaCorrection(y~X1+X2+P-1|continuous(P), num.boots=2, data=dataCopCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c1.2), fitted(c1.2))
+})
+
+test_that("Same prediction data as for fitting results in fitted values C1", {
+  expect_warning(c1.1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=2, data=dataCopCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c1.1,dataCopCont), fitted(c1.1))
+
+  expect_warning(c1.2 <- copulaCorrection(y~X1+X2+P-1|continuous(P), num.boots=2, data=dataCopCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c1.2,dataCopCont), fitted(c1.2))
+
+})
+
+test_that("Correct when using transformations in the formula C1", {
+  # transformation in regressor
+  expect_warning(c1.1 <- copulaCorrection(y~I((X1+1)/2)+X2+P|continuous(P), num.boots=2, data=dataCopCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c1.1,dataCopCont), fitted(c1.1))
+  # transformation in endogenous
+  expect_warning(c1.1 <- copulaCorrection(y~X1+X2+log(P+10)|continuous(log(P+10)), num.boots=2, data=dataCopCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c1.1,dataCopCont), fitted(c1.1))
+})
+
+test_that("Correct structure of predictions C1", {
+  expect_warning(c1.1 <- copulaCorrection(y~X1+X2+P|continuous(P), num.boots=2, data=dataCopCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_silent(pred.1 <- predict(c1.1, dataCopCont))
+  expect_true(is.numeric(pred.1))
+  expect_true(length(pred.1) == nrow(dataCopCont))
+  expect_true(all(names(pred.1) == names(fitted(c1.1))))
+  expect_true(all(names(pred.1) == rownames(dataCopCont)))
+})
+
+# * C2 --------------------------------------------------------------------------------------------------------
+test_that("No newdata results in fitted values C2", {
+  # 2 cont
+  expect_warning(c2.cont2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2), num.boots=2, data=dataCopCont2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.cont2), fitted(c2.cont2))
+
+  expect_warning(c2.dis2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots=2, data=dataCopDis2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.dis2), fitted(c2.dis2))
+
+  expect_warning(c2.discont <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), num.boots=2, data=dataCopDisCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.discont), fitted(c2.discont))
+})
+
+test_that("Same prediction data as for fitting results in fitted values C2", {
+  expect_warning(c2.cont2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2), num.boots=2, data=dataCopCont2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.cont2,dataCopCont2), fitted(c2.cont2))
+
+  expect_warning(c2.dis2 <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1, P2), num.boots=2, data=dataCopDis2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.dis2,dataCopDis2), fitted(c2.dis2))
+
+  expect_warning(c2.discont <- copulaCorrection(y~X1+X2+P1+P2|discrete(P1)+continuous(P2), num.boots=2, data=dataCopDisCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.discont,dataCopDisCont), fitted(c2.discont))
+})
+
+test_that("Correct when using transformations in the formula C2", {
+  skip_on_cran()
+  # Transformation in endogenous
+  expect_warning(c2.cont2 <- copulaCorrection(y~X1+X2+log(P1+50)+P2|continuous(log(P1+50), P2), num.boots=2, data=dataCopCont2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.cont2,dataCopCont2), fitted(c2.cont2))
+
+  expect_warning(c2.dis2 <- copulaCorrection(y~X1+X2+P1+log(P2+10)|discrete(P1, log(P2+10)), num.boots=2, data=dataCopDis2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.dis2,dataCopDis2), fitted(c2.dis2))
+
+  expect_warning(c2.discont <- copulaCorrection(y~X1+X2+P1+log(P2+50)|discrete(P1)+continuous(log(P2+50)), num.boots=2, data=dataCopDisCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.discont,dataCopDisCont), fitted(c2.discont))
+
+  # Transformation in regular
+  expect_warning(c2.cont2 <- copulaCorrection(y~X1+I((X2+10)/3)+P1+P2|continuous(P1, P2), num.boots=2, data=dataCopCont2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.cont2,dataCopCont2), fitted(c2.cont2))
+
+  expect_warning(c2.dis2 <- copulaCorrection(y~X1+I((X2+10)/3)+P1+P2|discrete(P1, P2), num.boots=2, data=dataCopDis2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.dis2,dataCopDis2), fitted(c2.dis2))
+
+  expect_warning(c2.discont <- copulaCorrection(y~X1+I((X2+10)/3)+P1+P2|discrete(P1)+continuous(P2), num.boots=2, data=dataCopDisCont, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_equal(predict(c2.discont,dataCopDisCont), fitted(c2.discont))
+})
+
+test_that("Correct structure of predictions C2", {
+  expect_warning(c2.cont2 <- copulaCorrection(y~X1+X2+P1+P2|continuous(P1, P2), num.boots=2, data=dataCopCont2, verbose = FALSE),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_silent(pred.1 <- predict(c2.cont2, dataCopCont2))
+  expect_true(is.numeric(pred.1))
+  expect_true(length(pred.1) == nrow(dataCopCont2))
+  expect_true(all(names(pred.1) == names(fitted(c2.cont2))))
+  expect_true(all(names(pred.1) == rownames(dataCopCont2)))
+})
+
+
+
+
 # test_that("Differently sorted data produces same results Dis", {
 #
 #   data.altered <- dataCopDis2

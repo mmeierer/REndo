@@ -240,3 +240,64 @@ test_that("Reproduce results by Kim and Frees 2007", {
   expect_equal(coef(res.kf)[, "REF"], correct.coefs[, "REF"], tolerance=0.1)
 
 })
+
+
+
+# Predict ----------------------------------------------------------------------------------------
+context("Correctness - multilevelIV - Predict")
+expect_silent(res.m2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
+                                       X32 + X33 + (1|SID) | endo(X15),
+                                     data = dataMultilevelIV, verbose = FALSE))
+expect_silent(res.m3 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
+                                     X32 + X33 + (1| CID) + (1|SID) | endo(X15),
+                                   data = dataMultilevelIV, verbose = FALSE))
+test_that("No newdata results in fitted values", {
+  for(m in all.L2.models)
+    expect_equal(predict(res.m2, model=m), fitted(res.m2, model=m))
+
+  for(m in all.L3.models)
+    expect_equal(predict(res.m3, model=m), fitted(res.m3, model=m))
+})
+
+
+test_that("Same prediction data as for fitting results in fitted values", {
+  for(m in all.L2.models)
+    expect_equal(predict(res.m2, newdata=dataMultilevelIV,model=m), fitted(res.m2, model=m))
+
+  for(m in all.L3.models)
+    expect_equal(predict(res.m3, newdata=dataMultilevelIV, model=m), fitted(res.m3, model=m))
+})
+
+test_that("Correct structure of predictions", {
+  for(m in all.L2.models){
+    expect_silent(pred.2 <- predict(res.m2, newdata=dataMultilevelIV, model=m))
+    expect_true(is.numeric(pred.2))
+    expect_true(length(pred.2) == nrow(dataMultilevelIV))
+    expect_true(all(names(pred.2) == names(fitted(res.m2, model=m))))
+    expect_true(all(names(pred.2) == rownames(dataMultilevelIV)))
+  }
+
+  for(m in all.L3.models){
+    expect_silent(pred.3 <- predict(res.m3, newdata=dataMultilevelIV, model=m))
+    expect_true(is.numeric(pred.3))
+    expect_true(length(pred.3) == nrow(dataMultilevelIV))
+    expect_true(all(names(pred.3) == names(fitted(res.m3, model=m))))
+    expect_true(all(names(pred.3) == rownames(dataMultilevelIV)))
+  }
+})
+
+test_that("Correct when using transformations in the formula", {
+  skip_on_cran()
+  # do endogenous and non-endogenous at the same time
+  expect_silent(res.m2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + I((X15+14)/4) + X21 + X22 + X23 +
+                                         X24 + log(X31) + X32 + X33 + (1|SID) | endo(I((X15+14)/4)),
+                                       data = dataMultilevelIV, verbose = FALSE))
+  for(m in all.L2.models)
+    expect_equal(predict(res.m2, newdata=dataMultilevelIV,model=m), fitted(res.m2, model=m))
+
+  expect_silent(res.m3 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + I((X15+14)/4) + X21 + X22 + X23 +
+                                         X24 + log(X31) + X32 + X33 + (1| CID) + (1|SID) | endo(I((X15+14)/4)),
+                                       data = dataMultilevelIV, verbose = FALSE))
+  for(m in all.L3.models)
+    expect_equal(predict(res.m3, newdata=dataMultilevelIV, model=m), fitted(res.m3, model=m))
+})

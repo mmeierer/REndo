@@ -141,7 +141,7 @@ print.rendo.multilevel <- function(x, digits = max(3L, getOption("digits") - 3L)
 #'
 #' @examples
 #'
-#' data(dataMultilevelIV)
+#' data("dataMultilevelIV")
 #' # Fit two levels model
 #' res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
 #'                               X32 + X33 + (1|SID) | endo(X15),
@@ -259,4 +259,62 @@ coef.summary.rendo.multilevel <- function(object, ...){
 vcov.summary.rendo.multilevel <- function(object, ...){
   # Model is determined in summary already
   return(object$vcov)
+}
+
+#' @title Predict method for Multilevel GMM Estimations
+#'
+#' @description
+#' Predicted values based on multilevel models employing the GMM approach for hierarchical data with
+#' endogenous regressors.
+#'
+#' @param object Object of class inheriting from "rendo.multilevel"
+#' @param newdata An optional data frame in which to look for variables with which to predict.
+#' If omitted, the fitted values for the specified model are returned.
+#' @param model character string to indicate for which fitted model predictions are made.
+#' Possible values are: \code{"REF", "FE_L2", "FE_L3", "GMM_L2"}, or \code{"GMM_L3"}.
+#' @param ... ignored, for consistency with the generic function.
+#'
+#' @return
+#' \code{predict.rendo.multilevel} produces a vector of predictions
+#'
+#' @seealso The model fitting function \code{\link[REndo:multilevelIV]{multilevelIV}}
+#'
+#' @examples
+#' data("dataMultilevelIV")
+#'
+#' # Two levels
+#' res.ml.L2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
+#'                           X32 + X33 + (1|SID) | endo(X15),
+#'                           data = dataMultilevelIV, verbose = FALSE)
+#' predict(res.ml.L2, model = "FE_L2")
+#'
+#' # using the data used for fitting also for predicting,
+#' #    correctly results in fitted values
+#' all.equal(predict(res.ml.L2, dataMultilevelIV, model = "GMM_L2"),
+#'           fitted(res.ml.L2, model = "GMM_L2")) # TRUE
+#'
+#' @importFrom Formula as.Formula
+#' @importFrom lme4 lFormula
+#' @export
+predict.rendo.multilevel <- function(object, newdata, model=c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...){
+
+  check_err_msg(checkinput_multilevel_model(object=object,model=model))
+  model <- match.arg(arg = model, choices = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), several.ok = FALSE)
+
+  if(length(list(...)))
+    warning("The arguments in ... are ignored.", call. = FALSE, immediate. = TRUE)
+
+  if(missing(newdata)){
+    return(fitted(object, model=model))
+  }else{
+
+    model.coef <- coef(object)[, model, drop=TRUE]
+
+    # Get X by processing newdata by lme4 (same steps as when fitting the model)
+    f.lmer  <- formula(Formula::as.Formula(object$formula), lhs = 1, rhs = 1)
+    l4.form <- lme4::lFormula(formula = f.lmer, data=newdata)
+    X       <- l4.form$X
+
+    return(drop(X %*% model.coef))
+  }
 }

@@ -6,8 +6,8 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
 #' @name dataCopCont
-#' @usage dataCopCont
-#' @format A data frame with 2500 observations on 5 variables:
+#' @usage data("dataCopCont")
+#' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -28,8 +28,8 @@
 #'  \code{b2 = -3}. The coefficient of the endogenous regressor \code{P1} is equal to \code{a1 = -1} and
 #'  of \code{P2} is equal to \code{a2 = 0.8}.
 #' @name dataCopCont2
-#' @usage dataCopCont2
-#' @format A data frame with 2500 observations on 6 variables:
+#' @usage data("dataCopCont2")
+#' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -50,8 +50,8 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor \code{P1} is set to \code{a1 = -1} and of \code{P2} is set to \code{a2=0.8}.
 #' @name dataCopDisCont
-#' @usage dataCopDisCont
-#' @format A data frame with 2500 observations on 6 variables:
+#' @usage data("dataCopDisCont")
+#' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -71,8 +71,8 @@
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
 #'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
 #' @name dataCopDis
-#' @usage dataCopDis
-#' @format A data frame with 2500 observations on 5 variables:
+#' @usage data("dataCopDis")
+#' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -92,8 +92,8 @@
 #'  \code{b2 = -3}. The true parameter values for the coefficients of the endogenous regressors are \code{a1 = -1} for \code{P1} and
 #'  \code{a2 = 0.8} for \code{P2}.
 #' @name dataCopDis2
-#' @usage dataCopDis2
-#' @format A data frame with 2500 observations on 6 variables:
+#' @usage data("dataCopDis2")
+#' @format A data frame with 2500 observations on 5 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -111,10 +111,18 @@
 #'  \code{X1},\code{X2}, and one endogenous, continuous regressor \code{P}.
 #'  An intercept and a dependent variable, \code{y}, are also included.
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
-#'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+#'  \code{b2 = 3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+#'
+#' @examples
+#' data("dataHigherMoments")
+#' # to recover the parameters,
+#' #   on average over many simulations
+#' higherMomentsIV(formula = y ~ X1 + X2 + P|P|IIV(iiv=yp),
+#'                data=dataHigherMoments)
+#'
 #' @name dataHigherMoments
-#' @usage dataHigherMoments
-#' @format A data frame with 2500 observations on 5 variables:
+#' @usage data("dataHigherMoments")
+#' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
@@ -125,21 +133,14 @@
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataHigherMoments"
 
-# All the other datasets dont have it either
-# @example
-# data("dataHigherMoments")
-# resultsHM <- higherMoments(y ~ X1 + X2 + P| IIV(X1+X2), data=dataHigherMoments)
-# summary(resultsHM)
-
-
 #' @title Simulated Dataset with One Endogenous Continuous Regressor
 #' @description A dataset with one endogenous regressor \code{P}, an instrument \code{Z}
 #'  used to build \code{P}, an intercept and a dependent variable, \code{y}.
 #'  The true parameter values for the coefficients are: \code{b0 = 3} for the intercept
 #'  and \code{a1 = -1} for \code{P}.
 #' @name dataLatentIV
-#' @usage dataLatentIV
-#' @format A data frame with 2500 observations on 4 variables:
+#' @usage data("dataLatentIV")
+#' @format A data frame with 2500 observations on 3 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{P}}{a numeric vector representing the endogenous variable.}
@@ -153,9 +154,9 @@
 #' @description A dataset with two exogenous regressors,
 #'  \code{X1},\code{X2}, one endogenous, continuous regressor \code{P}, and the dependent variable \code{y}.
 #'  The true parameter values for the coefficients are: \code{b0 = 2}, \code{b1 = 1.5},
-#'  \code{b2 = -3} and the coefficient of the endogenous regressor, P, is equal to \code{a1 = -1}.
+#'  \code{b2 = 3} and the coefficient of the endogenous regressor, \code{P}, is equal to \code{a1 = -1}.
 #' @name dataHetIV
-#' @usage dataHetIV
+#' @usage data("dataHetIV")
 #' @format A data frame with 2500 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
@@ -172,7 +173,7 @@
 #' It has 2645 observations, clustered into 40 level-three variables and 1312 observations at level two. The endogenous regressor is \code{X15} with a true
 #' coefficient value of -1.
 #' @name dataMultilevelIV
-#' @usage dataMultilevelIV
+#' @usage data("dataMultilevelIV")
 #' @format A data frame with 2645 observations clustered into 40 level-three variables and 1312 level-two variables.
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}

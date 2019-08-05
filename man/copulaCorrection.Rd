@@ -43,7 +43,7 @@ contains the following components:
 \item{start.params}{A named vector with the initial set of parameters used to optimize the log-likelihood function.}
 \item{res.optimx}{The result object returned by the function \code{optimx} after optimizing the log-likelihood function.}
 
-For all other cases, the returned object further contains the following components:
+For all other cases, the returned object further contains the following component:
 \item{res.lm.real.data}{The linear model fitted on the original data together with generated p.star data.}
 
 The function \code{summary} can be used to obtain and print a summary of the results.
