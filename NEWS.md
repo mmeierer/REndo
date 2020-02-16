@@ -1,3 +1,7 @@
+# CHANGES IN REndo 2.3.1
+* None. Version bump in order to resubmit to CRAN after package was archived.
+
+
 # CHANGES IN REndo 2.3.0
 
 ## SIGNIFICANT USER-VISIBLE CHANGES

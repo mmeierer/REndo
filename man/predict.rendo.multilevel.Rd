@@ -4,8 +4,12 @@
 \alias{predict.rendo.multilevel}
 \title{Predict method for Multilevel GMM Estimations}
 \usage{
-\method{predict}{rendo.multilevel}(object, newdata, model = c("REF",
-  "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...)
+\method{predict}{rendo.multilevel}(
+  object,
+  newdata,
+  model = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"),
+  ...
+)
 }
 \arguments{
 \item{object}{Object of class inheriting from "rendo.multilevel"}

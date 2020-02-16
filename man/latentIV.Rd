@@ -4,8 +4,13 @@
 \alias{latentIV}
 \title{Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables}
 \usage{
-latentIV(formula, data, start.params = c(), optimx.args = list(),
-  verbose = TRUE)
+latentIV(
+  formula,
+  data,
+  start.params = c(),
+  optimx.args = list(),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. Of class "formula".}
