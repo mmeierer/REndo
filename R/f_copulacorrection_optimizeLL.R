@@ -75,7 +75,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
 
   # Definition: Optimization function -----------------------------------------------------------------
-  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo){
+  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo,
+                              do.kkt){
 
     # P.star -----------------------------------------------------------------------------------
     # Calculate p.star that is part of the LL already here because it is constant
@@ -94,6 +95,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
                                 itnmax  = 100000,
                                 hessian = FALSE,
                                 control = list(trace  = 0,
+                                               kkt = do.kkt,
                                                dowarn = FALSE),
                                 vec.y   = vec.data.y,
                                 m.data.exo.endo     = m.model.data.exo.endo,
@@ -123,7 +125,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Run once for coef estimates with real data---------------------------------------------------------
   res.real.data.optimx  <- fct.optimize.LL(optimx.start.params = start.params, vec.data.y = vec.data.y,
                                           m.model.data.exo.endo = m.model.data.exo.endo,
-                                          vec.data.endo = vec.data.endo)
+                                          vec.data.endo = vec.data.endo,
+                                          do.kkt = TRUE)
 
   # Bootstrap num.boots times -------------------------------------------------------------------------
   if(verbose){
@@ -143,7 +146,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
       # return coefs as vector / first row (only 1 method used)
       return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y,
                                   m.model.data.exo.endo = i.m.model.data.exo.endo,
-                                  vec.data.endo = i.vec.data.endo))[1,])
+                                  vec.data.endo = i.vec.data.endo,
+                                  do.kkt = FALSE))[1,])
     })
 
   if(verbose)
