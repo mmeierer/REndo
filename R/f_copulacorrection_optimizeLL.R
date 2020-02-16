@@ -33,7 +33,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   m.model.data.exo.endo   <- model.matrix(object = F.formula, data = mf, lhs=0, rhs = 1)
   vec.data.endo           <- m.model.data.exo.endo[, name.var.continuous, drop=TRUE]
 
-  # Warn if the data is binomial=only has to values=dummy
+  # Warn if the data is binomial=only has two values=dummy
   #   Cannot really check this before data is transformed
   checkinput_copulacorrection_warnbinomialendodata(data = mf,
                                                    names.vars.continuous = name.var.continuous,
