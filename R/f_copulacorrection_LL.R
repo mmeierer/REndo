@@ -1,10 +1,11 @@
 #' @importFrom stats pnorm qnorm dnorm
-copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo.pstar){
+copulaCorrection_LL <- function(params, vec.y, m.data.exo.endo, vec.data.endo.pstar,
+                                param.pos.data, param.pos.sigma, param.pos.rho){
 
   # Extract params from optimx inputs --------------------------------------------------------
-  params.endo.exo <- params[setdiff(names(params), c("sigma", "rho"))]
-  sigma           <- params["sigma"]
-  rho             <- params["rho"]
+  params.endo.exo <- params[param.pos.data]
+  sigma           <- params[param.pos.sigma]
+  rho             <- params[param.pos.rho]
 
   # Constrain rho to [0,1] and sigma to [0, +Inf]
   #   (incl bound because can be very large which flips to 0 and 1)
