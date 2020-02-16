@@ -80,9 +80,6 @@ hetErrorsIV <- function(formula, data, verbose=TRUE){
 
   cl <- match.call()
 
-  formula.rhs.iiv  <- 3
-  formula.rhs.eiv  <- 4
-
   # Input checks ----------------------------------------------------------------------------------------------------
   check_err_msg(checkinput_heterrors_formula(formula=formula))
   check_err_msg(checkinput_heterrors_data(data=data))
