@@ -89,9 +89,19 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
     #   and returning Inf/NA breaks L-BFGS-B. Hence these transformations.
     #   This implies that the same transformations need to be applied to the found solution
     #     to report the values that are really used in the LL
+
     param.pos.rho   <- which(names(optimx.start.params) == "rho")
     param.pos.sigma <- which(names(optimx.start.params) == "sigma")
     param.pos.data  <- which(!(names(optimx.start.params) %in% c("rho", "sigma")))
+
+    # assign(x = "params", optimx.start.params, envir = .GlobalEnv)
+    # assign(x = "vec_y", vec.data.y, envir = .GlobalEnv)
+    # assign(x = "m_data_exo_endo", m.model.data.exo.endo, envir = .GlobalEnv)
+    # assign(x = "vec_data_endo_pstar", vec.data.endo.pstar, envir = .GlobalEnv)
+    # assign(x = "param_pos_data", param.pos.data, envir = .GlobalEnv)
+    # assign(x = "param_pos_sigma", param.pos.sigma, envir = .GlobalEnv)
+    # assign(x = "param_pos_rho", param.pos.rho, envir = .GlobalEnv)
+
     optimx.default.args <- list(par     = optimx.start.params,
                                 fn      = copulaCorrection_LL,
                                 method  = "Nelder-Mead",
@@ -100,12 +110,19 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
                                 control = list(trace  = 0,
                                                kkt = do.kkt,
                                                dowarn = FALSE),
-                                vec.y   = vec.data.y,
-                                m.data.exo.endo     = m.model.data.exo.endo,
-                                vec.data.endo.pstar = vec.data.endo.pstar,
-                                param.pos.rho = param.pos.rho,
-                                param.pos.sigma = param.pos.sigma,
-                                param.pos.data = param.pos.data)
+                                # vec.y   = vec.data.y,
+                                # m.data.exo.endo     = m.model.data.exo.endo,
+                                # vec.data.endo.pstar = vec.data.endo.pstar,
+                                # param.pos.rho = param.pos.rho,
+                                # param.pos.sigma = param.pos.sigma,
+                                # param.pos.data = param.pos.data)
+
+                                vec_y = vec.data.y,
+                                m_data_exo_endo = m.model.data.exo.endo,
+                                vec_data_endo_pstar = vec.data.endo.pstar,
+                                param_pos_data = param.pos.data,
+                                param_pos_sigma = param.pos.sigma,
+                                param_pos_rho = param.pos.rho)
 
     # Update default args with user given args for optimx
     optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)
