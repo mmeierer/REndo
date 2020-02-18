@@ -31,4 +31,8 @@
 #' @docType package
 #' @name REndo
 #'
+#' @useDynLib REndo, .registration=TRUE
+#' @importFrom Rcpp sourceCpp
+#' @import RcppEigen
+#'
 NULL
