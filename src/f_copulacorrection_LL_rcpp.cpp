@@ -33,16 +33,6 @@ double copulaCorrection_LL_rcpp(const Rcpp::NumericVector& params,
   Rcpp::CharacterVector m_colnames = Rcpp::colnames(m_data_exo_endo);
   params_endo_exo = params_endo_exo[m_colnames];
 
-  // R function matrix multiplication
-  // Rcpp::Environment base("package:base");
-  // Rcpp::Function R_matmult = base["%*%"];
-  // Rcpp::NumericVector matMultRes = R_matmult(m_data_exo_endo, params_endo_exo);
-
-  // arma:: Matrix multiplication
-  // const arma::mat arma_data_exo_endo = Rcpp::as<arma::mat>(m_data_exo_endo);
-  // const arma::vec arma_param_endo_exo = Rcpp::as<arma::vec>(params_endo_exo);
-  // Rcpp::NumericVector matMultRes = Rcpp::wrap(arma_data_exo_endo * arma_param_endo_exo);
-
   // Short excursion to RcppEigen: Matrix multiplication
   const Eigen::MatrixXd A = Rcpp::as<Eigen::MatrixXd>(m_data_exo_endo);
   const Eigen::VectorXd B = Rcpp::as<Eigen::VectorXd>(params_endo_exo);
