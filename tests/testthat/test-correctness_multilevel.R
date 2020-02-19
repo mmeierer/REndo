@@ -243,6 +243,7 @@ test_that("Reproduce results by Kim and Frees 2007", {
 
 
 
+
 # Predict ----------------------------------------------------------------------------------------
 context("Correctness - multilevelIV - Predict")
 expect_silent(res.m2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
@@ -301,3 +302,4 @@ test_that("Correct when using transformations in the formula", {
   for(m in all.L3.models)
     expect_equal(predict(res.m3, newdata=dataMultilevelIV, model=m), fitted(res.m3, model=m))
 })
+

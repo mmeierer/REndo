@@ -4,8 +4,7 @@
 \alias{summary.rendo.multilevel}
 \title{Summarizing Multilevel GMM Estimation with Endogenous Regressors Model Fits}
 \usage{
-\method{summary}{rendo.multilevel}(object, model = c("REF", "FE_L2",
-  "FE_L3", "GMM_L2", "GMM_L3"), ...)
+\method{summary}{rendo.multilevel}(object, model = c("REF", "FE_L2", "FE_L3", "GMM_L2", "GMM_L3"), ...)
 }
 \arguments{
 \item{object}{an object of class "rendo.multilevel", usually, a result of a call to \code{multilevelIV}.}

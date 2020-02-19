@@ -4,8 +4,12 @@
 \alias{multilevelIV}
 \title{Fitting Multilevel GMM Estimation with Endogenous Regressors}
 \usage{
-multilevelIV(formula, data, lmer.control = lmerControl(optimizer =
-  "Nelder_Mead", optCtrl = list(maxfun = 1e+05)), verbose = TRUE)
+multilevelIV(
+  formula,
+  data,
+  lmer.control = lmerControl(optimizer = "Nelder_Mead", optCtrl = list(maxfun = 1e+05)),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}

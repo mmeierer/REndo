@@ -242,6 +242,7 @@ test_that("Correct structure of predictions C2", {
 
 
 
+
 # test_that("Differently sorted data produces same results Dis", {
 #
 #   data.altered <- dataCopDis2
