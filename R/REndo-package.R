@@ -33,6 +33,7 @@
 #'
 #' @useDynLib REndo, .registration=TRUE
 #' @importFrom Rcpp sourceCpp
-#' @import RcppEigen
 #'
 NULL
+
+#@import RcppEigen
