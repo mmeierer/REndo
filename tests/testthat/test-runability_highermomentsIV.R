@@ -29,7 +29,7 @@ test_that("Works with non-numeric in exogenous not in IIV", {
   # Factor/Chars/ Logicals (as indicate dichotomous variable (=factor))
   # No exo used in IIV
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10), verbose=FALSE))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data=data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=FALSE), verbose=FALSE))
+  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data = data.frame(y=1:10, X1=as.character(1:10), X2=1:10, P=1:10, stringsAsFactors=FALSE), verbose=FALSE))
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10), verbose=FALSE))
   # Other exo used in IIV
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data= data.frame(y=1:10, X1=factor(1:10), X2=1:10, P=1:10), verbose=FALSE))
@@ -37,6 +37,18 @@ test_that("Works with non-numeric in exogenous not in IIV", {
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X2),data= data.frame(y=1:10, X1=as.logical(0:9), X2=1:10, P=1:10), verbose=FALSE))
 })
 
+test_that("Works with NA in not needed columns", {
+  dataHigherMoments.na <- dataHigherMoments
+  dataHigherMoments.na[5, "X2"] <- NA_real_
+  expect_silent(higherMomentsIV(y~X1+P|P|IIV(g=lnx,iiv=gp, X1), verbose = FALSE,
+                                data = dataHigherMoments.na))
+
+  dataHigherMoments.inf <- dataHigherMoments
+  dataHigherMoments.inf[5, "X2"] <- Inf
+  expect_silent(higherMomentsIV(y~X1+P|P|IIV(g=lnx,iiv=gp, X1), verbose = FALSE,
+                                data = dataHigherMoments.inf))
+
+})
 
 test_that("Multiple exo in single IIV equal single IIV with multiple exo", {
   expect_silent(res.single  <- higherMomentsIV(y~X1+X2+X3+P|P|IIV(g=x2,iiv=g,X1)+IIV(g=x2,iiv=g,X2)+IIV(g=x2,iiv=g,X3),

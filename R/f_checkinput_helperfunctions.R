@@ -92,11 +92,33 @@ check_err_msg <- function(err.msg){
 
   # Only allow numeric (real & integer) values in the specified columns
   data.types <- vapply(X = data, FUN = .MFclass, FUN.VALUE = "")
-  data.types <- data.types[num.only.cols]
+  data.types.have.to.be.num <- data.types[num.only.cols]
 
-  if(any(!(data.types %in% "numeric")))
+  if(any(!(data.types.have.to.be.num %in% "numeric")))
     err.msg <- c(err.msg, paste0("Please only provide numeric data for the regressors ",
                                  paste(num.only.cols, collapse = ", "), "."))
+
+  # do not allow non.finite values in any of the relevant columns
+  rel.data <- data[, all.vars(formula(F.formula, rhs=rhs.rel.regr)), drop=FALSE]
+
+  # Check for NA among all variables, incl character
+  #  also check for NA first with anyNA first because much faster than !is.finite
+  if(anyNA(rel.data)){
+    err.msg <- c(err.msg, "Please do not provide any NA values in the data.")
+    return(err.msg)
+  }
+
+  #  Do is.finite only do for numeric data and if dont have
+  #   any NAs (alloc mem for whole dataset)
+  #   !sapply same as sapply(,!is.finite)
+  numeric.are.finite <- sapply(rel.data, function(col){
+    if(is.numeric(col))
+      return(is.finite(col))
+    else
+      return(TRUE)}) # anything else (chars etc) are otherwise seen as not finite
+
+  if(any(!unlist(numeric.are.finite)))
+    err.msg <-c(err.msg, "Please do not provide any non-finite values in the data.")
 
   return(err.msg)
 }
@@ -196,13 +218,13 @@ checkinputhelper_startparams <- function(start.params, F.formula,
     if(!(n %in% names(start.params)))
       err.msg <- c(err.msg, paste0("Please provide the start parameter for ", n, "."))
 
-  # check that no parameter is named a forbidden name
-  if(any(names(start.params) %in% forbidden.names))
-    err.msg <- c(err.msg, paste0("Please provide none of the following parameters:",paste(paste0("\'", forbidden.names, "\'"), collapse = ","),"."))
+    # check that no parameter is named a forbidden name
+    if(any(names(start.params) %in% forbidden.names))
+      err.msg <- c(err.msg, paste0("Please provide none of the following parameters:",paste(paste0("\'", forbidden.names, "\'"), collapse = ","),"."))
 
 
-  # Exactly one for every formula var: Done with length check & that every is present
-  return(err.msg)
+    # Exactly one for every formula var: Done with length check & that every is present
+    return(err.msg)
 }
 
 checkinputhelper_charactervector <- function(vec, parameter.name, allowed.inputs){
@@ -227,7 +249,7 @@ checkinputhelper_charactervector <- function(vec, parameter.name, allowed.inputs
       err.msg <- c(err.msg, paste("Please provide only elements from c(",paste(allowed.inputs, collapse = ", "),
                                   ") for \'",parameter.name,"\'.", sep = ""))
 
-  return(err.msg)
+    return(err.msg)
 }
 
 

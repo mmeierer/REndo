@@ -61,6 +61,10 @@ test_that("Works with proper optimx.args", {
 })
 
 
+# Well, this is not possible: All columns are always needed (y and P)
+# test_that("Works with NA in not needed columns", {
+# })
+
 
 test_that("Summary prints about SE unavailable", {
   # model fitting possible without warnings

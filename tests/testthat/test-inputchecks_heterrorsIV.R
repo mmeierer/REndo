@@ -120,6 +120,16 @@ test_that("Fail if is NA, NULL or missing", {
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=NA_real_), regexp = "The above errors were encountered!")
 })
 
+
+test_that("Fail if contains any non-finite", {
+  call.args <- list(formula=y~X1+X2+P|P|IIV(X1))
+  test.nonfinite.in.data(data = dataHetIV, name.col = "y",  fct = hetErrorsIV, call.args = call.args)
+  test.nonfinite.in.data(data = dataHetIV, name.col = "X1", fct = hetErrorsIV, call.args = call.args)
+  test.nonfinite.in.data(data = dataHetIV, name.col = "X2", fct = hetErrorsIV, call.args = call.args)
+  test.nonfinite.in.data(data = dataHetIV, name.col = "P",  fct = hetErrorsIV, call.args = call.args)
+})
+
+
 test_that("Fail if not data.frame", {
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1), data=    c(y=1:10, X1=1:10, X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1), data= list(y=1:10, X1=1:10, X2=1:10, P=1:10)), regexp = "The above errors were encountered!")
