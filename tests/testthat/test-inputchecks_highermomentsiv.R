@@ -249,6 +249,14 @@ test_that("Fail if no rows or cols",{
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1), data= data.frame(y=integer(), X1=numeric(), X2=numeric(), P=integer())), regexp = "The above errors were encountered!")
 })
 
+test_that("Fail if contains any non-finite", {
+  call.args <- list(formula=y~X1+X2+P|P|IIV(g=x2,iiv=g, X1))
+  test.nonfinite.in.data(data = dataHigherMoments, name.col = "y",  fct = higherMomentsIV, call.args = call.args)
+  test.nonfinite.in.data(data = dataHigherMoments, name.col = "X1", fct = higherMomentsIV, call.args = call.args)
+  test.nonfinite.in.data(data = dataHigherMoments, name.col = "X2", fct = higherMomentsIV, call.args = call.args)
+  test.nonfinite.in.data(data = dataHigherMoments, name.col = "P",  fct = higherMomentsIV, call.args = call.args)
+})
+
 test_that("Fail if EIV not in data", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1)|EIV,data= dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1)|X1+eiv,data= dataHigherMoments), regexp = "The above errors were encountered!")

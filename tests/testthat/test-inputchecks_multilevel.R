@@ -179,6 +179,21 @@ test_that("Fail if no rows or cols",{
   expect_error(multilevelIV(formula = f.multilevel, data = data.frame(y=integer(), P=integer())), regexp = "The above errors were encountered!")
 })
 
+
+test_that("Fail if contains any non-finite", {
+  call.args <- list(formula=f.multilevel)
+  # y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15)
+  test.nonfinite.in.data(data = dataMultilevelIV, name.col = "y",  fct = multilevelIV, call.args = call.args, regexp=NULL)
+  test.nonfinite.in.data(data = dataMultilevelIV, name.col = "X11",  fct = multilevelIV, call.args = call.args, regexp=NULL)
+  test.nonfinite.in.data(data = dataMultilevelIV, name.col = "X12",  fct = multilevelIV, call.args = call.args, regexp=NULL)
+  test.nonfinite.in.data(data = dataMultilevelIV, name.col = "X13",  fct = multilevelIV, call.args = call.args, regexp=NULL)
+  test.nonfinite.in.data(data = dataMultilevelIV, name.col = "X14",  fct = multilevelIV, call.args = call.args, regexp=NULL)
+  test.nonfinite.in.data(data = dataMultilevelIV, name.col = "X15",  fct = multilevelIV, call.args = call.args, regexp=NULL)
+  test.nonfinite.in.data(data = dataMultilevelIV, name.col = "X32",  fct = multilevelIV, call.args = call.args, regexp=NULL)
+})
+
+
+
 test_that("Fail if wrong data type in any of the formula parts", {
   # Only allow numericals in all relevant columns
   # Factor
