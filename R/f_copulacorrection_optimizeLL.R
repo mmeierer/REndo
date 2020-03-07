@@ -33,7 +33,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   m.model.data.exo.endo   <- model.matrix(object = F.formula, data = mf, lhs=0, rhs = 1)
   vec.data.endo           <- m.model.data.exo.endo[, name.var.continuous, drop=TRUE]
 
-  # Warn if the data is binomial=only has to values=dummy
+  # Warn if the data is binomial=only has two values=dummy
   #   Cannot really check this before data is transformed
   checkinput_copulacorrection_warnbinomialendodata(data = mf,
                                                    names.vars.continuous = name.var.continuous,
@@ -75,7 +75,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
 
   # Definition: Optimization function -----------------------------------------------------------------
-  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo){
+  fct.optimize.LL <- function(optimx.start.params, vec.data.y, m.model.data.exo.endo, vec.data.endo,
+                              do.kkt){
 
     # P.star -----------------------------------------------------------------------------------
     # Calculate p.star that is part of the LL already here because it is constant
@@ -88,16 +89,25 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
     #   and returning Inf/NA breaks L-BFGS-B. Hence these transformations.
     #   This implies that the same transformations need to be applied to the found solution
     #     to report the values that are really used in the LL
+
+    param.pos.rho   <- which(names(optimx.start.params) == "rho")
+    param.pos.sigma <- which(names(optimx.start.params) == "sigma")
+    param.pos.data  <- which(!(names(optimx.start.params) %in% c("rho", "sigma")))
+
     optimx.default.args <- list(par     = optimx.start.params,
-                                fn      = copulaCorrection_LL,
+                                fn      = copulaCorrection_LL_rcpp,
                                 method  = "Nelder-Mead",
                                 itnmax  = 100000,
                                 hessian = FALSE,
                                 control = list(trace  = 0,
+                                               kkt = do.kkt,
                                                dowarn = FALSE),
-                                vec.y   = vec.data.y,
-                                m.data.exo.endo     = m.model.data.exo.endo,
-                                vec.data.endo.pstar = vec.data.endo.pstar)
+                                vec_y = vec.data.y,
+                                m_data_exo_endo = m.model.data.exo.endo,
+                                vec_data_endo_pstar = vec.data.endo.pstar,
+                                param_pos_data = param.pos.data,
+                                param_pos_sigma = param.pos.sigma,
+                                param_pos_rho = param.pos.rho)
 
     # Update default args with user given args for optimx
     optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)
@@ -123,7 +133,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
   # Run once for coef estimates with real data---------------------------------------------------------
   res.real.data.optimx  <- fct.optimize.LL(optimx.start.params = start.params, vec.data.y = vec.data.y,
                                           m.model.data.exo.endo = m.model.data.exo.endo,
-                                          vec.data.endo = vec.data.endo)
+                                          vec.data.endo = vec.data.endo,
+                                          do.kkt = TRUE)
 
   # Bootstrap num.boots times -------------------------------------------------------------------------
   if(verbose){
@@ -143,7 +154,8 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
       # return coefs as vector / first row (only 1 method used)
       return(coef(fct.optimize.LL(optimx.start.params = start.params, vec.data.y = i.y,
                                   m.model.data.exo.endo = i.m.model.data.exo.endo,
-                                  vec.data.endo = i.vec.data.endo))[1,])
+                                  vec.data.endo = i.vec.data.endo,
+                                  do.kkt = FALSE))[1,])
     })
 
   if(verbose)
