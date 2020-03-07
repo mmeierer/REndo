@@ -151,6 +151,20 @@ test_that("Works with proper optimx.args", {
                  regexp = "It is recommended to run 1000 or more bootstraps.")
 })
 
+
+test_that("Works with NA in not needed columns", {
+  dataCopCont.na <- dataCopCont
+  dataCopCont.na[5, "X2"] <- NA_real_
+  expect_warning(copulaCorrection(formula = y~X1+P|continuous(P), optimx.args = list(itnmax = 10),
+                                  data = dataCopCont.na, verbose = FALSE, num.boots = 2),
+                 regexp = "It is recommended to run 1000 or more bootstraps.")
+
+  dataCopDis.na <- dataCopDis
+  dataCopDis.na[5, "X2"] <- NA_real_
+  expect_warning(copulaCorrection(formula = y~X1+P|discrete(P),data = dataCopDis.na, verbose = FALSE,
+                 num.boots=2), regexp = "It is recommended to run 1000 or more bootstraps.")
+})
+
 # Transformations in formula ---------------------------------------------------------------------------------------------------
 context("Runability - copulaCorrection - Formula transformations")
 
