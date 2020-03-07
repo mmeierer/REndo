@@ -72,6 +72,12 @@ test_that("Works with NA in not needed columns", {
   expect_silent(multilevelIV(formula = y ~ X11 + X12 + X14 + X15 + X21 + X22 + X23 + X24 +
                                X31 + X32 + X33 + (X11| CID) + (X14| SID) | endo(X15),
                              data = dataMultilevelIV.na, verbose = FALSE))
+
+  dataMultilevelIV.inf <- dataMultilevelIV
+  dataMultilevelIV.inf[5, "X13"] <- Inf
+  expect_silent(multilevelIV(formula = y ~ X11 + X12 + X14 + X15 + X21 + X22 + X23 + X24 +
+                               X31 + X32 + X33 + (X11| CID) + (X14| SID) | endo(X15),
+                             data = dataMultilevelIV.inf, verbose = FALSE))
 })
 
 

@@ -55,7 +55,11 @@ test_that("Non-numerics can be used in exogenous data", {
 test_that("Works with NA in not needed columns", {
   dataHetIV.na <- dataHetIV
   dataHetIV.na[5, "X2"] <- NA_real_
-  expect_silent(hetErrorsIV(y~X1+P|P|IIV(X1), data=dataHetIV, verbose=FALSE))
+  expect_silent(hetErrorsIV(y~X1+P|P|IIV(X1), data=dataHetIV.na, verbose=FALSE))
+
+  dataHetIV.inf <- dataHetIV
+  dataHetIV.inf[5, "X2"] <- Inf
+  expect_silent(hetErrorsIV(y~X1+P|P|IIV(X1), data=dataHetIV.inf, verbose=FALSE))
 })
 
 

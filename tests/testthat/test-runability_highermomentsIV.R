@@ -42,6 +42,12 @@ test_that("Works with NA in not needed columns", {
   dataHigherMoments.na[5, "X2"] <- NA_real_
   expect_silent(higherMomentsIV(y~X1+P|P|IIV(g=lnx,iiv=gp, X1), verbose = FALSE,
                                 data = dataHigherMoments.na))
+
+  dataHigherMoments.inf <- dataHigherMoments
+  dataHigherMoments.inf[5, "X2"] <- Inf
+  expect_silent(higherMomentsIV(y~X1+P|P|IIV(g=lnx,iiv=gp, X1), verbose = FALSE,
+                                data = dataHigherMoments.inf))
+
 })
 
 test_that("Multiple exo in single IIV equal single IIV with multiple exo", {
