@@ -4,4 +4,3 @@ doc
 .Rhistory
 .RData
 inst/doc
-^\.github$
