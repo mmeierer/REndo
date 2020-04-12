@@ -27,7 +27,10 @@ test_that("Works with user given lmer.control and provides different results", {
                                data = dataMultilevelIV, verbose = FALSE,
                                lmer.control = lmerControl(optimizer="nloptwrap",
                                                           optCtrl=list(algorithm="NLOPT_LN_COBYLA",
-                                                                       xtol_rel=1e-6))))
+                                                                       xtol_rel=1),
+                                                          check.conv.grad = "ignore",
+                                                          check.conv.singular = "ignore",
+                                                          check.conv.hess = "ignore")))
   # different estimates
   expect_silent(res.ml2 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                           X31 + X32 + X33 + (1 | SID) | endo(X15),
@@ -41,7 +44,10 @@ test_that("Works with user given lmer.control and provides different results", {
                                data = dataMultilevelIV, verbose = FALSE,
                                lmer.control = lmerControl(optimizer="nloptwrap",
                                                           optCtrl=list(algorithm="NLOPT_LN_COBYLA",
-                                                                       xtol_rel=1e-6))))
+                                                                       xtol_rel=1),
+                                                          check.conv.grad = "ignore",
+                                                          check.conv.singular = "ignore",
+                                                          check.conv.hess = "ignore")))
   # different estimates
   expect_silent(res.ml3 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                           X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15),
