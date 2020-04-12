@@ -1,10 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Travis Build
-Status](https://travis-ci.org/mmeierer/REndo.svg?branch=development)](https://travis-ci.org/mmeierer/REndo)
-[![AppVeyor Build
-Status](https://ci.appveyor.com/api/projects/status/github/mmeierer/REndo?branch=development&svg=true)](https://ci.appveyor.com/project/mmeierer/REndo)
+[![R CMD
+checks](https://github.com/mmeierer/REndo/workflows/R-CMD-check/badge.svg?branch=development)](https://github.com/mmeierer/REndo/actions)
+[![Tests](https://github.com/mmeierer/REndo/workflows/coverage/badge.svg?branch=development)](https://github.com/mmeierer/REndo/actions)
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg)](https://codecov.io/github/mmeierer/REndo?branch=development)
 [![CRAN
