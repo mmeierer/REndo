@@ -43,7 +43,7 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
   df.data.exohetero <- mf.model[, names.exo.IIV, drop=FALSE]
 
   # For every exogenous variable separately, test whether a weak instrument is built from it
-  #   Regress endo ~ exo to test whether the null hypothesis of homoscedasticity can be rejected
+  #   Regress endo ~ exo to test whether the heteroscedasticity assumptions hold
 
   for(n.exo in colnames(df.data.exohetero)){
 
@@ -74,6 +74,7 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
   # Build internal instruments -----------------------------------------------------------------------------------
   # For every IIV() regressor (column): demean * resid
 
+  # **TODO: remove old code
   # df.data.internal.instr.2 <- de.mean(df.data.exohetero) * internal.instr.residuals
   df.data.internal.instr <- as.data.frame(apply(df.data.exohetero, MARGIN = 2, FUN = function(col){
     (col - mean(col)) * internal.instr.residuals }))
