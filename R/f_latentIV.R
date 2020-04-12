@@ -237,6 +237,21 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   all.estimated.params["theta5"] <- exp(all.estimated.params["theta5"]) / (1 + exp(all.estimated.params["theta5"]))
 
   # Read out hessian.
+  # Extracts the hessian from the optimx result
+  extract.hessian <- function(res.optimx, names.hessian){
+    # If optimx failed, single NA is returned as the hessian. Replace it with correctly-sized
+    #   matrix of NAs
+
+    hessian  <- attr(res.optimx, "details")[,"nhatend"][[1]]
+    if(length(hessian)==1 & all(is.na(hessian))){
+      hessian <- matrix(data = NA_real_, nrow = length(names.hessian), ncol = length(names.hessian))
+      warning("Hessian could not be derived. Setting all entries to NA.", immediate. = TRUE)
+    }
+
+    rownames(hessian) <- colnames(hessian) <- names.hessian
+    return(hessian)
+  }
+
   hessian <- extract.hessian(res.optimx = res.optimx, names.hessian = names(all.estimated.params))
 
   # To derive the vcov, the delta method is used for which the diagonal matrix is
