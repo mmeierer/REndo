@@ -16,6 +16,9 @@ test_that("Fail if bad 2nd RHS", {
   # Fail if all regressors are endogenous
   expect_error(higherMomentsIV(y~X1|X1|IIV(g=x2, iiv=g, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
   expect_error(higherMomentsIV(y~P|P|IIV(g=x2, iiv=g, X1), data=dataHigherMoments), regexp = "The above errors were encountered!")
+  # Fail if not exactly the same in model
+  expect_error(higherMomentsIV(y~X1+X2+log(P)|P|IIV(iiv=gp, g=x2, X1, X2), data = dataHigherMoments), regexp = "The above errors were encountered!")
+  expect_error(higherMomentsIV(y~X1+X2+P|log(P)|IIV(iiv=gp, g=x2, X1, X2), data = dataHigherMoments), regexp = "The above errors were encountered!")
 })
 
 

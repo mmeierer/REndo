@@ -16,6 +16,9 @@ test_that("Fail if bad 2nd RHS", {
   # Fail if all regressors are endogenous
   expect_error(hetErrorsIV(y~X1|X1|IIV(X1), data=dataHetIV), regexp = "The above errors were encountered!")
   expect_error(hetErrorsIV(y~P|P|IIV(X1), data=dataHetIV), regexp = "The above errors were encountered!")
+  # Fail if not exactly the same in model
+  expect_error(hetErrorsIV(y~X1+X2+log(P)|P|IIV(X1)+IIV(X2), data=dataHetIV), regexp = "The above errors were encountered!")
+  expect_error(hetErrorsIV(y~X1+X2+P|log(P)|IIV(X1)+IIV(X2), data=dataHetIV), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if more than a single endo regressor is given", {
