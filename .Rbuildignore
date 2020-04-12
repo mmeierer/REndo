@@ -7,7 +7,5 @@
 ^\.Rproj\.user$
 man-roxygen
 cran-comments.md
-^appveyor\.yml$
-^\.travis\.yml$
 vignettes/REndo-introduction_cache
 ^\.github$

@@ -3,7 +3,7 @@
 
 [![R CMD
 checks](https://github.com/mmeierer/REndo/workflows/R-CMD-check/badge.svg?branch=development)](https://github.com/mmeierer/REndo/actions)
-[![Tests](https://github.com/mmeierer/REndo/workflows/Tests/badge.svg?branch=development)](https://github.com/mmeierer/REndo/actions)
+[![Tests](https://github.com/mmeierer/REndo/workflows/coverage/badge.svg?branch=development)](https://github.com/mmeierer/REndo/actions)
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg)](https://codecov.io/github/mmeierer/REndo?branch=development)
 [![CRAN
