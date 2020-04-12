@@ -236,8 +236,19 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
                                      c(names.main.model, names.support.params))
   all.estimated.params["theta5"] <- exp(all.estimated.params["theta5"]) / (1 + exp(all.estimated.params["theta5"]))
 
-  # Read out hessian.
-  hessian <- extract.hessian(res.optimx = res.optimx, names.hessian = names(all.estimated.params))
+
+  # Hessian
+  names.hessian <- names(all.estimated.params)
+  m.hessian     <- attr(res.optimx, "details")[,"nhatend"][[1]]
+
+  # If optimx failed, single NA is returned as the hessian. Replace it with correctly-sized
+  #   matrix of NAs
+  if(length(m.hessian)==1 & all(is.na(m.hessian))){
+    m.hessian <- matrix(data = NA_real_, nrow = length(names.hessian), ncol = length(names.hessian))
+    warning("Hessian could not be derived. Setting all entries to NA.", immediate. = TRUE)
+  }
+
+  rownames(m.hessian) <- colnames(m.hessian) <- names.hessian
 
   # To derive the vcov, the delta method is used for which the diagonal matrix is
   #   already calculated here because the same class is used for copulaCorrection C1 but the diag matrix
@@ -256,7 +267,7 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
   # Fitted and residuals
   if(use.intercept)
     fitted        <- all.estimated.params[[name.intercept]]*1 +
-                        all.estimated.params[[name.endo.param]]*vec.data.endo
+    all.estimated.params[[name.endo.param]]*vec.data.endo
   else
     fitted        <- all.estimated.params[[name.endo.param]]*vec.data.endo
   fitted          <- as.vector(fitted)
@@ -275,7 +286,7 @@ latentIV <- function(formula, data, start.params=c(), optimx.args=list(), verbos
                              m.delta.diag     = m.delta.diag,
                              names.main.coefs = names.main.model,
                              res.optimx = res.optimx,
-                             hessian = hessian, fitted.values=fitted,
+                             hessian = m.hessian, fitted.values=fitted,
                              residuals=residuals)
   return(res)
 }
