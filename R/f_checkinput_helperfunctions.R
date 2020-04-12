@@ -264,8 +264,9 @@ checkinputhelper_formula_IIVs <- function(formula){
     return("Please specify the formula with exactly 3 or 4 parts on the right-hand side")
 
   # Check that every RHS2 is in RHs
-  names.rhs1 <- all.vars(formula(F.formula, rhs=1, lhs=0))
-  names.rhs2 <- all.vars(formula(F.formula, rhs=2, lhs=0))
+  # all.vars do not account for transformations, ie log(P) and P is the same. Use labels(terms) instead
+  names.rhs1 <- labels(terms(formula(F.formula, rhs=1, lhs=0)))
+  names.rhs2 <- labels(terms(formula(F.formula, rhs=2, lhs=0)))
   # RHS2 not in RHS1
   if(!all(names.rhs2 %in% names.rhs1))
     err.msg <- c(err.msg, "Please specify every endogenous regressors also in the first right-hand side (main model) of the formula.")
