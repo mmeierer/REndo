@@ -167,7 +167,7 @@ test_that("Fail if wrong data type in exo used in IIV", {
 
 test_that("Allow wrong data type in irrelevant columns", {
   # Allow wrong data types in unused columns
-  expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X2)+IIV(X1), verbose=FALSE,
+  expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X2), verbose=FALSE,
                                 data = cbind(dataHetIV,
                                              unused1=as.logical(0:9), unused2=as.character(1:10),unused3=as.factor(1:10), stringsAsFactors = FALSE)))
 })
@@ -180,10 +180,10 @@ test_that("Fail if any column starts with \'IIV.\'",{
   expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),
                                data = cbind(dataHetIV, IIV.1 = 1:10)),
                regexp = "The above errors were encountered!")
-  expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), verbose = FALSE,
-                                data = cbind(dataHetIV, IIV.ABC = 1:10)))
-  expect_silent(hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), verbose = FALSE,
-                                data = cbind(dataHetIV, IIV..123 = 1:10)))
+  expect_warning(hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), verbose = FALSE,
+                                data = cbind(dataHetIV, IIV.ABC = 1:10)), regexp = "Breusch-Pagan")
+  expect_warning(hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), verbose = FALSE,
+                                data = cbind(dataHetIV, IIV..123 = 1:10)), regexp = "Breusch-Pagan")
 })
 
 
