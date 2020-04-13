@@ -4,14 +4,16 @@
 \name{dataCopDis2}
 \alias{dataCopDis2}
 \title{Simulated Dataset with Two Endogenous Discrete Regressors}
-\format{A data frame with 2500 observations on 5 variables:
+\format{
+A data frame with 2500 observations on 5 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}
 \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
 \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
 \item{\code{P1}}{a numeric vector, having a Poisson distribution with parameter lambda equal to 3, and endogenous.}
 \item{\code{P2}}{a numeric vector, having a Poisson distribution with parameter lambda equal to 3, and endogenous.}
-}}
+}
+}
 \usage{
 data("dataCopDis2")
 }

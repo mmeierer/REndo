@@ -32,12 +32,13 @@ Imports:
     lme4 (>= 1.1-18-1),
     data.table (>= 1.11.8),
     corpcor (>= 1.6.9),
-    Rcpp (>= 1.0.3)
+    Rcpp (>= 1.0.3), 
+    lmtest (>= 0.9-35)
 Suggests:
     testthat,
     covr,
     R.rsp
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 VignetteBuilder: R.rsp

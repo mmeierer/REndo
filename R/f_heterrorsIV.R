@@ -56,6 +56,8 @@
 #' @examples
 #' data("dataHetIV")
 #' # P is the endogenous regressor in all examples
+#' # X1 generates a weak instrument but for the examples
+#' # this is ignored
 #'
 #' # 2 IVs, one from X1, one from X2
 #' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1)+IIV(X2), data=dataHetIV)
