@@ -36,12 +36,13 @@ double copulaCorrection_LL_rcpp(const NumericVector& params,
   CharacterVector m_colnames = colnames(m_data_exo_endo);
   params_endo_exo = params_endo_exo[m_colnames];
 
+
   // Short excursion to RcppEigen: Matrix multiplication
-  const Eigen::MatrixXd A = Rcpp::as<Eigen::MatrixXd>(m_data_exo_endo);
-  const Eigen::VectorXd B = Rcpp::as<Eigen::VectorXd>(params_endo_exo);
-  Eigen::MatrixXd C = A * B;
-  // Back to regular Rcpp again
-  NumericVector matMultRes = wrap(A*B);
+  const Eigen::Map<Eigen::MatrixXd> A = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(m_data_exo_endo);
+  const Eigen::Map<Eigen::VectorXd> B = Rcpp::as<Eigen::Map<Eigen::VectorXd>>(params_endo_exo);
+
+  // Math! and immediately back to regular Rcpp again
+  NumericVector matMultRes = Rcpp::wrap(A*B);
 
   NumericVector eps_1 = vec_y - matMultRes;
 
