@@ -27,12 +27,19 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
                 intercept  = TRUE)
 
   res.lm.resid <- lm(F.residuals, data=data)
+
   if(any(!is.finite(coef(res.lm.resid))))
     stop(paste0("The residuals of the linear model (",format(F.residuals),
                 ") to build the internal instruments could not be derived because some of the model coefficient were non-finite."),
          call. = FALSE)
 
   internal.instr.residuals <- residuals(res.lm.resid)
+
+  if(any(!is.finite(internal.instr.residuals)))
+    stop(paste0("The residuals of the linear model (",format(F.residuals),
+                ") to build the internal instruments could not be derived because some of the residuals were non-finite."),
+         call. = FALSE)
+
 
   if(verbose)
     message("Residuals were derived by fitting ",format(F.residuals),".")
