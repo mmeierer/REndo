@@ -326,10 +326,7 @@ checkinputhelper_dataVSformula_IIV <- function(formula, data){
                                                             rhs.rel.regr = relevant.cols.for.datacols,
                                                             num.only.cols = num.only.cols)
 
-  # Check that no column is named IIV.NUMBER. *** TODO: ADAPT
-  if(any(grepl(pattern = "^IIV\\.[0-9]", x = colnames(data))))
-    err.msg <- c(err.msg, paste0("Please name no column in the data \'IIV.NUMERIC"))
-  #**?? Check that no column is named iivs or g to avoid confusion wh
+  # No need to check that columns are not named iiv or g because that is caught as given double
 
   return(err.msg)
 }

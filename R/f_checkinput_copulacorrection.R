@@ -92,11 +92,9 @@ checkinput_copulacorrection_dataVSformula <- function(data, formula, names.cols.
                                                    from.rhs=2, params.as.chars.only=TRUE)
   names.vars.discrete   <- formula_readout_special(F.formula = F.formula, name.special = "discrete",
                                                    from.rhs=2, params.as.chars.only=TRUE)
-  names.cols.endo <- c(names.vars.discrete, names.vars.continuous)
-  # *** TODO: Which one here?
 
+  # Need names of column in data, not as they are in specials (potentially transformed names)
   names.cols.endo <- all.vars(terms(F.formula, rhs=2, lhs=0))
-
 
   err.msg <- .checkinputhelper_dataVSformula_basicstructure(formula=F.formula, data=data,
                                                             rhs.rel.regr=c(1,2),

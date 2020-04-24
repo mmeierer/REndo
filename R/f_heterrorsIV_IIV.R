@@ -18,7 +18,7 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
   #  any further processing in lm and model.frame.
   #   Alternative:
   #   attr(delete.response(terms(f, rhs=2)), "variables")[-1]
-  # response   = labels(terms(F.formula, rhs=formula.rhs.endo, lhs=0)),
+  #   response   = labels(terms(F.formula, rhs=formula.rhs.endo, lhs=0)),
   F.residuals <-
     reformulate(response = formula(F.formula, rhs=2, lhs=0)[[2]],
                 # all exo regs: complete model - endogenous reg
@@ -83,21 +83,15 @@ hetErrorsIV_IIV <- function(F.formula, data, verbose){
   # Build internal instruments -----------------------------------------------------------------------------------
   # For every IIV() regressor (column): demean * resid
 
-  # **TODO: remove old code
-  # df.data.internal.instr.2 <- de.mean(df.data.exohetero) * internal.instr.residuals
   df.data.internal.instr <- as.data.frame(apply(df.data.exohetero, MARGIN = 2, FUN = function(col){
     (col - mean(col)) * internal.instr.residuals }))
 
   # Naming stuff
-  # labels.het.exo   <- labels(terms(F.formula, lhs = 0, rhs = formula.rhs.exo))
   vec.desc.hetii.s                 <- paste0("IIV(",names.exo.IIV , ")")
   colnames(df.data.internal.instr) <- make.names(paste0("IIV.", names.exo.IIV))
 
 
-
-
   # Return ------------------------------------------------------------------------------------------------
   # Return list with readable description and IIV as data.frame
-
   return(list(desc.IIV = vec.desc.hetii.s, df.IIV = df.data.internal.instr))
 }

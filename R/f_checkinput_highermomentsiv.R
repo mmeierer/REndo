@@ -26,10 +26,10 @@ checkinput_highermomentsiv_docalllist <- function(l.args){
     err.msg <- c()
     # Check that the list containing the parsed args and is used to do.call the IIV function is fine
     if(sum(names(sublist) == "iiv") > 1)
-      err.msg <- c(err.msg, "Please  specify the parameter \'iiv\' in each IIV() only exactly once.")
+      err.msg <- c(err.msg, "Please specify the parameter \'iiv\' in each IIV() only exactly once.")
 
     if(sum(names(sublist) == "g") > 1)
-      err.msg <- c(err.msg, "Please  specify the parameter \'g\' in each IIV() only exactly once.")
+      err.msg <- c(err.msg, "Please specify the parameter \'g\' in each IIV() only exactly once.")
     return(err.msg)
   })
 
