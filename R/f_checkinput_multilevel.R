@@ -83,7 +83,6 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
   # lmer specific function part
   f.lmer <- formula(F.formula, lhs = 1, rhs = 1)
 
-  # check that it can be interpreted by lmer..??
   l4.form <- tryCatch(lme4::lFormula(formula = f.lmer, data = data),
                   error = function(e)return(e))
   if(is(object = l4.form, class2 = "simpleError"))
@@ -92,8 +91,6 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
       return("Please specify a random effects terms in the formula.")
     }else{
       # Some other error
-      # str(paste0("Please provide a formula interpretable by lme4::lmer. \nError from lmer: ",
-                 # sQuote(l4.form$message)))
       return(paste0("Please provide a formula interpretable by lme4::lmer().\nError: ",
                     sQuote(l4.form$message)))
     }

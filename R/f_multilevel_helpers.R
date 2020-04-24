@@ -51,14 +51,3 @@ multilevel_splitmatrixtolist <- function(m, dt.model.data, name.split.by){
   return(l.groups)
 }
 
-# Formula:
-#   p510: P(H) = H(H'H)^(-1)H'
-# @importFrom corpcor pseudoinverse
-# ** RALUCA: Example code different from projection in paper **
-# multilevel_projectionP <- function(H){
-#   # crossprod:  t(x) %*% y
-#   # tcrossprod: x %*% t(y)
-#   # Matrix::crossprod returns a dsCMatrix (ie knows its symmetric)
-#   # return(H %*% Matrix::tcrossprod( Matrix::solve(Matrix::crossprod(H), sparse=TRUE), H))
-#   return(H %*% Matrix::tcrossprod( Matrix(corpcor::pseudoinverse(Matrix::crossprod(H)),sparse = TRUE), H))
-# }

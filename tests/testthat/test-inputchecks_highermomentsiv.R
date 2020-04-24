@@ -293,19 +293,6 @@ test_that("Allow wrong data type in irrelevant columns", {
 })
 
 
-test_that("Fail if any column starts with \'IIV.\'",{
-  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),
-                               data = cbind(IIV.1 = 1:10, dataHigherMoments)),
-               regexp = "The above errors were encountered!")
-  expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1),
-                                data = cbind(dataHigherMoments, IIV.1 = 1:10)),
-               regexp = "The above errors were encountered!")
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), verbose = FALSE,
-                                data = cbind(dataHigherMoments, IIV.ABC = 1:10)))
-  expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), verbose = FALSE,
-                                data = cbind(dataHigherMoments, IIV..123 = 1:10)))
-})
-
 
 
 # verbose ----------------------------------------------------------------------

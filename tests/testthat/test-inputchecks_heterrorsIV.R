@@ -176,20 +176,6 @@ test_that("Allow wrong data type in irrelevant columns", {
 })
 
 
-test_that("Fail if any column starts with \'IIV.\'",{
-  expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),
-                               data = cbind(IIV.1 = 1:10, dataHetIV)),
-               regexp = "The above errors were encountered!")
-  expect_error(hetErrorsIV(y~X1+X2+P|P|IIV(X1),
-                               data = cbind(dataHetIV, IIV.1 = 1:10)),
-               regexp = "The above errors were encountered!")
-  expect_warning(hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), verbose = FALSE,
-                                data = cbind(dataHetIV, IIV.ABC = 1:10)), regexp = "Breusch-Pagan")
-  expect_warning(hetErrorsIV(y~X1+X2+P|P|IIV(X1, X2), verbose = FALSE,
-                                data = cbind(dataHetIV, IIV..123 = 1:10)), regexp = "Breusch-Pagan")
-})
-
-
 # verbose ----------------------------------------------------------------------
 context("Inputchecks - hetErrorsIV - Parameter verbose")
 test.single.logical(function.to.test = hetErrorsIV, parameter.name="verbose",
