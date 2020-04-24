@@ -1,7 +1,7 @@
 # For each exogen. hetero. variables, derive the instruments:
 #   residuals * [x-mean(x)] where residuals from
 #     lm(endo P ~ all exogenous) and x are the single exo.het.vars
-#' @importFrom stats cov
+#' @importFrom stats cov as.formula
 #' @importFrom lmtest bptest
 hetErrorsIV_IIV <- function(F.formula, data, verbose){
 
