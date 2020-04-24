@@ -1,5 +1,18 @@
+# REndo 2.4.0
+
+## SIGNIFICANT USER-VISIBLE CHANGES
+* Add a formal assumption test for method `hetErrorsIV` to detect weak instruments
+
+## NEW FEATURES
+* The log-likelihood function underlying `copulaCorrection` case 1 is refactored and implemented using Rcpp and RcppEigen what makes it considerably faster
+* Improved checks of user input that disallow any non-finite values in the data
+* New data was generated for `dataHetIV`
+
+
+
 # REndo 2.3.1
 * None. Version bump in order to resubmit to CRAN after package was archived.
+
 
 
 # REndo 2.3.0
