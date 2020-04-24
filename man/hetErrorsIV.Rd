@@ -23,7 +23,7 @@ All generic accessor functions for \code{ivreg} such as \code{anova}, \code{hata
 }
 \description{
 This function estimates the model parameters and associated standard errors for a
-linear regression model with one or more endogenous regressors. Identification is achieved
+linear regression model with one endogenous regressor. Identification is achieved
 through heteroscedastic covariance restrictions within the triangular system as proposed in Lewbel(2012).
 }
 \details{
