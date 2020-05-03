@@ -213,7 +213,7 @@ A set of six instruments can be constructed, which should be specified in the **
 where $G=G(X_{t})$ can be either $x^2$, $x^3$, $ln(x)$ or $1/x$ and should be specified in the **g** argument of the third RHD of the formula, as **x2, x3, lnx** or **1/x**.
 In case of internal instruments built only from the endogenous regressor, e.g. **p2**, or from the response and the endogenous regressor, like for example in **yp**, there is no need to specify **g** or the set of exogenous regressors in the **IIV()** part of the formula. The function returns a set of tests for checking the validity of the instruments and the endogeneity assumption. Here as well, transformation of explanatory variables, such as I(X), ln(X), are supported. 
 
-4. **hetErrorsIV()** - uses the heteroskedasticity of the errors in a linear projection of the endogenous regressor on the other covariates to solve the endogeneity problem induced by measurement error, as proposed by Lewbel (2012). The function allows more than one endogenous regressors.
+4. **hetErrorsIV()** - uses the heteroskedasticity of the errors in a linear projection of the endogenous regressor on the other covariates to solve the endogeneity problem induced by measurement error, as proposed by Lewbel (2012). The function allows just one endogenous regressor.
 
 The function **hetErrorsIV()** has a four-part formula specification: 
     
@@ -221,7 +221,7 @@ The function **hetErrorsIV()** has a four-part formula specification:
                 hetErrorsIV(y ~ X1 + X2 + X3 + P | P | IIV(X1,X2) | Z1, data)
 
 
-where: **y** is the response variable, **X1 + X2 + X3 + P** represents the model to be estimated; the second part, **P**, specifies the endogenous regressors, the third part, **IIV(X1, X2)**, specifies the exogenous  heteroskedastic variables from which the instruments are derived, while the final part **Z1** is optional,  allowing the user to include additional external instrumental variables. Like in the higher moments  approach, allowing the inclusion of additional external variables is a convenient feature of the function, since it increases the efficiency of the estimates. Transformation of the explanatory variables, such as I(X), ln(X) are possible both in the model specification as well as in the IIV() specification.
+where: **y** is the response variable, **X1 + X2 + X3 + P** represents the model to be estimated; the second part, **P**, specifies the endogenous regressors, the third part, **IIV(X1, X2)**, specifies the exogenous  heteroskedastic variables from which the instruments are derived, while the final part **Z1** is optional,  allowing the user to include additional external instrumental variables. Like in the higher moments approach, allowing the inclusion of additional external variables is a convenient feature of the function, since it increases the efficiency of the estimates. Transformation of the explanatory variables, such as I(X), ln(X) are possible both in the model specification as well as in the IIV() specification.
 
 5. **multilevelIV()** - implements the instrument free multilevel GMM method proposed by Kim and Frees (2007) where identification is possible due to the different levels of the data. Endogenous regressors at different levels can be present. The function comes along a built in omitted variable test, which helps in deciding which model is robust to omitted variables at different levels.
 
@@ -300,7 +300,7 @@ m4.cc <-  copulaCorrection(read ~  stratio + english + lunch + calworks +
 summary(m4.cc)$coefficients[1:7,]
 ```
 
-The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge (Converge Code = 1). Therefore, the copulaCorrection\(\) allows the user to specify the desired optimization algorithm (see the optimx\(\) function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.
+The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge. Therefore, the copulaCorrection\(\) allows the user to specify the desired optimization algorithm (see the optimx\(\) function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.
 
 In the current case, the algorithm converged, and we see that the coefficient of the student\/teacher ratio returned is equal to **-0.38**.
 
