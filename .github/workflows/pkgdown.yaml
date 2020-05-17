@@ -1,6 +1,7 @@
 on:
   push:
-    branches: feature-setup-ghpages
+    branches:
+      - master
 
 name: pkgdown
 
