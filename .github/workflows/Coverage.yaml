@@ -1,5 +1,15 @@
 name: coverage
-on: pull_request # default to types [opened, synchronize, reopened]
+on:
+  # also whenever pulled (ie pushed) to master and dev in order to get batches
+  push:
+    branches:
+      - development
+      - master
+  # default to types [opened, synchronize, reopened]
+  pull_request:
+
+
+
 jobs:
   coverage-ubuntu-16-04-R-3-6:
     runs-on: ubuntu-16.04
