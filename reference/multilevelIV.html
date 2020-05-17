@@ -8,21 +8,29 @@
 
 <title>Fitting Multilevel GMM Estimation with Endogenous Regressors — multilevelIV • REndo</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,8 +38,8 @@
 
 
 
-<meta property="og:title" content="Fitting Multilevel GMM Estimation with Endogenous Regressors — multilevelIV" />
 
+<meta property="og:title" content="Fitting Multilevel GMM Estimation with Endogenous Regressors — multilevelIV" />
 <meta property="og:description" content="Estimates multilevel models (max. 3 levels) employing the GMM approach presented in Kim and Frees (2007).
 One of the important features is that, using the hierarchical structure of the data, no external instrumental
 variables are needed, unlike traditional instrumental variable techniques. Specifically, the approach controls for
@@ -48,7 +56,7 @@ omitted variable test based on the Hausman-test for panel data (Hausman, 1978). 
 a robust estimator and an estimator that is efficient under the null hypothesis of no omitted variables,
 and to compare two robust estimators at different levels. The results of these tests are returned when
 calling summary() on a fitted model." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -62,9 +70,10 @@ calling summary() on a fitted model." />
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -78,7 +87,7 @@ calling summary() on a fitted model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
       </span>
     </div>
 
@@ -86,22 +95,33 @@ calling summary() on a fitted model." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/REndo-introduction.html">REndo: A Package to Address Endogeneity Without External Instrumental Variables</a>
+    </li>
+  </ul>
+</li>
 <li>
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/mmeierer/REndo">
-    <span class="fa fa-github fa-lg"></span>
+  <a href="https://github.com/mmeierer/REndo/">
+    <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -112,6 +132,7 @@ calling summary() on a fitted model." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -123,7 +144,6 @@ calling summary() on a fitted model." />
     </div>
 
     <div class="ref-description">
-    
     <p>Estimates multilevel models (max. 3 levels) employing the GMM approach presented in Kim and Frees (2007).
 One of the important features is that, using the hierarchical structure of the data, no external instrumental
 variables are needed, unlike traditional instrumental variable techniques. Specifically, the approach controls for
@@ -140,11 +160,15 @@ omitted variable test based on the Hausman-test for panel data (Hausman, 1978). 
 a robust estimator and an estimator that is efficient under the null hypothesis of no omitted variables,
 and to compare two robust estimators at different levels. The results of these tests are returned when
 calling <code><a href='summary.rendo.multilevel.html'>summary()</a></code> on a fitted model.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>multilevelIV</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>multilevelIV</span>(
+  <span class='no'>formula</span>,
+  <span class='no'>data</span>,
+  <span class='kw'>lmer.control</span> <span class='kw'>=</span> <span class='fu'>lmerControl</span>(<span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='st'>"Nelder_Mead"</span>, <span class='kw'>optCtrl</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>maxfun</span> <span class='kw'>=</span> <span class='fl'>1e+05</span>)),
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -157,11 +181,16 @@ calling <code><a href='summary.rendo.multilevel.html'>summary()</a></code> on a 
       <td><p>A data.frame containing the data of all parts specified in the formula parameter.</p></td>
     </tr>
     <tr>
+      <th>lmer.control</th>
+      <td><p>An output from <code>lmerControl</code> that will be used to fit the <code>lmer</code> model from which the variance and
+correlation are obtained.</p></td>
+    </tr>
+    <tr>
       <th>verbose</th>
       <td><p>Show details about the running of the function.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>multilevelIV</code> returns an object of class "<code>rendo.multilevel</code>".</p>
@@ -169,7 +198,7 @@ calling <code><a href='summary.rendo.multilevel.html'>summary()</a></code> on a 
 Note that an additional argument <code>model</code> with possible values <code>"REF", "FE_L2", "FE_L3", "GMM_L2"</code>, or <code>"GMM_L3"</code> is
 available for <code><a href='summary.rendo.multilevel.html'>summary</a></code>, <code>fitted</code>, <code>residuals</code>, <code>confint</code>, and <code>vcov</code>
 to extract the features for the specified model.</p>
-<p>Note that the obtained coefficients are rounded with <code><a href='https://www.rdocumentation.org/packages/base/topics/Round'>round(x, digits=getOption("digits"))</a></code>.</p>
+<p>Note that the obtained coefficients are rounded with <code><a href='https://rdrr.io/r/base/Round.html'>round(x, digits=getOption("digits"))</a></code>.</p>
 
 <p>An object of class <code>rendo.multilevel</code> is returned that is a list and contains the following components:</p>
 <dt>formula</dt><dd><p>the formula given to specify the model to be fitted.</p></dd>
@@ -184,11 +213,11 @@ to extract the features for the specified model.</p>
 <dt>W</dt><dd><p>the weight matrix W, such that W=V^(-1/2) per highest level group.</p></dd>
 <dt>l.ovt</dt><dd><p>a list of results of the Hausman OVT, named per model.</p></dd>
 
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <h3>Method</h3>
-    Multilevel modeling is a generalization of regression methods that recognize the existence of such data hierarchies
+    
+<h3>Method</h3>
+<p>Multilevel modeling is a generalization of regression methods that recognize the existence of such data hierarchies
 by allowing for residual components at each level in the hierarchy. For example, a three-level multilevel model which
 allows for grouping of students within classrooms, over time, would include time, student and classroom residuals
 (see equation below). Thus, the residual variance is partitioned into four components:
@@ -197,11 +226,11 @@ between student (the variance of the student-level residuals) and within-student
 The classroom residuals represent the unobserved classroom characteristics that affect student's outcomes.
 These unobserved variables lead to correlation between outcomes for students from the same classroom.
 Similarly, the unobserved time residuals lead to correlation between a student's outcomes over time.
-A three-level model can be described as follows:
-    <center>y<sub>cst</sub> = Z<sup>1</sup><sub>cst</sub> &beta;<sup>1</sup><sub>cs</sub> + X<sup>1</sup><sub>cst</sub> &beta;<sub>1</sub> &epsilon;<sup>1</sup><sub>cst</sub> </center>
+A three-level model can be described as follows:</p>
+<p><center>y<sub>cst</sub> = Z<sup>1</sup><sub>cst</sub> &beta;<sup>1</sup><sub>cs</sub> + X<sup>1</sup><sub>cst</sub> &beta;<sub>1</sub> &epsilon;<sup>1</sup><sub>cst</sub> </center>
 <br><center> &beta;<sup>1</sup><sub>cs</sub> =  Z<sup>2</sup><sub>cs</sub> &beta;<sup>2</sup><sub>c</sub> + X <sup>2</sup><sub>cs</sub> &beta;<sub>2</sub> &epsilon;<sup>2</sup><sub>cs</sub> </center>
-<br><center> &beta;<sup>2</sup><sub>c</sub> = X<sup>3</sup><sub>c</sub>&beta;<sub>3</sub> &epsilon;<sup>3</sup><sub>c</sub> </center>
-    Like in single-level regression, in multilevel models endogeneity is also a concern. The additional problem is that in multilevel models
+<br><center> &beta;<sup>2</sup><sub>c</sub> = X<sup>3</sup><sub>c</sub>&beta;<sub>3</sub> &epsilon;<sup>3</sup><sub>c</sub> </center></p>
+<p>Like in single-level regression, in multilevel models endogeneity is also a concern. The additional problem is that in multilevel models
 there are multiple independent assumptions involving various random components at different levels. Any moderate correlation between some
 predictors and a random component or error term, can result in a significant bias of the coefficients and of the variance components.
 The multilevel GMM approach for addressing endogeneity uses both the between and within variations of the exogenous variables, but only the within
@@ -222,31 +251,34 @@ random intercepts and slopes in the model, FE allows for endogeneity of all effe
 explanatory variables at the same levels. The more general estimator GMM proposed by Kim and Frees (2007) allows for some of the explanatory
 variables to be endogenous and uses this information to build instrumental variables. The multilevel GMM estimator uses both the between and
 within variations of the exogenous variables, but only the within variation of the variables assumed endogenous. When all variables are assumed
-exogenous, GMM estimator equals REF. When all covariates are assume endogenous, GMM equals FE.
-    <h3>Formula parameter</h3>
-    The <code>formula</code> argument follows a two part notation:
-    In the first part, the model is specified while in the second part, the endogenous regressors are indicated.
-These two parts are separated by a single vertical bar (<code>|</code>).
-    The first RHS follows the exact same model specification as required by the <code><a href='https://www.rdocumentation.org/packages/lme4/topics/lmer'>lmer</a></code>
+exogenous, GMM estimator equals REF. When all covariates are assume endogenous, GMM equals FE.</p>
+
+<h3>Formula parameter</h3>
+
+
+<p>The <code>formula</code> argument follows a two part notation:</p>
+<p>In the first part, the model is specified while in the second part, the endogenous regressors are indicated.
+These two parts are separated by a single vertical bar (<code>|</code>).</p>
+<p>The first RHS follows the exact same model specification as required by the <code><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></code>
 function of package <code>lme4</code> and internally will be used to fit a <code>lmer</code> model. In the second part,
 one or multiple endogenous regressors are indicated by passing them to the special function <code>endo</code>
 (e.g. <code>endo(X1, X2)</code>). Note that no argument to <code>endo()</code> is to be supplied as character
-but as symbols without quotation marks.
-    See the example section for illustrations on how to specify the <code>formula</code> parameter.
-    
+but as symbols without quotation marks.</p>
+<p>See the example section for illustrations on how to specify the <code>formula</code> parameter.</p>
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Hausman J (1978). “Specification Tests in Econometrics.” Econometrica, 46(6), 1251–1271.</p>
 <p>Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://www.rdocumentation.org/packages/lme4/topics/lmer'>lmer</a></code> for more details on how to specify the <code>formula</code> parameter</p>
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></code> for more details on how to specify the <code>formula</code> parameter</p>
+<p><code><a href='https://rdrr.io/pkg/lme4/man/lmerControl.html'>lmerControl</a></code> for more details on how to provide the <code>lmer.control</code> parameter</p>
 <p><code><a href='summary.rendo.multilevel.html'>summary</a></code> for how fitted models are summarized</p></div>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='no'>dataMultilevelIV</span>)
+    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataMultilevelIV"</span>)
 
 <span class='co'># Two levels</span>
 <span class='no'>res.ml.L2</span> <span class='kw'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> + <span class='no'>X31</span> +
@@ -269,11 +301,20 @@ but as symbols without quotation marks.
                               <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>, <span class='no'>X21</span>) + <span class='fu'>endo</span>(<span class='no'>X22</span>),
                           <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
+<span class='co'># Fit above model with different settings for lmer()</span>
+<span class='no'>lmer.control</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmerControl.html'>lmerControl</a></span>(<span class='kw'>optimizer</span><span class='kw'>=</span><span class='st'>"nloptwrap"</span>,
+                                  <span class='kw'>optCtrl</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>algorithm</span><span class='kw'>=</span><span class='st'>"NLOPT_LN_COBYLA"</span>,
+                                               <span class='kw'>xtol_rel</span><span class='kw'>=</span><span class='fl'>1e-6</span>))
+<span class='no'>res.ml.L2.cob</span> <span class='kw'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> +
+                                  <span class='no'>X31</span> + <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>, <span class='no'>X21</span>) + <span class='fu'>endo</span>(<span class='no'>X22</span>),
+                              <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+                              <span class='kw'>lmer.control</span> <span class='kw'>=</span> <span class='no'>lmer.control</span>) <span class='co'># use different controls for lmer</span>
+
 
 <span class='co'># specify argument "model" in the S3 methods to obtain results for the respective model</span>
 <span class='co'># default is "REF" for all methods</span>
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>res.ml.L3</span>)</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>res.ml.L3</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + 
 #&gt;     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | 
@@ -309,7 +350,7 @@ but as symbols without quotation marks.
 #&gt; FE_L3_vs_REF  13     39.99 0.000138 ***
 #&gt; ---
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</div><div class='input'><span class='co'># same as above</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"REF"</span>)</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"REF"</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + 
 #&gt;     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | 
@@ -346,33 +387,22 @@ but as symbols without quotation marks.
 #&gt; ---
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</div><div class='input'>
 <span class='co'># complete pval table for L3 fixed effects</span>
-<span class='no'>L3.FE.p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/coef'>coef</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/summary'>summary</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L3"</span>))
+<span class='no'>L3.FE.p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L3"</span>))
 
 <span class='co'># variance covariance matrix</span>
-<span class='no'>L2.FE.var</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/vcov'>vcov</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L2"</span>)
-<span class='no'>L2.GMM.var</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/vcov'>vcov</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"GMM_L2"</span>)
+<span class='no'>L2.FE.var</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L2"</span>)
+<span class='no'>L2.GMM.var</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"GMM_L2"</span>)
 <span class='co'># residuals</span>
-<span class='no'>L3.REF.resid</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/residuals'>resid</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"REF"</span>)</div><div class='input'>
-</div></pre>
+<span class='no'>L3.REF.resid</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"REF"</span>)
+<span class='co'># }</span></div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#references">References</a></li>
-
-      <li><a href="#see-also">See also</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -380,13 +410,16 @@ but as symbols without quotation marks.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
