@@ -126,6 +126,169 @@
       <small>Source: <a href='https://github.com/mmeierer/REndo/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="rendo-231" class="section level1">
+<h1 class="page-header" data-toc-text="2.3.1">
+<a href="#rendo-231" class="anchor"></a>REndo 2.3.1<small> 2020-02-17 </small>
+</h1>
+<ul>
+<li>None. Version bump in order to resubmit to CRAN after package was archived.</li>
+</ul>
+</div>
+    <div id="rendo-230" class="section level1">
+<h1 class="page-header" data-toc-text="2.3.0">
+<a href="#rendo-230" class="anchor"></a>REndo 2.3.0<small> 2019-08-05 </small>
+</h1>
+<div id="significant-user-visible-changes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#significant-user-visible-changes" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<ul>
+<li>Add support for predictions through method <code>predict</code> for every model</li>
+</ul>
+</div>
+<div id="bug-fixes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>BUG FIXES</h3>
+<ul>
+<li>Fix wrong calculations for the fitted values and residuals in the enhanced OLS cases of <code>copulaCorrection</code>
+</li>
+<li>Improved documentation</li>
+</ul>
+</div>
+</div>
+    <div id="rendo-221" class="section level1">
+<h1 class="page-header" data-toc-text="2.2.1">
+<a href="#rendo-221" class="anchor"></a>REndo 2.2.1<small> 2019-06-05 </small>
+</h1>
+<div id="significant-user-visible-changes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#significant-user-visible-changes-1" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<ul>
+<li>To tweak the lmer model fit in <code>multilevelIV</code> to their linking, users can supply a parameter <code>lmer.control</code>
+</li>
+</ul>
+</div>
+<div id="new-features" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>NEW FEATURES</h3>
+<ul>
+<li>Warning in <code>confint</code> if there are NAs in the bootstrapped estimates for <code>copulaCorrection</code>
+</li>
+<li>Updated vignette</li>
+</ul>
+</div>
+<div id="bug-fixes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes-1" class="anchor"></a>BUG FIXES</h3>
+<ul>
+<li>The coefficient estimates for <code>multilevelIV</code> are more consistent and independent of data sorting due to different standard settings for fitting <code>lmer</code>
+</li>
+<li>Bootstrapped parameter estimates for <code>copualCorrection</code> result in fewer NAs when using L-BFGS-B as optimization method</li>
+</ul>
+</div>
+</div>
+    <div id="rendo-220" class="section level1">
+<h1 class="page-header" data-toc-text="2.2.0">
+<a href="#rendo-220" class="anchor"></a>REndo 2.2.0<small> 2019-04-13 </small>
+</h1>
+<div id="significant-user-visible-changes-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#significant-user-visible-changes-2" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<ul>
+<li>The augmented OLS method in <code>copulaCorrection</code> also bootstraps parameter estimates</li>
+<li>The summary output for results from <code>copulaCorrection</code> was adapted to reflect that standard errors are bootstrapped</li>
+<li>Removed support for the S3 method <code>labels</code> because of inconsistent behavior across methods</li>
+</ul>
+</div>
+<div id="new-features-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-features-1" class="anchor"></a>NEW FEATURES</h3>
+<ul>
+<li>Bootstrapping for <code>copulaCorrection</code> case 1 is now considerably faster</li>
+<li>New data was generated for <code>dataMultilevelIV</code>
+</li>
+</ul>
+</div>
+<div id="bug-fixes-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes-2" class="anchor"></a>BUG FIXES</h3>
+<ul>
+<li>The sigma matrix in <code>latentIV</code> is constructed as in the paper by Ebbes et al. what improves results. Special thanks to Jordan Henderson for investigating and pointing this out!</li>
+<li>In <code>latentIV</code>, the parameter for group membership (<code>theta5</code>) is now transformed back and reported correctly.</li>
+<li>The vcov matrix for <code>latentIV</code> is corrected for the transformation in <code>theta5</code>.</li>
+<li>The bootstrapping in <code>copulaCorrection</code> case 1 now creates samples of the same length as the original data</li>
+<li>The (percentile) confidence intervals and vcov for results from <code>copulaCorrection</code> now rely on bootstraping</li>
+</ul>
+</div>
+</div>
+    <div id="rendo-210" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.0">
+<a href="#rendo-210" class="anchor"></a>REndo 2.1.0<small> 2019-01-16 </small>
+</h1>
+<div id="significant-user-visible-changes-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#significant-user-visible-changes-3" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<ul>
+<li>The reworked method <code>multilevelIV</code> and accompanying data was added back to the package</li>
+<li>Vignette <code>REndo-introduction</code> was added to showcase package usage</li>
+<li>Users can supply a parameter <code>optimx.args</code> to tweak the LL optimization to their liking</li>
+</ul>
+</div>
+<div id="new-features-2" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-features-2" class="anchor"></a>NEW FEATURES</h3>
+<ul>
+<li>Method <code>confint</code> was added for methods <code>latentIV</code> and <code>copulaCorrection</code>
+</li>
+<li>Examples and documentation were improved for all methods</li>
+<li>New data was generated for <code>dataHetIV</code>
+</li>
+<li>The default number of iterations for all optimizations was increased to 100’000</li>
+</ul>
+</div>
+<div id="bug-fixes-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes-3" class="anchor"></a>BUG FIXES</h3>
+<ul>
+<li>To avoid infrequent warnings, the parameter <code>sigma</code> used in <code>copulaCorrection</code> was constrained to &gt; 0</li>
+<li>Various spelling mistakes were fixed</li>
+</ul>
+</div>
+</div>
+    <div id="rendo-200" class="section level1">
+<h1 class="page-header" data-toc-text="2.0.0">
+<a href="#rendo-200" class="anchor"></a>REndo 2.0.0<small> 2018-11-10 </small>
+</h1>
+<div id="significant-user-visible-changes-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#significant-user-visible-changes-4" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<ul>
+<li>Remodeled all methods’ user-interface</li>
+<li>Added detailed input checks for every provided parameter</li>
+<li>Adapted all visible outputs</li>
+<li>Parameter <code>verbose</code> allows to turn on or off printing</li>
+<li>Updated documentation to reflect all changes and added theoretical background</li>
+</ul>
+</div>
+<div id="new-features-3" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-features-3" class="anchor"></a>NEW FEATURES</h3>
+<ul>
+<li>Formulas support transformations</li>
+<li>Improve all code to be more reliable and stable</li>
+<li>Provide new example datasets and accompanying documentation for all methods</li>
+<li>Added extensive testing for all aspects of the package</li>
+<li>Increased numerical stability for log-likelihood optimization methods <code>latentIV</code> and <code>copualCorrection</code>
+</li>
+</ul>
+</div>
+<div id="bug-fixes-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes-4" class="anchor"></a>BUG FIXES</h3>
+<ul>
+<li>Many</li>
+</ul>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
