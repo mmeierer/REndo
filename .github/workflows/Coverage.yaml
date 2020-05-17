@@ -1,10 +1,12 @@
 name: coverage
 on:
-  push: # also whenever pulled (ie pushed) to master and dev in order to get batches
+  # also whenever pulled (ie pushed) to master and dev in order to get batches
+  push:
     branches:
       - development
       - master
-  pull_request: # default to types [opened, synchronize, reopened]
+  # default to types [opened, synchronize, reopened]
+  pull_request:
 
 
 
