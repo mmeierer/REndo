@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -85,7 +85,7 @@
       <h1 data-toc-skip>REndo: A Package to Address Endogeneity Without External Instrumental Variables</h1>
                         <h4 class="author">Raluca Gui</h4>
             
-            <h4 class="date">2020-05-17</h4>
+            <h4 class="date">2020-06-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/vignettes/REndo-introduction.Rmd"><code>vignettes/REndo-introduction.Rmd</code></a></small>
       <div class="hidden name"><code>REndo-introduction.Rmd</code></div>
@@ -273,7 +273,7 @@ q_{6t}&amp;=(Y_{t} - \bar{Y})^{2}  \hspace{1.90cm} (3f)
 <p>where <span class="math inline">\(G=G(X_{t})\)</span> can be either <span class="math inline">\(x^2\)</span>, <span class="math inline">\(x^3\)</span>, <span class="math inline">\(ln(x)\)</span> or <span class="math inline">\(1/x\)</span> and should be specified in the <strong>g</strong> argument of the third RHD of the formula, as <strong>x2, x3, lnx</strong> or <strong>1/x</strong>. In case of internal instruments built only from the endogenous regressor, e.g. <strong>p2</strong>, or from the response and the endogenous regressor, like for example in <strong>yp</strong>, there is no need to specify <strong>g</strong> or the set of exogenous regressors in the <strong>IIV()</strong> part of the formula. The function returns a set of tests for checking the validity of the instruments and the endogeneity assumption. Here as well, transformation of explanatory variables, such as I(X), ln(X), are supported.</p>
 <ol start="4" style="list-style-type: decimal">
 <li>
-<strong>hetErrorsIV()</strong> - uses the heteroskedasticity of the errors in a linear projection of the endogenous regressor on the other covariates to solve the endogeneity problem induced by measurement error, as proposed by Lewbel (2012). The function allows more than one endogenous regressors.</li>
+<strong>hetErrorsIV()</strong> - uses the heteroskedasticity of the errors in a linear projection of the endogenous regressor on the other covariates to solve the endogeneity problem induced by measurement error, as proposed by Lewbel (2012). The function allows just one endogenous regressor.</li>
 </ol>
 <p>The function <strong>hetErrorsIV()</strong> has a four-part formula specification:</p>
 <pre><code><a href="../reference/hetErrorsIV.html">            hetErrorsIV(y ~ X1 + X2 + X3 + P | P | IIV(X1,X2) | Z1, data)</a></code></pre>
@@ -377,7 +377,7 @@ q_{6t}&amp;=(Y_{t} - \bar{Y})^{2}  \hspace{1.90cm} (3f)
 <span class="co">#&gt; calworks                      NA</span>
 <span class="co">#&gt; gradesKK-08                   NA</span>
 <span class="co">#&gt; income                        NA</span></pre></body></html></div>
-<p>The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge (Converge Code = 1). Therefore, the copulaCorrection() allows the user to specify the desired optimization algorithm (see the optimx() function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.</p>
+<p>The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge. Therefore, the copulaCorrection() allows the user to specify the desired optimization algorithm (see the optimx() function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.</p>
 <p>In the current case, the algorithm converged, and we see that the coefficient of the student/teacher ratio returned is equal to <strong>-0.38</strong>.</p>
 <p>The <strong>heteroskedastic errors</strong> approach returns an estimate of the student/teacher ratio equal to <strong>0.71</strong>, far away from the coefficients returned by the external instrumental variables or even OLS. As Lewbel (2012) underlined, it is often better to use this approach in order to create additional instruments, which together with external ones, could lead to improved efficiency.</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">111</span>)

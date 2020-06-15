@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
       </span>
     </div>
 
@@ -126,6 +126,28 @@
       <small>Source: <a href='https://github.com/mmeierer/REndo/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="rendo-240" class="section level1">
+<h1 class="page-header" data-toc-text="2.4.0">
+<a href="#rendo-240" class="anchor"></a>REndo 2.4.0<small> 2020-05-24 </small>
+</h1>
+<div id="significant-user-visible-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#significant-user-visible-changes" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h2>
+<ul>
+<li>Add a formal assumption test for method <code>hetErrorsIV</code> to detect weak instruments</li>
+</ul>
+</div>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>NEW FEATURES</h2>
+<ul>
+<li>The log-likelihood function underlying <code>copulaCorrection</code> case 1 is refactored and implemented using Rcpp and RcppEigen what makes it considerably faster</li>
+<li>Improved checks of user input that disallow any non-finite values in the data</li>
+<li>New data was generated for <code>dataHetIV</code>
+</li>
+</ul>
+</div>
+</div>
     <div id="rendo-231" class="section level1">
 <h1 class="page-header" data-toc-text="2.3.1">
 <a href="#rendo-231" class="anchor"></a>REndo 2.3.1<small> 2020-02-17 </small>
@@ -138,9 +160,9 @@
 <h1 class="page-header" data-toc-text="2.3.0">
 <a href="#rendo-230" class="anchor"></a>REndo 2.3.0<small> 2019-08-05 </small>
 </h1>
-<div id="significant-user-visible-changes" class="section level3">
+<div id="significant-user-visible-changes-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#significant-user-visible-changes" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<a href="#significant-user-visible-changes-1" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
 <ul>
 <li>Add support for predictions through method <code>predict</code> for every model</li>
 </ul>
@@ -159,17 +181,17 @@
 <h1 class="page-header" data-toc-text="2.2.1">
 <a href="#rendo-221" class="anchor"></a>REndo 2.2.1<small> 2019-06-05 </small>
 </h1>
-<div id="significant-user-visible-changes-1" class="section level3">
+<div id="significant-user-visible-changes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#significant-user-visible-changes-1" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<a href="#significant-user-visible-changes-2" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
 <ul>
 <li>To tweak the lmer model fit in <code>multilevelIV</code> to their linking, users can supply a parameter <code>lmer.control</code>
 </li>
 </ul>
 </div>
-<div id="new-features" class="section level3">
+<div id="new-features-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#new-features" class="anchor"></a>NEW FEATURES</h3>
+<a href="#new-features-1" class="anchor"></a>NEW FEATURES</h3>
 <ul>
 <li>Warning in <code>confint</code> if there are NAs in the bootstrapped estimates for <code>copulaCorrection</code>
 </li>
@@ -190,18 +212,18 @@
 <h1 class="page-header" data-toc-text="2.2.0">
 <a href="#rendo-220" class="anchor"></a>REndo 2.2.0<small> 2019-04-13 </small>
 </h1>
-<div id="significant-user-visible-changes-2" class="section level3">
+<div id="significant-user-visible-changes-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#significant-user-visible-changes-2" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<a href="#significant-user-visible-changes-3" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
 <ul>
 <li>The augmented OLS method in <code>copulaCorrection</code> also bootstraps parameter estimates</li>
 <li>The summary output for results from <code>copulaCorrection</code> was adapted to reflect that standard errors are bootstrapped</li>
 <li>Removed support for the S3 method <code>labels</code> because of inconsistent behavior across methods</li>
 </ul>
 </div>
-<div id="new-features-1" class="section level3">
+<div id="new-features-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#new-features-1" class="anchor"></a>NEW FEATURES</h3>
+<a href="#new-features-2" class="anchor"></a>NEW FEATURES</h3>
 <ul>
 <li>Bootstrapping for <code>copulaCorrection</code> case 1 is now considerably faster</li>
 <li>New data was generated for <code>dataMultilevelIV</code>
@@ -224,18 +246,18 @@
 <h1 class="page-header" data-toc-text="2.1.0">
 <a href="#rendo-210" class="anchor"></a>REndo 2.1.0<small> 2019-01-16 </small>
 </h1>
-<div id="significant-user-visible-changes-3" class="section level3">
+<div id="significant-user-visible-changes-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#significant-user-visible-changes-3" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<a href="#significant-user-visible-changes-4" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
 <ul>
 <li>The reworked method <code>multilevelIV</code> and accompanying data was added back to the package</li>
 <li>Vignette <code>REndo-introduction</code> was added to showcase package usage</li>
 <li>Users can supply a parameter <code>optimx.args</code> to tweak the LL optimization to their liking</li>
 </ul>
 </div>
-<div id="new-features-2" class="section level3">
+<div id="new-features-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#new-features-2" class="anchor"></a>NEW FEATURES</h3>
+<a href="#new-features-3" class="anchor"></a>NEW FEATURES</h3>
 <ul>
 <li>Method <code>confint</code> was added for methods <code>latentIV</code> and <code>copulaCorrection</code>
 </li>
@@ -258,9 +280,9 @@
 <h1 class="page-header" data-toc-text="2.0.0">
 <a href="#rendo-200" class="anchor"></a>REndo 2.0.0<small> 2018-11-10 </small>
 </h1>
-<div id="significant-user-visible-changes-4" class="section level3">
+<div id="significant-user-visible-changes-5" class="section level3">
 <h3 class="hasAnchor">
-<a href="#significant-user-visible-changes-4" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
+<a href="#significant-user-visible-changes-5" class="anchor"></a>SIGNIFICANT USER-VISIBLE CHANGES</h3>
 <ul>
 <li>Remodeled all methods’ user-interface</li>
 <li>Added detailed input checks for every provided parameter</li>
@@ -269,9 +291,9 @@
 <li>Updated documentation to reflect all changes and added theoretical background</li>
 </ul>
 </div>
-<div id="new-features-3" class="section level3">
+<div id="new-features-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#new-features-3" class="anchor"></a>NEW FEATURES</h3>
+<a href="#new-features-4" class="anchor"></a>NEW FEATURES</h3>
 <ul>
 <li>Formulas support transformations</li>
 <li>Improve all code to be more reliable and stable</li>

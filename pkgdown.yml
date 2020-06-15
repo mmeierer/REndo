@@ -1,7 +1,7 @@
 pandoc: 2.7.3
 pkgdown: 1.5.1.9000
-pkgdown_sha: 6789abfb952483f27c1879a24fe881720f3e5257
+pkgdown_sha: 307a4e35dc42c8ba5373c8a17304316125f72a55
 articles:
   REndo-introduction: REndo-introduction.html
-last_built: 2020-05-17T18:19Z
+last_built: 2020-06-15T19:30Z
 
