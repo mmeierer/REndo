@@ -19,7 +19,7 @@ function \code{ivreg} of package \code{AER} and slightly modifies it by adapting
 and \code{formula} components. The \code{summary} function prints additional diagnostic information as
 described in documentation for \code{\link[AER]{summary.ivreg}}.
 
-All generic accessor functions for \code{ivreg} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
+All generic accessor functions for \code{ivreg} such as \code{anova}, \code{hatvalues}, or \code{vcov} are available.
 }
 \description{
 Fits linear models with one endogenous regressor using internal instruments built using the approach described in

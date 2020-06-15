@@ -115,7 +115,9 @@ check_err_msg <- function(err.msg){
     if(is.numeric(col))
       return(is.finite(col))
     else
-      return(TRUE)}) # anything else (chars etc) are otherwise seen as not finite
+      # all other types (chars etc) are seen as not finite.
+      # Checking for NA not needed because done before
+      return(TRUE)})
 
   if(any(!unlist(numeric.are.finite)))
     err.msg <-c(err.msg, "Please do not provide any non-finite values in the data.")
