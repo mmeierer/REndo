@@ -3,6 +3,7 @@
 # Required data --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataCopCont")
 data("dataCopCont2")
+data("dataCopDis")
 data("dataCopDis2")
 data("dataCopDisCont")
 
@@ -30,6 +31,10 @@ test_that("Fail if bad 2nd RHS", {
   expect_error(copulaCorrection(formula=  y ~ P1+P2|continuous(P1)+continuous(P2),                        data=dataCopCont2), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(X1)+continuous(X2)+continuous(P2),  data=dataCopCont2), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2+P1|continuous(P1)+continuous(P2)+continuous(X1)+continuous(X2),  data=dataCopCont2), regexp = "The above errors were encountered!")
+
+  # Fail if not exactly the same in model
+  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + log(P1)|continuous(P1), data=dataCopCont2), regexp = "The above errors were encountered!")
+  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P1|continuous(log(P1)), data=dataCopCont2), regexp = "The above errors were encountered!")
 
   # expect_error(function.to.test(formula = y ~ X1 + X2 + P|., data = function.std.data), regexp = "The above errors were encountered!") # dot version
 })
@@ -202,6 +207,137 @@ test_that("Fail if no rows or cols",{
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1),data=data.frame(y=integer(), X1=numeric(), X2=numeric(), P1=integer(), P2=integer())), regexp = "The above errors were encountered!")
 })
 
+
+test_that("Fails if contains any non-finite", {
+  # 1 Continuous
+  call.args.c1 <- list(formula=y~X1+X2+P|continuous(P))
+  test.nonfinite.in.data(dataCopCont,name.col="y", fct=copulaCorrection, call.args = call.args.c1)
+  test.nonfinite.in.data(dataCopCont,name.col="X1",fct=copulaCorrection, call.args = call.args.c1)
+  test.nonfinite.in.data(dataCopCont,name.col="P", fct=copulaCorrection, call.args = call.args.c1)
+
+  # 2 Continuous
+  call.args.c2 <- list(formula=y~X1+X2+P1+P2|continuous(P2))
+  test.nonfinite.in.data(dataCopCont2,name.col="y", fct=copulaCorrection,   call.args = call.args.c2)
+  test.nonfinite.in.data(dataCopCont2,name.col="X1", fct=copulaCorrection,  call.args = call.args.c2)
+  test.nonfinite.in.data(dataCopCont2,name.col="P1", fct=copulaCorrection,  call.args = call.args.c2)
+  test.nonfinite.in.data(dataCopCont2,name.col="P2", fct=copulaCorrection,  call.args = call.args.c2)
+
+  # 1 Discrete
+  call.args.d1 <- list(formula=y~X1+X2+P|discrete(P))
+  test.nonfinite.in.data(dataCopDis,name.col="y", fct=copulaCorrection,   call.args = call.args.d1)
+  test.nonfinite.in.data(dataCopDis,name.col="X1", fct=copulaCorrection,  call.args = call.args.d1)
+  test.nonfinite.in.data(dataCopDis,name.col="P", fct=copulaCorrection,   call.args = call.args.d1)
+
+  # 2 Discrete
+  call.args.d2 <- list(formula=y~X1+X2+P1+P2|discrete(P1))
+  test.nonfinite.in.data(dataCopDis2,name.col="y", fct=copulaCorrection,    call.args = call.args.d2)
+  test.nonfinite.in.data(dataCopDis2,name.col="X1", fct=copulaCorrection,   call.args = call.args.d2)
+  test.nonfinite.in.data(dataCopDis2,name.col="P1", fct=copulaCorrection,   call.args = call.args.d2)
+  test.nonfinite.in.data(dataCopDis2,name.col="P2", fct=copulaCorrection,   call.args = call.args.d2)
+
+  # 1 Discrete, 1 Continuous
+  call.args.c1.d1 <- list(formula=y~X1+X2+P1+P2|discrete(P1)+continuous(P2))
+  test.nonfinite.in.data(dataCopDisCont,name.col="y", fct=copulaCorrection,    call.args = call.args.c1.d1)
+  test.nonfinite.in.data(dataCopDisCont,name.col="X1", fct=copulaCorrection,   call.args = call.args.c1.d1)
+  test.nonfinite.in.data(dataCopDisCont,name.col="P1", fct=copulaCorrection,   call.args = call.args.c1.d1)
+  test.nonfinite.in.data(dataCopDisCont,name.col="P2", fct=copulaCorrection,   call.args = call.args.c1.d1)
+})
+#
+# test_that("Fails if contains any NA", {
+#
+#   fct.test.na <- function(data, name.col, call.args){
+#     data[5, name.col] <- NA_real_
+#     call.args <- modifyList(call.args, list(data= data))
+#     expect_error(do.call(what = copulaCorrection, args=call.args), regexp = "The above errors were encountered!")
+#   }
+#
+#   # 1 Continuous
+#   call.args.c1 <- list(formula=y ~ X1+X2+P|continuous(P))
+#   fct.test.na(dataCopCont,name.col="y",  call.args = call.args.c1)
+#   fct.test.na(dataCopCont,name.col="X1", call.args = call.args.c1)
+#   fct.test.na(dataCopCont,name.col="P",  call.args = call.args.c1)
+#
+#
+#   # 2 Continuous
+#   call.args.c2 <- list(formula=y~X1+X2+P1+P2|continuous(P2))
+#   fct.test.na(dataCopCont2,name.col="y",   call.args = call.args.c2)
+#   fct.test.na(dataCopCont2,name.col="X1",  call.args = call.args.c2)
+#   fct.test.na(dataCopCont2,name.col="P1",  call.args = call.args.c2)
+#   fct.test.na(dataCopCont2,name.col="P2",  call.args = call.args.c2)
+#
+#   # 1 Discrete
+#   call.args.d1 <- list(formula=y~X1+X2+P|discrete(P))
+#   fct.test.na(dataCopDis,name.col="y",   call.args = call.args.d1)
+#   fct.test.na(dataCopDis,name.col="X1",  call.args = call.args.d1)
+#   fct.test.na(dataCopDis,name.col="P",   call.args = call.args.d1)
+#
+#   # 2 Discrete
+#   call.args.d2 <- list(formula=y~X1+X2+P1+P2|discrete(P1))
+#   fct.test.na(dataCopDis,name.col="y",    call.args = call.args.d2)
+#   fct.test.na(dataCopDis,name.col="X1",   call.args = call.args.d2)
+#   fct.test.na(dataCopDis,name.col="P1",   call.args = call.args.d2)
+#   fct.test.na(dataCopDis,name.col="P2",   call.args = call.args.d2)
+#
+#   # 1 Discrete, 1 Continuous
+#   call.args.c1.d1 <- list(formula=y~X1+X2+P1+P2|discrete(P1)+continuous(P2))
+#   fct.test.na(dataCopDisCont,name.col="y",    call.args = call.args.c1.d1)
+#   fct.test.na(dataCopDisCont,name.col="X1",   call.args = call.args.c1.d1)
+#   fct.test.na(dataCopDisCont,name.col="P1",   call.args = call.args.c1.d1)
+#   fct.test.na(dataCopDisCont,name.col="P2",   call.args = call.args.c1.d1)
+#
+# })
+#
+#
+# test_that("Fails if contains any Non-Finite", {
+#
+#   fct.test.nonfin <- function(data, name.col, call.args){
+#     data[5, name.col] <- Inf
+#     call.args <- modifyList(call.args, list(data= data))
+#     expect_error(do.call(what = copulaCorrection, args=call.args), regexp = "The above errors were encountered!")
+#     data[5, name.col] <- -Inf
+#     call.args <- modifyList(call.args, list(data= data))
+#     expect_error(do.call(what = copulaCorrection, args=call.args), regexp = "The above errors were encountered!")
+#     data[5, name.col] <- NaN
+#     call.args <- modifyList(call.args, list(data= data))
+#     expect_error(do.call(what = copulaCorrection, args=call.args), regexp = "The above errors were encountered!")
+#   }
+#
+#   # 1 Continuous
+#   call.args.c1 <- list(formula=y ~ X1+X2+P|continuous(P))
+#   fct.test.nonfin(dataCopCont,name.col="y", call.args = call.args.c1)
+#   fct.test.nonfin(dataCopCont,name.col="X1", call.args = call.args.c1)
+#   fct.test.nonfin(dataCopCont,name.col="P", call.args = call.args.c1)
+#
+#
+#   # 2 Continuous
+#   call.args.c2 <- list(formula=y~X1+X2+P1+P2|continuous(P2))
+#   fct.test.nonfin(dataCopCont2,name.col="y",   call.args = call.args.c2)
+#   fct.test.nonfin(dataCopCont2,name.col="X1",  call.args = call.args.c2)
+#   fct.test.nonfin(dataCopCont2,name.col="P1",  call.args = call.args.c2)
+#   fct.test.nonfin(dataCopCont2,name.col="P2",  call.args = call.args.c2)
+#
+#
+#   # 1 Discrete
+#   call.args.d1 <- list(formula=y~X1+X2+P|discrete(P))
+#   fct.test.nonfin(dataCopDis,name.col="y",   call.args = call.args.d1)
+#   fct.test.nonfin(dataCopDis,name.col="X1",  call.args = call.args.d1)
+#   fct.test.nonfin(dataCopDis,name.col="P",   call.args = call.args.d1)
+#
+#   # 2 Discrete
+#   call.args.d2 <- list(formula=y~X1+X2+P1+P2|discrete(P1))
+#   fct.test.nonfin(dataCopDis2,name.col="y",   call.args = call.args.d2)
+#   fct.test.nonfin(dataCopDis2,name.col="X1",  call.args = call.args.d2)
+#   fct.test.nonfin(dataCopDis2,name.col="P1",   call.args = call.args.d2)
+#   fct.test.nonfin(dataCopDis2,name.col="P2",   call.args = call.args.d2)
+#
+#   # 1 Discrete, 1 Continuous
+#   call.args.c1.d1 <- list(formula=y~X1+X2+P1+P2|discrete(P1)+continuous(P2))
+#   fct.test.nonfin(dataCopDisCont,name.col="y",    call.args = call.args.c1.d1)
+#   fct.test.nonfin(dataCopDisCont,name.col="X1",   call.args = call.args.c1.d1)
+#   fct.test.nonfin(dataCopDisCont,name.col="P1",   call.args = call.args.c1.d1)
+#   fct.test.nonfin(dataCopDisCont,name.col="P2",   call.args = call.args.c1.d1)
+#
+# })
 
 
 

@@ -1,6 +1,6 @@
 #' @title  Fitting Linear Models with Endogenous Regressors using Heteroskedastic Covariance Restrictions
 #' @description  This function estimates the model parameters and associated standard errors for a
-#' linear regression model with one or more endogenous regressors. Identification is achieved
+#' linear regression model with one endogenous regressor. Identification is achieved
 #' through heteroscedastic covariance restrictions within the triangular system as proposed in Lewbel(2012).
 #'
 #' @template template_param_formuladataverbose
@@ -56,6 +56,8 @@
 #' @examples
 #' data("dataHetIV")
 #' # P is the endogenous regressor in all examples
+#' # X1 generates a weak instrument but for the examples
+#' # this is ignored
 #'
 #' # 2 IVs, one from X1, one from X2
 #' het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1)+IIV(X2), data=dataHetIV)
@@ -79,9 +81,6 @@
 hetErrorsIV <- function(formula, data, verbose=TRUE){
 
   cl <- match.call()
-
-  formula.rhs.iiv  <- 3
-  formula.rhs.eiv  <- 4
 
   # Input checks ----------------------------------------------------------------------------------------------------
   check_err_msg(checkinput_heterrors_formula(formula=formula))

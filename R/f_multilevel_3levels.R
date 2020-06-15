@@ -122,12 +122,10 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   #         Q(2)_s=I_s-P(Z_3s), Z_3s=stacked Z_3sct
   #         where P(H) = H(H'H)^(-1)H' (p.510)
   #
-  #   L2: ?
   #
   # Structure:
   #   L3: p.512 (11)
   #       Q(2)=blkdiag(Q(2)_s)
-  #   L2: ?
 
   # . Q at L3 level ------------------------------------------------------------------------------------
   # Move the diagonal outside as the blocks are all square and therefore the diagonal is the same
@@ -176,9 +174,7 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
 
   # Build instruments --------------------------------------------------------------------------
-  # Formula: independent of level (** RALUCA: Double-check these)
-  #   HREE,p?: ?
-  #   FE,  p?: ?
+  # Formula: independent of level
   #   GMM, p518: H_{1,GLS} = (Q(1)_gls V^(-0.5) X : P(1)_GLS V^(-0.5) X_1)
 
   HIV.FE_L2  <- L2.Q %*% (W %*% X)
@@ -223,7 +219,6 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
   GMM_L3_vs_REF <- multilevel_omittedvartest(IV1 = HIV.GMM_L3, IV2 = HREE,
                                               res.gmm.IV1 = res.gmm.GMM_L3, res.gmm.IV2 = res.gmm.HREE,
                                               W = W, l.Lhighest.X=l.L3.X, l.Lhighest.y=l.L3.y)
-  # HIVc1 vs HREE, id=2 ** double but different id ??
 
   # HIVc1 vs HIVs1
   FE_L2_vs_FE_L3 <- multilevel_omittedvartest(IV1 = HIV.FE_L2, IV2 = HIV.FE_L3,

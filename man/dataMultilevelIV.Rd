@@ -4,7 +4,8 @@
 \name{dataMultilevelIV}
 \alias{dataMultilevelIV}
 \title{Multilevel Simulated Dataset - Three Levels}
-\format{A data frame with 2645 observations clustered into 40 level-three variables and 1312 level-two variables.
+\format{
+A data frame with 2645 observations clustered into 40 level-three variables and 1312 level-two variables.
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}
 \item{\code{X11}}{a level-one numeric vector representing a categorical exogenous variable with true parameter value equal to 3.}
@@ -21,7 +22,8 @@ It true parameter value equals to \eqn{-1} and it has a correlation with the lev
 \item{\code{X32}}{a level-three numeric vector representing a truncated normally distributed exogenous variable with true parameter value equal to 0.1.}
 \item{\code{X33}}{a level-three numeric vector representing a truncated normally distributed exogenous variable with true parameter value equal to -0.5.}
 \item{\code{SID}}{a numeric vector identifying each level-three observations.}
-\item{\code{CID}}{a numeric vector identifying each level-two observations.}}}
+\item{\code{CID}}{a numeric vector identifying each level-two observations.}}
+}
 \usage{
 data("dataMultilevelIV")
 }

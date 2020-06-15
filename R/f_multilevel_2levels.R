@@ -137,8 +137,6 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   #   and   P(1)_sgls = I_sc-Q(1)_sgls
 
   # GMM
-  # p. ??
-  # ** RALUCA: Where does the W come from then if "by using only the QX part of the instruments"
   HIV.GMM_L2 <- cbind(Q %*% W%*%X, P%*%W%*%X1)
 
   HREE   <- W %*% X

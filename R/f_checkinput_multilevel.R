@@ -83,7 +83,6 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
   # lmer specific function part
   f.lmer <- formula(F.formula, lhs = 1, rhs = 1)
 
-  # check that it can be interpreted by lmer..??
   l4.form <- tryCatch(lme4::lFormula(formula = f.lmer, data = data),
                   error = function(e)return(e))
   if(is(object = l4.form, class2 = "simpleError"))
@@ -92,7 +91,7 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
       return("Please specify a random effects terms in the formula.")
     }else{
       # Some other error
-      return(paste0("Please provide a formula interpretable by lme4::lmer. \nError: ",
+      return(paste0("Please provide a formula interpretable by lme4::lmer().\nError: ",
                     sQuote(l4.form$message)))
     }
 
@@ -121,6 +120,16 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
   if(!all(names.slopes %in% names.model))
     err.msg <- c(err.msg, "Please specify all slopes as well in the model part of the formula.")
 
+  # data contains no NA
+  #   cannot rely on lmer as its works with NA (but will block any other non-finites)
+  rel.data <- data[, all.vars(f.lmer), drop=FALSE]
+
+  if(anyNA(rel.data))
+    err.msg <- c(err.msg, "Please provide no NA values in the data.")
+
+  # Not needed, because lmer() already catches this
+  # if(any(!sapply(rel.data[numeric.cols], is.finite)))
+    # return("Please provide no non-finite values in the data.")
 
   return(err.msg)
 }

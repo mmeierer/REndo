@@ -19,11 +19,11 @@ function \code{ivreg} of package \code{AER} and slightly modifies it by adapting
 and \code{formula} components. The \code{summary} function prints additional diagnostic information as
 described in documentation for \code{\link[AER]{summary.ivreg}}.
 
-All generic accessor functions for \code{ivreg} such as \code{anova}, \code{hatalues}, or \code{vcov} are available.
+All generic accessor functions for \code{ivreg} such as \code{anova}, \code{hatvalues}, or \code{vcov} are available.
 }
 \description{
 This function estimates the model parameters and associated standard errors for a
-linear regression model with one or more endogenous regressors. Identification is achieved
+linear regression model with one endogenous regressor. Identification is achieved
 through heteroscedastic covariance restrictions within the triangular system as proposed in Lewbel(2012).
 }
 \details{
@@ -77,6 +77,8 @@ See the example section for illustrations on how to specify the \code{formula} p
 \examples{
 data("dataHetIV")
 # P is the endogenous regressor in all examples
+# X1 generates a weak instrument but for the examples
+# this is ignored
 
 # 2 IVs, one from X1, one from X2
 het <- hetErrorsIV(y~X1+X2+P|P|IIV(X1)+IIV(X2), data=dataHetIV)

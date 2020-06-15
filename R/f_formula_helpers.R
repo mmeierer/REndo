@@ -67,7 +67,8 @@ formula_readout_special <- function(F.formula, name.special, from.rhs, params.as
                                             unnamed.ind <- which(names(subl)=="")
                                             names(subl)[unnamed.ind] <- subl[unnamed.ind]
                                             return(subl)})
-    # *** TODO: unique per list or not?? may mixup entries if regressors are named same as g/iiv
+    # Does not need be unique per list, will not mixup entries if regressors are named same as g/iiv
+    #   rather it is caught that they may not be twice
   }
 
   return(names.special)

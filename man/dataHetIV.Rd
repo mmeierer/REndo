@@ -4,13 +4,15 @@
 \name{dataHetIV}
 \alias{dataHetIV}
 \title{Simulated Dataset with One Endogenous Continuous Regressor}
-\format{A data frame with 2500 observations on 4 variables:
+\format{
+A data frame with 2500 observations on 4 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}
 \item{\code{X1}}{a numeric vector, normally distributed and exogenous.}
 \item{\code{X2}}{a numeric vector, normally distributed and exogenous.}
 \item{\code{P}}{a numeric vector, continuous and endogenous regressor, normally distributed.}
-}}
+}
+}
 \usage{
 data("dataHetIV")
 }

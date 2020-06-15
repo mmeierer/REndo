@@ -18,7 +18,7 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   # GammaHat(H) = inv(Ghat' inv(M_HH) GHat) Ghat' inv(M_HH)
   GHat    <- Matrix::t(HIV) %*% W %*% X / n
   MHH     <- Matrix::crossprod(HIV) / n
-  ginvMHH <- corpcor::pseudoinverse(MHH) # maybe use Matrix::solve? could be faster but not failsave?
+  ginvMHH <- corpcor::pseudoinverse(MHH)
   Gamma.H <- corpcor::pseudoinverse( Matrix::t(GHat) %*% ginvMHH %*% GHat) %*% Matrix::t(GHat) %*% ginvMHH
 
   # Actual parameter estimate
@@ -29,7 +29,6 @@ multilevel_gmmestim <- function(y, X, W, HIV, num.groups.highest.level){
   # Standard Error, pval, p.530 --------------------------------------------------------------------------------
   #   b_GMM has an asymptotic (n -> Inf) normal distribution with mean beta
   #     and asymptotic variance Gamma(H) Lambda Gamma(H)'
-  #       *** RALUCA *** where Lambda = ??
 
   Lambda  <- MHH
 

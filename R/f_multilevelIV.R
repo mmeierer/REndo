@@ -283,7 +283,7 @@ multilevelIV <- function(formula, data, lmer.control=lmerControl(optimizer = "Ne
   #   with applied transformations
 
   if(verbose)
-    message("Fitting linear mixed-effects model.")
+    message("Fitting linear mixed-effects model ",format(f.lmer),".")
 
   res.lmer <- tryCatch(lme4::lmer(formula = f.lmer, data=data, REML = TRUE,
                                   control = lmer.control),

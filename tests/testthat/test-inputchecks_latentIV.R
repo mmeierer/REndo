@@ -73,6 +73,14 @@ test_that("Fail if no rows or cols",{
   expect_error(latentIV(formula = y ~ P, data = data.frame(y=integer(), P=integer())), regexp = "The above errors were encountered!")
 })
 
+
+test_that("Fail if contains any non-finite", {
+  call.args <- list(formula=y ~ P)
+  test.nonfinite.in.data(data = dataLatentIV, name.col = "y",  fct = latentIV, call.args = call.args)
+  test.nonfinite.in.data(data = dataLatentIV, name.col = "P",  fct = latentIV, call.args = call.args)
+})
+
+
 test_that("Fail if wrong data type in any of the formula parts", {
   # Only allow numericals in all relevant columns
   # Factor

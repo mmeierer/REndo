@@ -40,6 +40,19 @@ higherMomentsIV_IIV <- function(F.formula, data, g=NULL, iiv,  ...){
                     "lnx" = function(x){log(x)},
                     "1/x" = function(x){1/x})
 
+  # Col-wise de-mean helper function
+  de.mean <- function(x){
+    if(length(dim(x)) > 1){
+      # >1 col (data.frame,...).
+      # Use sweep contrary to apply because it again returns data.frame
+      # return(apply(x, MARGIN = 2, FUN = function(x){x-mean(x)}))
+      return(sweep(x = x, MARGIN = 2, STATS = colMeans(x=x, na.rm = TRUE), FUN = "-"))
+    }else{
+      # vector
+      return(x-mean(x))
+    }
+  }
+
   # IIV calculations
   df.IIV <- data.frame(res.iiv =
     switch(EXPR = iiv,
