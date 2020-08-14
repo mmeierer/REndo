@@ -56,6 +56,16 @@ endogenous regressors." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -136,10 +146,10 @@ endogenous regressors.</p>
 
     <pre class="usage"><span class='co'># S3 method for rendo.multilevel</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(
-  <span class='no'>object</span>,
-  <span class='no'>newdata</span>,
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"REF"</span>, <span class='st'>"FE_L2"</span>, <span class='st'>"FE_L3"</span>, <span class='st'>"GMM_L2"</span>, <span class='st'>"GMM_L3"</span>),
-  <span class='no'>...</span>
+  <span class='kw'>object</span>,
+  <span class='kw'>newdata</span>,
+  model = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"REF"</span>, <span class='st'>"FE_L2"</span>, <span class='st'>"FE_L3"</span>, <span class='st'>"GMM_L2"</span>, <span class='st'>"GMM_L3"</span>),
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -176,10 +186,10 @@ Possible values are: <code>"REF", "FE_L2", "FE_L3", "GMM_L2"</code>, or <code>"G
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataMultilevelIV"</span>)
 
 <span class='co'># Two levels</span>
-<span class='no'>res.ml.L2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='multilevelIV.html'>multilevelIV</a></span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> + <span class='no'>X31</span> +
-                          <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>),
-                          <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L2"</span>)</div><div class='output co'>#&gt;             1             2             3             4             5 
+<span class='kw'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='multilevelIV.html'>multilevelIV</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X11</span> <span class='op'>+</span> <span class='kw'>X12</span> <span class='op'>+</span> <span class='kw'>X13</span> <span class='op'>+</span> <span class='kw'>X14</span> <span class='op'>+</span> <span class='kw'>X15</span> <span class='op'>+</span> <span class='kw'>X21</span> <span class='op'>+</span> <span class='kw'>X22</span> <span class='op'>+</span> <span class='kw'>X23</span> <span class='op'>+</span> <span class='kw'>X24</span> <span class='op'>+</span> <span class='kw'>X31</span> <span class='op'>+</span>
+                          <span class='kw'>X32</span> <span class='op'>+</span> <span class='kw'>X33</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>SID</span>) <span class='op'>|</span> <span class='fu'>endo</span>(<span class='kw'>X15</span>),
+                          data = <span class='kw'>dataMultilevelIV</span>, verbose = <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>res.ml.L2</span>, model = <span class='st'>"FE_L2"</span>)</div><div class='output co'>#&gt;             1             2             3             4             5 
 #&gt; -10.232547152   7.943168917  15.446168289   4.387662973  -2.324243016 
 #&gt;             6             7             8             9            10 
 #&gt;  -0.614258484 -12.663909794 -15.341477838   6.591412113   0.906485365 
@@ -1311,9 +1321,8 @@ Possible values are: <code>"REF", "FE_L2", "FE_L3", "GMM_L2"</code>, or <code>"G
 #&gt;   7.613783525  -6.430078042   4.304900606  -2.419576913 </div><div class='input'>
 <span class='co'># using the data used for fitting also for predicting,</span>
 <span class='co'>#    correctly results in fitted values</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>res.ml.L2</span>, <span class='no'>dataMultilevelIV</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"GMM_L2"</span>),
-          <span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"GMM_L2"</span>)) <span class='co'># TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>res.ml.L2</span>, <span class='kw'>dataMultilevelIV</span>, model = <span class='st'>"GMM_L2"</span>),
+          <span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span>(<span class='kw'>res.ml.L2</span>, model = <span class='st'>"GMM_L2"</span>)) <span class='co'># TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

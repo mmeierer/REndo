@@ -58,6 +58,16 @@ the structural error is normally distributed." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -139,11 +149,11 @@ the structural error is normally distributed.</p>
     </div>
 
     <pre class="usage"><span class='fu'>latentIV</span>(
-  <span class='no'>formula</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>start.params</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(),
-  <span class='kw'>optimx.args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>formula</span>,
+  <span class='kw'>data</span>,
+  start.params = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(),
+  optimx.args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
+  verbose = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -248,7 +258,7 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataLatentIV"</span>)
 
 <span class='co'># function call without any initial parameter values</span>
-<span class='no'>l</span>  <span class='kw'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='no'>y</span> ~ <span class='no'>P</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>l</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>l</span>  <span class='op'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>P</span>, data = <span class='kw'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>l</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; latentIV(formula = y ~ P, data = dataLatentIV)
 #&gt; 
@@ -272,8 +282,8 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 #&gt; AIC: -15730.69 , BIC: -15684.1 
 #&gt; KKT1: FALSE  KKT2: TRUE Optimx Convergence Code: 0 </div><div class='input'>
 <span class='co'># function call with initial parameter values given by the user</span>
-<span class='no'>l1</span> <span class='kw'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='no'>y</span> ~ <span class='no'>P</span>, <span class='kw'>start.params</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"(Intercept)"</span><span class='kw'>=</span><span class='fl'>2.5</span>, <span class='kw'>P</span><span class='kw'>=</span>-<span class='fl'>0.5</span>),
-               <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.5, P=-0.5, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>l1</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>l1</span> <span class='op'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>P</span>, start.params = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"(Intercept)"</span>=<span class='fl'>2.5</span>, P=<span class='op'>-</span><span class='fl'>0.5</span>),
+               data = <span class='kw'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.5, P=-0.5, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>l1</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; latentIV(formula = y ~ P, data = dataLatentIV, start.params = c(`(Intercept)` = 2.5, 
 #&gt;     P = -0.5))
@@ -299,11 +309,11 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 #&gt; KKT1: FALSE  KKT2: TRUE Optimx Convergence Code: 0 </div><div class='input'>
 <span class='co'># use own optimization settings (see optimx())</span>
 <span class='co'># set maximum number of iterations to 50'000</span>
-<span class='no'>l2</span> <span class='kw'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='no'>y</span> ~ <span class='no'>P</span>, <span class='kw'>optimx.args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>itnmax</span> <span class='kw'>=</span> <span class='fl'>50000</span>),
-               <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'>
+<span class='kw'>l2</span> <span class='op'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>P</span>, optimx.args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(itnmax = <span class='fl'>50000</span>),
+               data = <span class='kw'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'>
 <span class='co'># print detailed tracing information on progress</span>
-<span class='no'>l3</span> <span class='kw'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='no'>y</span> ~ <span class='no'>P</span>, <span class='kw'>optimx.args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>6</span>)),
-               <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='output co'>#&gt; fn is  fn 
+<span class='kw'>l3</span> <span class='op'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>P</span>, optimx.args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace = <span class='fl'>6</span>)),
+               data = <span class='kw'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='output co'>#&gt; fn is  fn 
 #&gt; Looking for method =  Nelder-Mead 
 #&gt; Methods to be used:[1] "Nelder-Mead"
 #&gt; Function has  8  arguments
@@ -400,7 +410,7 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 #&gt;         (1 - pt) * exp(log.pdf2 - max.AB)))
 #&gt;     return(-1 * logLL.lse)
 #&gt; }
-#&gt; &lt;bytecode: 0x7f95b8c87938&gt;
+#&gt; &lt;bytecode: 0x7fa0c40b5890&gt;
 #&gt; &lt;environment: namespace:REndo&gt;
 #&gt; 
 #&gt; $have.bounds
@@ -1137,12 +1147,12 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 #&gt; 
 #&gt; $xtimes
 #&gt; user.self 
-#&gt;      1.16 
+#&gt;     1.103 
 #&gt; 
 #&gt; Assemble the answers</div><div class='input'>
 <span class='co'># use method L-BFGS-B instead of Nelder-Mead and print report every 50 iterations</span>
-<span class='no'>l4</span> <span class='kw'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='no'>y</span> ~ <span class='no'>P</span>, <span class='kw'>optimx.args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>, <span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>REPORT</span><span class='kw'>=</span><span class='fl'>50</span>)),
-               <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='output co'>#&gt; fn is  fn 
+<span class='kw'>l4</span> <span class='op'>&lt;-</span> <span class='fu'>latentIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>P</span>, optimx.args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(method = <span class='st'>"L-BFGS-B"</span>, control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace = <span class='fl'>2</span>, REPORT=<span class='fl'>50</span>)),
+               data = <span class='kw'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='output co'>#&gt; fn is  fn 
 #&gt; Looking for method =  L-BFGS-B 
 #&gt; Methods to be used:[1] "L-BFGS-B"
 #&gt; Function has  8  arguments
@@ -1242,7 +1252,7 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 #&gt;         (1 - pt) * exp(log.pdf2 - max.AB)))
 #&gt;     return(-1 * logLL.lse)
 #&gt; }
-#&gt; &lt;bytecode: 0x7f95b8c87938&gt;
+#&gt; &lt;bytecode: 0x7fa0c40b5890&gt;
 #&gt; &lt;environment: namespace:REndo&gt;
 #&gt; 
 #&gt; $have.bounds
@@ -1304,16 +1314,17 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 #&gt; 
 #&gt; $xtimes
 #&gt; user.self 
-#&gt;     0.422 
+#&gt;     0.417 
 #&gt; 
 #&gt; Assemble the answers</div><div class='input'>
 <span class='co'># read out all coefficients, incl auxiliary coefs</span>
-<span class='no'>lat.all.coefs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>l4</span>)
+<span class='kw'>lat.all.coefs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>l4</span>)
 <span class='co'># same as above</span>
-<span class='no'>lat.all.coefs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>l4</span>, <span class='kw'>complete</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='kw'>lat.all.coefs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>l4</span>, complete = <span class='fl'>TRUE</span>)
 <span class='co'># only main model coefs</span>
-<span class='no'>lat.main.coefs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>l4</span>, <span class='kw'>complete</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='co'># }</span></div></pre>
+<span class='kw'>lat.main.coefs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>l4</span>, complete = <span class='fl'>FALSE</span>)
+<span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -57,6 +57,16 @@ The important assumption of the model is that the endogenous variables should NO
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -136,7 +146,7 @@ This is a statistical technique to address the endogeneity problem where no exte
 The important assumption of the model is that the endogenous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>copulaCorrection</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>num.boots</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>copulaCorrection</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, num.boots = <span class='fl'>1000</span>, verbose = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -260,7 +270,7 @@ parameters, and not based on the Hessian.</p>
 <p>The <code>formula</code> argument follows a two part notation:</p>
 <p>A two-sided formula describing the model (e.g. <code>y ~ X1 + X2 + P</code>) to be estimated and a
 second right-hand side part in which the endogenous regressors and their distributional
-assumptions are indicated (e.g. <code>continuous(P)</code>). These two parts are separated by a single vertical bar (<code>|</code>).
+assumptions are indicated (e.g. <code>continuous(P)</code>). These two parts are separated by a single vertical bar (<code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>).
 In the second part, the special functions <code>continuous</code>, <code>discrete</code>, or a combination
 of both, are used to indicate the endogenous regressors and their respective distribution.
 Both functions use the <code>...</code> parameter in which the respective endogenous regressors is specified.</p>
@@ -289,64 +299,65 @@ Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC M
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataCopDisCont"</span>)
 
 <span class='co'># \donttest{</span>
-<span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='co'># Single continuous: log-likelihood optimization</span>
-<span class='no'>c1</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='fu'>continuous</span>(<span class='no'>P</span>), <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopCont</span>)
+<span class='kw'>c1</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>continuous</span>(<span class='kw'>P</span>), num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopCont</span>)
 <span class='co'># same as above, with start.parameters and number of bootstrappings</span>
-<span class='no'>c1</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='fu'>continuous</span>(<span class='no'>P</span>), <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopCont</span>,
-                       <span class='kw'>start.params</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"(Intercept)"</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>X1</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>X2</span><span class='kw'>=</span>-<span class='fl'>2</span>, <span class='kw'>P</span><span class='kw'>=</span>-<span class='fl'>1</span>))
+<span class='kw'>c1</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>continuous</span>(<span class='kw'>P</span>), num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopCont</span>,
+                       start.params = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"(Intercept)"</span>=<span class='fl'>1</span>, X1=<span class='fl'>1</span>, X2=<span class='op'>-</span><span class='fl'>2</span>, P=<span class='op'>-</span><span class='fl'>1</span>))
 
 <span class='co'># All following examples fit linear model with Gaussian copulas</span>
 
 <span class='co'># 2 continuous endogenous regressors</span>
-<span class='no'>c2</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P1</span>+<span class='no'>P2</span><span class='kw'>|</span><span class='fu'>continuous</span>(<span class='no'>P1</span>, <span class='no'>P2</span>),
-                        <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopCont2</span>)
+<span class='kw'>c2</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P1</span><span class='op'>+</span><span class='kw'>P2</span><span class='op'>|</span><span class='fu'>continuous</span>(<span class='kw'>P1</span>, <span class='kw'>P2</span>),
+                        num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopCont2</span>)
 <span class='co'># same as above</span>
-<span class='no'>c2</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P1</span>+<span class='no'>P2</span><span class='kw'>|</span><span class='fu'>continuous</span>(<span class='no'>P1</span>)+<span class='fu'>continuous</span>(<span class='no'>P2</span>),
-                        <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopCont2</span>)
+<span class='kw'>c2</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P1</span><span class='op'>+</span><span class='kw'>P2</span><span class='op'>|</span><span class='fu'>continuous</span>(<span class='kw'>P1</span>)<span class='op'>+</span><span class='fu'>continuous</span>(<span class='kw'>P2</span>),
+                        num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopCont2</span>)
 
 <span class='co'># single discrete endogenous regressor</span>
-<span class='no'>d1</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='fu'>discrete</span>(<span class='no'>P</span>), <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopDis</span>)
+<span class='kw'>d1</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>discrete</span>(<span class='kw'>P</span>), num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopDis</span>)
 
 <span class='co'># two discrete endogenous regressor</span>
-<span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P1</span>+<span class='no'>P2</span><span class='kw'>|</span><span class='fu'>discrete</span>(<span class='no'>P1</span>)+<span class='fu'>discrete</span>(<span class='no'>P2</span>),
-                        <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopDis2</span>)
+<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P1</span><span class='op'>+</span><span class='kw'>P2</span><span class='op'>|</span><span class='fu'>discrete</span>(<span class='kw'>P1</span>)<span class='op'>+</span><span class='fu'>discrete</span>(<span class='kw'>P2</span>),
+                        num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopDis2</span>)
 <span class='co'># same as above but less bootstrap runs</span>
-<span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P1</span>+<span class='no'>P2</span><span class='kw'>|</span><span class='fu'>discrete</span>(<span class='no'>P1</span>, <span class='no'>P2</span>), <span class='kw'>num.boots</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-                       <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopDis2</span>)
+<span class='kw'>d2</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P1</span><span class='op'>+</span><span class='kw'>P2</span><span class='op'>|</span><span class='fu'>discrete</span>(<span class='kw'>P1</span>, <span class='kw'>P2</span>), num.boots = <span class='fl'>10</span>,
+                       data=<span class='kw'>dataCopDis2</span>)
 
 <span class='co'># single discrete, single continuous</span>
-<span class='no'>cd</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P1</span>+<span class='no'>P2</span><span class='kw'>|</span><span class='fu'>discrete</span>(<span class='no'>P1</span>)+<span class='fu'>continuous</span>(<span class='no'>P2</span>),
-                        <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopDisCont</span>)
+<span class='kw'>cd</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P1</span><span class='op'>+</span><span class='kw'>P2</span><span class='op'>|</span><span class='fu'>discrete</span>(<span class='kw'>P1</span>)<span class='op'>+</span><span class='fu'>continuous</span>(<span class='kw'>P2</span>),
+                        num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopDisCont</span>)
 
 <span class='co'># For single continuous only: use own optimization settings (see optimx())</span>
 <span class='co'># set maximum number of iterations to 50'000</span>
-<span class='no'>res.c1</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='fu'>continuous</span>(<span class='no'>P</span>),
-                           <span class='kw'>optimx.args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>itnmax</span> <span class='kw'>=</span> <span class='fl'>50000</span>),
-                            <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopCont</span>)
+<span class='kw'>res.c1</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>continuous</span>(<span class='kw'>P</span>),
+                           optimx.args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(itnmax = <span class='fl'>50000</span>),
+                            num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopCont</span>)
 
 <span class='co'># print detailed tracing information on progress</span>
- <span class='no'>res.c1</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='fu'>continuous</span>(<span class='no'>P</span>),
-                            <span class='kw'>optimx.args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>control</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>6</span>)),
-                             <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopCont</span>)
+ <span class='kw'>res.c1</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>continuous</span>(<span class='kw'>P</span>),
+                            optimx.args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(control = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace = <span class='fl'>6</span>)),
+                             num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopCont</span>)
 
 <span class='co'># use method L-BFGS-B instead of Nelder-Mead and print report every 50 iterations</span>
- <span class='no'>res.c1</span> <span class='kw'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='fu'>continuous</span>(<span class='no'>P</span>),
-                            <span class='kw'>optimx.args</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"L-BFGS-B"</span>,
-                                               <span class='kw'>control</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>trace</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>REPORT</span><span class='kw'>=</span><span class='fl'>50</span>)),
-                             <span class='kw'>num.boots</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataCopCont</span>)
+ <span class='kw'>res.c1</span> <span class='op'>&lt;-</span> <span class='fu'>copulaCorrection</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>continuous</span>(<span class='kw'>P</span>),
+                            optimx.args = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(method = <span class='st'>"L-BFGS-B"</span>,
+                                               control=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(trace = <span class='fl'>2</span>, REPORT=<span class='fl'>50</span>)),
+                             num.boots=<span class='fl'>10</span>, data=<span class='kw'>dataCopCont</span>)
 
 <span class='co'># For coef(), the parameter "complete" determines if only the</span>
 <span class='co'># main model parameters or also the auxiliary coefficients are returned</span>
 
-<span class='no'>c1.all.coefs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>res.c1</span>) <span class='co'># also returns rho and sigma</span>
+<span class='kw'>c1.all.coefs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>res.c1</span>) <span class='co'># also returns rho and sigma</span>
 <span class='co'># same as above</span>
-<span class='no'>c1.all.coefs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>res.c1</span>, <span class='kw'>complete</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='kw'>c1.all.coefs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>res.c1</span>, complete = <span class='fl'>TRUE</span>)
 
 <span class='co'># only main model coefs</span>
-<span class='no'>c1.main.coefs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>res.c1</span>, <span class='kw'>complete</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='kw'>c1.main.coefs</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>res.c1</span>, complete = <span class='fl'>FALSE</span>)
 
-}<span class='co'># }</span></div></pre>
+}<span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

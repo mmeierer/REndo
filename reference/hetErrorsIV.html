@@ -57,6 +57,16 @@ through heteroscedastic covariance restrictions within the triangular system as 
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -136,7 +146,7 @@ linear regression model with one endogenous regressor. Identification is achieve
 through heteroscedastic covariance restrictions within the triangular system as proposed in Lewbel(2012).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hetErrorsIV</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>hetErrorsIV</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, verbose = <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,7 +199,7 @@ function). If it is zero or close to zero, the instrument is weak, producing imp
 <p>The <code>formula</code> argument follows a four part notation:</p>
 <p>A two-sided formula describing the model (e.g. <code>y ~ X1 + X2 + P</code>), a single endogenous regressor
 (e.g. <code>P</code>), and the exogenous variables from which the internal instrumental variables should
-be build (e.g. <code>IIV(X1) + IIV(X2)</code>), each part separated by a single vertical bar (<code>|</code>).</p>
+be build (e.g. <code>IIV(X1) + IIV(X2)</code>), each part separated by a single vertical bar (<code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>).</p>
 <p>The instrumental variables that should be built are specified as (multiple) functions, one for each
 instrument. This function is <code>IIV</code> and uses the following arguments:</p>
 <dl>
@@ -217,11 +227,11 @@ and are provided as the fourth right-hand side part of the formula, again separa
 <span class='co'># this is ignored</span>
 
 <span class='co'># 2 IVs, one from X1, one from X2</span>
-<span class='no'>het</span> <span class='kw'>&lt;-</span> <span class='fu'>hetErrorsIV</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='no'>X1</span>)+<span class='fu'>IIV</span>(<span class='no'>X2</span>), <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataHetIV</span>)</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1 + X2.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1), IIV(X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(X1) + IIV(X2).</span></div><div class='input'><span class='co'># same as above</span>
-<span class='no'>het</span> <span class='kw'>&lt;-</span> <span class='fu'>hetErrorsIV</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='no'>X1</span>,<span class='no'>X2</span>), <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataHetIV</span>)</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1 + X2.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1), IIV(X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(X1) + IIV(X2).</span></div><div class='input'>
+<span class='kw'>het</span> <span class='op'>&lt;-</span> <span class='fu'>hetErrorsIV</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(<span class='kw'>X1</span>)<span class='op'>+</span><span class='fu'>IIV</span>(<span class='kw'>X2</span>), data=<span class='kw'>dataHetIV</span>)</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1 + X2.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1), IIV(X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(X1) + IIV(X2).</span></div><div class='input'><span class='co'># same as above</span>
+<span class='kw'>het</span> <span class='op'>&lt;-</span> <span class='fu'>hetErrorsIV</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(<span class='kw'>X1</span>,<span class='kw'>X2</span>), data=<span class='kw'>dataHetIV</span>)</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1 + X2.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1), IIV(X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(X1) + IIV(X2).</span></div><div class='input'>
 <span class='co'># use X2 as an external IV</span>
-<span class='no'>het</span> <span class='kw'>&lt;-</span> <span class='fu'>hetErrorsIV</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='no'>X1</span>)<span class='kw'>|</span><span class='no'>X2</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataHetIV</span>)</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + P|X1 + IIV(X1) + X2.</span></div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>het</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>het</span> <span class='op'>&lt;-</span> <span class='fu'>hetErrorsIV</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(<span class='kw'>X1</span>)<span class='op'>|</span><span class='kw'>X2</span>, data=<span class='kw'>dataHetIV</span>)</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + P|X1 + IIV(X1) + X2.</span></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>het</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; hetErrorsIV(formula = y ~ X1 + P | P | IIV(X1) | X2, data = dataHetIV)
 #&gt; 
@@ -246,8 +256,7 @@ and are provided as the fourth right-hand side part of the formula, again separa
 #&gt; Residual standard error: 5.762 on 2497 degrees of freedom
 #&gt; Multiple R-Squared: 0.0762,	Adjusted R-squared: 0.07546 
 #&gt; Wald test: 93.98 on 2 and 2497 DF,  p-value: &lt; 2.2e-16 
-#&gt; </div><div class='input'>
-</div></pre>
+#&gt; </div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

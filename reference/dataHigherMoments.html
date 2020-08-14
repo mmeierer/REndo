@@ -59,6 +59,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -161,16 +171,15 @@
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataHigherMoments"</span>)
 <span class='co'># to recover the parameters,</span>
 <span class='co'>#   on average over many simulations</span>
-<span class='fu'><a href='higherMomentsIV.html'>higherMomentsIV</a></span>(<span class='kw'>formula</span> <span class='kw'>=</span> <span class='no'>y</span> ~ <span class='no'>X1</span> + <span class='no'>X2</span> + <span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>yp</span>),
-               <span class='kw'>data</span><span class='kw'>=</span><span class='no'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=yp).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=yp).</span></div><div class='output co'>#&gt; 
+<span class='fu'><a href='higherMomentsIV.html'>higherMomentsIV</a></span>(formula = <span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X1</span> <span class='op'>+</span> <span class='kw'>X2</span> <span class='op'>+</span> <span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(iiv=<span class='kw'>yp</span>),
+               data=<span class='kw'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=yp).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=yp).</span></div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; higherMomentsIV(formula = y ~ X1 + X2 + P | P | IIV(iiv = yp),     data = dataHigherMoments)
 #&gt; 
 #&gt; Coefficients:
 #&gt; (Intercept)           X1           X2            P  
 #&gt;       1.619        1.586        3.062       -1.014  
-#&gt; </div><div class='input'>
-</div></pre>
+#&gt; </div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

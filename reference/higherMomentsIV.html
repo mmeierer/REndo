@@ -58,6 +58,16 @@ An important assumption for identification is that the endogenous variable has a
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -138,7 +148,7 @@ variables are needed. The implementation allows the incorporation of external in
 An important assumption for identification is that the endogenous variable has a skewed distribution.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>higherMomentsIV</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>higherMomentsIV</span>(<span class='kw'>formula</span>, <span class='kw'>data</span>, verbose = <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -204,7 +214,7 @@ in equation \(1\) under the assumptions exposed in Lewbel(1997).</p>
 <p>The <code>formula</code> argument follows a four part notation:</p>
 <p>A two-sided formula describing the model (e.g. <code>y ~ X1 + X2 + P</code>), a single endogenous regressor
 (e.g. <code>P</code>), and the exogenous variables from which the internal instrumental variables should
-be build (e.g. <code>IIV(iiv=y2)</code>), each part separated by a single vertical bar (<code>|</code>).</p>
+be build (e.g. <code>IIV(iiv=y2)</code>), each part separated by a single vertical bar (<code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>).</p>
 <p>The instrumental variables that should be built are specified as (multiple) functions, one for each
 instrument. This function is <code>IIV</code> and uses the following arguments:</p>
 <dl>
@@ -235,18 +245,18 @@ and are provided as the fourth right-hand side part of the formula, again separa
 <span class='co'># P is the endogenous regressor in all examples</span>
 
 <span class='co'># 2 IVs with g*p, g=x^2, separately for each regressor X1 and X2.</span>
-<span class='no'>hm</span> <span class='kw'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>gp</span>, <span class='kw'>g</span><span class='kw'>=</span><span class='no'>x2</span>, <span class='no'>X1</span>, <span class='no'>X2</span>),
-                      <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=gp,g=x2,X1,X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=gp,g=x2,X1,X2).</span></div><div class='input'><span class='co'># same as above</span>
-<span class='no'>hm</span> <span class='kw'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>gp</span>, <span class='kw'>g</span><span class='kw'>=</span><span class='no'>x2</span>, <span class='no'>X1</span>) +
-                                  <span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>gp</span>, <span class='kw'>g</span><span class='kw'>=</span><span class='no'>x2</span>, <span class='no'>X2</span>),
-                      <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=gp,g=x2,X1), IIV(iiv=gp,g=x2,X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=gp,g=x2,X1) + IIV(iiv=gp,g=x2,X2).</span></div><div class='input'>
+<span class='kw'>hm</span> <span class='op'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(iiv=<span class='kw'>gp</span>, g=<span class='kw'>x2</span>, <span class='kw'>X1</span>, <span class='kw'>X2</span>),
+                      data = <span class='kw'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=gp,g=x2,X1,X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=gp,g=x2,X1,X2).</span></div><div class='input'><span class='co'># same as above</span>
+<span class='kw'>hm</span> <span class='op'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(iiv=<span class='kw'>gp</span>, g=<span class='kw'>x2</span>, <span class='kw'>X1</span>) <span class='op'>+</span>
+                                  <span class='fu'>IIV</span>(iiv=<span class='kw'>gp</span>, g=<span class='kw'>x2</span>, <span class='kw'>X2</span>),
+                      data = <span class='kw'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=gp,g=x2,X1), IIV(iiv=gp,g=x2,X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=gp,g=x2,X1) + IIV(iiv=gp,g=x2,X2).</span></div><div class='input'>
 <span class='co'># 3 different IVs</span>
-<span class='no'>hm</span> <span class='kw'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>X2</span>+<span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>y2</span>) + <span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>yp</span>) +
-                                  <span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>g</span>,<span class='kw'>g</span><span class='kw'>=</span><span class='no'>x3</span>,<span class='no'>X1</span>),
-                      <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=y2), IIV(iiv=yp), IIV(iiv=g,g=x3,X1).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=y2) + IIV(iiv=yp) + IIV(iiv=g,g=x3,X1).</span></div><div class='input'>
+<span class='kw'>hm</span> <span class='op'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(iiv=<span class='kw'>y2</span>) <span class='op'>+</span> <span class='fu'>IIV</span>(iiv=<span class='kw'>yp</span>) <span class='op'>+</span>
+                                  <span class='fu'>IIV</span>(iiv=<span class='kw'>g</span>,g=<span class='kw'>x3</span>,<span class='kw'>X1</span>),
+                      data = <span class='kw'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=y2), IIV(iiv=yp), IIV(iiv=g,g=x3,X1).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(iiv=y2) + IIV(iiv=yp) + IIV(iiv=g,g=x3,X1).</span></div><div class='input'>
 <span class='co'># use X2 as external IV</span>
-<span class='no'>hm</span> <span class='kw'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='no'>y</span>~<span class='no'>X1</span>+<span class='no'>P</span><span class='kw'>|</span><span class='no'>P</span><span class='kw'>|</span><span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>y2</span>)+<span class='fu'>IIV</span>(<span class='kw'>iiv</span><span class='kw'>=</span><span class='no'>g</span>,<span class='kw'>g</span><span class='kw'>=</span><span class='no'>lnx</span>,<span class='no'>X1</span>)<span class='kw'>|</span> <span class='no'>X2</span>,
-                      <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=y2), IIV(iiv=g,g=lnx,X1).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + P|X1 + IIV(iiv=y2) + IIV(iiv=g,g=lnx,X1) + X2.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>hm</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>hm</span> <span class='op'>&lt;-</span> <span class='fu'>higherMomentsIV</span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(iiv=<span class='kw'>y2</span>)<span class='op'>+</span><span class='fu'>IIV</span>(iiv=<span class='kw'>g</span>,g=<span class='kw'>lnx</span>,<span class='kw'>X1</span>)<span class='op'>|</span> <span class='kw'>X2</span>,
+                      data = <span class='kw'>dataHigherMoments</span>)</div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(iiv=y2), IIV(iiv=g,g=lnx,X1).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + P|X1 + IIV(iiv=y2) + IIV(iiv=g,g=lnx,X1) + X2.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>hm</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; higherMomentsIV(formula = y ~ X1 + P | P | IIV(iiv = y2) + IIV(iiv = g, 
 #&gt;     g = lnx, X1) | X2, data = dataHigherMoments)
@@ -272,8 +282,7 @@ and are provided as the fourth right-hand side part of the formula, again separa
 #&gt; Residual standard error: 2.174 on 2497 degrees of freedom
 #&gt; Multiple R-Squared: 0.8378,	Adjusted R-squared: 0.8377 
 #&gt; Wald test:   107 on 2 and 2497 DF,  p-value: &lt; 2.2e-16 
-#&gt; </div><div class='input'>
-</div></pre>
+#&gt; </div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

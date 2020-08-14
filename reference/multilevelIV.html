@@ -70,6 +70,16 @@ calling summary() on a fitted model." />
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -163,10 +173,10 @@ calling <code><a href='summary.rendo.multilevel.html'>summary()</a></code> on a 
     </div>
 
     <pre class="usage"><span class='fu'>multilevelIV</span>(
-  <span class='no'>formula</span>,
-  <span class='no'>data</span>,
-  <span class='kw'>lmer.control</span> <span class='kw'>=</span> <span class='fu'>lmerControl</span>(<span class='kw'>optimizer</span> <span class='kw'>=</span> <span class='st'>"Nelder_Mead"</span>, <span class='kw'>optCtrl</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>maxfun</span> <span class='kw'>=</span> <span class='fl'>1e+05</span>)),
-  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>formula</span>,
+  <span class='kw'>data</span>,
+  lmer.control = <span class='fu'>lmerControl</span>(optimizer = <span class='st'>"Nelder_Mead"</span>, optCtrl = <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(maxfun = <span class='fl'>1e+05</span>)),
+  verbose = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -258,7 +268,7 @@ exogenous, GMM estimator equals REF. When all covariates are assume endogenous, 
 
 <p>The <code>formula</code> argument follows a two part notation:</p>
 <p>In the first part, the model is specified while in the second part, the endogenous regressors are indicated.
-These two parts are separated by a single vertical bar (<code>|</code>).</p>
+These two parts are separated by a single vertical bar (<code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>).</p>
 <p>The first RHS follows the exact same model specification as required by the <code><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></code>
 function of package <code>lme4</code> and internally will be used to fit a <code>lmer</code> model. In the second part,
 one or multiple endogenous regressors are indicated by passing them to the special function <code>endo</code>
@@ -281,40 +291,40 @@ but as symbols without quotation marks.</p>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataMultilevelIV"</span>)
 
 <span class='co'># Two levels</span>
-<span class='no'>res.ml.L2</span> <span class='kw'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> + <span class='no'>X31</span> +
-                              <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>),
-                          <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='kw'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X11</span> <span class='op'>+</span> <span class='kw'>X12</span> <span class='op'>+</span> <span class='kw'>X13</span> <span class='op'>+</span> <span class='kw'>X14</span> <span class='op'>+</span> <span class='kw'>X15</span> <span class='op'>+</span> <span class='kw'>X21</span> <span class='op'>+</span> <span class='kw'>X22</span> <span class='op'>+</span> <span class='kw'>X23</span> <span class='op'>+</span> <span class='kw'>X24</span> <span class='op'>+</span> <span class='kw'>X31</span> <span class='op'>+</span>
+                              <span class='kw'>X32</span> <span class='op'>+</span> <span class='kw'>X33</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>SID</span>) <span class='op'>|</span> <span class='fu'>endo</span>(<span class='kw'>X15</span>),
+                          data = <span class='kw'>dataMultilevelIV</span>, verbose = <span class='fl'>FALSE</span>)
 
 <span class='co'># Three levels</span>
-<span class='no'>res.ml.L3</span> <span class='kw'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> + <span class='no'>X31</span> +
-                              <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span> <span class='no'>CID</span>) + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>),
-                          <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='kw'>res.ml.L3</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X11</span> <span class='op'>+</span> <span class='kw'>X12</span> <span class='op'>+</span> <span class='kw'>X13</span> <span class='op'>+</span> <span class='kw'>X14</span> <span class='op'>+</span> <span class='kw'>X15</span> <span class='op'>+</span> <span class='kw'>X21</span> <span class='op'>+</span> <span class='kw'>X22</span> <span class='op'>+</span> <span class='kw'>X23</span> <span class='op'>+</span> <span class='kw'>X24</span> <span class='op'>+</span> <span class='kw'>X31</span> <span class='op'>+</span>
+                              <span class='kw'>X32</span> <span class='op'>+</span> <span class='kw'>X33</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span> <span class='kw'>CID</span>) <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>SID</span>) <span class='op'>|</span> <span class='fu'>endo</span>(<span class='kw'>X15</span>),
+                          data = <span class='kw'>dataMultilevelIV</span>, verbose = <span class='fl'>FALSE</span>)
 
 
 <span class='co'># L2 with multiple endogenous regressors</span>
-<span class='no'>res.ml.L2</span> <span class='kw'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> + <span class='no'>X31</span> +
-                              <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>, <span class='no'>X21</span>, <span class='no'>X22</span>),
-                          <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='kw'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X11</span> <span class='op'>+</span> <span class='kw'>X12</span> <span class='op'>+</span> <span class='kw'>X13</span> <span class='op'>+</span> <span class='kw'>X14</span> <span class='op'>+</span> <span class='kw'>X15</span> <span class='op'>+</span> <span class='kw'>X21</span> <span class='op'>+</span> <span class='kw'>X22</span> <span class='op'>+</span> <span class='kw'>X23</span> <span class='op'>+</span> <span class='kw'>X24</span> <span class='op'>+</span> <span class='kw'>X31</span> <span class='op'>+</span>
+                              <span class='kw'>X32</span> <span class='op'>+</span> <span class='kw'>X33</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>SID</span>) <span class='op'>|</span> <span class='fu'>endo</span>(<span class='kw'>X15</span>, <span class='kw'>X21</span>, <span class='kw'>X22</span>),
+                          data = <span class='kw'>dataMultilevelIV</span>, verbose = <span class='fl'>FALSE</span>)
 
 <span class='co'># same as above</span>
-<span class='no'>res.ml.L2</span> <span class='kw'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> + <span class='no'>X31</span> +
-                              <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>, <span class='no'>X21</span>) + <span class='fu'>endo</span>(<span class='no'>X22</span>),
-                          <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='kw'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X11</span> <span class='op'>+</span> <span class='kw'>X12</span> <span class='op'>+</span> <span class='kw'>X13</span> <span class='op'>+</span> <span class='kw'>X14</span> <span class='op'>+</span> <span class='kw'>X15</span> <span class='op'>+</span> <span class='kw'>X21</span> <span class='op'>+</span> <span class='kw'>X22</span> <span class='op'>+</span> <span class='kw'>X23</span> <span class='op'>+</span> <span class='kw'>X24</span> <span class='op'>+</span> <span class='kw'>X31</span> <span class='op'>+</span>
+                              <span class='kw'>X32</span> <span class='op'>+</span> <span class='kw'>X33</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>SID</span>) <span class='op'>|</span> <span class='fu'>endo</span>(<span class='kw'>X15</span>, <span class='kw'>X21</span>) <span class='op'>+</span> <span class='fu'>endo</span>(<span class='kw'>X22</span>),
+                          data = <span class='kw'>dataMultilevelIV</span>, verbose = <span class='fl'>FALSE</span>)
 
 <span class='co'># Fit above model with different settings for lmer()</span>
-<span class='no'>lmer.control</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmerControl.html'>lmerControl</a></span>(<span class='kw'>optimizer</span><span class='kw'>=</span><span class='st'>"nloptwrap"</span>,
-                                  <span class='kw'>optCtrl</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>algorithm</span><span class='kw'>=</span><span class='st'>"NLOPT_LN_COBYLA"</span>,
-                                               <span class='kw'>xtol_rel</span><span class='kw'>=</span><span class='fl'>1e-6</span>))
-<span class='no'>res.ml.L2.cob</span> <span class='kw'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> +
-                                  <span class='no'>X31</span> + <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>, <span class='no'>X21</span>) + <span class='fu'>endo</span>(<span class='no'>X22</span>),
-                              <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-                              <span class='kw'>lmer.control</span> <span class='kw'>=</span> <span class='no'>lmer.control</span>) <span class='co'># use different controls for lmer</span>
+<span class='kw'>lmer.control</span> <span class='op'>&lt;-</span> <span class='kw'>lme4</span>::<span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmerControl.html'>lmerControl</a></span>(optimizer=<span class='st'>"nloptwrap"</span>,
+                                  optCtrl=<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(algorithm=<span class='st'>"NLOPT_LN_COBYLA"</span>,
+                                               xtol_rel=<span class='fl'>1e-6</span>))
+<span class='kw'>res.ml.L2.cob</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X11</span> <span class='op'>+</span> <span class='kw'>X12</span> <span class='op'>+</span> <span class='kw'>X13</span> <span class='op'>+</span> <span class='kw'>X14</span> <span class='op'>+</span> <span class='kw'>X15</span> <span class='op'>+</span> <span class='kw'>X21</span> <span class='op'>+</span> <span class='kw'>X22</span> <span class='op'>+</span> <span class='kw'>X23</span> <span class='op'>+</span> <span class='kw'>X24</span> <span class='op'>+</span>
+                                  <span class='kw'>X31</span> <span class='op'>+</span> <span class='kw'>X32</span> <span class='op'>+</span> <span class='kw'>X33</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>SID</span>) <span class='op'>|</span> <span class='fu'>endo</span>(<span class='kw'>X15</span>, <span class='kw'>X21</span>) <span class='op'>+</span> <span class='fu'>endo</span>(<span class='kw'>X22</span>),
+                              data = <span class='kw'>dataMultilevelIV</span>, verbose = <span class='fl'>FALSE</span>,
+                              lmer.control = <span class='kw'>lmer.control</span>) <span class='co'># use different controls for lmer</span>
 
 
 <span class='co'># specify argument "model" in the S3 methods to obtain results for the respective model</span>
 <span class='co'># default is "REF" for all methods</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>res.ml.L3</span>)</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>res.ml.L3</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + 
 #&gt;     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | 
@@ -350,7 +360,7 @@ but as symbols without quotation marks.</p>
 #&gt; FE_L3_vs_REF  13     39.99 0.000138 ***
 #&gt; ---
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</div><div class='input'><span class='co'># same as above</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"REF"</span>)</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>res.ml.L3</span>, model = <span class='st'>"REF"</span>)</div><div class='output co'>#&gt; 
 #&gt; Call:
 #&gt; multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + 
 #&gt;     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | 
@@ -387,14 +397,15 @@ but as symbols without quotation marks.</p>
 #&gt; ---
 #&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</div><div class='input'>
 <span class='co'># complete pval table for L3 fixed effects</span>
-<span class='no'>L3.FE.p</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L3"</span>))
+<span class='kw'>L3.FE.p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>res.ml.L3</span>, model = <span class='st'>"FE_L3"</span>))
 
 <span class='co'># variance covariance matrix</span>
-<span class='no'>L2.FE.var</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L2"</span>)
-<span class='no'>L2.GMM.var</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"GMM_L2"</span>)
+<span class='kw'>L2.FE.var</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='kw'>res.ml.L2</span>, model = <span class='st'>"FE_L2"</span>)
+<span class='kw'>L2.GMM.var</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='kw'>res.ml.L2</span>, model = <span class='st'>"GMM_L2"</span>)
 <span class='co'># residuals</span>
-<span class='no'>L3.REF.resid</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></span>(<span class='no'>res.ml.L3</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"REF"</span>)
-<span class='co'># }</span></div></pre>
+<span class='kw'>L3.REF.resid</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></span>(<span class='kw'>res.ml.L3</span>, model = <span class='st'>"REF"</span>)
+<span class='co'># }</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

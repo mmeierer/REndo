@@ -55,6 +55,16 @@
 <![endif]-->
 
 
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-31477052-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-31477052-1');
+</script>
+
 
   </head>
 
@@ -133,7 +143,7 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for rendo.multilevel</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"REF"</span>, <span class='st'>"FE_L2"</span>, <span class='st'>"FE_L3"</span>, <span class='st'>"GMM_L2"</span>, <span class='st'>"GMM_L3"</span>), <span class='no'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>object</span>, model = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"REF"</span>, <span class='st'>"FE_L2"</span>, <span class='st'>"FE_L3"</span>, <span class='st'>"GMM_L2"</span>, <span class='st'>"GMM_L3"</span>), <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -189,18 +199,19 @@ function <code>vcov</code> will extract the component <code>vcov</code>.</p></di
     <pre class="examples"><div class='input'>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataMultilevelIV"</span>)
 <span class='co'># Fit two levels model</span>
-<span class='no'>res.ml.L2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='multilevelIV.html'>multilevelIV</a></span>(<span class='no'>y</span> ~ <span class='no'>X11</span> + <span class='no'>X12</span> + <span class='no'>X13</span> + <span class='no'>X14</span> + <span class='no'>X15</span> + <span class='no'>X21</span> + <span class='no'>X22</span> + <span class='no'>X23</span> + <span class='no'>X24</span> + <span class='no'>X31</span> +
-                              <span class='no'>X32</span> + <span class='no'>X33</span> + (<span class='fl'>1</span><span class='kw'>|</span><span class='no'>SID</span>) <span class='kw'>|</span> <span class='fu'>endo</span>(<span class='no'>X15</span>),
-                          <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>dataMultilevelIV</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='kw'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='multilevelIV.html'>multilevelIV</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>X11</span> <span class='op'>+</span> <span class='kw'>X12</span> <span class='op'>+</span> <span class='kw'>X13</span> <span class='op'>+</span> <span class='kw'>X14</span> <span class='op'>+</span> <span class='kw'>X15</span> <span class='op'>+</span> <span class='kw'>X21</span> <span class='op'>+</span> <span class='kw'>X22</span> <span class='op'>+</span> <span class='kw'>X23</span> <span class='op'>+</span> <span class='kw'>X24</span> <span class='op'>+</span> <span class='kw'>X31</span> <span class='op'>+</span>
+                              <span class='kw'>X32</span> <span class='op'>+</span> <span class='kw'>X33</span> <span class='op'>+</span> (<span class='fl'>1</span><span class='op'>|</span><span class='kw'>SID</span>) <span class='op'>|</span> <span class='fu'>endo</span>(<span class='kw'>X15</span>),
+                          data = <span class='kw'>dataMultilevelIV</span>, verbose = <span class='fl'>FALSE</span>)
 
 <span class='co'># Get summary for FE_L2 (does not print)</span>
-<span class='no'>res.sum</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L2"</span>)
+<span class='kw'>res.sum</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='kw'>res.ml.L2</span>, model = <span class='st'>"FE_L2"</span>)
 <span class='co'># extract table with coefficients summary statistics</span>
-<span class='no'>sum.stat.FE_L2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='no'>res.sum</span>)
+<span class='kw'>sum.stat.FE_L2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span>(<span class='kw'>res.sum</span>)
 <span class='co'># extract vcov of model FE_L2</span>
-<span class='no'>FE_L2.vcov</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='no'>res.sum</span>)
+<span class='kw'>FE_L2.vcov</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='kw'>res.sum</span>)
 <span class='co'># same as above</span>
-<span class='no'>FE_L2.vcov</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='no'>res.ml.L2</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"FE_L2"</span>)</div></pre>
+<span class='kw'>FE_L2.vcov</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span>(<span class='kw'>res.ml.L2</span>, model = <span class='st'>"FE_L2"</span>)
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
