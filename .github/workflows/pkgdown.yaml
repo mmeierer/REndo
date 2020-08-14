@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - master
-      - feature-ghpages-ga-token
 
 name: pkgdown
 
