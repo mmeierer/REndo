@@ -26,12 +26,6 @@ test_that("Fail if bad 2nd RHS", {
   expect_error(copulaCorrection(formula=  y ~ y ~ X1 + X2 + P1|continuous(P1)+continuous(P2), data=dataCopCont2), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(P1)+continuous(P2),     data=dataCopCont2), regexp = "The above errors were encountered!")
 
-  # Fail if all regressors are endogenous
-  expect_error(copulaCorrection(formula=  y ~ P1|continuous(P1),                                          data=dataCopCont2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ P1+P2|continuous(P1)+continuous(P2),                        data=dataCopCont2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2|continuous(X1)+continuous(X2)+continuous(P2),  data=dataCopCont2), regexp = "The above errors were encountered!")
-  expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P2+P1|continuous(P1)+continuous(P2)+continuous(X1)+continuous(X2),  data=dataCopCont2), regexp = "The above errors were encountered!")
-
   # Fail if not exactly the same in model
   expect_error(copulaCorrection(formula=  y ~ X1 + X2 + log(P1)|continuous(P1), data=dataCopCont2), regexp = "The above errors were encountered!")
   expect_error(copulaCorrection(formula=  y ~ X1 + X2 + P1|continuous(log(P1)), data=dataCopCont2), regexp = "The above errors were encountered!")
