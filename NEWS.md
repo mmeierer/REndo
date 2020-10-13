@@ -1,3 +1,10 @@
+# REndo 2.4.1
+
+## SIGNIFICANT USER-VISIBLE CHANGES
+* Allow using the method `copulaCorrection` with a single endogenous regressor
+
+
+
 # REndo 2.4.0
 
 ## SIGNIFICANT USER-VISIBLE CHANGES
