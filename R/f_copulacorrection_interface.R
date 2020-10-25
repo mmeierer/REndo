@@ -207,7 +207,7 @@
 #'
 #' @importFrom Formula as.Formula
 #' @export
-copulaCorrection <- function(formula, data, num.boots=1000, verbose=TRUE, ...){
+copulaCorrection <- function(formula, data, single.continuous.uses.OLS=FALSE, num.boots=1000, verbose=TRUE, ...){
   # Catch stuff ------------------------------------------------------------------------------------------------
   cl <- quote(match.call())
   l.ellipsis <- list(...)
@@ -229,10 +229,11 @@ copulaCorrection <- function(formula, data, num.boots=1000, verbose=TRUE, ...){
 
 
   # Determine case
-  if(length(names.vars.continuous) == 1 & length(names.vars.discrete) == 0)
+  if((length(names.vars.continuous) == 1 & length(names.vars.discrete) == 0) & single.continuous.uses.OLS == FALSE){
     optimizeLL <- TRUE
-  else
+  }else{
     optimizeLL <- FALSE
+  }
 
   # Dispatch to either LL optimization or PStar+lm -------------------------------------------------------------
   if(optimizeLL){

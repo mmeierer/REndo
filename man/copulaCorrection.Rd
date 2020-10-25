@@ -4,7 +4,14 @@
 \alias{copulaCorrection}
 \title{Fitting Linear Models Endogenous Regressors using Gaussian Copula}
 \usage{
-copulaCorrection(formula, data, num.boots = 1000, verbose = TRUE, ...)
+copulaCorrection(
+  formula,
+  data,
+  single.continuous.uses.OLS = FALSE,
+  num.boots = 1000,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
