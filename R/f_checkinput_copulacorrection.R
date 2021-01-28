@@ -60,9 +60,6 @@ checkinput_copulacorrection_formula <- function(formula){
   if(num.specials.lhs > 0)
     err.msg <- c(err.msg, "Please specify no endogenous regressor in the left-hand side of the formula.")
 
-  # Check that not all RHS1 are endogenous
-  if(all(all.vars(formula(F.formula, rhs=1, lhs=0)) %in% c(names.vars.discrete, names.vars.continuous)))
-    err.msg <- c(err.msg, "Please do not specify all regressors as endogenous.")
 
   # Check that the specials contains no transformations / functions (ie discrete(log(P))) and are specified additively
   # allowed.names.rhs2 <- c("~", "+", "discrete", "continuous", all.vars(formula(F.formula, rhs=1, lhs=0)))

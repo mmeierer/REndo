@@ -1,8 +1,9 @@
 # Comment from the authors
-This is version 2.4.0 which adds formal tests of assumptions, performs improved checks of user-inputs, and considerably speeds up calculations of the LL function in method copulaCorrection by re-writing it in Rcpp and RcppEigen.
+This is version 2.4.1 which newly allows to use the method copulaCorrection with a single endogenous regressor whereas before also exogenous regressors were required.
 
 ## Test environments
-* local install on OS X 10.15.4, R 3.6.2, devtools 2.3.0
+* local install on OS X 10.15.4, R 4.0.1, devtools 2.3.1
+* github actions: win, osx, linux (release and devel)
 * win-builder (rdevel, release)
 * rhub (all)
 

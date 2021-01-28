@@ -38,8 +38,8 @@ double copulaCorrection_LL_rcpp(const NumericVector& params,
 
 
   // Short excursion to RcppEigen: Matrix multiplication
-  const Eigen::Map<Eigen::MatrixXd> A = Rcpp::as<Eigen::Map<Eigen::MatrixXd>>(m_data_exo_endo);
-  const Eigen::Map<Eigen::VectorXd> B = Rcpp::as<Eigen::Map<Eigen::VectorXd>>(params_endo_exo);
+  const Eigen::Map<Eigen::MatrixXd> A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(m_data_exo_endo);
+  const Eigen::Map<Eigen::VectorXd> B = Rcpp::as<Eigen::Map<Eigen::VectorXd> >(params_endo_exo);
 
   // Math! and immediately back to regular Rcpp again
   NumericVector matMultRes = Rcpp::wrap(A*B);
