@@ -46,6 +46,8 @@ variables approach for a single endogenous regressor." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -83,19 +85,13 @@ variables approach for a single endogenous regressor." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -117,7 +113,7 @@ variables approach for a single endogenous regressor." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/mmeierer/REndo/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -145,7 +141,7 @@ variables approach for a single endogenous regressor.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for rendo.latent.IV</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>object</span>, <span class='kw'>newdata</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>newdata</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -173,11 +169,13 @@ If omitted, the fitted values are returned.</p></td>
     <div class='dont-index'><p>The model fitting function <code><a href='latentIV.html'>latentIV</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataLatentIV"</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dataLatentIV"</span><span class='op'>)</span>
 
-<span class='kw'>lat</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='latentIV.html'>latentIV</a></span>(<span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>P</span>, data = <span class='kw'>dataLatentIV</span>)</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'>
+<span class='va'>lat</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='latentIV.html'>latentIV</a></span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>P</span>, data <span class='op'>=</span> <span class='va'>dataLatentIV</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>No start parameters were given. The linear model y ~ P is fitted to derive them.</span></div><div class='output co'>#&gt; <span class='message'>The start parameters c((Intercept)=2.915, P=-0.852, pi1=0.589, pi2=2.001, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></div><div class='input'>
 <span class='co'># returns the fitted values</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>lat</span>)</div><div class='output co'>#&gt;            1            2            3            4            5            6 
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>lat</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;            1            2            3            4            5            6 
 #&gt;  2.599396972  3.765350053  1.682120460  2.438210591  1.451323706  1.318184884 
 #&gt;            7            8            9           10           11           12 
 #&gt;  3.923496852  3.867807428  4.008413789  2.001687129  3.194304112  0.516542811 
@@ -1013,7 +1011,9 @@ If omitted, the fitted values are returned.</p></td>
 #&gt;  2.197599546  3.988057023 -0.372599704  1.668964975 </div><div class='input'>
 <span class='co'># using the data used for fitting also for predicting,</span>
 <span class='co'># correctly results in fitted values</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>lat</span>, <span class='kw'>dataLatentIV</span>), <span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span>(<span class='kw'>lat</span>)) <span class='co'># TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>lat</span>, <span class='va'>dataLatentIV</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span><span class='op'>(</span><span class='va'>lat</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -1029,7 +1029,7 @@ If omitted, the fitted values are returned.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

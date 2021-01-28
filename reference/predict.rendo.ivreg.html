@@ -46,6 +46,8 @@ with IVs generated from the data." />
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -83,19 +85,13 @@ with IVs generated from the data." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -117,7 +113,7 @@ with IVs generated from the data." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/mmeierer/REndo/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -145,7 +141,7 @@ with IVs generated from the data.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for rendo.ivreg</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>object</span>, <span class='kw'>newdata</span>, <span class='kw'>...</span>)</pre>
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>newdata</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -174,12 +170,14 @@ If omitted, the fitted values are returned.</p></td>
 <code><a href='higherMomentsIV.html'>higherMomentsIV</a></code>.</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"dataHetIV"</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dataHetIV"</span><span class='op'>)</span>
 
-<span class='kw'>het</span> <span class='op'>&lt;-</span> <span class='fu'><a href='hetErrorsIV.html'>hetErrorsIV</a></span>(<span class='kw'>y</span><span class='op'>~</span><span class='kw'>X1</span><span class='op'>+</span><span class='kw'>X2</span><span class='op'>+</span><span class='kw'>P</span><span class='op'>|</span><span class='kw'>P</span><span class='op'>|</span><span class='fu'>IIV</span>(<span class='kw'>X1</span>, <span class='kw'>X2</span>),
-                   data = <span class='kw'>dataHetIV</span>)</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1 + X2.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1), IIV(X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(X1) + IIV(X2).</span></div><div class='input'>
+<span class='va'>het</span> <span class='op'>&lt;-</span> <span class='fu'><a href='hetErrorsIV.html'>hetErrorsIV</a></span><span class='op'>(</span><span class='va'>y</span><span class='op'>~</span><span class='va'>X1</span><span class='op'>+</span><span class='va'>X2</span><span class='op'>+</span><span class='va'>P</span><span class='op'>|</span><span class='va'>P</span><span class='op'>|</span><span class='fu'>IIV</span><span class='op'>(</span><span class='va'>X1</span>, <span class='va'>X2</span><span class='op'>)</span>,
+                   data <span class='op'>=</span> <span class='va'>dataHetIV</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Residuals were derived by fitting P ~ X1 + X2.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: A studentized Breusch-Pagan test (P ~ X1) indicates at a 95% confidence level that the assumption of heteroscedasticity for the variable is not satisfied (p-value: 0.0501). The instrument built from it therefore is weak.</span></div><div class='output co'>#&gt; <span class='message'>The following internal instruments were built: IIV(X1), IIV(X2).</span></div><div class='output co'>#&gt; <span class='message'>Fitting an instrumental variable regression with model y ~ X1 + X2 + P|X1 + X2 + IIV(X1) + IIV(X2).</span></div><div class='input'>
 <span class='co'># returns the fitted values</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>het</span>)</div><div class='output co'>#&gt;             1             2             3             4             5 
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>het</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;             1             2             3             4             5 
 #&gt;  -2.381827953   1.552819350  -4.744519447  -0.300672147   2.829797144 
 #&gt;             6             7             8             9            10 
 #&gt;  -6.277046810  -0.273880888   0.741438729  -1.234216315  -3.037205607 
@@ -1181,7 +1179,9 @@ If omitted, the fitted values are returned.</p></td>
 #&gt;  -0.375654844   3.267286602  -2.107549122   0.562112936  -3.733693981 </div><div class='input'>
 <span class='co'># using the data used for fitting also for predicting,</span>
 <span class='co'># correctly results in fitted values</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='kw'>het</span>, <span class='kw'>dataHetIV</span>), <span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span>(<span class='kw'>het</span>)) <span class='co'># TRUE</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/all.equal.html'>all.equal</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>het</span>, <span class='va'>dataHetIV</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/stats/fitted.values.html'>fitted</a></span><span class='op'>(</span><span class='va'>het</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># TRUE</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -1197,7 +1197,7 @@ If omitted, the fitted values are returned.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
