@@ -10,23 +10,21 @@ double copulaCorrection_LL_rcpp(const NumericVector& params,
                                 const NumericVector& vec_y,
                                 const NumericMatrix& m_data_exo_endo,
                                 const NumericVector& vec_data_endo_pstar,
-                                const NumericVector& param_pos_data,
-                                const double& param_pos_sigma,
-                                const double& param_pos_rho){
+                                const IntegerVector& param_pos_data,
+                                const int& param_pos_sigma,
+                                const int& param_pos_rho){
 
   // # Extract params from optimx inputs --------------------------------------------------------
   NumericVector params_endo_exo       = params[param_pos_data - 1];
   double sigma                        = params[param_pos_sigma - 1];
   double rho                          = params[param_pos_rho - 1];
 
-  // # Constrain rho to [0,1] and sigma to [0, +Inf]
+  // # Constrain rho to [-1,1] and sigma to [0, +Inf]
   // #   (incl bound because can be very large which flips to 0 and 1)
   // #   The vcov is not derived from the hessian anymore, but BFGS still does not accept
   // #     NA/Inf
-  // rho <- exp(rho)
-  // rho <- rho / (1+rho)
-  rho = std::exp(rho);
-  rho = rho / (1.0+rho);
+  // rho <- tanh(rho)
+  rho = std::tanh(rho);
 
   // sigma <- exp(sigma)
   sigma = exp(sigma);
