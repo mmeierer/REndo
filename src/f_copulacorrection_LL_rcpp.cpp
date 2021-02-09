@@ -61,8 +61,8 @@ double copulaCorrection_LL_rcpp(const NumericVector& params,
   // # s
   // s <- sum((vec.data.endo.pstar^2 + eps.star^2)/(2*(1-rho^2)) -
   //   (rho*vec.data.endo.pstar*eps.star)/(1-rho^2))
-  double s = sum((pow(vec_data_endo_pstar,2.0) + pow(eps_star,2.0)) /
-                       (2*(1-std::pow(rho,2.0))) -
+  double s = sum(
+            (std::pow(rho,2.0)*(pow(vec_data_endo_pstar,2.0) + pow(eps_star,2.0))) / (2*(1-std::pow(rho,2.0))) -
              (rho*vec_data_endo_pstar*eps_star)/(1-std::pow(rho,2.0)));
   // # mm
   // mm <- (length(vec.y)/2)* log(1-rho^2)
