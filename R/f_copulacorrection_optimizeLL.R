@@ -121,10 +121,10 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
            "\'. Please revise your start parameter and data.", call. = FALSE)
 
     # Apply the boundary transformation for rho/sigma
-    #   to report results as the coefs were really used in the LL
+    #   to report results in the way the coefs were really used in the LL
     #   apply here because the same function is used for bootstrapping
+    res.optimx$rho   <- tanh(res.optimx$rho)
     res.optimx$sigma <- exp(res.optimx$sigma)
-    res.optimx$rho   <- exp(res.optimx$rho)/(1+exp(res.optimx$rho))
 
     return(res.optimx)
   }
