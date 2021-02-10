@@ -83,7 +83,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.2</span>
       </span>
     </div>
 
@@ -132,6 +132,18 @@
       <small>Source: <a href='https://github.com/mmeierer/REndo/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="rendo-242" class="section level1">
+<h1 class="page-header" data-toc-text="2.4.2">
+<a href="#rendo-242" class="anchor"></a>REndo 2.4.2<small> 2021-02-10 </small>
+</h1>
+<div id="bug-fixes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#bug-fixes" class="anchor"></a>BUG FIXES</h3>
+<ul>
+<li>In the <code>copulaCorrection</code> method with a single endogenous regressor the correlation coefficient rho was wrongly constraint to [0, 1] instead of to [-1, 1]. Further, rho was not included in parts of the calculations. Special thanks to Fredrik Falkenström for reporting this observation!</li>
+</ul>
+</div>
+</div>
     <div id="rendo-241" class="section level1">
 <h1 class="page-header" data-toc-text="2.4.1">
 <a href="#rendo-241" class="anchor"></a>REndo 2.4.1<small> 2020-10-14 </small>
@@ -185,9 +197,9 @@
 <li>Add support for predictions through method <code>predict</code> for every model</li>
 </ul>
 </div>
-<div id="bug-fixes" class="section level3">
+<div id="bug-fixes-1" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>BUG FIXES</h3>
+<a href="#bug-fixes-1" class="anchor"></a>BUG FIXES</h3>
 <ul>
 <li>Fix wrong calculations for the fitted values and residuals in the enhanced OLS cases of <code>copulaCorrection</code>
 </li>
@@ -216,9 +228,9 @@
 <li>Updated vignette</li>
 </ul>
 </div>
-<div id="bug-fixes-1" class="section level3">
+<div id="bug-fixes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>BUG FIXES</h3>
+<a href="#bug-fixes-2" class="anchor"></a>BUG FIXES</h3>
 <ul>
 <li>The coefficient estimates for <code>multilevelIV</code> are more consistent and independent of data sorting due to different standard settings for fitting <code>lmer</code>
 </li>
@@ -248,9 +260,9 @@
 </li>
 </ul>
 </div>
-<div id="bug-fixes-2" class="section level3">
+<div id="bug-fixes-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixes-2" class="anchor"></a>BUG FIXES</h3>
+<a href="#bug-fixes-3" class="anchor"></a>BUG FIXES</h3>
 <ul>
 <li>The sigma matrix in <code>latentIV</code> is constructed as in the paper by Ebbes et al. what improves results. Special thanks to Jordan Henderson for investigating and pointing this out!</li>
 <li>In <code>latentIV</code>, the parameter for group membership (<code>theta5</code>) is now transformed back and reported correctly.</li>
@@ -285,9 +297,9 @@
 <li>The default number of iterations for all optimizations was increased to 100’000</li>
 </ul>
 </div>
-<div id="bug-fixes-3" class="section level3">
+<div id="bug-fixes-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixes-3" class="anchor"></a>BUG FIXES</h3>
+<a href="#bug-fixes-4" class="anchor"></a>BUG FIXES</h3>
 <ul>
 <li>To avoid infrequent warnings, the parameter <code>sigma</code> used in <code>copulaCorrection</code> was constrained to &gt; 0</li>
 <li>Various spelling mistakes were fixed</li>
@@ -321,9 +333,9 @@
 </li>
 </ul>
 </div>
-<div id="bug-fixes-4" class="section level3">
+<div id="bug-fixes-5" class="section level3">
 <h3 class="hasAnchor">
-<a href="#bug-fixes-4" class="anchor"></a>BUG FIXES</h3>
+<a href="#bug-fixes-5" class="anchor"></a>BUG FIXES</h3>
 <ul>
 <li>Many</li>
 </ul>

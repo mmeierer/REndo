@@ -37,7 +37,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.2</span>
       </span>
     </div>
 
@@ -85,7 +85,7 @@
       <h1 data-toc-skip>REndo: A Package to Address Endogeneity Without External Instrumental Variables</h1>
                         <h4 class="author">Raluca Gui</h4>
             
-            <h4 class="date">2021-01-28</h4>
+            <h4 class="date">2021-02-10</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/vignettes/REndo-introduction.Rmd"><code>vignettes/REndo-introduction.Rmd</code></a></small>
       <div class="hidden name"><code>REndo-introduction.Rmd</code></div>
@@ -365,22 +365,14 @@ q_{6t}&amp;=(Y_{t} - \bar{Y})^{2}  \hspace{1.90cm} (3f)
 <span class="co">#&gt; Warning: It is recommended to run 1000 or more bootstraps.</span>
 
 <span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">m4.cc</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span>
-<span class="co">#&gt;             Point Estimate    Boots SE Lower Boots CI (95%)</span>
-<span class="co">#&gt; (Intercept)   682.56562449 2.892541893                   NA</span>
-<span class="co">#&gt; stratio        -0.40322352 0.188960137                   NA</span>
-<span class="co">#&gt; english        -0.20380742 0.010970833                   NA</span>
-<span class="co">#&gt; lunch          -0.36426215 0.031529433                   NA</span>
-<span class="co">#&gt; calworks       -0.07186591 0.003223237                   NA</span>
-<span class="co">#&gt; gradesKK-08    -0.72045639 0.195490165                   NA</span>
-<span class="co">#&gt; income          0.78911122 0.040396762                   NA</span>
-<span class="co">#&gt;             Upper Boots CI (95%)</span>
-<span class="co">#&gt; (Intercept)                   NA</span>
-<span class="co">#&gt; stratio                       NA</span>
-<span class="co">#&gt; english                       NA</span>
-<span class="co">#&gt; lunch                         NA</span>
-<span class="co">#&gt; calworks                      NA</span>
-<span class="co">#&gt; gradesKK-08                   NA</span>
-<span class="co">#&gt; income                        NA</span></code></pre></div>
+<span class="co">#&gt;             Point Estimate   Boots SE Lower Boots CI (95%) Upper Boots CI (95%)</span>
+<span class="co">#&gt; (Intercept)   683.06900891 2.80554212                   NA                   NA</span>
+<span class="co">#&gt; stratio        -0.32434608 0.02075999                   NA                   NA</span>
+<span class="co">#&gt; english        -0.21576110 0.01450666                   NA                   NA</span>
+<span class="co">#&gt; lunch          -0.37087664 0.01902052                   NA                   NA</span>
+<span class="co">#&gt; calworks       -0.05569058 0.02076781                   NA                   NA</span>
+<span class="co">#&gt; gradesKK-08    -1.92286128 0.25684614                   NA                   NA</span>
+<span class="co">#&gt; income          0.73595353 0.04725700                   NA                   NA</span></code></pre></div>
 <p>The copula correction with one endogenous continuous regressor, estimates the model using maximum likelihood. The optimization algorithm used is the Nelder-Mead, which it is known to converge slowly, so it might happen that sometimes your code will not converge. Therefore, the copulaCorrection() allows the user to specify the desired optimization algorithm (see the optimx() function for a list of vailable options) and also the maximum number of iterations for the optimization algorithm.</p>
 <p>In the current case, the algorithm converged, and we see that the coefficient of the student/teacher ratio returned is equal to <strong>-0.38</strong>.</p>
 <p>The <strong>heteroskedastic errors</strong> approach returns an estimate of the student/teacher ratio equal to <strong>0.71</strong>, far away from the coefficients returned by the external instrumental variables or even OLS. As Lewbel (2012) underlined, it is often better to use this approach in order to create additional instruments, which together with external ones, could lead to improved efficiency.</p>
