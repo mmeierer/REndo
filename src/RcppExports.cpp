@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // copulaCorrection_LL_rcpp
-double copulaCorrection_LL_rcpp(const NumericVector& params, const NumericVector& vec_y, const NumericMatrix& m_data_exo_endo, const NumericVector& vec_data_endo_pstar, const NumericVector& param_pos_data, const double& param_pos_sigma, const double& param_pos_rho);
+double copulaCorrection_LL_rcpp(const NumericVector& params, const NumericVector& vec_y, const NumericMatrix& m_data_exo_endo, const NumericVector& vec_data_endo_pstar, const IntegerVector& param_pos_data, const int& param_pos_sigma, const int& param_pos_rho);
 RcppExport SEXP _REndo_copulaCorrection_LL_rcpp(SEXP paramsSEXP, SEXP vec_ySEXP, SEXP m_data_exo_endoSEXP, SEXP vec_data_endo_pstarSEXP, SEXP param_pos_dataSEXP, SEXP param_pos_sigmaSEXP, SEXP param_pos_rhoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -16,9 +16,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type vec_y(vec_ySEXP);
     Rcpp::traits::input_parameter< const NumericMatrix& >::type m_data_exo_endo(m_data_exo_endoSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type vec_data_endo_pstar(vec_data_endo_pstarSEXP);
-    Rcpp::traits::input_parameter< const NumericVector& >::type param_pos_data(param_pos_dataSEXP);
-    Rcpp::traits::input_parameter< const double& >::type param_pos_sigma(param_pos_sigmaSEXP);
-    Rcpp::traits::input_parameter< const double& >::type param_pos_rho(param_pos_rhoSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type param_pos_data(param_pos_dataSEXP);
+    Rcpp::traits::input_parameter< const int& >::type param_pos_sigma(param_pos_sigmaSEXP);
+    Rcpp::traits::input_parameter< const int& >::type param_pos_rho(param_pos_rhoSEXP);
     rcpp_result_gen = Rcpp::wrap(copulaCorrection_LL_rcpp(params, vec_y, m_data_exo_endo, vec_data_endo_pstar, param_pos_data, param_pos_sigma, param_pos_rho));
     return rcpp_result_gen;
 END_RCPP
