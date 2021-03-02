@@ -1,3 +1,10 @@
+# REndo 2.4.2
+
+### BUG FIXES
+* In the `copulaCorrection` method with a single endogenous regressor the correlation coefficient rho was wrongly constraint to [0, 1] instead of to [-1, 1]. Further, rho was not included in parts of the calculations. Special thanks to Fredrik Falkenström for reporting this observation!
+
+
+
 # REndo 2.4.1
 
 ## SIGNIFICANT USER-VISIBLE CHANGES
