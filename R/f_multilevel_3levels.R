@@ -129,10 +129,11 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
 
   # . Q at L3 level ------------------------------------------------------------------------------------
   # Move the diagonal outside as the blocks are all square and therefore the diagonal is the same
-  l.L3.Q <- mapply(l.L3.Z3, l.L3.W, FUN = function(g.z3, g.w3){
+  l.L3.Q <- mapply(l.L3.Z3, l.L3.W, SIMPLIFY = FALSE, FUN = function(g.z3, g.w3){
     g.w3 %*% g.z3 %*% corpcor::pseudoinverse(Matrix::crossprod(g.z3, g.w3) %*% g.w3 %*% g.z3) %*%
       Matrix::crossprod(g.z3, g.w3)
-  })
+    })
+
   L3.Q <- Matrix::Diagonal(x=1, n=nrow(W)) - Matrix::bdiag(l.L3.Q)
 
 
@@ -144,9 +145,10 @@ multilevel_3levels <- function(cl, f.orig, dt.model.data, res.VC,
                                            name.split.by=name.split.by.L2)
 
   # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
-  l.L2.Q <- mapply(l.L2.Z2, l.L2.W, FUN = function(g.z2, g.w2){
+  l.L2.Q <- mapply(l.L2.Z2, l.L2.W, SIMPLIFY = FALSE, FUN = function(g.z2, g.w2){
     g.w2 %*% g.z2 %*%corpcor::pseudoinverse(t(g.z2)%*%(g.w2%*%g.w2)%*%g.z2) %*% Matrix::crossprod(g.z2, g.w2)
-  })
+    })
+
   L2.Q <- Matrix::Diagonal(x=1, n=nrow(W)) - Matrix::bdiag(l.L2.Q)
 
   # Calc P -------------------------------------------------------------------------------------

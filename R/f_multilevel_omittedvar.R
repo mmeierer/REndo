@@ -29,8 +29,10 @@ multilevel_omittedvartest <- function(IV1, IV2,
 
   # Residuals ----------------------------------------------------------------------------
   m.coef.IV1 <- matrix(data = coef.IV1, ncol=1)
-  l.Lhighest.resid.e <- mapply(l.Lhighest.y, l.Lhighest.X, FUN=function(g.y,g.x){
-                                  g.y - g.x %*% m.coef.IV1})
+  l.Lhighest.resid.e <- mapply(l.Lhighest.y, l.Lhighest.X, SIMPLIFY = FALSE, FUN=function(g.y,g.x){
+    g.y - g.x %*% m.coef.IV1
+    })
+
   # resid * resid' in blocks
   V.hat <- Matrix::tcrossprod(Matrix::bdiag(l.Lhighest.resid.e))
 
