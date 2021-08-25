@@ -22,14 +22,17 @@ jobs:
       - uses: r-lib/actions/setup-r@v1
         with:
           r-version: release
+
       - name: Install system dependencies
         env:
           RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          Rscript -e "install.packages(c('remotes'))"
-          Rscript -e "remotes::install_github('r-hub/sysreqs')"
-          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
-          sudo -s eval "$sysreqs"
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements(os="ubuntu", os_release="20.04"))')
+
+
       - name: Install package dependencies
         run: |
           remotes::install_deps(dependencies = TRUE) # installs binaries
