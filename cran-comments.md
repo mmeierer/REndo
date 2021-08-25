@@ -1,12 +1,12 @@
 # Comment from the authors
-This is version 2.4.2 which fixes 2 bugs in the copulaCorrection method for 1 endogenous regressor where the implementation deviated from the formula.
+This is version 2.4.3 which fixes 1 bug in the multilevelIV method where matrices could not be constructed if all groups were of the same size.
 
 
 ## Test environments
-* local install on OS X 10.15.17, R 4.0.1, devtools 2.3.2
+* local install on OS X 10.15.7, R 4.0.4, devtools 2.4.2
 * github actions: win, osx, linux (release and devel)
-* win-builder (rdevel, release)
-(* rhub is currently not working)
+* win-builder: release and devel
+* rhub: check_for_cran
 
 ## R CMD check results 
 There were 0 ERRORs, 0 WARNINGs, and 1-3 insignificant NOTEs (mis-spellings, invalid DOI).

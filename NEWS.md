@@ -1,3 +1,10 @@
+# REndo 2.4.3
+
+### BUG FIXES
+* In method `multilevelIV` matrices could not be constructed if all groups were of the same size. Thanks to pinson06 for reporting.
+
+
+
 # REndo 2.4.2
 
 ### BUG FIXES

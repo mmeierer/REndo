@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // copulaCorrection_LL_rcpp
 double copulaCorrection_LL_rcpp(const NumericVector& params, const NumericVector& vec_y, const NumericMatrix& m_data_exo_endo, const NumericVector& vec_data_endo_pstar, const IntegerVector& param_pos_data, const int& param_pos_sigma, const int& param_pos_rho);
 RcppExport SEXP _REndo_copulaCorrection_LL_rcpp(SEXP paramsSEXP, SEXP vec_ySEXP, SEXP m_data_exo_endoSEXP, SEXP vec_data_endo_pstarSEXP, SEXP param_pos_dataSEXP, SEXP param_pos_sigmaSEXP, SEXP param_pos_rhoSEXP) {
