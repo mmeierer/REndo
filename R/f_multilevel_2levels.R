@@ -92,10 +92,10 @@ multilevel_2levels <- function(cl, f.orig, dt.model.data, res.VC,
   #   Qsc = i(Tsc) - Wsc*Zsc*ginv(Zsc`*Wsc*Wsc*Zsc)*Zsc`*Wsc;
   #
   # Move the diagonal outside as the blocks are all square and therefore the diagnoal is the same
-  l.Q <- mapply(l.Z2, l.W, FUN = function(g.z2, g.w){
+  l.Q <- mapply(l.Z2, l.W, SIMPLIFY = FALSE, FUN = function(g.z2, g.w){
     g.w %*% g.z2 %*% corpcor::pseudoinverse(Matrix::crossprod(g.z2, g.w) %*% g.w %*% g.z2) %*%
       Matrix::crossprod(g.z2, g.w)
-  })
+    })
 
   Q <- Matrix::Diagonal(x=1, n=nrow(W)) - Matrix::bdiag(l.Q)
 

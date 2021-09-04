@@ -151,3 +151,17 @@ test_that("Works with slopes as factors and chars", {
                                 X31 + X32 + X33 + factorSLP+(0+factorSLP| SID) | endo(X15),
                               data = dataMultilevelIV, verbose = FALSE), regexp = "singular")
 })
+
+test_that("Works with rank-deficient and all same-size groups, see issue #63",{
+  #Model specification and example data from pinson06
+  skip_on_cran()
+
+  # Is in tests/testthat folder
+  df.data.pinson06 <- read.csv("pinson06_rankdeficient_samesizegroup.csv", header=TRUE)
+  expect_message(multilevelIV(formula = y ~ e + a + f + w + l + w2 + w_l + f_l + e_l + e_w + a_w + a_l + a_e +
+                                             e_w_l + f_w_l + f_a_l + f_e_l + a_w_l + f_a_e_l + v + pr + t +
+                                             (1 | album_id) | endo(e,a,f),
+                                           data = df.data.pinson06, verbose=FALSE),
+                 regexp = "matrix is rank deficient")
+
+})
