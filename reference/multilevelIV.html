@@ -83,9 +83,15 @@ calling summary() on a fitted model." />
 </script>
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -99,7 +105,7 @@ calling summary() on a fitted model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.3</span>
       </span>
     </div>
 
@@ -168,12 +174,12 @@ and to compare two robust estimators at different levels. The results of these t
 calling <code><a href='summary.rendo.multilevel.html'>summary()</a></code> on a fitted model.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>multilevelIV</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>multilevelIV</span><span class='op'>(</span>
   <span class='va'>formula</span>,
   <span class='va'>data</span>,
   lmer.control <span class='op'>=</span> <span class='fu'>lmerControl</span><span class='op'>(</span>optimizer <span class='op'>=</span> <span class='st'>"Nelder_Mead"</span>, optCtrl <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>maxfun <span class='op'>=</span> <span class='fl'>1e+05</span><span class='op'>)</span><span class='op'>)</span>,
   verbose <span class='op'>=</span> <span class='cn'>TRUE</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -204,7 +210,7 @@ correlation are obtained.</p></td>
 Note that an additional argument <code>model</code> with possible values <code>"REF", "FE_L2", "FE_L3", "GMM_L2"</code>, or <code>"GMM_L3"</code> is
 available for <code><a href='summary.rendo.multilevel.html'>summary</a></code>, <code>fitted</code>, <code>residuals</code>, <code>confint</code>, and <code>vcov</code>
 to extract the features for the specified model.</p>
-<p>Note that the obtained coefficients are rounded with <code><a href='https://rdrr.io/r/base/Round.html'>round(x, digits=getOption("digits"))</a></code>.</p>
+<p>Note that the obtained coefficients are rounded with <code>round(x, digits=getOption("digits"))</code>.</p>
 
 <p>An object of class <code>rendo.multilevel</code> is returned that is a list and contains the following components:</p>
 <dt>formula</dt><dd><p>the formula given to specify the model to be fitted.</p></dd>
@@ -222,7 +228,7 @@ to extract the features for the specified model.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Method</h3>
+<h3 class='hasAnchor' id='method'><a class='anchor' aria-hidden='true' href='#method'></a>Method</h3>
 <p>Multilevel modeling is a generalization of regression methods that recognize the existence of such data hierarchies
 by allowing for residual components at each level in the hierarchy. For example, a three-level multilevel model which
 allows for grouping of students within classrooms, over time, would include time, student and classroom residuals
@@ -259,12 +265,12 @@ variables to be endogenous and uses this information to build instrumental varia
 within variations of the exogenous variables, but only the within variation of the variables assumed endogenous. When all variables are assumed
 exogenous, GMM estimator equals REF. When all covariates are assume endogenous, GMM equals FE.</p>
 
-<h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Formula parameter</h3>
+<h3 class='hasAnchor' id='formula-parameter'><a class='anchor' aria-hidden='true' href='#formula-parameter'></a>Formula parameter</h3>
 
 
 <p>The <code>formula</code> argument follows a two part notation:</p>
 <p>In the first part, the model is specified while in the second part, the endogenous regressors are indicated.
-These two parts are separated by a single vertical bar (<code><a href='https://rdrr.io/r/base/Logic.html'>|</a></code>).</p>
+These two parts are separated by a single vertical bar (<code>|</code>).</p>
 <p>The first RHS follows the exact same model specification as required by the <code><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></code>
 function of package <code>lme4</code> and internally will be used to fit a <code>lmer</code> model. In the second part,
 one or multiple endogenous regressors are indicated by passing them to the special function <code>endo</code>
@@ -283,128 +289,130 @@ but as symbols without quotation marks.</p>
 <p><code><a href='summary.rendo.multilevel.html'>summary</a></code> for how fitted models are summarized</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># \donttest{</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dataMultilevelIV"</span><span class='op'>)</span>
-
-<span class='co'># Two levels</span>
-<span class='va'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span>
-                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span><span class='op'>)</span>,
-                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'># Three levels</span>
-<span class='va'>res.ml.L3</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span>
-                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span> <span class='va'>CID</span><span class='op'>)</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span><span class='op'>)</span>,
-                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-
-<span class='co'># L2 with multiple endogenous regressors</span>
-<span class='va'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span>
-                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span>, <span class='va'>X21</span>, <span class='va'>X22</span><span class='op'>)</span>,
-                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'># same as above</span>
-<span class='va'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span>
-                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span>, <span class='va'>X21</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X22</span><span class='op'>)</span>,
-                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-
-<span class='co'># Fit above model with different settings for lmer()</span>
-<span class='va'>lmer.control</span> <span class='op'>&lt;-</span> <span class='fu'>lme4</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmerControl.html'>lmerControl</a></span><span class='op'>(</span>optimizer<span class='op'>=</span><span class='st'>"nloptwrap"</span>,
-                                  optCtrl<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>algorithm<span class='op'>=</span><span class='st'>"NLOPT_LN_COBYLA"</span>,
-                                               xtol_rel<span class='op'>=</span><span class='fl'>1e-6</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>res.ml.L2.cob</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span>
-                                  <span class='va'>X31</span> <span class='op'>+</span> <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span>, <span class='va'>X21</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X22</span><span class='op'>)</span>,
-                              data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,
-                              lmer.control <span class='op'>=</span> <span class='va'>lmer.control</span><span class='op'>)</span> <span class='co'># use different controls for lmer</span>
-
-
-<span class='co'># specify argument "model" in the S3 methods to obtain results for the respective model</span>
-<span class='co'># default is "REF" for all methods</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + 
-#&gt;     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | 
-#&gt;     endo(X15), data = dataMultilevelIV, verbose = FALSE)
-#&gt; 
-#&gt; Number of levels: 3
-#&gt; Number of observations: 2824
-#&gt; Number of groups: L2(CID): 1368  L3(SID): 40
-#&gt; 
-#&gt; Coefficients for model REF:
-#&gt;             Estimate Std. Error z-score Pr(&gt;|z|)    
-#&gt; (Intercept) 64.31689    7.87332   8.169 3.11e-16 ***
-#&gt; X11          3.02134    0.02576 117.306  &lt; 2e-16 ***
-#&gt; X12          8.95222    0.02572 348.131  &lt; 2e-16 ***
-#&gt; X13         -2.01942    0.02409 -83.835  &lt; 2e-16 ***
-#&gt; X14          1.96514    0.02521  77.937  &lt; 2e-16 ***
-#&gt; X15         -0.56479    0.01950 -28.962  &lt; 2e-16 ***
-#&gt; X21         -2.33162    0.16228 -14.368  &lt; 2e-16 ***
-#&gt; X22         -3.95649    0.13119 -30.160  &lt; 2e-16 ***
-#&gt; X23         -2.97799    0.06611 -45.044  &lt; 2e-16 ***
-#&gt; X24          4.90783    0.19796  24.792  &lt; 2e-16 ***
-#&gt; X31          2.11423    0.10433  20.264  &lt; 2e-16 ***
-#&gt; X32          0.39348    0.30426   1.293   0.1959    
-#&gt; X33          0.10821    0.05236   2.067   0.0388 *  
-#&gt; ---
-#&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-#&gt; 
-#&gt; Omitted variable tests for model REF:
-#&gt;               df     Chisq  p-value    
-#&gt; GMM_L2_vs_REF  7     18.74 0.009040 ** 
-#&gt; GMM_L3_vs_REF 13 -12872.98 1.000000    
-#&gt; FE_L2_vs_REF  13     39.99 0.000139 ***
-#&gt; FE_L3_vs_REF  13     39.99 0.000138 ***
-#&gt; ---
-#&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</div><div class='input'><span class='co'># same as above</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span>, model <span class='op'>=</span> <span class='st'>"REF"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 
-#&gt; Call:
-#&gt; multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + 
-#&gt;     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | 
-#&gt;     endo(X15), data = dataMultilevelIV, verbose = FALSE)
-#&gt; 
-#&gt; Number of levels: 3
-#&gt; Number of observations: 2824
-#&gt; Number of groups: L2(CID): 1368  L3(SID): 40
-#&gt; 
-#&gt; Coefficients for model REF:
-#&gt;             Estimate Std. Error z-score Pr(&gt;|z|)    
-#&gt; (Intercept) 64.31689    7.87332   8.169 3.11e-16 ***
-#&gt; X11          3.02134    0.02576 117.306  &lt; 2e-16 ***
-#&gt; X12          8.95222    0.02572 348.131  &lt; 2e-16 ***
-#&gt; X13         -2.01942    0.02409 -83.835  &lt; 2e-16 ***
-#&gt; X14          1.96514    0.02521  77.937  &lt; 2e-16 ***
-#&gt; X15         -0.56479    0.01950 -28.962  &lt; 2e-16 ***
-#&gt; X21         -2.33162    0.16228 -14.368  &lt; 2e-16 ***
-#&gt; X22         -3.95649    0.13119 -30.160  &lt; 2e-16 ***
-#&gt; X23         -2.97799    0.06611 -45.044  &lt; 2e-16 ***
-#&gt; X24          4.90783    0.19796  24.792  &lt; 2e-16 ***
-#&gt; X31          2.11423    0.10433  20.264  &lt; 2e-16 ***
-#&gt; X32          0.39348    0.30426   1.293   0.1959    
-#&gt; X33          0.10821    0.05236   2.067   0.0388 *  
-#&gt; ---
-#&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-#&gt; 
-#&gt; Omitted variable tests for model REF:
-#&gt;               df     Chisq  p-value    
-#&gt; GMM_L2_vs_REF  7     18.74 0.009040 ** 
-#&gt; GMM_L3_vs_REF 13 -12872.98 1.000000    
-#&gt; FE_L2_vs_REF  13     39.99 0.000139 ***
-#&gt; FE_L3_vs_REF  13     39.99 0.000138 ***
-#&gt; ---
-#&gt; Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</div><div class='input'>
-<span class='co'># complete pval table for L3 fixed effects</span>
-<span class='va'>L3.FE.p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span>, model <span class='op'>=</span> <span class='st'>"FE_L3"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='co'># variance covariance matrix</span>
-<span class='va'>L2.FE.var</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>res.ml.L2</span>, model <span class='op'>=</span> <span class='st'>"FE_L2"</span><span class='op'>)</span>
-<span class='va'>L2.GMM.var</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>res.ml.L2</span>, model <span class='op'>=</span> <span class='st'>"GMM_L2"</span><span class='op'>)</span>
-<span class='co'># residuals</span>
-<span class='va'>L3.REF.resid</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span>, model <span class='op'>=</span> <span class='st'>"REF"</span><span class='op'>)</span>
-<span class='co'># }</span>
-
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='co'># \donttest{</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"dataMultilevelIV"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Two levels</span></span>
+<span class='r-in'><span class='va'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span></span>
+<span class='r-in'>                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span><span class='op'>)</span>,</span>
+<span class='r-in'>                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Three levels</span></span>
+<span class='r-in'><span class='va'>res.ml.L3</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span></span>
+<span class='r-in'>                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span> <span class='va'>CID</span><span class='op'>)</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span><span class='op'>)</span>,</span>
+<span class='r-in'>                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># L2 with multiple endogenous regressors</span></span>
+<span class='r-in'><span class='va'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span></span>
+<span class='r-in'>                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span>, <span class='va'>X21</span>, <span class='va'>X22</span><span class='op'>)</span>,</span>
+<span class='r-in'>                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># same as above</span></span>
+<span class='r-in'><span class='va'>res.ml.L2</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span> <span class='va'>X31</span> <span class='op'>+</span></span>
+<span class='r-in'>                              <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span>, <span class='va'>X21</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X22</span><span class='op'>)</span>,</span>
+<span class='r-in'>                          data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Fit above model with different settings for lmer()</span></span>
+<span class='r-in'><span class='va'>lmer.control</span> <span class='op'>&lt;-</span> <span class='fu'>lme4</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmerControl.html'>lmerControl</a></span><span class='op'>(</span>optimizer<span class='op'>=</span><span class='st'>"nloptwrap"</span>,</span>
+<span class='r-in'>                                  optCtrl<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>algorithm<span class='op'>=</span><span class='st'>"NLOPT_LN_COBYLA"</span>,</span>
+<span class='r-in'>                                               xtol_rel<span class='op'>=</span><span class='fl'>1e-6</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res.ml.L2.cob</span> <span class='op'>&lt;-</span> <span class='fu'>multilevelIV</span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>X11</span> <span class='op'>+</span> <span class='va'>X12</span> <span class='op'>+</span> <span class='va'>X13</span> <span class='op'>+</span> <span class='va'>X14</span> <span class='op'>+</span> <span class='va'>X15</span> <span class='op'>+</span> <span class='va'>X21</span> <span class='op'>+</span> <span class='va'>X22</span> <span class='op'>+</span> <span class='va'>X23</span> <span class='op'>+</span> <span class='va'>X24</span> <span class='op'>+</span></span>
+<span class='r-in'>                                  <span class='va'>X31</span> <span class='op'>+</span> <span class='va'>X32</span> <span class='op'>+</span> <span class='va'>X33</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span><span class='op'>|</span><span class='va'>SID</span><span class='op'>)</span> <span class='op'>|</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X15</span>, <span class='va'>X21</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>endo</span><span class='op'>(</span><span class='va'>X22</span><span class='op'>)</span>,</span>
+<span class='r-in'>                              data <span class='op'>=</span> <span class='va'>dataMultilevelIV</span>, verbose <span class='op'>=</span> <span class='cn'>FALSE</span>,</span>
+<span class='r-in'>                              lmer.control <span class='op'>=</span> <span class='va'>lmer.control</span><span class='op'>)</span> <span class='co'># use different controls for lmer</span></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># specify argument "model" in the S3 methods to obtain results for the respective model</span></span>
+<span class='r-in'><span class='co'># default is "REF" for all methods</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Call:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     endo(X15), data = dataMultilevelIV, verbose = FALSE)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Number of levels: 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Number of observations: 2824</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Number of groups: L2(CID): 1368  L3(SID): 40</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Coefficients for model REF:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             Estimate Std. Error z-score Pr(&gt;|z|)    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> (Intercept) 64.31689    7.87332   8.169 3.11e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X11          3.02134    0.02576 117.306  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X12          8.95222    0.02572 348.131  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X13         -2.01942    0.02409 -83.835  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X14          1.96514    0.02521  77.937  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X15         -0.56479    0.01950 -28.962  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X21         -2.33162    0.16228 -14.368  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X22         -3.95649    0.13119 -30.160  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X23         -2.97799    0.06611 -45.044  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X24          4.90783    0.19796  24.792  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X31          2.11423    0.10433  20.264  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X32          0.39348    0.30426   1.293   0.1959    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X33          0.10821    0.05236   2.067   0.0388 *  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ---</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Omitted variable tests for model REF:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               df     Chisq  p-value    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GMM_L2_vs_REF  7     18.74 0.009040 ** </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GMM_L3_vs_REF 13 -12872.98 1.000000    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FE_L2_vs_REF  13     39.99 0.000139 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FE_L3_vs_REF  13     39.99 0.000138 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ---</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class='r-in'><span class='co'># same as above</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span>, model <span class='op'>=</span> <span class='st'>"REF"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Call:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     endo(X15), data = dataMultilevelIV, verbose = FALSE)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Number of levels: 3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Number of observations: 2824</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Number of groups: L2(CID): 1368  L3(SID): 40</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Coefficients for model REF:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             Estimate Std. Error z-score Pr(&gt;|z|)    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> (Intercept) 64.31689    7.87332   8.169 3.11e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X11          3.02134    0.02576 117.306  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X12          8.95222    0.02572 348.131  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X13         -2.01942    0.02409 -83.835  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X14          1.96514    0.02521  77.937  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X15         -0.56479    0.01950 -28.962  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X21         -2.33162    0.16228 -14.368  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X22         -3.95649    0.13119 -30.160  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X23         -2.97799    0.06611 -45.044  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X24          4.90783    0.19796  24.792  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X31          2.11423    0.10433  20.264  &lt; 2e-16 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X32          0.39348    0.30426   1.293   0.1959    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> X33          0.10821    0.05236   2.067   0.0388 *  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ---</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Omitted variable tests for model REF:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>               df     Chisq  p-value    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GMM_L2_vs_REF  7     18.74 0.009040 ** </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> GMM_L3_vs_REF 13 -12872.98 1.000000    </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FE_L2_vs_REF  13     39.99 0.000139 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> FE_L3_vs_REF  13     39.99 0.000138 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ---</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># complete pval table for L3 fixed effects</span></span>
+<span class='r-in'><span class='va'>L3.FE.p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span>, model <span class='op'>=</span> <span class='st'>"FE_L3"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># variance covariance matrix</span></span>
+<span class='r-in'><span class='va'>L2.FE.var</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>res.ml.L2</span>, model <span class='op'>=</span> <span class='st'>"FE_L2"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>L2.GMM.var</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>res.ml.L2</span>, model <span class='op'>=</span> <span class='st'>"GMM_L2"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># residuals</span></span>
+<span class='r-in'><span class='va'>L3.REF.resid</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></span><span class='op'>(</span><span class='va'>res.ml.L3</span>, model <span class='op'>=</span> <span class='st'>"REF"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'># }</span></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -416,11 +424,11 @@ but as symbols without quotation marks.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Raluca Gui, Markus Meierer, Rene Algesheimer, Patrik Schilter.</p>
+  <p><p>Developed by Raluca Gui, Markus Meierer, Rene Algesheimer, Patrik Schilter.</p></p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p></p>
 </div>
 
       </footer>
@@ -428,6 +436,8 @@ but as symbols without quotation marks.</p>
 
   
 
+
+  
 
   </body>
 </html>
