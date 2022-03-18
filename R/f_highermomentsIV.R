@@ -13,9 +13,9 @@
 #' \subsection{Method}{
 #'
 #' Consider the model:
-#' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ Y_{t} = \beta_{0}+ \beta_{1}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
+#' \ifelse{html}{\out{<br><div style="text-align:center">Y<sub>t</sub>=&beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></div>}}{\deqn{ Y_{t} = \beta_{0}+ \beta_{1}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
 #'
-#' \ifelse{html}{\out{<center>P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{\deqn{ P_{t} = \gamma Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
+#' \ifelse{html}{\out{<div style="text-align:center">P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></div>}}{\deqn{ P_{t} = \gamma Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
 #'
 #' The observed data consist of \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}}, \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}} and \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}},
 #' while \ifelse{html}{\out{Z<sub>t</sub>}}{\eqn{Z_{t}}}, \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}},
