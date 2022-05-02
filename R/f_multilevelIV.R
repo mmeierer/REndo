@@ -38,9 +38,9 @@
 #' A three-level model can be described as follows:
 #'
 #' \ifelse{html}{
-#' \out{ <center>y<sub>cst</sub> = Z<sup>1</sup><sub>cst</sub> &beta;<sup>1</sup><sub>cs</sub> + X<sup>1</sup><sub>cst</sub> &beta;<sub>1</sub> &epsilon;<sup>1</sup><sub>cst</sub> </center>
-#' <br><center> &beta;<sup>1</sup><sub>cs</sub> =  Z<sup>2</sup><sub>cs</sub> &beta;<sup>2</sup><sub>c</sub> + X <sup>2</sup><sub>cs</sub> &beta;<sub>2</sub> &epsilon;<sup>2</sup><sub>cs</sub> </center>
-#' <br><center> &beta;<sup>2</sup><sub>c</sub> = X<sup>3</sup><sub>c</sub>&beta;<sub>3</sub> &epsilon;<sup>3</sup><sub>c</sub> </center>}}{
+#' \out{ <div style="text-align:center">y<sub>cst</sub> = Z<sup>1</sup><sub>cst</sub> &beta;<sup>1</sup><sub>cs</sub> + X<sup>1</sup><sub>cst</sub> &beta;<sub>1</sub> &epsilon;<sup>1</sup><sub>cst</sub> </div>
+#' <br><div style="text-align:center"> &beta;<sup>1</sup><sub>cs</sub> =  Z<sup>2</sup><sub>cs</sub> &beta;<sup>2</sup><sub>c</sub> + X <sup>2</sup><sub>cs</sub> &beta;<sub>2</sub> &epsilon;<sup>2</sup><sub>cs</sub> </div>
+#' <br><div style="text-align:center"> &beta;<sup>2</sup><sub>c</sub> = X<sup>3</sup><sub>c</sub>&beta;<sub>3</sub> &epsilon;<sup>3</sup><sub>c</sub> </div>}}{
 #'  \deqn{
 #'  y_{cst} = Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1} +\epsilon^{1}_{cst}}
 #'  \deqn{

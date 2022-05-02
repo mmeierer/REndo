@@ -34,7 +34,7 @@ The instruments are constructed as simple functions of the model's data. The met
 no external instruments are available or to supplement external instruments to improve the efficiency of the
 IV estimator.
 Consider the model in the equation:
-\ifelse{html}{\out{<br><center>y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
+\ifelse{html}{\out{<br><div style="text-align:center">y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub></div>}}{\deqn{ y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
 
 where \eqn{t=1,..,T} indexes either time or cross-sectional units.The endogeneity problem arises from the correlation of
 \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} and \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}}.

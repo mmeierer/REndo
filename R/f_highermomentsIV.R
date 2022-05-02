@@ -13,9 +13,9 @@
 #' \subsection{Method}{
 #'
 #' Consider the model:
-#' \ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{ Y_{t} = \beta_{0}+ \beta_{1}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
+#' \ifelse{html}{\out{<br><div style="text-align:center">Y<sub>t</sub>=&beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></div>}}{\deqn{ Y_{t} = \beta_{0}+ \beta_{1}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
 #'
-#' \ifelse{html}{\out{<center>P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></center>}}{\deqn{ P_{t} = \gamma Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
+#' \ifelse{html}{\out{<div style="text-align:center">P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></div>}}{\deqn{ P_{t} = \gamma Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}
 #'
 #' The observed data consist of \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}}, \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}} and \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}},
 #' while \ifelse{html}{\out{Z<sub>t</sub>}}{\eqn{Z_{t}}}, \ifelse{html}{\out{&epsilon;<sub>t</sub>}}{\eqn{\epsilon_{t}}},
@@ -29,12 +29,12 @@
 #' and \ifelse{html}{\out{G<sub>t</sub>=G(X<sub>t</sub>)}}{\eqn{G_{t} = G(X_{t})}} for any given function \eqn{G} that
 #' has finite third own and cross moments. Lewbel(1997) proves that the following instruments can be constructed and used with two-stage least squares to obtain consistent estimates:
 #'
-#' \ifelse{html}{\out{<div align="center">q<sub>1t</sub>=(G<sub>t</sub>-G&#773;)<span style="float:right;">(3a)</span></div>}}{\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}}
-#' \ifelse{html}{\out{<div align="center">q<sub>2t</sub>=(G<sub>t</sub>-G&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3b)</span></div>}}{\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b)}}
-#' \ifelse{html}{\out{<div align="center">q<sub>3t</sub>=(G<sub>t</sub>-G&#773;)(Y<sub>t</sub>-Y&#773;)<span style="float:right;">(3c)</span></div>}}{\deqn{ q_{3t}=(G_{t} - \bar{G})(Y_{t}-\bar{Y}) \hspace{0.3cm} (3c)}}
-#' \ifelse{html}{\out{<div align="center">q<sub>4t</sub>=(Y<sub>t</sub>-Y&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3d)</span></div>}}{\deqn{ q_{4t}=(Y_{t} - \bar{Y})(P_{t}-\bar{P}) \hspace{0.3cm} (3d)}}
-#' \ifelse{html}{\out{<div align="center">q<sub>5t</sub>=(P<sub>t</sub>-P&#773;)<sup>2</sup><span style="float:right;">(3e)</span></div>}}{\deqn{ q_{5t}=(P_{t}-\bar{P})^{2} \hspace{1.5 cm} (3e)}}
-#' \ifelse{html}{\out{<div align="center">q<sub>6t</sub>=(Y<sub>t</sub>-Y&#773;)<sup>2</sup><span style="float:right;">(3f)</span></div>}}{\deqn{ q_{6t}=(Y_{t}-\bar{Y})^{2}\hspace{1.5 cm} (3f)}}
+#' \ifelse{html}{\out{<div style="text-align:center">q<sub>1t</sub>=(G<sub>t</sub>-G&#773;)<span style="float:right;">(3a)</span></div>}}{\deqn{ q_{1t}=(G_{t} - \bar{G})  \hspace{1.6 cm}(3a)}}
+#' \ifelse{html}{\out{<div style="text-align:center">q<sub>2t</sub>=(G<sub>t</sub>-G&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3b)</span></div>}}{\deqn{ q_{2t}=(G_{t} - \bar{G})(P_{t}-\bar{P}) \hspace{0.3cm} (3b)}}
+#' \ifelse{html}{\out{<div style="text-align:center">q<sub>3t</sub>=(G<sub>t</sub>-G&#773;)(Y<sub>t</sub>-Y&#773;)<span style="float:right;">(3c)</span></div>}}{\deqn{ q_{3t}=(G_{t} - \bar{G})(Y_{t}-\bar{Y}) \hspace{0.3cm} (3c)}}
+#' \ifelse{html}{\out{<div style="text-align:center">q<sub>4t</sub>=(Y<sub>t</sub>-Y&#773;)(P<sub>t</sub>-P&#773;)<span style="float:right;">(3d)</span></div>}}{\deqn{ q_{4t}=(Y_{t} - \bar{Y})(P_{t}-\bar{P}) \hspace{0.3cm} (3d)}}
+#' \ifelse{html}{\out{<div style="text-align:center">q<sub>5t</sub>=(P<sub>t</sub>-P&#773;)<sup>2</sup><span style="float:right;">(3e)</span></div>}}{\deqn{ q_{5t}=(P_{t}-\bar{P})^{2} \hspace{1.5 cm} (3e)}}
+#' \ifelse{html}{\out{<div style="text-align:center">q<sub>6t</sub>=(Y<sub>t</sub>-Y&#773;)<sup>2</sup><span style="float:right;">(3f)</span></div>}}{\deqn{ q_{6t}=(Y_{t}-\bar{Y})^{2}\hspace{1.5 cm} (3f)}}
 #'
 #'
 #' Instruments in equations \eqn{3e} and \eqn{3f} can be used only when the measurement and the structural errors are symmetrically distributed.
