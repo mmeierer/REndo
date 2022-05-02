@@ -1,3 +1,10 @@
+# REndo 2.4.4
+
+### BUG FIXES
+* Fix documentation to conform to HTML5.
+
+
+
 # REndo 2.4.3
 
 ### BUG FIXES
