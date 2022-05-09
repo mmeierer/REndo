@@ -1,3 +1,20 @@
+# REndo 2.4.5
+
+### BUG FIXES
+* Fix broken correctness tests for `latentIV` on M1mac.
+
+### MAINTENANCE
+* Update maintainer email.
+
+
+
+# REndo 2.4.4
+
+### BUG FIXES
+* Fix documentation to conform to HTML5.
+
+
+
 # REndo 2.4.3
 
 ### BUG FIXES
