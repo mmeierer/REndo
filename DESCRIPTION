@@ -1,10 +1,10 @@
 Package: REndo
 Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables
 Type: Package
-Version: 2.4.3
-Date: 2021-09-03
+Version: 2.4.5
+Date: 2022-05-17
 Authors@R: c(
-    person(given="Raluca", family="Gui",         email = "raluca.gui@business.uzh.ch", role = c("cre","aut")),
+    person(given="Raluca", family="Gui",         email = "raluca.gui@gmail.com", role = c("cre","aut")),
     person(given="Markus", family="Meierer",     email = "markus.meierer@business.uzh.ch", role = "aut"),
     person(given="Rene",   family="Algesheimer", email = "market-research@business.uzh.ch", role = "aut"),
     person(given="Patrik", family="Schilter",    email = "patrik.schilter@gmail.com",role = "aut"))
@@ -41,5 +41,5 @@ Suggests:
     R.rsp
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: R.rsp

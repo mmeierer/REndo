@@ -6,9 +6,9 @@
 #' The variance-covariance matrix is derived from the bootstrapped parameter estimates stored in the object.
 #' It is based on Efron (1979) and calculates the result as follows:
 #'
-#' \ifelse{html}{\out{<center> 1/(B-1) * &Sigma;(&theta;<sub>b</sub>-&theta;&#773)(&theta;<sub>b</sub>-&theta;&#773)' </center>}}{\deqn{\frac{1}{B-1}\sum_{b=1}^{B}{(\theta_b-\bar\theta)(\theta_b-\bar\theta)}}}
+#' \ifelse{html}{\out{<div style="text-align:center"> 1/(B-1) * &Sigma;(&theta;<sub>b</sub> - &theta;&#773;)(&theta;<sub>b</sub> - &theta;&#773;)' </div>}}{\deqn{\frac{1}{B-1}\sum_{b=1}^{B}{(\theta_b-\bar\theta)(\theta_b-\bar\theta)}}}
 #'
-#' where B is the number of bootstraps and \ifelse{html}{\out{&theta;&#773}}{\eqn{\bar\theta}} is the mean of the bootstrapped coefficients.
+#' where B is the number of bootstraps and \ifelse{html}{\out{&theta;&#773;}}{\eqn{\bar\theta}} is the mean of the bootstrapped coefficients.
 #'
 #'
 #' @return

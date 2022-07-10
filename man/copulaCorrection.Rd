@@ -65,7 +65,7 @@ of correlations between the two marginals.
 
 
 Consider the model:
-\ifelse{html}{\out{<br><center>Y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub></center>}}{\deqn{Y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
+\ifelse{html}{\out{<br><div style="text-align:center">Y<sub>t</sub>=&beta;<sub>0</sub>+&beta;<sub>1</sub>P<sub>t</sub>+&beta;<sub>2</sub>X<sub>t</sub>+&epsilon;<sub>t</sub></div>}}{\deqn{Y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}}}
 
 where \eqn{t=1,..,T} indexes either time or cross-sectional units, \ifelse{html}{\out{Y<sub>t</sub>}}{\eqn{Y_{t}}} is a \eqn{1x1} response variable,
 \ifelse{html}{\out{X<sub>t</sub>}}{\eqn{X_{t}}} is a \eqn{kxn} exogenous regressor,
@@ -76,7 +76,7 @@ where \eqn{t=1,..,T} indexes either time or cross-sectional units, \ifelse{html}
 
 The marginal distribution of the endogenous regressor \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is obtained using the Epanechnikov
 kernel density estimator (Epanechnikov, 1969), as below:
-\ifelse{html}{\out{<br><center>h&#770;(p)=1/(T&#183;b) &sum;(K&#183;((p-P<sub>t</sub>)/b))</center>}}{\deqn{\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)}}
+\ifelse{html}{\out{<br><div style="text-align:center">h&#770;(p)=1/(T&#183;b) &sum;(K&#183;((p-P<sub>t</sub>)/b))</div>}}{\deqn{\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)}}
 
 where \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is the endogenous regressor,
 \ifelse{html}{\out{K(x)=0.75&#183;(1-x<sup>2</sup>)&#183;I(|x|<=1)}}{\eqn{K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|<=1)}}
