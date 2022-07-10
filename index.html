@@ -45,7 +45,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.5</span>
       </span>
     </div>
 
@@ -55,7 +55,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -72,7 +72,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/mmeierer/REndo/">
+  <a href="https://github.com/mmeierer/REndo/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -91,9 +91,9 @@
   <div class="contents col-md-9">
 
 
-<div id="the-rendo-package" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#the-rendo-package" class="anchor" aria-hidden="true"></a>The REndo Package</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="the-rendo-package">The REndo Package<a class="anchor" aria-label="anchor" href="#the-rendo-package"></a>
+</h1></div>
 <p>Endogeneity arises when the independence assumption between an explanatory variable and the error in a statistical model is violated. Among its most common causes are omitted variable bias (e.g. like ability in the returns to education estimation), measurement error (e.g. survey response bias), or simultaneity (e.g. advertising and sales).</p>
 <p>Instrumental variable estimation is a common treatment when endogeneity is of concern. However valid, strong external instruments are difficult to find. Consequently, statistical methods to correct for endogeneity without external instruments have been advanced. They are called <strong>internal instrumental variable models (IIV)</strong>.</p>
 <p>REndo implements the following instrument-free methods:</p>
@@ -104,32 +104,32 @@
 <li><p>joint estimation using copula (Park and Gupta 2012)</p></li>
 <li><p>multilevel GMM (Kim and Frees 2007)</p></li>
 </ol>
-<div id="the-new-version---rendo-200" class="section level2">
-<h2 class="hasAnchor">
-<a href="#the-new-version---rendo-200" class="anchor" aria-hidden="true"></a>The new version - REndo 2.0.0</h2>
+<div class="section level2">
+<h2 id="the-new-version---rendo-200">The new version - REndo 2.0.0<a class="anchor" aria-label="anchor" href="#the-new-version---rendo-200"></a>
+</h2>
 <p>The new version of <strong>REndo</strong> comes with a lot of improvements in terms of code optimization as well as different syntax for all functions.</p>
 </div>
-<div id="walk-through" class="section level2">
-<h2 class="hasAnchor">
-<a href="#walk-through" class="anchor" aria-hidden="true"></a>Walk-Through</h2>
+<div class="section level2">
+<h2 id="walk-through">Walk-Through<a class="anchor" aria-label="anchor" href="#walk-through"></a>
+</h2>
 <p>Below, we present the syntax for each of the 5 implemented instrument-free methods:</p>
-<div id="latent-instrumental-variables" class="section level3">
-<h3 class="hasAnchor">
-<a href="#latent-instrumental-variables" class="anchor" aria-hidden="true"></a><strong>Latent Instrumental Variables</strong>
+<div class="section level3">
+<h3 id="latent-instrumental-variables">
+<strong>Latent Instrumental Variables</strong><a class="anchor" aria-label="anchor" href="#latent-instrumental-variables"></a>
 </h3>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">latentIV</span>(y <span class="op">~</span><span class="st"> </span>P, data, <span class="dt">start.params=</span><span class="kw">c</span>()) </span></code></pre></div>
 <p>The first argument is the formula of the model to be estimated, <strong>y ~ P</strong>, where <strong>y</strong> is the response and <strong>P</strong> is the endogenous regressor. The second argument is the name of the dataset used and the last one, <strong>start.params=c()</strong>, which is optional, is a vector with the initial parameter values. When not indicated, the initial parameter values are taken to be the coefficients returned by the OLS estimator of <strong>y</strong> on <strong>P</strong>.</p>
 </div>
-<div id="copula-correction" class="section level3">
-<h3 class="hasAnchor">
-<a href="#copula-correction" class="anchor" aria-hidden="true"></a><strong>Copula Correction</strong>
+<div class="section level3">
+<h3 id="copula-correction">
+<strong>Copula Correction</strong><a class="anchor" aria-label="anchor" href="#copula-correction"></a>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">copulaCorrection</span>( y <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>P1 <span class="op">+</span><span class="st"> </span>P2 <span class="op">|</span><span class="st"> </span><span class="kw">continuous</span>(P1) <span class="op">+</span><span class="st"> </span><span class="kw">discrete</span>(P2), data, <span class="dt">start.params=</span><span class="kw">c</span>(), num.boots)</span></code></pre></div>
 <p>The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here <strong>continuous(P1) + discrete(P2)</strong>. The second argument is the name of the data, the third argument of the function, <strong>start.params</strong>, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); while the fourth argument, <strong>num.boots</strong>, also optional, is the number of bootstraps to be performed (the default is 1000). Of course, defining the endogenous regressors depends on the number of endogenous regressors and their assumed distribution. Transformations of the explanatory variables, such as I(X), ln(X) are supported.</p>
 </div>
-<div id="higher-moments" class="section level3">
-<h3 class="hasAnchor">
-<a href="#higher-moments" class="anchor" aria-hidden="true"></a><strong>Higher Moments</strong>
+<div class="section level3">
+<h3 id="higher-moments">
+<strong>Higher Moments</strong><a class="anchor" aria-label="anchor" href="#higher-moments"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">higherMomentsIV</span>(y <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>P <span class="op">|</span><span class="st"> </span>P <span class="op">|</span><span class="st"> </span><span class="kw">IIV</span>(<span class="dt">iiv =</span> gp, <span class="dt">g=</span> x2, X1, X2) <span class="op">+</span><span class="st"> </span><span class="kw">IIV</span>(<span class="dt">iiv =</span> yp) <span class="op">|</span><span class="st"> </span>Z1, data)</span></code></pre></div>
 <p>Here, <strong>y</strong> is the response; the first RHS of the formula, <strong>X1 + X2 + P</strong>, is the model to be estimated; the second part, <strong>P</strong>, specifies the endogenous regressors; the third part, <strong>IIV()</strong>, specifies the format of the internal instruments; the fourth part, <strong>Z1</strong>, is optional, allowing the user to add any external instruments available.</p>
@@ -158,24 +158,24 @@
 </ul>
 <p>where <embed src="https://latex.codecogs.com/png.latex?G%3DG%28X_%7Bt%7D%29%20%22G=G(X_%7Bt%7D)%22"></embed> can be either <embed src="https://latex.codecogs.com/png.latex?x%5E2" title="x^2"></embed>, <embed src="https://latex.codecogs.com/png.latex?x%5E3" title="x^3"></embed>, <embed src="https://latex.codecogs.com/png.latex?ln%28x%29" title="ln(x)"></embed> or <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7Bx%7D%20%22%5Cfrac%7B1%7D%7Bx%7D%22" alt="\frac{1}{x}"> and should be specified in the <strong>g</strong> argument of the third RHS of the formula, as <strong>x2, x3, lnx</strong> or <strong>1/x</strong>. In case of internal instruments built only from the endogenous regressor, e.g. <strong>p2</strong>, or from the response and the endogenous regressor, like for example in <strong>yp</strong>, there is no need to specify <strong>g</strong> or the set of exogenous regressors in the <strong>IIV()</strong> part of the formula. The function returns a set of tests for checking the validity of the instruments and the endogeneity assumption.</p>
 </div>
-<div id="heteroskedastic-errors" class="section level3">
-<h3 class="hasAnchor">
-<a href="#heteroskedastic-errors" class="anchor" aria-hidden="true"></a><strong>Heteroskedastic Errors</strong>
+<div class="section level3">
+<h3 id="heteroskedastic-errors">
+<strong>Heteroskedastic Errors</strong><a class="anchor" aria-label="anchor" href="#heteroskedastic-errors"></a>
 </h3>
-<pre><code> hetErrorsIV(y ~ X1 + X2 + X3 + P | P | IIV(X1,X2) | Z1, data)</code></pre>
+<pre><code><span> <span class="fu"><a href="reference/hetErrorsIV.html">hetErrorsIV</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">P</span> <span class="op">|</span> <span class="va">P</span> <span class="op">|</span> <span class="fu">IIV</span><span class="op">(</span><span class="va">X1</span>,<span class="va">X2</span><span class="op">)</span> <span class="op">|</span> <span class="va">Z1</span>, <span class="va">data</span><span class="op">)</span></span></code></pre>
 <p>Here, <strong>y</strong> is the response variable, <strong>X1 + X2 + X3 + P</strong> represents the model to be estimated; the second part, <strong>P</strong>, specifies the endogenous regressors, the third part, <strong>IIV(X1, X2)</strong>, specifies the exogenous heteroskedastic variables from which the instruments are derived, while the final part <strong>Z1</strong> is optional, allowing the user to include additional external instrumental variables. Like in the higher moments approach, allowing the inclusion of additional external variables is a convenient feature of the function, since it increases the efficiency of the estimates. Transformation of the explanatory variables, such as I(X), ln(X) are possible both in the model specification as well as in the IIV() specification.</p>
 </div>
-<div id="multilevel-gmm" class="section level3">
-<h3 class="hasAnchor">
-<a href="#multilevel-gmm" class="anchor" aria-hidden="true"></a><strong>Multilevel GMM</strong>
+<div class="section level3">
+<h3 id="multilevel-gmm">
+<strong>Multilevel GMM</strong><a class="anchor" aria-label="anchor" href="#multilevel-gmm"></a>
 </h3>
-<pre><code>multilevelIV(y ~ X11 + X12 + X21 + X22 + X23 + X31 + X33 + X34 + (1|CID) + (1|SID) | endo(X12), data)  </code></pre>
+<pre><code><span><span class="fu"><a href="reference/multilevelIV.html">multilevelIV</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">X11</span> <span class="op">+</span> <span class="va">X12</span> <span class="op">+</span> <span class="va">X21</span> <span class="op">+</span> <span class="va">X22</span> <span class="op">+</span> <span class="va">X23</span> <span class="op">+</span> <span class="va">X31</span> <span class="op">+</span> <span class="va">X33</span> <span class="op">+</span> <span class="va">X34</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">|</span><span class="va">CID</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">|</span><span class="va">SID</span><span class="op">)</span> <span class="op">|</span> <span class="fu">endo</span><span class="op">(</span><span class="va">X12</span><span class="op">)</span>, <span class="va">data</span><span class="op">)</span>  </span></code></pre>
 <p>The call of the function has a two-part formula and an argument for data specification. In the formula, the first part is the model specification, with fixed and random parameter specification, and the second part which specifies the regressors assumed endogenous, here <strong>endo(X12)</strong>. The function returns the parameter estimates obtained with fixed effects, random effects and the GMM estimator proposed by Kim and Frees (2007), such that a comparison across models can be done.</p>
 </div>
 </div>
-<div id="installation-instructions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation-instructions" class="anchor" aria-hidden="true"></a>Installation Instructions</h2>
+<div class="section level2">
+<h2 id="installation-instructions">Installation Instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
+</h2>
 <p>Install the stable version from CRAN:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">install.packages</span>(<span class="st">"REndo"</span>)</span></code></pre></div>
 <p>Install the development version from GitHub:</p>
@@ -189,22 +189,26 @@
     <div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from CRAN at <br><a href="https://cloud.r-project.org/package=REndo">https://​cloud.r-project.org/​package=REndo</a>
-</li>
-<li>Browse source code at <br><a href="https://github.com/mmeierer/REndo/">https://​github.com/​mmeierer/​REndo/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/mmeierer/REndo/issues">https://​github.com/​mmeierer/​REndo/​issues</a>
-</li>
+<li><a href="https://cloud.r-project.org/package=REndo" class="external-link">View on CRAN</a></li>
+<li><a href="https://github.com/mmeierer/REndo/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/mmeierer/REndo/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
 <div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
+<li><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></li>
 </ul>
 </div>
 
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing REndo</a></li>
+</ul>
+</div>
 
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
@@ -239,7 +243,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
 </div>
 
       </footer>
