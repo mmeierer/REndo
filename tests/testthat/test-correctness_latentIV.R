@@ -13,17 +13,17 @@ test_that("Transformations are correct", {
   #   testing log(exp()) gives same as no transformations yields numerical differences on M1 architectures
 
   data.altered.y   <- dataLatentIV
-  data.altered.y$y <- data.altered.y$y/2 + 1.23
+  data.altered.y$y <- data.altered.y$y/2 + 12.3
 
-  expect_silent(res.trans.lhs <- latentIV(formula = I(y/2 + 1.23) ~ P, data = dataLatentIV, verbose = FALSE))
+  expect_silent(res.trans.lhs <- latentIV(formula = I(y/2 + 12.3) ~ P, data = dataLatentIV, verbose = FALSE))
   expect_silent(res.data.trans.lhs <- latentIV(formula = y ~ P, data = data.altered.y, verbose = FALSE))
   expect_equal(coef(res.trans.lhs), coef(res.data.trans.lhs), check.attributes=FALSE)
   expect_equal(coef(summary(res.trans.lhs)), coef(summary(res.data.trans.lhs)), check.attributes=FALSE)
 
 
   data.altered.P   <- dataLatentIV
-  data.altered.P$P <- data.altered.P$P/2 + 1.23
-  expect_silent(res.trans.rhs <- latentIV(formula = y ~ I(P/2 + 1.23), data = dataLatentIV, verbose = FALSE))
+  data.altered.P$P <- data.altered.P$P/2 + 12.3
+  expect_silent(res.trans.rhs <- latentIV(formula = y ~ I(P/2 + 12.3), data = dataLatentIV, verbose = FALSE))
   expect_silent(res.data.trans.rhs <- latentIV(formula = y ~ P, data = data.altered.P, verbose = FALSE))
   expect_equal(coef(res.trans.rhs), coef(res.data.trans.rhs), check.attributes=FALSE)
   expect_equal(coef(summary(res.trans.rhs)), coef(summary(res.data.trans.rhs)), check.attributes=FALSE)

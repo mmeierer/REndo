@@ -35,7 +35,7 @@ test_that("Fail if more than 2 parts given", {
 })
 
 test_that("Fail if more than 3 levels given", {
-  expect_error(multilevelIV(formula = y ~ X11 + X12 + (1|SID)+(1|CID)+(1|A)|endo(X11), data = cbind(dataMultilevelIV, A=1:4)), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12 + (1|SID)+(1|CID)+(1|A)|endo(X11), data = cbind(dataMultilevelIV, A=rep_len(1:4, nrow(dataMultilevelIV)))), regexp = "The above errors were encountered!")
 })
 
 

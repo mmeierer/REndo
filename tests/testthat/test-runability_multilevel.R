@@ -76,13 +76,13 @@ test_that("Works with NA in not needed columns", {
   dataMultilevelIV.na <- dataMultilevelIV
   dataMultilevelIV.na[5, "X13"] <- NA_real_
   expect_silent(multilevelIV(formula = y ~ X11 + X12 + X14 + X15 + X21 + X22 + X23 + X24 +
-                               X31 + X32 + X33 + (X11| CID) + (X14| SID) | endo(X15),
+                               X31 + X32 + X33 + (1| CID) + (1| SID) | endo(X15),
                              data = dataMultilevelIV.na, verbose = FALSE))
 
   dataMultilevelIV.inf <- dataMultilevelIV
   dataMultilevelIV.inf[5, "X13"] <- Inf
   expect_silent(multilevelIV(formula = y ~ X11 + X12 + X14 + X15 + X21 + X22 + X23 + X24 +
-                               X31 + X32 + X33 + (X11| CID) + (X14| SID) | endo(X15),
+                               X31 + X32 + X33 + (1| CID) + (1| SID) | endo(X15),
                              data = dataMultilevelIV.inf, verbose = FALSE))
 })
 
@@ -134,7 +134,7 @@ test_that("Works with group ids as factor", {
 
 test_that("Works with slopes as factors and chars", {
   skip_on_cran()
-  dataMultilevelIV$charSLP   <- rep(LETTERS[1:2], nrow(dataMultilevelIV)/2)
+  dataMultilevelIV$charSLP   <- rep_len(LETTERS[1:2], nrow(dataMultilevelIV))
   dataMultilevelIV$factorSLP <- as.factor(dataMultilevelIV$charSLP)
   # intercept + category slope
   expect_message(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
