@@ -13,6 +13,7 @@
 #' \subsection{Method}{
 #'
 #' Consider the model:
+#'
 #' \ifelse{html}{\out{<br><div style="text-align:center">Y<sub>t</sub>=&beta;<sub>0</sub> + &beta;<sub>1</sub>X<sub>t</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></div>}}{\deqn{ Y_{t} = \beta_{0}+ \beta_{1}X_{t} + \alpha P_{t}+\epsilon_{t} \hspace{0.3cm} (1) }}
 #'
 #' \ifelse{html}{\out{<div style="text-align:center">P<sub>t</sub>=Z<sub>t</sub>+&nu;<sub>t</sub></div>}}{\deqn{ P_{t} = \gamma Z_{t}+\nu_{t} \hspace{2.5 cm} (2)}}

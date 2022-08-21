@@ -137,5 +137,5 @@
 ### BUG FIXES
 * Many
 
-# DEPRECATED AND DEFUNCT
+### DEPRECATED AND DEFUNCT
 * The multilevel function is temporarily removed from the package due to ongoing work on it
