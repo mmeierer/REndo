@@ -1,3 +1,11 @@
+# REndo 2.4.6
+
+### MAINTENANCE
+* Replace data sets with new ones
+* Fix tidy HTML warnings in documentation and parsing of news.md reported in daily CRAN checks
+
+
+
 # REndo 2.4.5
 
 ### BUG FIXES
