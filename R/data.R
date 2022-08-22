@@ -170,11 +170,11 @@
 
 #' @title Multilevel Simulated Dataset - Three Levels
 #' @description  A dataset simulated to exemplify the use of the \code{multilevelIV()} function.
-#' It has 2645 observations, clustered into 40 level-three variables and 1312 observations at level two. The endogenous regressor is \code{X15} with a true
+#' It has 2767 observations, clustered into 40 level-three variables and 1347 observations at level two. The endogenous regressor is \code{X15} with a true
 #' coefficient value of -1.
 #' @name dataMultilevelIV
 #' @usage data("dataMultilevelIV")
-#' @format A data frame with 2645 observations clustered into 40 level-three variables and 1312 level-two variables.
+#' @format A data frame with 2767 observations clustered into 40 level-three variables and 1347 level-two variables.
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{X11}}{a level-one numeric vector representing a categorical exogenous variable with true parameter value equal to 3.}
