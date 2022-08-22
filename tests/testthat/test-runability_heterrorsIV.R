@@ -69,8 +69,8 @@ test_that("Works with transformation in exogenous", {
   # Non IIV exo
   expect_silent(hetErrorsIV(y~log(X1+100)+X2+P  |P|IIV(X2), data=dataHetIV, verbose=FALSE))
   # IIV exo
-  expect_silent(hetErrorsIV(y~log(X1+100)+X2+P  |P|IIV(log(X1+100)), data=dataHetIV, verbose=FALSE))
-  expect_silent(hetErrorsIV(y~log(X1+100)+X2+P  |P|IIV(log(X1+100), X2), data=dataHetIV, verbose=FALSE))
+  expect_warning(hetErrorsIV(y~log(X1+100)+X2+P  |P|IIV(log(X1+100)), data=dataHetIV, verbose=FALSE), regexp = "Breusch-Pagan")
+  expect_warning(hetErrorsIV(y~log(X1+100)+X2+P  |P|IIV(log(X1+100), X2), data=dataHetIV, verbose=FALSE), regexp = "Breusch-Pagan")
 })
 
 test_that("Works with endo transformation", {
