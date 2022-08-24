@@ -25,7 +25,7 @@ The important assumption of the model is that the endogenous variables should NO
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.6</span>
       </span>
     </div>
 
@@ -175,8 +175,8 @@ one selects marginal distributions for the endogenous regressor and the structur
 Then, the copula model enables the construction of a flexible multivariate joint distribution allowing a wide range
 of correlations between the two marginals.</p>
 
-<p>Consider the model:
-<br></p><div style="text-align:center">Y<sub>t</sub>=β<sub>0</sub>+β<sub>1</sub>P<sub>t</sub>+β<sub>2</sub>X<sub>t</sub>+ε<sub>t</sub></div>
+<p>Consider the model:</p>
+<p><br></p><div style="text-align:center">Y<sub>t</sub>=β<sub>0</sub>+β<sub>1</sub>P<sub>t</sub>+β<sub>2</sub>X<sub>t</sub>+ε<sub>t</sub></div>
 <p>where \(t=1,..,T\) indexes either time or cross-sectional units, Y<sub>t</sub> is a \(1x1\) response variable,
 X<sub>t</sub> is a \(kxn\) exogenous regressor,
 P<sub>t</sub> is a \(kx1\) continuous endogenous regressor,
@@ -184,8 +184,8 @@ P<sub>t</sub> is a \(kx1\) continuous endogenous regressor,
 E(ε<sup>2</sup>)=σ<sub>ε</sub><sup>2</sup>,
 \(\alpha\) and \(\beta\) are model parameters.</p>
 <p>The marginal distribution of the endogenous regressor P<sub>t</sub> is obtained using the Epanechnikov
-kernel density estimator (Epanechnikov, 1969), as below:
-<br></p><div style="text-align:center">ĥ(p)=1/(T·b) ∑(K·((p-P<sub>t</sub>)/b))</div>
+kernel density estimator (Epanechnikov, 1969), as below:</p>
+<p><br></p><div style="text-align:center">ĥ(p)=1/(T·b) ∑(K·((p-P<sub>t</sub>)/b))</div>
 <p>where P<sub>t</sub> is the endogenous regressor,
 K(x)=0.75·(1-x<sup>2</sup>)·I(|x|&lt;=1)
 and the bandwidth \(b\) is the one proposed by Silverman (1986),
@@ -336,7 +336,7 @@ Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC M
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>
