@@ -16,6 +16,7 @@
 #' @details
 #'
 #' Let's consider the model:
+#'
 #' \ifelse{html}{\out{<br><div style="text-align:center">Y<sub>t</sub>=&beta;<sub>0</sub>+&alpha;P<sub>t</sub>+&epsilon;<sub>t</sub></div>}}{ \deqn{Y_{t} = \beta_{0} + \alpha P_{t} + \epsilon_{t}}}
 #' \ifelse{html}{\out{<div style="text-align:center">P<sub>t</sub>=&pi;'Z<sub>t</sub>+&nu;<sub>t</sub></div>}}{ \deqn{P_{t}=\pi^{'}Z_{t} + \nu_{t}}}
 #'
@@ -33,6 +34,7 @@
 #' \code{latentIV} considers \ifelse{html}{\out{Z<sub>t</sub>'}}{\eqn{Z_{t}^{'}}} to be a latent, discrete, exogenous variable with an unknown number of groups \eqn{m} and \eqn{\pi} is a vector of group means.
 #' It is assumed that \eqn{Z} is independent of the error terms \eqn{\epsilon} and \eqn{\nu} and that it has at least two groups with different means.
 #' The structural and random errors are considered normally distributed with mean zero and variance-covariance matrix \eqn{\Sigma}:
+#'
 #' \ifelse{html}{\out{<div style="text-align:center">&Sigma;=(&sigma;<sub>&epsilon;</sub><sup>2</sup>, &sigma;<sub>0</sub><sup>2</sup>,
 #' <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&sigma;<sub>0</sub><sup>2</sup>, &sigma;<sub>&nu;</sub><sup>2</sup>)</div>}}{
 #' \deqn{\Sigma = \left(

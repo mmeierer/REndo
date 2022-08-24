@@ -1,3 +1,11 @@
+# REndo 2.4.6
+
+### MAINTENANCE
+* Replace data sets with new ones
+* Fix tidy HTML warnings in documentation and parsing of news.md reported in daily CRAN checks
+
+
+
 # REndo 2.4.5
 
 ### BUG FIXES
@@ -137,5 +145,5 @@
 ### BUG FIXES
 * Many
 
-# DEPRECATED AND DEFUNCT
+### DEPRECATED AND DEFUNCT
 * The multilevel function is temporarily removed from the package due to ongoing work on it
