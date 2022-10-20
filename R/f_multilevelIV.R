@@ -289,14 +289,12 @@ multilevelIV <- function(formula, data, lmer.control=lmerControl(optimizer = "Ne
                                   control = lmer.control),
                        error = function(e)return(e))
   if(is(res.lmer, "error"))
-    stop("lme4::lmer() could not be fitted with error: ",
-        sQuote(res.lmer$message), "\nPlease revise your data and formula.", call. = FALSE)
+    check_err_msg(paste0("lme4::lmer() could not be fitted with error: ",sQuote(res.lmer$message), "\nPlease revise your data and formula."))
 
   res.VC <- tryCatch(lme4::VarCorr(res.lmer),
                      error = function(e)return(e))
   if(is(res.VC, "error"))
-    stop("lme4::VarCorr() could not be fitted with error: ",
-         sQuote(res.VC$message), "\nPlease revise your data and formula.", call. = FALSE)
+    check_err_msg(paste0("lme4::VarCorr() could not be fitted with error: ", sQuote(res.VC$message), "\nPlease revise your data and formula."))
 
 
   # Fit multilevel model -----------------------------------------------------------------------
