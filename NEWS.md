@@ -1,3 +1,10 @@
+# REndo 2.4.7
+
+### MAINTENANCE
+* Fix tests due to changes in package dependencies
+
+
+
 # REndo 2.4.6
 
 ### MAINTENANCE
