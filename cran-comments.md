@@ -1,13 +1,12 @@
 # Comment from the authors
 
-This is version 2.4.6 which:
-- updates the example data sets shipped with the package
-- fixes issues reported by the daily CRAN checks. This includes tidy HTML checks for the documentation as well as parsing of the news.md file
+This is version 2.4.7 which:
+- adapt tests which fail due to the latest update to package 'Matrix' that change the behavior in 'lme4::lmer()' on which REndo heavily depends
 
 
 ## Test environments
 * macbuilder 
-* local install on OS X 11.6.8, R 4.2.0, devtools 2.4.3
+* local install on OS X 11.7, R 4.2.0, devtools 2.4.4
 * github actions: win, osx, linux (release and devel)
 * win-builder: release and devel
 * rhub: check_for_cran

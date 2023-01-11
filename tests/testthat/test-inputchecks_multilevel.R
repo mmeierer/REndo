@@ -109,8 +109,8 @@ test_that("Fail if level grouping id in model", {
 
 test_that("Fail if no slope provided",{
   expect_error(multilevelIV(formula = y ~ X11 + X12  + X15+ (0|CID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
-  expect_error(multilevelIV(formula = y ~ X11 + X12  + X15+ (0|CID)+(1|SID) | endo(X11), data = dataMultilevelIV), regexp = "Please revise your data and formula.")
-  expect_error(multilevelIV(formula = y ~ X11 + X12  + X15+ (1|CID)+(0|SID) | endo(X11), data = dataMultilevelIV), regexp = "Please revise your data and formula.")
+  expect_error(multilevelIV(formula = y ~ X11 + X12  + X15+ (0|CID)+(1|SID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
+  expect_error(multilevelIV(formula = y ~ X11 + X12  + X15+ (1|CID)+(0|SID) | endo(X11), data = dataMultilevelIV), regexp = "The above errors were encountered!")
 })
 
 test_that("Fail if slopes are not in model",{
