@@ -12,13 +12,13 @@ test_that("Transformations are correct for L2", {
   skip_on_cran()
 
   expect_silent(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15),
                                             data = dataMultilevelIV, verbose = FALSE))
   # Can handle transformations in LHS
   data.altered   <- dataMultilevelIV
   data.altered$y <- exp(data.altered$y)
   expect_silent(res.trans.lhs <- multilevelIV(formula = log(y) ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                                X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                                X31 + X32 + X33 + (1+X11 | SID) | endo(X15),
                                               data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.lhs), coef(correct.res))
   for(m in all.L2.models)
@@ -28,7 +28,7 @@ test_that("Transformations are correct for L2", {
   data.altered   <- dataMultilevelIV
   data.altered$X23 <- exp(data.altered$X23)
   expect_silent(res.trans.exo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + log(X23) + X24 +
-                                                X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                                X31 + X32 + X33 + (1+X11 | SID) | endo(X15),
                                               data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.exo), coef(correct.res), check.attributes = FALSE)
   for(m in all.L2.models)
@@ -39,7 +39,7 @@ test_that("Transformations are correct for L2", {
   data.altered   <- dataMultilevelIV
   data.altered$X15 <- exp(data.altered$X15)
   expect_silent(res.trans.endo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + log(X15) + X21 + X22 + X23 + X24 +
-                                                 X31 + X32 + X33 + (1+X11 | SID) | endo(log(X15), X21),
+                                                 X31 + X32 + X33 + (1+X11 | SID) | endo(log(X15)),
                                                data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.endo), coef(correct.res), check.attributes = FALSE)
   for(m in all.L2.models)
@@ -49,7 +49,7 @@ test_that("Transformations are correct for L2", {
   data.altered   <- dataMultilevelIV
   data.altered$X11 <- exp(data.altered$X11)
   expect_silent(res.trans.slope <- multilevelIV(formula = y ~ log(X11) + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                                  X31 + X32 + X33 + (1+log(X11) | SID) | endo(X15, X21),
+                                                  X31 + X32 + X33 + (1+log(X11) | SID) | endo(X15),
                                                 data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.slope), coef(correct.res), check.attributes = FALSE)
   for(m in all.L2.models)
@@ -61,13 +61,13 @@ test_that("Transformations are correct for L2", {
 test_that("Transformations are correct for L3", {
   skip_on_cran()
   expect_silent(correct.res <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                               X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15, X21),
+                                               X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15),
                                             data = dataMultilevelIV, verbose = FALSE))
   # Can handle transformations in LHS
   data.altered   <- dataMultilevelIV
   data.altered$y <- (data.altered$y+99)/2
   expect_silent(res.trans.lhs <- multilevelIV(formula = I((y*2)-99) ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                                 X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15, X21),
+                                                 X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15),
                                                data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.lhs), coef(correct.res), check.attributes = FALSE)
   for(m in all.L3.models)
@@ -77,7 +77,7 @@ test_that("Transformations are correct for L3", {
   data.altered   <- dataMultilevelIV
   data.altered$X23 <- (data.altered$X23+99)/2
   expect_silent(res.trans.exo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + I((X23*2)-99) + X24 +
-                                                 X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15, X21),
+                                                 X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(X15),
                                                data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.exo), coef(correct.res), check.attributes = FALSE)
   for(m in all.L3.models){
@@ -89,7 +89,7 @@ test_that("Transformations are correct for L3", {
   data.altered   <- dataMultilevelIV
   data.altered$X15 <- (data.altered$X15+99)/2
   expect_silent(res.trans.endo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + I((X15*2)-99) + X21 + X22 + X23 + X24 +
-                                                  X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(I((X15*2)-99), X21),
+                                                  X31 + X32 + X33 + (1+X11 | CID) + (1 | SID) | endo(I((X15*2)-99)),
                                                 data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.endo), coef(correct.res),  check.attributes = FALSE)
   for(m in all.L3.models){
@@ -100,7 +100,7 @@ test_that("Transformations are correct for L3", {
   data.altered   <- dataMultilevelIV
   data.altered$X11 <- (data.altered$X11+99)/2
   expect_silent(res.trans.slope <- multilevelIV(formula = y ~ I((X11*2)-99) + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                                   X31 + X32 + X33 + (1+I((X11*2)-99) | CID) + (1 | SID) | endo(X15, X21),
+                                                   X31 + X32 + X33 + (1+I((X11*2)-99) | CID) + (1 | SID) | endo(X15),
                                                  data = data.altered, verbose = FALSE))
   expect_equal(coef(res.trans.slope), coef(correct.res), check.attributes = FALSE)
   for(m in all.L3.models)
@@ -124,13 +124,13 @@ test_that("Unsorted data is correct L2", {
   rownames(dataMultilevelIV) <- as.character(seq(from=nrow(dataMultilevelIV)+100000, to=1+100000))
 
   expect_silent(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15),
                                             data = dataMultilevelIV, verbose = FALSE))
   # Can handle transformations in LHS
   data.altered   <- dataMultilevelIV
   data.altered   <- data.altered[sample(x=nrow(dataMultilevelIV), size = nrow(dataMultilevelIV), replace = FALSE), ]
   expect_silent(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                                X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                                X31 + X32 + X33 + (1+X11 | SID) | endo(X15),
                                               data = data.altered, verbose = FALSE))
 
   # Coefs + summary statistics the same
@@ -154,13 +154,13 @@ test_that("Unsorted data is correct L3", {
   # Distinguishable non-standard rownames
   rownames(dataMultilevelIV) <- as.character(seq(from=nrow(dataMultilevelIV)+100000, to=1+100000))
   expect_silent(res.sorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                              X31 + X32 + X33 + (1|CID)+(1 | SID) | endo(X15, X21),
+                                              X31 + X32 + X33 + (1|CID)+(1 | SID) | endo(X15),
                                             data = dataMultilevelIV, verbose = FALSE))
   # Can handle transformations in LHS
   data.altered   <- dataMultilevelIV
   data.altered   <- data.altered[sample.int(n=nrow(dataMultilevelIV), replace = FALSE), ]
   expect_silent(res.unsorted <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                                X31 + X32 + X33 + (1|CID)+(1 | SID) | endo(X15, X21),
+                                                X31 + X32 + X33 + (1|CID)+(1 | SID) | endo(X15),
                                               data = data.altered, verbose = FALSE))
 
   # Coefs + summary statistics the same
@@ -185,7 +185,7 @@ test_that("REF is same as lmer()", {
   skip_on_cran()
   # L2
   expect_silent(res.ml2 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15, X21),
+                                              X31 + X32 + X33 + (1+X11 | SID) | endo(X15),
                                             data = dataMultilevelIV, verbose = FALSE))
 
   expect_silent(res.lmer2 <- lmer(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
@@ -197,7 +197,7 @@ test_that("REF is same as lmer()", {
   expect_equal(coef(res.ml2)[, "REF"], coef(summary(res.lmer2))[, "Estimate"])
 
   expect_silent(res.ml3 <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
-                                          X31 + X32 + X33 + (1|CID)+(1+X11 | SID) | endo(X15, X21),
+                                          X31 + X32 + X33 + (1|CID)+(1+X11 | SID) | endo(X15),
                                         data = dataMultilevelIV, verbose = FALSE))
 
   expect_silent(res.lmer3 <- lmer(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
