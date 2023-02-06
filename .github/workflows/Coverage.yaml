@@ -18,8 +18,8 @@ jobs:
       # to install binaries on ubuntu
       RSPM: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"
     steps:
-      - uses: actions/checkout@v2
-      - uses: r-lib/actions/setup-r@v1
+      - uses: actions/checkout@v3
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: release
 
