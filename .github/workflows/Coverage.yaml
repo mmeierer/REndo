@@ -11,12 +11,12 @@ on:
 
 
 jobs:
-  coverage-ubuntu-20-04-R-release:
-    runs-on: ubuntu-20.04
+  coverage-ubuntu-22-04-R-release:
+    runs-on: ubuntu-22.04
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       # to install binaries on ubuntu
-      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"
+      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@v1
@@ -31,7 +31,7 @@ jobs:
           while read -r cmd
           do
             eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements(os="ubuntu", os_release="20.04"))')
+          done < <(Rscript -e 'writeLines(remotes::system_requirements(os="ubuntu", os_release="22.04"))')
 
 
       - name: Install package dependencies
