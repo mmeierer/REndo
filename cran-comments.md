@@ -1,8 +1,7 @@
 # Comment from the authors
 
-This is version 2.4.7 which:
-- adapt tests which fail due to the latest update to package 'Matrix' that change the behavior in 'lme4::lmer()' on which REndo heavily depends
-
+This is version 2.4.8 which:
+- update the example data dataCopDisCont shipped with the package
 
 ## Test environments
 * macbuilder 
