@@ -1,3 +1,10 @@
+# REndo 2.4.8
+
+### MAINTENANCE
+* Replace data set `dataCopDisCont` with a new one
+
+
+
 # REndo 2.4.7
 
 ### MAINTENANCE
