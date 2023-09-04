@@ -33,6 +33,7 @@
 #' @references Gui R, Meierer M, Schilter P, Algesheimer R (2023). “REndo: Internal Instrumental Variables to Address Endogeneity.” Journal of Statistical Software, 107 (3), 1-43. \href{http://dx.doi.org/10.18637/jss.v107.i03}{doi:10.18637/jss.v107.i03}
 #'
 #' @docType package
+#' @aliases REndo-package
 #' @name REndo
 #'
 #' @useDynLib REndo, .registration=TRUE

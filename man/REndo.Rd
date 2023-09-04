@@ -3,6 +3,7 @@
 \docType{package}
 \name{REndo}
 \alias{REndo}
+\alias{REndo-package}
 \title{Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables}
 \description{
 Fits linear models with endogenous regressor using latent instrumental variable approaches.
