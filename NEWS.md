@@ -1,3 +1,11 @@
+# REndo 2.4.9
+
+### MAINTENANCE
+* Add CITATION file and references to forthcoming JSS publication
+* Fix missing package alias
+
+
+
 # REndo 2.4.8
 
 ### MAINTENANCE
