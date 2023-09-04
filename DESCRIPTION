@@ -42,6 +42,6 @@ Suggests:
     R.rsp
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 VignetteBuilder: R.rsp
 LazyData: true

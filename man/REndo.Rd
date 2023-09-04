@@ -32,4 +32,9 @@ Moreover, the call of most of the functions (except latentIV() and multilevelIV(
 of the Formula package.
 
 Check the NEWS file or our \href{https://github.com/mmeierer/REndo}{github page} for the latest updates and for reporting issues.
+
+See our publication in the Journal of Statistical Software for more details: \href{http://dx.doi.org/10.18637/jss.v107.i03}{doi:10.18637/jss.v107.i03}.
+}
+\references{
+Gui R, Meierer M, Schilter P, Algesheimer R (2023). “REndo: Internal Instrumental Variables to Address Endogeneity.” Journal of Statistical Software, 107 (3), 1-43. \href{http://dx.doi.org/10.18637/jss.v107.i03}{doi:10.18637/jss.v107.i03}
 }
