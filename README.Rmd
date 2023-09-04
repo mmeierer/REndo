@@ -23,6 +23,9 @@ knitr::opts_chunk$set(
 [![Repo Status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![DOI:10.18637/jss.v107.i03](http://img.shields.io/badge/DOI-10.18637/jss.v107.i03-197DBE.svg)](https://doi.org/10.18637/jss.v107.i03)
 
+
+See our publication in JSS for more details on the methods and usage: [doi:10.18637/jss.v107.i03](http://dx.doi.org/10.18637/jss.v107.i03)
+
 # The REndo Package
 Endogeneity arises when the independence assumption between an explanatory variable and the error in a statistical model is violated. Among its most common causes are omitted variable bias (e.g. like ability in the returns to education estimation), measurement error (e.g. survey response bias), or simultaneity (e.g. advertising and sales). 
 
