@@ -1,0 +1,20 @@
+bibentry(bibtype = "Article",
+  title        = "{REndo}: Internal Instrumental Variables to Address Endogeneity",
+  author       = c(person(given = "Raluca",
+                          family = "Gui",
+                          email = "raluca.gui@business.uzh.ch"),
+                   person(given = "Markus",
+                          family = "Meierer"),
+                   person(given = "Patrik",
+                          family = "Schilter"),
+                   person(given = "Ren\\'e",
+                          family = "Algesheimer")),
+  journal      = "Journal of Statistical Software",
+  year         = "2023",
+  volume       = "107",
+  number       = "3",
+  pages        = "1--43",
+  doi          = "10.18637/jss.v107.i03",
+  header       = "To cite REndo in publications use:"
+)
+
