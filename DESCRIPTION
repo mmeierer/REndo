@@ -1,8 +1,8 @@
 Package: REndo
 Title: Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables
 Type: Package
-Version: 2.4.8
-Date: 2023-02-07
+Version: 2.4.9
+Date: 2023-09-04
 Authors@R: c(
     person(given="Raluca", family="Gui",         email = "raluca.gui@gmail.com", role = c("cre","aut")),
     person(given="Markus", family="Meierer",     email = "markus.meierer@business.uzh.ch", role = "aut"),
@@ -14,6 +14,7 @@ Description: Fits linear models with endogenous regressor using latent instrumen
     that uses Gaussian copula and Kim and Frees's (2007) <doi:10.1007/s11336-007-9008-1> multilevel generalized
     method of moment approach that deals with endogeneity in a multilevel setting.
     These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
+    See the publication related to this package in the Journal of Statistical Software for more details: <doi:10.18637/jss.v107.i03>.
     Note that with version 2.0.0 sweeping changes were introduced which greatly improve functionality and usability but break backwards compatibility.
 License: GPL-3
 URL: https://github.com/mmeierer/REndo
@@ -41,6 +42,6 @@ Suggests:
     R.rsp
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 VignetteBuilder: R.rsp
 LazyData: true
