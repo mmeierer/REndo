@@ -1,8 +1,8 @@
+# Follows https://github.com/r-lib/actions/blob/v2/examples/check-full.yaml
 name: R-CMD-check
 on: push
-# CMD checks on win, mac, ubuntu
+permissions: read-all
 
-# Follows https://github.com/r-lib/actions/blob/v2/examples/check-full.yaml
 
 jobs:
   R-CMD-check:
@@ -17,15 +17,14 @@ jobs:
           - {os: macos-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-
-          # - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: macos-latest,   r: 'devel'}
           - {os: windows-latest, r: 'devel'}
+          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
 
     env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      R_KEEP_PKG_SOURCE: yes
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+        GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+        R_KEEP_PKG_SOURCE: yes
+        R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
 
     steps:
         - uses: actions/checkout@v4
