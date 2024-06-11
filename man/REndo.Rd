@@ -39,3 +39,22 @@ See our publication in the Journal of Statistical Software for more details: \do
 \references{
 Gui R, Meierer M, Schilter P, Algesheimer R (2023). “REndo: Internal Instrumental Variables to Address Endogeneity.” Journal of Statistical Software, 107 (3), 1-43. \doi{10.18637/jss.v107.i03}
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mmeierer/REndo}
+  \item Report bugs at \url{https://github.com/mmeierer/REndo/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Raluca Gui \email{raluca.gui@gmail.com}
+
+Authors:
+\itemize{
+  \item Markus Meierer \email{markus.meierer@business.uzh.ch}
+  \item Rene Algesheimer \email{market-research@business.uzh.ch}
+  \item Patrik Schilter \email{patrik.schilter@gmail.com}
+}
+
+}

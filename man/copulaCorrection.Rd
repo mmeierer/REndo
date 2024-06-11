@@ -210,6 +210,8 @@ c1.main.coefs <- coef(res.c1, complete = FALSE)
 \references{
 Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
 
+Qian, Y., Koschmann, A., and Xie, H. (2024). "A Practical Guide to Endogeneity Correction Using Copulas". National Bureau of Economic Research, w32231.
+
 Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Density." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
 Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman & Hall.
 
