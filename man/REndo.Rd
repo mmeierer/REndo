@@ -15,7 +15,7 @@ method of moment approach that deals with endogeneity in a multilevel setting.
 These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
 
 The main functions to estimate models are:
-\itemize{
+\describe{
 \item{\code{latentIV()}}{the latent instrumental variables method of Ebbes et al. (2005)}
 \item{\code{copulaCorrection()}}{copula correction method proposed by Paek and Gupta (2012)}
 \item{\code{hetErrorsIV()}}{heteroskedastic errors approach proposed by Lewbel(2012)}
