@@ -29,5 +29,10 @@ jobs:
           extra-packages: covr
 
       - name: Test coverage and upload to codecov.io
-        run: covr::codecov()
+        run: |
+          # run coverage, show, and then (try) upload
+          covr_res <- covr::package_coverage()
+          print(covr_res)
+          # upload to codecov.io (for badge)
+          covr::codecov(coverage=covr_res)
         shell: Rscript {0}
