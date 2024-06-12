@@ -1,73 +1,65 @@
+# Follows https://github.com/r-lib/actions/blob/v2/examples/check-full.yaml
+
 name: R-CMD-check
+
 on: push
-# CMD checks on win, mac, ubuntu
+
+permissions: read-all
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
+
     name: R-CMD-check-${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
-      fail-fast: false # dont cancel if one fails, might have differen checks fail on different OS
+      fail-fast: false # dont cancel if one fails, might have different checks fail on different OS
       matrix:
         config:
-          - {os: macOS-latest,   r: 'devel'}
-          - {os: windows-latest, r: 'devel'}
-          - {os: macOS-latest,   r: 'release'}
+          - {os: macos-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
-          - {os: ubuntu-22.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"}
+          - {os: ubuntu-latest,  r: 'release'}
+          - {os: macos-latest,   r: 'devel'}
+          - {os: windows-latest, r: 'devel'}
+          - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
 
     env:
-        R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-        RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
 
     steps:
-        - uses: actions/checkout@v3
-        - uses: r-lib/actions/setup-r@v2
-          with:
-            r-version: ${{ matrix.config.r }}
-        - name: Query dependencies
-          run: |
-            install.packages('remotes')
-            saveRDS(remotes::dev_package_deps(dependencies = TRUE), "depends.Rds", version = 2)
-          shell: Rscript {0}
+      - uses: actions/checkout@v4
 
-        - name: Cache R packages
-          if: runner.os != 'Windows'
-          uses: actions/cache@v2
-          with:
-            path: ${{ env.R_LIBS_USER }}
-            key: ${{ runner.os }}-r-${{ matrix.config.r }}-${{ hashFiles('depends.Rds') }}
-            restore-keys: ${{ runner.os }}-r-${{ matrix.config.r }}-
+      - uses: r-lib/actions/setup-pandoc@v2
 
-        - name: Install system dependencies
-          if: runner.os == 'Linux'
-          env:
-            RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
-          run: |
-            while read -r cmd
-            do
-              eval sudo $cmd
-            done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "22.04"))')
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
 
-        - name: Install package dependencies
-          run: |
-            remotes::install_deps(dependencies = TRUE)
-            remotes::install_cran("rcmdcheck", repos = "https://cran.rstudio.com")
-            # remove because leads to NOTE. Does not exist on windows
-            if(file.exists('depends.Rds')) {file.remove('depends.Rds')}
-          shell: Rscript {0}
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
 
-        - name: Check
-          env:
-            _R_CHECK_CRAN_INCOMING_REMOTE_: false
-          run: |
-            options(crayon.enabled = TRUE)
-            rcmdcheck::rcmdcheck(args = c("--no-tests", "--as-cran", "--no-manual"), error_on = "warning", check_dir = "check")
-          shell: Rscript {0}
+      - uses: r-lib/actions/check-r-package@v2
+        with:
+          upload-snapshots: true
+          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
 
-        - name: Upload check results
-          if: failure()
-          uses: actions/upload-artifact@main
-          with:
-            name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-            path: check
+        # - name: Check
+        #   env:
+        #     _R_CHECK_CRAN_INCOMING_REMOTE_: false
+        #   run: |
+        #     options(crayon.enabled = TRUE)
+        #     rcmdcheck::rcmdcheck(args = c("--no-tests", "--as-cran", "--no-manual"), error_on = "warning", check_dir = "check")
+        #   shell: Rscript {0}
+
+        # - name: Upload check results
+        #   if: failure()
+        #   uses: actions/upload-artifact@main
+        #   with:
+        #     name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+        #     path: check
