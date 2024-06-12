@@ -9,7 +9,7 @@
 #' These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
 #'
 #' The main functions to estimate models are:
-#' \itemize{
+#' \describe{
 #' \item{\code{latentIV()}}{the latent instrumental variables method of Ebbes et al. (2005)}
 #' \item{\code{copulaCorrection()}}{copula correction method proposed by Paek and Gupta (2012)}
 #' \item{\code{hetErrorsIV()}}{heteroskedastic errors approach proposed by Lewbel(2012)}
@@ -32,13 +32,12 @@
 #'
 #' @references Gui R, Meierer M, Schilter P, Algesheimer R (2023). “REndo: Internal Instrumental Variables to Address Endogeneity.” Journal of Statistical Software, 107 (3), 1-43. \doi{10.18637/jss.v107.i03}
 #'
-#' @docType package
 #' @aliases REndo-package
 #' @name REndo
 #'
 #' @useDynLib REndo, .registration=TRUE
 #' @importFrom Rcpp sourceCpp
 #'
-NULL
+"_PACKAGE"
 
 #@import RcppEigen
