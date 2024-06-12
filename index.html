@@ -6,19 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables • REndo</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Fitting Linear Models with Endogenous Regressors using Latent Instrumental Variables">
-<meta property="og:description" content="Fits linear models with endogenous regressor using latent instrumental variable approaches. 
-    The methods included in the package are Lewbels (1997) &lt;doi:10.2307/2171884&gt; higher moments approach as well as 
-    Lewbels (2012) &lt;doi:10.1080/07350015.2012.643126&gt; heteroscedasticity approach, Park and Guptas (2012) &lt;doi:10.1287/mksc.1120.0718&gt; joint estimation method 
-    that uses Gaussian copula and Kim and Freess (2007) &lt;doi:10.1007/s11336-007-9008-1&gt; multilevel generalized
-    method of moment approach that deals with endogeneity in a multilevel setting.
-    These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
-    Note that with version 2.0.0 sweeping changes were introduced which greatly improve functionality and usability but break backwards compatibility.">
+<meta property="og:description" content="Fits linear models with endogenous regressor using latent instrumental variable approaches. The methods included in the package are Lewbels (1997) &lt;doi:10.2307/2171884&gt; higher moments approach as well as Lewbels (2012) &lt;doi:10.1080/07350015.2012.643126&gt; heteroscedasticity approach, Park and Guptas (2012) &lt;doi:10.1287/mksc.1120.0718&gt; joint estimation method that uses Gaussian copula and Kim and Freess (2007) &lt;doi:10.1007/s11336-007-9008-1&gt; multilevel generalized method of moment approach that deals with endogeneity in a multilevel setting. These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed. See the publication related to this package in the Journal of Statistical Software for more details: &lt;doi:10.18637/jss.v107.i03&gt;. Note that with version 2.0.0 sweeping changes were introduced which greatly improve functionality and usability but break backwards compatibility.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -45,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.10</span>
       </span>
     </div>
 
@@ -91,6 +85,7 @@
   <div class="contents col-md-9">
 
 
+<p>See our publication in JSS for more details on the methods and usage: <a href="http://dx.doi.org/10.18637/jss.v107.i03" class="external-link">doi:10.18637/jss.v107.i03</a></p>
 <div class="section level1">
 <div class="page-header"><h1 id="the-rendo-package">The REndo Package<a class="anchor" aria-label="anchor" href="#the-rendo-package"></a>
 </h1></div>
@@ -117,21 +112,21 @@
 <h3 id="latent-instrumental-variables">
 <strong>Latent Instrumental Variables</strong><a class="anchor" aria-label="anchor" href="#latent-instrumental-variables"></a>
 </h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">latentIV</span>(y <span class="op">~</span><span class="st"> </span>P, data, <span class="dt">start.params=</span><span class="kw">c</span>()) </span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">latentIV</span>(y <span class="sc">~</span> P, data, <span class="at">start.params=</span><span class="fu">c</span>()) </span></code></pre></div>
 <p>The first argument is the formula of the model to be estimated, <strong>y ~ P</strong>, where <strong>y</strong> is the response and <strong>P</strong> is the endogenous regressor. The second argument is the name of the dataset used and the last one, <strong>start.params=c()</strong>, which is optional, is a vector with the initial parameter values. When not indicated, the initial parameter values are taken to be the coefficients returned by the OLS estimator of <strong>y</strong> on <strong>P</strong>.</p>
 </div>
 <div class="section level3">
 <h3 id="copula-correction">
 <strong>Copula Correction</strong><a class="anchor" aria-label="anchor" href="#copula-correction"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">copulaCorrection</span>( y <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>P1 <span class="op">+</span><span class="st"> </span>P2 <span class="op">|</span><span class="st"> </span><span class="kw">continuous</span>(P1) <span class="op">+</span><span class="st"> </span><span class="kw">discrete</span>(P2), data, <span class="dt">start.params=</span><span class="kw">c</span>(), num.boots)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">copulaCorrection</span>( y <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> P1 <span class="sc">+</span> P2 <span class="sc">|</span> <span class="fu">continuous</span>(P1) <span class="sc">+</span> <span class="fu">discrete</span>(P2), data, <span class="at">start.params=</span><span class="fu">c</span>(), num.boots)</span></code></pre></div>
 <p>The first argument is a two-part formula of the model to be estimated, with the second part of the RHS defining the endogenous regressor, here <strong>continuous(P1) + discrete(P2)</strong>. The second argument is the name of the data, the third argument of the function, <strong>start.params</strong>, is optional and represents the initial parameter values supplied by the user (when missing, the OLS estimates are considered); while the fourth argument, <strong>num.boots</strong>, also optional, is the number of bootstraps to be performed (the default is 1000). Of course, defining the endogenous regressors depends on the number of endogenous regressors and their assumed distribution. Transformations of the explanatory variables, such as I(X), ln(X) are supported.</p>
 </div>
 <div class="section level3">
 <h3 id="higher-moments">
 <strong>Higher Moments</strong><a class="anchor" aria-label="anchor" href="#higher-moments"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">higherMomentsIV</span>(y <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>P <span class="op">|</span><span class="st"> </span>P <span class="op">|</span><span class="st"> </span><span class="kw">IIV</span>(<span class="dt">iiv =</span> gp, <span class="dt">g=</span> x2, X1, X2) <span class="op">+</span><span class="st"> </span><span class="kw">IIV</span>(<span class="dt">iiv =</span> yp) <span class="op">|</span><span class="st"> </span>Z1, data)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">higherMomentsIV</span>(y <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> P <span class="sc">|</span> P <span class="sc">|</span> <span class="fu">IIV</span>(<span class="at">iiv =</span> gp, <span class="at">g=</span> x2, X1, X2) <span class="sc">+</span> <span class="fu">IIV</span>(<span class="at">iiv =</span> yp) <span class="sc">|</span> Z1, data)</span></code></pre></div>
 <p>Here, <strong>y</strong> is the response; the first RHS of the formula, <strong>X1 + X2 + P</strong>, is the model to be estimated; the second part, <strong>P</strong>, specifies the endogenous regressors; the third part, <strong>IIV()</strong>, specifies the format of the internal instruments; the fourth part, <strong>Z1</strong>, is optional, allowing the user to add any external instruments available.</p>
 <p>Regarding the third part of the formula, <strong>IIV()</strong>, it has a set of three arguments:</p>
 <ul>
@@ -144,32 +139,32 @@
 <p>A set of six instruments can be constructed, which should be specified in the <strong>iiv</strong> argument of <strong>IIV()</strong>:</p>
 <ul>
 <li>
-<strong>g</strong> - for <img src="https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29%20%22(G_%7Bt%7D%20-%20%5Cbar%7BG%7D)%22" alt="(G_{t} - \bar{G})">,</li>
+<strong>g</strong> - for <embed src="https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29" title="(G_{t} - \bar{G})"></embed>,</li>
 <li>
-<strong>gp</strong> - for <img src="https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29%28P_%7Bt%7D-%5Cbar%7BP%7D%29%20%22(G_%7Bt%7D%20-%20%5Cbar%7BG%7D)(P_%7Bt%7D-%5Cbar%7BP%7D)%22" alt="(G_{t} - \bar{G})(P_{t}-\bar{P})">,</li>
+<strong>gp</strong> - for <embed src="https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29%28P_%7Bt%7D-%5Cbar%7BP%7D%29" title="(G_{t} - \bar{G})(P_{t}-\bar{P})"></embed>,</li>
 <li>
-<strong>gy</strong> - for <img src="https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29%28Y_%7Bt%7D-%5Cbar%7BY%7D%29%20%22(G_%7Bt%7D%20-%20%5Cbar%7BG%7D)(Y_%7Bt%7D-%5Cbar%7BY%7D)%22" alt="(G_{t} - \bar{G})(Y_{t}-\bar{Y})">,</li>
+<strong>gy</strong> - for <embed src="https://latex.codecogs.com/png.latex?%28G_%7Bt%7D%20-%20%5Cbar%7BG%7D%29%28Y_%7Bt%7D-%5Cbar%7BY%7D%29" title="(G_{t} - \bar{G})(Y_{t}-\bar{Y})"></embed>,</li>
 <li>
-<strong>yp</strong> - for <img src="https://latex.codecogs.com/png.latex?%28Y_%7Bt%7D%20-%20%5Cbar%7BY%7D%29%28P_%7Bt%7D-%5Cbar%7BP%7D%29%20%22(Y_%7Bt%7D%20-%20%5Cbar%7BY%7D)(P_%7Bt%7D-%5Cbar%7BP%7D)%22" alt="(Y_{t} - \bar{Y})(P_{t}-\bar{P})">,</li>
+<strong>yp</strong> - for <embed src="https://latex.codecogs.com/png.latex?%28Y_%7Bt%7D%20-%20%5Cbar%7BY%7D%29%28P_%7Bt%7D-%5Cbar%7BP%7D%29" title="(Y_{t} - \bar{Y})(P_{t}-\bar{P})"></embed>,</li>
 <li>
-<strong>p2</strong> - for <img src="https://latex.codecogs.com/png.latex?%28P_%7Bt%7D%20-%20%5Cbar%7BP%7D%29%5E2%20%22(P_%7Bt%7D%20-%20%5Cbar%7BP%7D)%5E2%22" alt="(P_{t} - \bar{P})^2">,</li>
+<strong>p2</strong> - for <embed src="https://latex.codecogs.com/png.latex?%28P_%7Bt%7D%20-%20%5Cbar%7BP%7D%29%5E2" title="(P_{t} - \bar{P})^2"></embed>,</li>
 <li>
-<strong>y2</strong> - for <img src="https://latex.codecogs.com/png.latex?%28Y_%7Bt%7D%20-%20%5Cbar%7BY%7D%29%5E2%20%22(Y_%7Bt%7D%20-%20%5Cbar%7BY%7D)%5E2%22" alt="(Y_{t} - \bar{Y})^2">.</li>
+<strong>y2</strong> - for <embed src="https://latex.codecogs.com/png.latex?%28Y_%7Bt%7D%20-%20%5Cbar%7BY%7D%29%5E2" title="(Y_{t} - \bar{Y})^2"></embed>.</li>
 </ul>
-<p>where <embed src="https://latex.codecogs.com/png.latex?G%3DG%28X_%7Bt%7D%29%20%22G=G(X_%7Bt%7D)%22"></embed> can be either <embed src="https://latex.codecogs.com/png.latex?x%5E2" title="x^2"></embed>, <embed src="https://latex.codecogs.com/png.latex?x%5E3" title="x^3"></embed>, <embed src="https://latex.codecogs.com/png.latex?ln%28x%29" title="ln(x)"></embed> or <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7Bx%7D%20%22%5Cfrac%7B1%7D%7Bx%7D%22" alt="\frac{1}{x}"> and should be specified in the <strong>g</strong> argument of the third RHS of the formula, as <strong>x2, x3, lnx</strong> or <strong>1/x</strong>. In case of internal instruments built only from the endogenous regressor, e.g. <strong>p2</strong>, or from the response and the endogenous regressor, like for example in <strong>yp</strong>, there is no need to specify <strong>g</strong> or the set of exogenous regressors in the <strong>IIV()</strong> part of the formula. The function returns a set of tests for checking the validity of the instruments and the endogeneity assumption.</p>
+<p>where <embed src="https://latex.codecogs.com/png.latex?G%3DG%28X_%7Bt%7D%29" title="G=G(X_{t})"></embed> can be either <embed src="https://latex.codecogs.com/png.latex?x%5E2" title="x^2"></embed>, <embed src="https://latex.codecogs.com/png.latex?x%5E3" title="x^3"></embed>, <embed src="https://latex.codecogs.com/png.latex?ln%28x%29" title="ln(x)"></embed> or <embed src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7Bx%7D" title="\frac{1}{x}"></embed> and should be specified in the <strong>g</strong> argument of the third RHS of the formula, as <strong>x2, x3, lnx</strong> or <strong>1/x</strong>. In case of internal instruments built only from the endogenous regressor, e.g. <strong>p2</strong>, or from the response and the endogenous regressor, like for example in <strong>yp</strong>, there is no need to specify <strong>g</strong> or the set of exogenous regressors in the <strong>IIV()</strong> part of the formula. The function returns a set of tests for checking the validity of the instruments and the endogeneity assumption.</p>
 </div>
 <div class="section level3">
 <h3 id="heteroskedastic-errors">
 <strong>Heteroskedastic Errors</strong><a class="anchor" aria-label="anchor" href="#heteroskedastic-errors"></a>
 </h3>
-<pre><code><span> <span class="fu"><a href="reference/hetErrorsIV.html">hetErrorsIV</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span> <span class="op">+</span> <span class="va">P</span> <span class="op">|</span> <span class="va">P</span> <span class="op">|</span> <span class="fu">IIV</span><span class="op">(</span><span class="va">X1</span>,<span class="va">X2</span><span class="op">)</span> <span class="op">|</span> <span class="va">Z1</span>, <span class="va">data</span><span class="op">)</span></span></code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a> <span class="fu">hetErrorsIV</span>(y <span class="sc">~</span> X1 <span class="sc">+</span> X2 <span class="sc">+</span> X3 <span class="sc">+</span> P <span class="sc">|</span> P <span class="sc">|</span> <span class="fu">IIV</span>(X1,X2) <span class="sc">|</span> Z1, data)</span></code></pre></div>
 <p>Here, <strong>y</strong> is the response variable, <strong>X1 + X2 + X3 + P</strong> represents the model to be estimated; the second part, <strong>P</strong>, specifies the endogenous regressors, the third part, <strong>IIV(X1, X2)</strong>, specifies the exogenous heteroskedastic variables from which the instruments are derived, while the final part <strong>Z1</strong> is optional, allowing the user to include additional external instrumental variables. Like in the higher moments approach, allowing the inclusion of additional external variables is a convenient feature of the function, since it increases the efficiency of the estimates. Transformation of the explanatory variables, such as I(X), ln(X) are possible both in the model specification as well as in the IIV() specification.</p>
 </div>
 <div class="section level3">
 <h3 id="multilevel-gmm">
 <strong>Multilevel GMM</strong><a class="anchor" aria-label="anchor" href="#multilevel-gmm"></a>
 </h3>
-<pre><code><span><span class="fu"><a href="reference/multilevelIV.html">multilevelIV</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">X11</span> <span class="op">+</span> <span class="va">X12</span> <span class="op">+</span> <span class="va">X21</span> <span class="op">+</span> <span class="va">X22</span> <span class="op">+</span> <span class="va">X23</span> <span class="op">+</span> <span class="va">X31</span> <span class="op">+</span> <span class="va">X33</span> <span class="op">+</span> <span class="va">X34</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">|</span><span class="va">CID</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">|</span><span class="va">SID</span><span class="op">)</span> <span class="op">|</span> <span class="fu">endo</span><span class="op">(</span><span class="va">X12</span><span class="op">)</span>, <span class="va">data</span><span class="op">)</span>  </span></code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">multilevelIV</span>(y <span class="sc">~</span> X11 <span class="sc">+</span> X12 <span class="sc">+</span> X21 <span class="sc">+</span> X22 <span class="sc">+</span> X23 <span class="sc">+</span> X31 <span class="sc">+</span> X33 <span class="sc">+</span> X34 <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>CID) <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>SID) <span class="sc">|</span> <span class="fu">endo</span>(X12), data)  </span></code></pre></div>
 <p>The call of the function has a two-part formula and an argument for data specification. In the formula, the first part is the model specification, with fixed and random parameter specification, and the second part which specifies the regressors assumed endogenous, here <strong>endo(X12)</strong>. The function returns the parameter estimates obtained with fixed effects, random effects and the GMM estimator proposed by Kim and Frees (2007), such that a comparison across models can be done.</p>
 </div>
 </div>
@@ -177,9 +172,9 @@
 <h2 id="installation-instructions">Installation Instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
 </h2>
 <p>Install the stable version from CRAN:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">install.packages</span>(<span class="st">"REndo"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"REndo"</span>)</span></code></pre></div>
 <p>Install the development version from GitHub:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"mmeierer/REndo"</span>, <span class="dt">ref =</span> <span class="st">"development"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"mmeierer/REndo"</span>, <span class="at">ref =</span> <span class="st">"development"</span>)</span></code></pre></div>
 </div>
 </div>
 
@@ -225,10 +220,11 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/mmeierer/REndo/actions" class="external-link"><img src="https://github.com/mmeierer/REndo/workflows/R-CMD-check/badge.svg?branch=development" alt="R CMD checks"></a></li>
 <li><a href="https://github.com/mmeierer/REndo/actions" class="external-link"><img src="https://github.com/mmeierer/REndo/workflows/coverage/badge.svg?branch=development" alt="Tests"></a></li>
-<li><a href="https://codecov.io/github/mmeierer/REndo?branch=development" class="external-link"><img src="https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg" alt="Coverage Status"></a></li>
+<li><a href="https://app.codecov.io/github/mmeierer/REndo?branch=development" class="external-link"><img src="https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg" alt="Coverage Status"></a></li>
 <li><a href="https://cran.r-project.org/package=REndo" class="external-link"><img src="http://www.r-pkg.org/badges/version/REndo" alt="CRAN Status"></a></li>
 <li><a href="https://cran.r-project.org/package=REndo" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/REndo" alt="CRAN Downloads"></a></li>
 <li><a href="https://www.repostatus.org/#active" class="external-link"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Repo Status"></a></li>
+<li><a href="https://doi.org/10.18637/jss.v107.i03" class="external-link"><img src="http://img.shields.io/badge/DOI-10.18637/jss.v107.i03-197DBE.svg" alt="DOI:10.18637/jss.v107.i03"></a></li>
 </ul>
 </div>
 
@@ -243,7 +239,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>
