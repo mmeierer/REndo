@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - feature-githubactions-update-to-latest
 
 name: pkgdown
 
