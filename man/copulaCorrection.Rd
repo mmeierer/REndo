@@ -54,6 +54,7 @@ Depending on the returned object, the generic accessor functions \code{coefficie
 Fits linear models with continuous or discrete endogenous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
 This is a statistical technique to address the endogeneity problem where no external instrumental variables are needed.
 The important assumption of the model is that the endogenous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
+The corrections proposed by Qian, Koschmann, and Xie (2024, p.19-22) are implemented. These mitigate the bias of the original paper for small and moderate sample sizes.
 }
 \details{
 \subsection{Method}{
