@@ -3,6 +3,7 @@
 #' Fits linear models with continuous or discrete endogenous regressors (or a mixture of both) using Gaussian copulas, as presented in Park and Gupta (2012).
 #' This is a statistical technique to address the endogeneity problem where no external instrumental variables are needed.
 #' The important assumption of the model is that the endogenous variables should NOT be normally distributed, if continuous, preferably with a skewed distribution.
+#' The corrections proposed by Qian, Koschmann, and Xie (2024, p.19-22) are implemented. These mitigate the bias of the original paper for small and moderate sample sizes.
 #'
 #' @template template_param_formuladataverbose
 #' @param num.boots Number of bootstrapping iterations. Defaults to 1000.
@@ -134,8 +135,10 @@
 #' @references
 #' Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
 #'
+#' Qian, Y., Koschmann, A., and Xie, H. (2024). "A Practical Guide to Endogeneity Correction Using Copulas". National Bureau of Economic Research, w32231.
+#'
 #' Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Density." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
-#
+#'
 #' Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman & Hall.
 #'
 #' Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consumer Choice Models." Journal of Marketing Research, 47(1), 3–13.
