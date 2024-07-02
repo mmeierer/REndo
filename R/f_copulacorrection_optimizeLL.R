@@ -66,12 +66,19 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
 
 
   # Add rho and sigma with defaults
-  #   Same order as model.matrix/formula. This is done in LL again,
-  #   but do here to have consistent output (inputorder to optimx counts for this)
-  #     rho=0 -> rho=0.5 in LL
-  #     sigma=0 -> sigma=1 in LL
+  #   rho=0 -> rho=0.5 in LL
+  #   sigma=0 -> sigma=1 in LL
   start.params <- c(start.params, rho=0, sigma=0)
-  start.params <- start.params[c(names.model.mat, "rho", "sigma")]
+
+  # Bring start parameters to correct order
+  #   Parameters are read in the LL by position and therefore have to match the
+  #   coloumns of the data they are multiplied with (`m_data_exo_endo`).
+  #   Also, to have consistent output (inputorder to optimx counts for this).
+  #
+  #   <model params>: First positions, in same order as data!
+  #   rho: second last position
+  #   sigma: last position
+  start.params <- start.params[c(colnames(m.model.data.exo.endo), "rho", "sigma")]
 
 
   # Definition: Optimization function -----------------------------------------------------------------
@@ -90,10 +97,6 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
     #   This implies that the same transformations need to be applied to the found solution
     #     to report the values that are really used in the LL
 
-    param.pos.rho   <- which(names(optimx.start.params) == "rho")
-    param.pos.sigma <- which(names(optimx.start.params) == "sigma")
-    param.pos.data  <- which(!(names(optimx.start.params) %in% c("rho", "sigma")))
-
     optimx.default.args <- list(par     = optimx.start.params,
                                 fn      = copulaCorrection_LL_rcpp,
                                 method  = "Nelder-Mead",
@@ -104,10 +107,7 @@ copulaCorrection_optimizeLL <- function(F.formula, data, name.var.continuous, ve
                                                dowarn = FALSE),
                                 vec_y = vec.data.y,
                                 m_data_exo_endo = m.model.data.exo.endo,
-                                vec_data_endo_pstar = vec.data.endo.pstar,
-                                param_pos_data = param.pos.data,
-                                param_pos_sigma = param.pos.sigma,
-                                param_pos_rho = param.pos.rho)
+                                vec_data_endo_pstar = vec.data.endo.pstar)
 
     # Update default args with user given args for optimx
     optimx.call.args <- modifyList(optimx.default.args, val = optimx.args, keep.null = FALSE)

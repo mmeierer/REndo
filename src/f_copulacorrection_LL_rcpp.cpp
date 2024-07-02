@@ -9,15 +9,14 @@ using namespace Rcpp;
 double copulaCorrection_LL_rcpp(const NumericVector& params,
                                 const NumericVector& vec_y,
                                 const NumericMatrix& m_data_exo_endo,
-                                const NumericVector& vec_data_endo_pstar,
-                                const IntegerVector& param_pos_data,
-                                const int& param_pos_sigma,
-                                const int& param_pos_rho){
+                                const NumericVector& vec_data_endo_pstar){
 
   // # Extract params from optimx inputs --------------------------------------------------------
-  NumericVector params_endo_exo       = params[param_pos_data - 1];
-  double sigma                        = params[param_pos_sigma - 1];
-  double rho                          = params[param_pos_rho - 1];
+  // Positions based on `start.params[c(colnames(m.model.data.exo.endo), "rho", "sigma")]`
+  const auto n_params = params.size();
+  const NumericVector params_endo_exo = params[Rcpp::Range(0, n_params-3)]; // everything from start until (excl) 2nd last element
+  double rho = params[n_params - 2]; // second last element
+  double sigma = params[n_params - 1]; // last element
 
   // # Constrain rho to [-1,1] and sigma to [0, +Inf]
   // #   (incl bound because can be very large which flips to 0 and 1)
@@ -30,10 +29,6 @@ double copulaCorrection_LL_rcpp(const NumericVector& params,
   sigma = exp(sigma);
 
   // # epsilon, incl. endo regressor ------------------------------------------------------------
-  // # Reorder params to fit matrix col order
-  CharacterVector m_colnames = colnames(m_data_exo_endo);
-  params_endo_exo = params_endo_exo[m_colnames];
-
 
   // Short excursion to RcppEigen: Matrix multiplication
   const Eigen::Map<Eigen::MatrixXd> A = Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(m_data_exo_endo);
