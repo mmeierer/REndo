@@ -12,7 +12,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="REndo: A Package to Address Endogeneity Without External Instrumental Variables">
-<meta property="og:description" content="REndo">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -25,7 +24,7 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -51,7 +50,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -68,7 +67,7 @@
 <li>
   <a href="https://github.com/mmeierer/REndo/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul>
@@ -79,7 +78,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -88,9 +87,9 @@
 External Instrumental Variables</h1>
                         <h4 data-toc-skip class="author">Raluca Gui</h4>
             
-            <h4 data-toc-skip class="date">2024-06-12</h4>
+            <h4 data-toc-skip class="date">2024-07-12</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/HEAD/vignettes/REndo-introduction.Rmd" class="external-link"><code>vignettes/REndo-introduction.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/vignettes/REndo-introduction.Rmd" class="external-link"><code>vignettes/REndo-introduction.Rmd</code></a></small>
       <div class="hidden name"><code>REndo-introduction.Rmd</code></div>
 
     </div>
@@ -132,41 +131,106 @@ same underlying model presented in equations (1) and (2) below. The
 specific characteristics of each method are discussed in the subsequent
 sections.</p>
 <p>Consider the model:</p>
-<p><span class="math display">\[\begin{equation}
+<p><span class="math display">$$\begin{equation}
 Y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}
 \hspace{0.5cm} (1)
-\end{equation}\]</span></p>
-<p>where <span class="math inline">\(t=1,..,T\)</span> indexes either
-time or cross-sectional units, <span class="math inline">\(Y_{t}\)</span> is a <span class="math inline">\(k\)</span> x <span class="math inline">\(1\)</span> response variable, <span class="math inline">\(X_{t}\)</span> is a <span class="math inline">\(k\)</span> x <span class="math inline">\(n\)</span> exogenous regressor, <span class="math inline">\(P_{t}\)</span> is a <span class="math inline">\(k\)</span> x <span class="math inline">\(1\)</span> continuous <em>endogenous</em>
-regressor, <span class="math inline">\(\epsilon_{t}\)</span> is a
-structural error term with mean zero and <span class="math inline">\(E(\epsilon^{2})=\sigma^{2}_{\epsilon}\)</span>,
-<span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are model parameters. The
-endogeneity problem arises from the correlation of <span class="math inline">\(P_{t}\)</span> and <span class="math inline">\(\epsilon_{t}\)</span>. As such:</p>
-<p><span class="math display">\[\begin{equation}
+\end{equation}$$</span></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>.</mi><mi>.</mi><mo>,</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">t=1,..,T</annotation></semantics></math>
+indexes either time or cross-sectional units,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_{t}</annotation></semantics></math>
+is a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+x
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+response variable,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mi>t</mi></msub><annotation encoding="application/x-tex">X_{t}</annotation></semantics></math>
+is a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+x
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+exogenous regressor,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+is a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+x
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+continuous <em>endogenous</em> regressor,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϵ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\epsilon_{t}</annotation></semantics></math>
+is a structural error term with mean zero and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ϵ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mi>σ</mi><mi>ϵ</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">E(\epsilon^{2})=\sigma^{2}_{\epsilon}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
+are model parameters. The endogeneity problem arises from the
+correlation of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϵ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\epsilon_{t}</annotation></semantics></math>.
+As such:</p>
+<p><span class="math display">$$\begin{equation}
 P_{t}=\gamma Z_{t}+\nu_{t}
 \hspace{0.5cm} (2)
-\end{equation}\]</span></p>
-<p>where <span class="math inline">\(Z_{t}\)</span> is a <span class="math inline">\(l\)</span> x <span class="math inline">\(1\)</span> vector of internal instrumental
-variables, and <span class="math inline">\(\nu_{t}\)</span> is a random
-error with mean zero, <span class="math inline">\(E(\nu^{2})=\sigma^{2}_{\nu}\)</span> and <span class="math inline">\(E(\epsilon\nu)=\sigma_{\epsilon\nu}\)</span>.
-<span class="math inline">\(Z_{t}\)</span> is assumed to be stochastic
-with distribution <span class="math inline">\(G\)</span> and <span class="math inline">\(\nu_{t}\)</span> is assumed to have density <span class="math inline">\(h(\cdot)\)</span>.</p>
+\end{equation}$$</span></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+is a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>l</mi><annotation encoding="application/x-tex">l</annotation></semantics></math>
+x
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>1</mn><annotation encoding="application/x-tex">1</annotation></semantics></math>
+vector of internal instrumental variables, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>
+is a random error with mean zero,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ν</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mi>σ</mi><mi>ν</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">E(\nu^{2})=\sigma^{2}_{\nu}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ϵ</mi><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>σ</mi><mrow><mi>ϵ</mi><mi>ν</mi></mrow></msub></mrow><annotation encoding="application/x-tex">E(\epsilon\nu)=\sigma_{\epsilon\nu}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+is assumed to be stochastic with distribution
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>
+is assumed to have density
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(\cdot)</annotation></semantics></math>.</p>
 <p>The <strong>latent instrumental variables</strong> and <strong>the
-higher moments</strong> models assume <span class="math inline">\(Z_{t}\)</span> to be uncorrelated with the
-structural error, which is similar to the exclusion restriction
-assumption for observed instrumental variables methods. Moreover, <span class="math inline">\(Z_{t}\)</span> is also assumed
-<strong>unobserved</strong>. Therefore, <span class="math inline">\(Z_{t}\)</span> and <span class="math inline">\(\nu_{t}\)</span> cannot be identified without
-distributional assumptions.</p>
-<p>The distributions of <span class="math inline">\(Z_{t}\)</span> and
-<span class="math inline">\(\nu_{t}\)</span> should be specified such
-that two conditions are met: <strong>(1)</strong> endogeneity of <span class="math inline">\(P_{t}\)</span> is corrected, and
-<strong>(2)</strong> the distribution of <span class="math inline">\(P_{t}\)</span> is empirically close to the
-integral that expresses the amount of overlap of <span class="math inline">\(Z\)</span> as it is shifted over <span class="math inline">\(\nu\)</span> (= the convolution between <span class="math inline">\(Z_{t}\)</span> and <span class="math inline">\(\nu_{t}\)</span>). When the density <span class="math inline">\(h(\cdot)\)</span> is chosen to be normal, then
-<span class="math inline">\(G\)</span> cannot be normal because the
-parameters would not be identified (Ebbes et al., 2005). Consequently,
-in the LIV model the distribution of <span class="math inline">\(Z_{t}\)</span> is discrete while in the higher
-moments and joint estimation with copulas methods, the distribution of
-the internal instruments is taken to be skewed.</p>
+higher moments</strong> models assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+to be uncorrelated with the structural error, which is similar to the
+exclusion restriction assumption for observed instrumental variables
+methods. Moreover,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+is also assumed <strong>unobserved</strong>. Therefore,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>
+cannot be identified without distributional assumptions.</p>
+<p>The distributions of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>
+should be specified such that two conditions are met:
+<strong>(1)</strong> endogeneity of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+is corrected, and <strong>(2)</strong> the distribution of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+is empirically close to the integral that expresses the amount of
+overlap of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+as it is shifted over
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ν</mi><annotation encoding="application/x-tex">\nu</annotation></semantics></math>
+(= the convolution between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>).
+When the density
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(\cdot)</annotation></semantics></math>
+is chosen to be normal, then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
+cannot be normal because the parameters would not be identified (Ebbes
+et al., 2005). Consequently, in the LIV model the distribution of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+is discrete while in the higher moments and joint estimation with
+copulas methods, the distribution of the internal instruments is taken
+to be skewed.</p>
 <div class="section level4">
 <h4 id="latent-instrumental-variable-approach">
 <em>Latent Instrumental Variable Approach</em><a class="anchor" aria-label="anchor" href="#latent-instrumental-variable-approach"></a>
@@ -174,21 +238,28 @@ the internal instruments is taken to be skewed.</p>
 <p>Ebbes et al. (2005) propose the latent instrumental variables
 approach whose model is described in equations (1) and (2) above. A
 particular characteristic of this approach is that the internal
-instrumental variables <span class="math inline">\(Z_{t}\)</span> are
-assumed <strong>unobserved, discrete and exogenous</strong>, with an
-unknown number of groups <span class="math inline">\(m\)</span>, while
-<span class="math inline">\(\gamma\)</span> is a vector of group
-means.</p>
+instrumental variables
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+are assumed <strong>unobserved, discrete and exogenous</strong>, with an
+unknown number of groups
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math>,
+while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>γ</mi><annotation encoding="application/x-tex">\gamma</annotation></semantics></math>
+is a vector of group means.</p>
 <p>Identification of the parameters relies on the distributional
-assumptions of the latent instruments, <span class="math inline">\(Z_{t}\)</span>, as well as that of the endogenous
-regressor, <span class="math inline">\(P_{t}\)</span>. Specifically:</p>
+assumptions of the latent instruments,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>,
+as well as that of the endogenous regressor,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>.
+Specifically:</p>
 <ul>
 <li>
-<span class="math inline">\(P_{t}\)</span> should have a
-non-Gaussian distribution.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+should have a non-Gaussian distribution.</li>
 <li>
-<span class="math inline">\(Z_{t}\)</span> should be discrete and
-have at least two groups with different means.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
+should be discrete and have at least two groups with different
+means.</li>
 </ul>
 <p>A continuous distribution for the instruments leads to an
 unidentified model, while a normal distribution of the endogenous
@@ -215,31 +286,41 @@ approach, still based on Gaussian copulas, but using an augmented OLS
 estimation is being used. The assumption of a skewed endogenous
 regressor is maintained here as well for the recovery of the correct
 parameter estimates.</p>
-<p>The structural error <span class="math inline">\(\epsilon_{t}\)</span> is assumed to have a normal
-marginal distribution. The marginal distribution of the endogenous
-regressor <span class="math inline">\(P_{t}\)</span> is obtained using
-the Epanechnikov kernel density estimator, as below:</p>
-<p><span class="math display">\[\begin{equation}
+<p>The structural error
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϵ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\epsilon_{t}</annotation></semantics></math>
+is assumed to have a normal marginal distribution. The marginal
+distribution of the endogenous regressor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+is obtained using the Epanechnikov kernel density estimator, as
+below:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>h</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mrow><mi>T</mi><mo>⋅</mo><mi>b</mi></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>T</mi></munderover><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>p</mi><mo>−</mo><msub><mi>P</mi><mi>t</mi></msub></mrow><mi>b</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\begin{equation}
 \label{eqn:6}
-\hat{h}(p)=\frac{1}{T\cdot
-b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)
-\end{equation}\]</span></p>
-<p>where <span class="math inline">\(P_{t}\)</span> is the endogenous
-regressor, <span class="math inline">\(K(x)=0.75\cdot(1-x^{2})\cdot
-I(\|x\|&lt;=1)\)</span> and the bandwidth <span class="math inline">\(b\)</span> is equal to <span class="math inline">\(b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)\)</span>,
-as proposed by Silvermann (1969). <span class="math inline">\(IQR\)</span> is the interquartile range while
-<span class="math inline">\(s\)</span> is the data sample standard
-deviation and <span class="math inline">\(T\)</span> is the number of
-time periods observed in the data. In both cases, augmented OLS and
-maximum likelihood, the inference procedure occurs in two stages (first
-the empirical distribution of the endogenous regressor is computed and
-then used in constructing the likelihood function), the standard errors
-are not correct. Therefore, in both cases, the standard errors and the
-confidence intervals are obtained based on the sampling distributions
-resulted from bootstrapping. Since the distribution of the bootstraped
-parameters is highly skewed, we report the percentile confidence
-intervals. The variance-covariance matrix is also computed based on the
-bootstraped parameters, and not based on the Hessian.</p>
+\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)
+\end{equation}</annotation></semantics></math></p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+is the endogenous regressor,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.75</mn><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>x</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="false" form="postfix">∥</mo><mi>x</mi><mo stretchy="false" form="postfix">∥</mo><mo>&lt;</mo><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|&lt;=1)</annotation></semantics></math>
+and the bandwidth
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
+is equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>=</mo><mn>0.9</mn><mo>⋅</mo><msup><mi>T</mi><mrow><mo>−</mo><mn>1</mn><mi>/</mi><mn>5</mn></mrow></msup><mo>⋅</mo><mi>m</mi><mi>i</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>I</mi><mi>Q</mi><mi>R</mi><mi>/</mi><mn>1.34</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)</annotation></semantics></math>,
+as proposed by Silvermann (1969).
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mi>Q</mi><mi>R</mi></mrow><annotation encoding="application/x-tex">IQR</annotation></semantics></math>
+is the interquartile range while
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+is the data sample standard deviation and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+is the number of time periods observed in the data. In both cases,
+augmented OLS and maximum likelihood, the inference procedure occurs in
+two stages (first the empirical distribution of the endogenous regressor
+is computed and then used in constructing the likelihood function), the
+standard errors are not correct. Therefore, in both cases, the standard
+errors and the confidence intervals are obtained based on the sampling
+distributions resulted from bootstrapping. Since the distribution of the
+bootstraped parameters is highly skewed, we report the percentile
+confidence intervals. The variance-covariance matrix is also computed
+based on the bootstraped parameters, and not based on the Hessian.</p>
 <p>In both cases, maximum likelihood estimation and augmented OLS, the
 reported standard errors are the bootstrapped standard errors, due to
 the inference being done in two steps. The confidence intervals are also
@@ -257,7 +338,7 @@ third moments of the data, with no restrictions imposed on the
 distribution of the error terms.</p>
 <p>The following instruments are constructed and can be used with
 two-stage least squares estimation to obtain consistent estimates:</p>
-<p><span class="math display">\[\begin{equation}
+<p><span class="math display">$$\begin{equation}
 \begin{aligned}
 q_{1t} &amp;=(G_{t} - \bar{G})  \hspace{1.98cm} (3a)\\
 q_{2t}&amp;=(G_{t} - \bar{G})(P_{t}-\bar{P})  \hspace{0.6cm} (3b) \\
@@ -266,18 +347,31 @@ q_{4t}&amp;=(Y_{t} - \bar{Y})(P_{t}-\bar{P})  \hspace{0.7cm} (3d)\\
 q_{5t}&amp;=(P_{t}- \bar{P})^{2}  \hspace{1.9cm} (3e)\\
 q_{6t}&amp;=(Y_{t} - \bar{Y})^{2}  \hspace{1.90cm} (3f)
 \end{aligned}
-\end{equation}\]</span></p>
-<p>Here, <span class="math inline">\(G_{t}=G(X_{t})\)</span> for any
-given function <span class="math inline">\(G\)</span> that has finite
-third own and cross moments and <span class="math inline">\(X\)</span>
-are all the exogenous in the model. <span class="math inline">\(\bar{G}\)</span> is the sample mean of <span class="math inline">\(G_{t}\)</span>. The same rule applies also for
-<span class="math inline">\(P_{t}\)</span> and <span class="math inline">\(Y_{t}\)</span>.</p>
+\end{equation}$$</span></p>
+<p>Here,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>t</mi></msub><mo>=</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G_{t}=G(X_{t})</annotation></semantics></math>
+for any given function
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
+that has finite third own and cross moments and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+are all the exogenous in the model.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>G</mi><mo accent="true">‾</mo></mover><annotation encoding="application/x-tex">\bar{G}</annotation></semantics></math>
+is the sample mean of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>G</mi><mi>t</mi></msub><annotation encoding="application/x-tex">G_{t}</annotation></semantics></math>.
+The same rule applies also for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Y_{t}</annotation></semantics></math>.</p>
 <p>The instruments in equations (3e) and (3f) can be used only when the
 measurement and the structural errors are symmetrically distributed.
 Otherwise, the use of the instruments does not require any
 distributional assumptions for the errors. Given that the regressors
-<span class="math inline">\(G(X)=X\)</span> are included as instruments,
-<span class="math inline">\(G(X)\)</span> should not be linear in <span class="math inline">\(X\)</span> in equation (3a) above.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">G(X)=X</annotation></semantics></math>
+are included as instruments,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G(X)</annotation></semantics></math>
+should not be linear in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+in equation (3a) above.</p>
 <p>Since the constructed instruments come along with very strong
 assumptions, one of their best uses is to provide over-identifying
 information. The over-identification can be used to test validity of a
@@ -299,25 +393,44 @@ estimator (Lewbel, 2012).</p>
 <p>Consider the model in equations (1) and (2). This approach assumes
 that:</p>
 <ul>
-<li><span class="math inline">\(E(X\epsilon)=0\)</span></li>
-<li><span class="math inline">\(E(X\nu)=0\)</span></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mi>ϵ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E(X\epsilon)=0</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E(X\nu)=0</annotation></semantics></math></li>
 <li>
-<span class="math inline">\(cov(Z,\epsilon\nu)=0\)</span>.</li>
-<li>the errors, <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(\nu\)</span>, may be correlated with each
-other.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>,</mo><mi>ϵ</mi><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">cov(Z,\epsilon\nu)=0</annotation></semantics></math>.</li>
+<li>the errors,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ν</mi><annotation encoding="application/x-tex">\nu</annotation></semantics></math>,
+may be correlated with each other.</li>
 </ul>
 <p>Structural parameters are identified by an ordinary two stage least
-squares regression of <span class="math inline">\(Y\)</span> on <span class="math inline">\(X\)</span> and <span class="math inline">\(P\)</span>, using <span class="math inline">\(X\)</span> and <span class="math inline">\([Z-E(Z)]\nu\)</span> as instruments. A vital
-assumption for identification is that <span class="math inline">\(cov(Z,\nu^2) \neq 0\)</span>.</p>
+squares regression of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Y</mi><annotation encoding="application/x-tex">Y</annotation></semantics></math>
+on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>,
+using
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">[</mo><mi>Z</mi><mo>−</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>ν</mi></mrow><annotation encoding="application/x-tex">[Z-E(Z)]\nu</annotation></semantics></math>
+as instruments. A vital assumption for identification is that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>,</mo><msup><mi>ν</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>≠</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">cov(Z,\nu^2) \neq 0</annotation></semantics></math>.</p>
 <p>The strength of the instrument is proportional to the covariance
-between <span class="math inline">\((Z-\bar{Z}) \nu\)</span> and <span class="math inline">\(\nu\)</span>, which corresponds to the degree of
-heteroskedasticity of <span class="math inline">\(\nu\)</span> with
-respect to <span class="math inline">\(Z\)</span> (Lewbel, 2012). This
-assumption can be empirically tested. If it is zero or close to zero,
-the instrument is weak, producing imprecise estimates, with large
-standard errors. Under homoskedasticity, the parameters of the model are
-unidentified. But, identification is achieved in the presence of
-heteroskedasticity related to at least some elements of <span class="math inline">\(X\)</span>.</p>
+between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>−</mo><mover><mi>Z</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mi>ν</mi></mrow><annotation encoding="application/x-tex">(Z-\bar{Z}) \nu</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ν</mi><annotation encoding="application/x-tex">\nu</annotation></semantics></math>,
+which corresponds to the degree of heteroskedasticity of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ν</mi><annotation encoding="application/x-tex">\nu</annotation></semantics></math>
+with respect to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+(Lewbel, 2012). This assumption can be empirically tested. If it is zero
+or close to zero, the instrument is weak, producing imprecise estimates,
+with large standard errors. Under homoskedasticity, the parameters of
+the model are unidentified. But, identification is achieved in the
+presence of heteroskedasticity related to at least some elements of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>.</p>
 </div>
 </div>
 <div class="section level3">
@@ -347,23 +460,26 @@ regressors.</li>
 </ul>
 <p>If the last assumption is not met, additional, external instruments
 are necessary.</p>
-<p>Consider a hierarchical model with three levels like below: <span class="math display">\[
+<p>Consider a hierarchical model with three levels like below:
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>y</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>Z</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup><msubsup><mi>β</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>1</mn></msubsup><mo>+</mo><msubsup><mi>X</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>β</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>1</mn></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>Z</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup><msubsup><mi>β</mi><mi>c</mi><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>X</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup><msub><mi>β</mi><mn>2</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>β</mi><mi>c</mi><mn>2</mn></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>X</mi><mi>c</mi><mn>3</mn></msubsup><msub><mi>β</mi><mn>3</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mi>c</mi><mn>3</mn></msubsup><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
 \begin{aligned}
-y_{cst} &amp;= Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1}
-+\epsilon^{1}_{cst} \\
-\beta^{1}_{cs} &amp;= Z^{2}_{cs} \beta^{2}_{c} + X^{2}_{cs} \beta_{2}
-+\epsilon^{2}_{cs} \\
-\beta^{2}_{c} &amp;= X^{3}_{c} \beta_{3} +\epsilon^{3}_{c}.
+ y_{cst} &amp;= Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1} +\epsilon^{1}_{cst} \\ 
+ \beta^{1}_{cs} &amp;= Z^{2}_{cs} \beta^{2}_{c} + X^{2}_{cs} \beta_{2} +\epsilon^{2}_{cs} \\
+ \beta^{2}_{c} &amp;= X^{3}_{c} \beta_{3} +\epsilon^{3}_{c}.
 \end{aligned}
-\]</span></p>
+</annotation></semantics></math></p>
 <p>Given the set of disturbance terms at different levels, there exist a
 couple of possible correlation patterns that could lead to biased
 results:</p>
 <ul>
-<li>errors at the higher two levels (<span class="math inline">\(\epsilon^{2}_{cs}\)</span> and <span class="math inline">\(\epsilon^{3}_{c}\)</span>) are correlated with
-some of the regressors,</li>
-<li>only third level errors (<span class="math inline">\(\epsilon^{3}_{c}\)</span>) are correlated with
-some of the regressors,</li>
+<li>errors at the higher two levels
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>ϵ</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup><annotation encoding="application/x-tex">\epsilon^{2}_{cs}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>ϵ</mi><mi>c</mi><mn>3</mn></msubsup><annotation encoding="application/x-tex">\epsilon^{3}_{c}</annotation></semantics></math>)
+are correlated with some of the regressors,</li>
+<li>only third level errors
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi>ϵ</mi><mi>c</mi><mn>3</mn></msubsup><annotation encoding="application/x-tex">\epsilon^{3}_{c}</annotation></semantics></math>)
+are correlated with some of the regressors,</li>
 <li>an intermediate case, where there is concern with the higher level
 errors, but there is not enough information to estimate level 3
 parameters.</li>
@@ -483,36 +599,42 @@ specified in the <strong>iiv</strong> argument of
 <strong>IIV()</strong>:</p>
 <ul>
 <li>
-<strong>g</strong> - for <span class="math inline">\((G_{t} -
-\bar{G})\)</span>,</li>
+<strong>g</strong> - for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})</annotation></semantics></math>,</li>
 <li>
-<strong>gp</strong> - for <span class="math inline">\((G_{t} -
-\bar{G})(P_{t}-\bar{P})\)</span>,</li>
+<strong>gp</strong> - for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})(P_{t}-\bar{P})</annotation></semantics></math>,</li>
 <li>
-<strong>gy</strong> - for <span class="math inline">\((G_{t} -
-\bar{G})(Y_{t}-\bar{Y})\)</span>,</li>
+<strong>gy</strong> - for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})(Y_{t}-\bar{Y})</annotation></semantics></math>,</li>
 <li>
-<strong>yp</strong> - for <span class="math inline">\((Y_{t} -
-\bar{Y})(P_{t}-\bar{P})\)</span>,</li>
+<strong>yp</strong> - for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(Y_{t} - \bar{Y})(P_{t}-\bar{P})</annotation></semantics></math>,</li>
 <li>
-<strong>p2</strong> - for <span class="math inline">\((P_{t} -
-\bar{P})^2\)</span>,</li>
+<strong>p2</strong> - for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(P_{t} - \bar{P})^2</annotation></semantics></math>,</li>
 <li>
-<strong>y2</strong> - for <span class="math inline">\((Y_{t} -
-\bar{Y})^2\)</span>,</li>
+<strong>y2</strong> - for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(Y_{t} - \bar{Y})^2</annotation></semantics></math>,</li>
 </ul>
-<p>where <span class="math inline">\(G=G(X_{t})\)</span> can be either
-<span class="math inline">\(x^2\)</span>, <span class="math inline">\(x^3\)</span>, <span class="math inline">\(ln(x)\)</span> or <span class="math inline">\(1/x\)</span> and should be specified in the
-<strong>g</strong> argument of the third RHD of the formula, as
-<strong>x2, x3, lnx</strong> or <strong>1/x</strong>. In case of
-internal instruments built only from the endogenous regressor,
-e.g. <strong>p2</strong>, or from the response and the endogenous
-regressor, like for example in <strong>yp</strong>, there is no need to
-specify <strong>g</strong> or the set of exogenous regressors in the
-<strong>IIV()</strong> part of the formula. The function returns a set
-of tests for checking the validity of the instruments and the
-endogeneity assumption. Here as well, transformation of explanatory
-variables, such as I(X), ln(X), are supported.</p>
+<p>where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G=G(X_{t})</annotation></semantics></math>
+can be either
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>x</mi><mn>2</mn></msup><annotation encoding="application/x-tex">x^2</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>x</mi><mn>3</mn></msup><annotation encoding="application/x-tex">x^3</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">ln(x)</annotation></semantics></math>
+or
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">1/x</annotation></semantics></math>
+and should be specified in the <strong>g</strong> argument of the third
+RHD of the formula, as <strong>x2, x3, lnx</strong> or
+<strong>1/x</strong>. In case of internal instruments built only from
+the endogenous regressor, e.g. <strong>p2</strong>, or from the response
+and the endogenous regressor, like for example in <strong>yp</strong>,
+there is no need to specify <strong>g</strong> or the set of exogenous
+regressors in the <strong>IIV()</strong> part of the formula. The
+function returns a set of tests for checking the validity of the
+instruments and the endogeneity assumption. Here as well, transformation
+of explanatory variables, such as I(X), ln(X), are supported.</p>
 <ol start="4" style="list-style-type: decimal">
 <li>
 <strong>hetErrorsIV()</strong> - uses the heteroskedasticity of the
@@ -590,10 +712,12 @@ reading score of the students. Having access to an additional variable,
 namely <strong>expenditure</strong> (the expenditure per student
 aggregated at district level), we can use it as external instrumental
 variable. This is possible since it is correlated with the
-student/teacher ratio (a correlation of <span class="math inline">\(-0.61\)</span>), but does not directly explain the
-reading score tests of the students. Therefore, we can apply both
-external(two-stage least squares) and internal instrumental variables
-techniques to estimate the model and compare their performance.</p>
+student/teacher ratio (a correlation of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.61</mn></mrow><annotation encoding="application/x-tex">-0.61</annotation></semantics></math>),
+but does not directly explain the reading score tests of the students.
+Therefore, we can apply both external(two-stage least squares) and
+internal instrumental variables techniques to estimate the model and
+compare their performance.</p>
 <p>In orde to have a reference point, we apply OLS on the above
 data:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -649,9 +773,8 @@ is the endogenous one. Let’s see:</p>
 <code class="sourceCode R"><span></span>
 <span><span class="va">m3.liv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/latentIV.html">latentIV</a></span><span class="op">(</span><span class="va">read</span> <span class="op">~</span> <span class="va">stratio</span>, data<span class="op">=</span><span class="va">school</span><span class="op">)</span></span>
 <span><span class="co">#&gt; No start parameters were given. The linear model read ~ stratio is fitted to derive them.</span></span>
-<span><span class="co">#&gt; The start parameters c((Intercept)=706.449, stratio=-2.621, pi1=19.64, pi2=21.532, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m3.liv</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
+<span><span class="co">#&gt; The start parameters c((Intercept)=706.449, stratio=-2.621, pi1=19.64, pi2=21.532, theta5=0.5, theta6=1, theta7=0.5, theta8=1) are used for optimization.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m3.liv</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
 <span><span class="co">#&gt; Warning: For some parameters the standard error could not be calculated.</span></span>
 <span><span class="co">#&gt;                   Estimate    Std. Error       z-score     Pr(&gt;|z|)</span></span>
 <span><span class="co">#&gt; (Intercept)   6.996014e+02  2.686159e+02  2.604468e+00 9.528873e-03</span></span>
@@ -671,24 +794,31 @@ for the coefficients (the bootstrapped confidence intervals will not be
 reported here, since we used only 2 bootstraps, and 1000 are needed for
 reporting standard errors).</p>
 <p>Next, we call the <strong>copulaCorrection()</strong> function:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">110</span><span class="op">)</span></span>
 <span><span class="va">m4.cc</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/copulaCorrection.html">copulaCorrection</a></span><span class="op">(</span><span class="va">read</span> <span class="op">~</span>  <span class="va">stratio</span> <span class="op">+</span> <span class="va">english</span> <span class="op">+</span> <span class="va">lunch</span> <span class="op">+</span> <span class="va">calworks</span> <span class="op">+</span></span>
 <span>           <span class="va">grades</span> <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> <span class="va">county</span> <span class="op">|</span> <span class="fu">continuous</span><span class="op">(</span><span class="va">stratio</span><span class="op">)</span>, data<span class="op">=</span> <span class="va">school</span>,</span>
 <span>           optimx.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Nelder-Mead"</span><span class="op">)</span>, itnmax<span class="op">=</span> <span class="fl">60000</span><span class="op">)</span>,</span>
 <span>            num.boots<span class="op">=</span><span class="fl">2</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: It is recommended to run 1000 or more bootstraps.</span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; Warning: It is recommended to run 1000 or more bootstraps.</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m4.cc</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
-<span><span class="co">#&gt;             Point Estimate   Boots SE Lower Boots CI (95%) Upper Boots CI (95%)</span></span>
-<span><span class="co">#&gt; (Intercept)   683.24386309 2.80554213                   NA                   NA</span></span>
-<span><span class="co">#&gt; stratio        -0.30475893 0.02075999                   NA                   NA</span></span>
-<span><span class="co">#&gt; english        -0.22028582 0.01450666                   NA                   NA</span></span>
-<span><span class="co">#&gt; lunch          -0.37040728 0.01902052                   NA                   NA</span></span>
-<span><span class="co">#&gt; calworks       -0.07054442 0.02076781                   NA                   NA</span></span>
-<span><span class="co">#&gt; gradesKK-08    -1.94814593 0.25684614                   NA                   NA</span></span>
-<span><span class="co">#&gt; income          0.72390623 0.04725700                   NA                   NA</span></span></code></pre></div>
+<span><span class="co">#&gt;             Point Estimate    Boots SE Lower Boots CI (95%)</span></span>
+<span><span class="co">#&gt; (Intercept)   681.94143888 2.438874458                   NA</span></span>
+<span><span class="co">#&gt; stratio        -0.33863513 0.022332810                   NA</span></span>
+<span><span class="co">#&gt; english        -0.20070147 0.026136685                   NA</span></span>
+<span><span class="co">#&gt; lunch          -0.37339560 0.032293205                   NA</span></span>
+<span><span class="co">#&gt; calworks       -0.06261583 0.009027372                   NA</span></span>
+<span><span class="co">#&gt; gradesKK-08    -1.64282345 0.138420392                   NA</span></span>
+<span><span class="co">#&gt; income          0.80127388 0.033266598                   NA</span></span>
+<span><span class="co">#&gt;             Upper Boots CI (95%)</span></span>
+<span><span class="co">#&gt; (Intercept)                   NA</span></span>
+<span><span class="co">#&gt; stratio                       NA</span></span>
+<span><span class="co">#&gt; english                       NA</span></span>
+<span><span class="co">#&gt; lunch                         NA</span></span>
+<span><span class="co">#&gt; calworks                      NA</span></span>
+<span><span class="co">#&gt; gradesKK-08                   NA</span></span>
+<span><span class="co">#&gt; income                        NA</span></span></code></pre></div>
 <p>The copula correction with one endogenous continuous regressor,
 estimates the model using maximum likelihood. The optimization algorithm
 used is the Nelder-Mead, which it is known to converge slowly, so it
@@ -706,16 +836,15 @@ far away from the coefficients returned by the external instrumental
 variables or even OLS. As Lewbel (2012) underlined, it is often better
 to use this approach in order to create additional instruments, which
 together with external ones, could lead to improved efficiency.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">111</span><span class="op">)</span></span>
 <span><span class="va">m5.hetEr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hetErrorsIV.html">hetErrorsIV</a></span><span class="op">(</span><span class="va">read</span> <span class="op">~</span> <span class="va">stratio</span> <span class="op">+</span> <span class="va">english</span> <span class="op">+</span> <span class="va">lunch</span> <span class="op">+</span> <span class="va">calworks</span>  <span class="op">+</span> <span class="va">income</span>  <span class="op">+</span></span>
 <span>        <span class="va">grades</span><span class="op">+</span> <span class="va">county</span> <span class="op">|</span> <span class="va">stratio</span> <span class="op">|</span> <span class="fu">IIV</span><span class="op">(</span><span class="va">income</span>, <span class="va">english</span><span class="op">)</span>, data<span class="op">=</span><span class="va">school</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: A studentized Breusch-Pagan test (stratio ~ english) indicates at a</span></span>
 <span><span class="co">#&gt; 95% confidence level that the assumption of heteroscedasticity for the variable</span></span>
 <span><span class="co">#&gt; is not satisfied (p-value: 0.2428). The instrument built from it therefore is</span></span>
-<span><span class="co">#&gt; weak.</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; weak.</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m5.hetEr</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
 <span><span class="co">#&gt; Warning in printHypothesis(L, rhs, names(b)): one or more coefficients in the hypothesis include</span></span>
 <span><span class="co">#&gt;      arithmetic operators in their names;</span></span>
@@ -731,7 +860,7 @@ together with external ones, could lead to improved efficiency.</p>
 <p>Last, but not least, <strong>higher moments approach</strong> returns
 an estimate in the range of the estimate produced by the two-stage least
 squares and control function methods, namely <strong>-1.30</strong>:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">112</span><span class="op">)</span></span>
 <span><span class="va">m6.highMoment</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/higherMomentsIV.html">higherMomentsIV</a></span><span class="op">(</span><span class="va">read</span> <span class="op">~</span> <span class="va">stratio</span> <span class="op">+</span> <span class="va">english</span> <span class="op">+</span> <span class="va">lunch</span> <span class="op">+</span> <span class="va">calworks</span> <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> </span>
 <span>                 <span class="va">grades</span> <span class="op">+</span> <span class="va">county</span><span class="op">|</span> <span class="va">stratio</span> <span class="op">|</span> <span class="fu">IIV</span><span class="op">(</span>g <span class="op">=</span> <span class="va">x3</span>,iiv <span class="op">=</span> <span class="va">gp</span>, <span class="va">income</span><span class="op">)</span>, data<span class="op">=</span><span class="va">school</span><span class="op">)</span></span>
@@ -762,7 +891,7 @@ similar with the ones returned by OLS since we included county dummy
 variables. Indeed, the omitted variable test between the fixed effects
 and the GMM model rejects the null hypothesis, therefore indicating an
 endogeneity problem at level one and the use of fixed effects.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">113</span><span class="op">)</span></span>
 <span> <span class="va">school</span><span class="op">$</span><span class="va">gr08</span> <span class="op">&lt;-</span> <span class="va">school</span><span class="op">$</span><span class="va">grades</span><span class="op">==</span><span class="st">"KK-06"</span></span>
 <span> <span class="va">m7.multilevel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/multilevelIV.html">multilevelIV</a></span><span class="op">(</span><span class="va">read</span> <span class="op">~</span> <span class="va">stratio</span> <span class="op">+</span> <span class="va">english</span> <span class="op">+</span> <span class="va">lunch</span>  <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> <span class="va">gr08</span> <span class="op">+</span> </span>
@@ -795,7 +924,7 @@ confident that no important variables were omitted. On the contrary, the
 robust estimator would be preferable if there was a concern that
 important variables were likely to be omitted. The estimation result is
 below:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dataMultilevelIV</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">114</span><span class="op">)</span></span>
 <span><span class="va">formula1</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="va">X11</span> <span class="op">+</span> <span class="va">X12</span> <span class="op">+</span> <span class="va">X13</span> <span class="op">+</span> <span class="va">X14</span> <span class="op">+</span> <span class="va">X15</span> <span class="op">+</span> <span class="va">X21</span> <span class="op">+</span> <span class="va">X22</span> <span class="op">+</span> <span class="va">X23</span> <span class="op">+</span> <span class="va">X24</span> <span class="op">+</span></span>
@@ -817,15 +946,18 @@ below:</p>
 <span><span class="co">#&gt; X32          0.4540926  0.000000  0.0000000  0.4571712  0.4540962</span></span>
 <span><span class="co">#&gt; X33          0.0991915  0.000000  0.0000000  0.0980949  0.0991902</span></span></code></pre></div>
 <p>As we have simulated the data, we know that the true parameter value
-of the endogenous regressor (X15) is <span class="math inline">\(-1\)</span>. Looking at the coefficients of X15
-returned by the five models, we see that they form two clusters: one
-cluster is composed of the level-two fixed effects estimator and the
-level-two GMM estimator (both return <span class="math inline">\(-0.975\)</span>), while the other cluster is
-composed of the other three estimators, FE_L3, GMM_L3, REF, all three
-having a value of <span class="math inline">\(-0.564\)</span>. The bias
-of the last three estimators is to be expected since we have simulated
-the data such that X15 is correlated with the level-two error, to which
-only FE_L2 and GMM_L2 are robust.</p>
+of the endogenous regressor (X15) is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>.
+Looking at the coefficients of X15 returned by the five models, we see
+that they form two clusters: one cluster is composed of the level-two
+fixed effects estimator and the level-two GMM estimator (both return
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.975</mn></mrow><annotation encoding="application/x-tex">-0.975</annotation></semantics></math>),
+while the other cluster is composed of the other three estimators,
+FE_L3, GMM_L3, REF, all three having a value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.564</mn></mrow><annotation encoding="application/x-tex">-0.564</annotation></semantics></math>.
+The bias of the last three estimators is to be expected since we have
+simulated the data such that X15 is correlated with the level-two error,
+to which only FE_L2 and GMM_L2 are robust.</p>
 <p>To provide guidance for selecting the appropriate estimator,
 <strong>multilevelIV()</strong> function performs an omitted variable
 test. The results are returned by the <strong>summary()</strong>
@@ -879,7 +1011,7 @@ z-scores. Further, it returns the chi-squared statistic, degrees of
 freedom and p-value of the omitted variable test between the focal model
 (here REF) and all the other possible options (here FE_L3, GMM_L2 and
 GMM_L3).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m8.multilevel</span>, <span class="st">"REF"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
@@ -920,12 +1052,13 @@ the other estimators. Testing REF, the most efficient estimator, against
 the level-two fixed effects estimator, FE_L2, which is the most robust
 estimator, we are actually testing simultaneously for level-2 and
 level-3 omitted effects. Since the null hypothesis is rejected with a
-p-value of <span class="math inline">\(0.000139\)</span>, the test
-indicates severe bias in the random effects estimator. In order to test
-for <em>level-two omitted effects regardless of the presence of
+p-value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.000139</mn><annotation encoding="application/x-tex">0.000139</annotation></semantics></math>,
+the test indicates severe bias in the random effects estimator. In order
+to test for <em>level-two omitted effects regardless of the presence of
 level-three omitted effects</em>, we have to compare the two fixed
 effects estimators, FE_L2 versus FE_L3:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m8.multilevel</span>,<span class="st">"FE_L2"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Call:</span></span>
@@ -962,7 +1095,8 @@ effects estimators, FE_L2 versus FE_L3:</p>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
 <p>The null hypothesis of no omitted level-two effects is rejected
-(p-value is equal to <span class="math inline">\(3.92e-05\)</span>).
+(p-value is equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3.92</mn><mi>e</mi><mo>−</mo><mn>05</mn></mrow><annotation encoding="application/x-tex">3.92e-05</annotation></semantics></math>).
 Therefore, we conclude that there are omitted effects at level-two. This
 finding is no surprise as we simulated the dataset with the level-two
 error correlated with X15, which leads to biased FE_L3 coefficients. The
@@ -1002,9 +1136,7 @@ Estimation Using Cop- ulas.” Marketing Science, 31(4), 567–586.</p>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -1017,16 +1149,16 @@ Estimation Using Cop- ulas.” Marketing Science, 31(4), 567–586.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

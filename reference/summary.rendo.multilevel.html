@@ -9,7 +9,7 @@
 
   gtag('config', 'UA-31477052-1');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -34,7 +34,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -47,20 +47,20 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/mmeierer/REndo/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Summarizing Multilevel GMM Estimation with Endogenous Regressors Model Fits</h1>
-    <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/HEAD/R/f_s3_multilevel.R" class="external-link"><code>R/f_s3_multilevel.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/R/f_s3_multilevel.R" class="external-link"><code>R/f_s3_multilevel.R</code></a></small>
     <div class="hidden name"><code>summary.rendo.multilevel.Rd</code></div>
     </div>
 
@@ -69,33 +69,31 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for rendo.multilevel</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'rendo.multilevel'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"REF"</span>, <span class="st">"FE_L2"</span>, <span class="st">"FE_L3"</span>, <span class="st">"GMM_L2"</span>, <span class="st">"GMM_L3"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>object</dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>an object of class "rendo.multilevel", usually, a result of a call to <code>multilevelIV</code>.</p></dd>
 
 
-<dt>model</dt>
+<dt id="arg-model">model<a class="anchor" aria-label="anchor" href="#arg-model"></a></dt>
 <dd><p>character string to indicate which fitted model should be summarized.
 Possible values are: <code>"REF", "FE_L2", "FE_L3", "GMM_L2"</code>, or <code>"GMM_L3"</code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>ignored, for consistency with the generic function.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>For the model specified in argument <code>model</code>, the function <code>summary.rendo.multilevel</code> computes and returns
+    <p>For the model specified in argument <code>model</code>, the function <code>summary.rendo.multilevel</code> computes and returns
 a list of summary statistics and the results of the omitted variable tests for the fitted multilevel object given in <code>object</code>.</p>
-
-
 <p>An object of class <code>summary.rendo.multilevel</code> is returned that is a list using the component <code>call</code> of argument <code>object</code>, plus,</p>
 <dl><dt>summary.model</dt>
 <dd><p>the model parameter with which the summary function was called.</p></dd>
@@ -166,15 +164,15 @@ function <code>vcov</code> will extract the component <code>vcov</code>.</p></di
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

@@ -12,7 +12,7 @@ the structural error is normally distributed."><!-- mathjax --><script src="http
 
   gtag('config', 'UA-31477052-1');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -37,7 +37,7 @@ the structural error is normally distributed."><!-- mathjax --><script src="http
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -50,20 +50,20 @@ the structural error is normally distributed."><!-- mathjax --><script src="http
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/mmeierer/REndo/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Fitting Linear Models with one Endogenous Regressor using Latent Instrumental Variables</h1>
-    <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/HEAD/R/f_latentIV.R" class="external-link"><code>R/f_latentIV.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/R/f_latentIV.R" class="external-link"><code>R/f_latentIV.R</code></a></small>
     <div class="hidden name"><code>latentIV.Rd</code></div>
     </div>
 
@@ -86,33 +86,33 @@ the structural error is normally distributed.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>formula</dt>
+
+
+<dl><dt id="arg-formula">formula<a class="anchor" aria-label="anchor" href="#arg-formula"></a></dt>
 <dd><p>A symbolic description of the model to be fitted. Of class "formula".</p></dd>
 
 
-<dt>data</dt>
+<dt id="arg-data">data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
 <dd><p>A data.frame containing the data of all parts specified in the formula parameter.</p></dd>
 
 
-<dt>start.params</dt>
+<dt id="arg-start-params">start.params<a class="anchor" aria-label="anchor" href="#arg-start-params"></a></dt>
 <dd><p>A named vector containing a set of parameters to use in the first optimization iteration.
 The names have to correspond exactly to the names of the components specified in the formula parameter.
 If not provided, a linear model is fitted to derive them.</p></dd>
 
 
-<dt>optimx.args</dt>
+<dt id="arg-optimx-args">optimx.args<a class="anchor" aria-label="anchor" href="#arg-optimx-args"></a></dt>
 <dd><p>A named list of arguments which are passed to <code><a href="https://rdrr.io/pkg/optimx/man/optimx.html" class="external-link">optimx</a></code>. This allows users to tweak optimization settings to their liking.</p></dd>
 
 
-<dt>verbose</dt>
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Show details about the running of the function.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>An object of classes <code>rendo.latent.IV</code> and <code>rendo.base</code> is returned which is a list and contains the following components:</p>
+    <p>An object of classes <code>rendo.latent.IV</code> and <code>rendo.base</code> is returned which is a list and contains the following components:</p>
 <dl><dt>formula</dt>
 <dd><p>The formula given to specify the fitted model.</p></dd>
 
@@ -205,7 +205,7 @@ A continuous distribution for the instruments leads to an unidentified model, wh
     <h2>References</h2>
     <p>Ebbes, P., Wedel,M., Böckenholt, U., and Steerneman, A. G. M. (2005). 'Solving and Testing for Regressor-Error
 (in)Dependence When no Instrumental Variables are Available: With New Evidence for the Effect of Education on Income'.
-Quantitative Marketing and Economics, 3:365--392.</p>
+Quantitative Marketing and Economics, 3:365–392.</p>
 <p>Ebbes P., Wedel M., Böckenholt U. (2009). “Frugal IV Alternatives to Identify the Parameter for an Endogenous Regressor.” Journal of Applied Econometrics, 24(3), 446–468.</p>
     </div>
     <div id="see-also">
@@ -353,8 +353,8 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ufn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (par) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> fn(par, ...)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5607e62bc508&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5607edac3bc8&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55627696cd18&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55626f865908&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $have.bounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
@@ -988,7 +988,7 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $xtimes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> user.self </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     1.154 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1.137 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Assemble the answers</span>
 <span class="r-in"><span></span></span>
@@ -1063,8 +1063,8 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $ufn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (par) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> fn(par, ...)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5607e62bc508&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x5607ec247478&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55627696cd18&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x55626f815a10&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $have.bounds</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
@@ -1125,7 +1125,7 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $xtimes</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> user.self </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     1.842 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     1.728 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Assemble the answers</span>
 <span class="r-in"><span></span></span>
@@ -1151,15 +1151,15 @@ Quantitative Marketing and Economics, 3:365--392.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
