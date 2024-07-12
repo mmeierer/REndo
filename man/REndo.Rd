@@ -15,7 +15,7 @@ method of moment approach that deals with endogeneity in a multilevel setting.
 These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
 
 The main functions to estimate models are:
-\itemize{
+\describe{
 \item{\code{latentIV()}}{the latent instrumental variables method of Ebbes et al. (2005)}
 \item{\code{copulaCorrection()}}{copula correction method proposed by Paek and Gupta (2012)}
 \item{\code{hetErrorsIV()}}{heteroskedastic errors approach proposed by Lewbel(2012)}
@@ -38,4 +38,23 @@ See our publication in the Journal of Statistical Software for more details: \do
 }
 \references{
 Gui R, Meierer M, Schilter P, Algesheimer R (2023). “REndo: Internal Instrumental Variables to Address Endogeneity.” Journal of Statistical Software, 107 (3), 1-43. \doi{10.18637/jss.v107.i03}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/mmeierer/REndo}
+  \item Report bugs at \url{https://github.com/mmeierer/REndo/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Raluca Gui \email{raluca.gui@gmail.com}
+
+Authors:
+\itemize{
+  \item Markus Meierer \email{markus.meierer@business.uzh.ch}
+  \item Rene Algesheimer \email{market-research@business.uzh.ch}
+  \item Patrik Schilter \email{patrik.schilter@gmail.com}
+}
+
 }

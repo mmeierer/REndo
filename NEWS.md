@@ -1,3 +1,13 @@
+# REndo 2.4.10
+
+### NEW FEATURES
+* The Pstar data generated in `copulaCorrection` is improved with the corrections proposed by Qian, Koschmann, and Xie (2024).
+
+### MAINTENANCE
+* Fix CRAN notes regarding documentation
+
+
+
 # REndo 2.4.9
 
 ### MAINTENANCE
