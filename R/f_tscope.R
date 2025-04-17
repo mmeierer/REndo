@@ -65,7 +65,7 @@
 #' }
 #'
 #' @return
-#' An object of class `rendo.tscope.IV` (inheriting from `rendo.base`) is returned. This object is a list containing the following components:
+#' An object of class `rendo.tscope` (inheriting from `rendo.base`) is returned. This object is a list containing the following components:
 #' \item{call}{The original function call.}
 #' \item{F.formula}{The processed `Formula` object.}
 #' \item{mf}{The model frame used for fitting.}

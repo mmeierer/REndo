@@ -18,13 +18,13 @@ new_rendo_tscope <- function(call, F.formula, mf, coefficients, names.main.coefs
                                 fitted.values, residuals, tscope_model, details) {
   .new_rendo_base(
     call = call,
-    F.formula = F.formula,
+    F.formula = as.Formula(F.formula), #to be sure its a Formula
     mf = mf,
     coefficients = coefficients,
     names.main.coefs = names.main.coefs,
     fitted.values = fitted.values,
     residuals = residuals,
-    subclass = c("rendo.tscope", "rendo.tscope.IV"),
+    subclass = c("rendo.tscope"),
     tscope_model = tscope_model,
     details = details
   )
