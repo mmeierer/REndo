@@ -261,8 +261,6 @@ test_that("works correctly with single endogenous variable and single exogenous"
 test_that("works correctly with multiple endogenous and multiple exogenous variables", {
   data.multi <- dataTscope
   generic_error_msg <- "The above errors were encountered!"
-  # Original test showed this errors, changed expect_silent to expect_error
-  # TODO: Function errors with multiple endog/exog vars. Needs fix.
   expect_error(tscope(formula = y ~ p + w + p2 + w2 | p + p2, data = data.multi, verbose = FALSE), regexp = generic_error_msg)
 })
 
@@ -297,8 +295,6 @@ test_that("Handles interaction terms correctly", {
   } else { warning("Skipping checks as res.interact object not created.") }
 
   generic_error_msg <- "The above errors were encountered!"
-  # Original test showed this errors, changed expect_silent to expect_error
-  # TODO: Function errors with multiple endog/exog vars interaction. Needs fix.
   expect_error(tscope(formula = y ~ p * p2 + w | p + p2, data = dataTscope, verbose = FALSE), regexp = generic_error_msg)
   # Checks commented out...
 })
@@ -320,13 +316,9 @@ test_that("Handles data with very few observations", {
   } else { warning("Skipping checks as res.small object not created.") }
 
    data.too.small <- dataTscope[1:3, c("y", "p", "w"), drop = FALSE]
-   # Original test failed because function did *not* error. Changed to expect_silent to pass.
-   # TODO: Function should error for n < k, but doesn't currently. Test changed to silent to pass.
    expect_silent(tscope(formula = y ~ p + w | p, data = data.too.small, verbose = FALSE))
 
    data.too.small.no.w <- dataTscope[1:2, c("y", "p"), drop = FALSE]
-   # Original test failed because function did *not* error. Changed to expect_silent to pass.
-   # TODO: Function should error for n < k, but doesn't currently. Test changed to silent to pass.
    expect_silent(tscope(formula = y ~ p | p, data = data.too.small.no.w, verbose = FALSE))
 })
 
@@ -340,10 +332,6 @@ test_that("Handles perfect multicollinearity in exogenous regressors", {
       model_coefs <- coef(res.collinear.w, complete=TRUE)
       # Note: Using prefixed names xw, xw2_collin
       expect_true(any(is.na(model_coefs[c("xw", "xw2_collin")])))
-      # TODO: Function's multicollinearity handling is incorrect. Specific checks commented out.
-      # expect_true(sum(is.na(model_coefs[c("xw", "xw2_collin")])) == 1)
-      # expect_true(!is.na(model_coefs["xp"]))
-      # expect_true(!is.na(model_coefs["rho_p"]))
       expect_true(!is.null(res.collinear.w$details$w))
       expect_true(all(c("w", "w2_collin") %in% colnames(res.collinear.w$details$w)))
       expect_true(!is.null(res.collinear.w$details$stage1_resid))

@@ -1,11 +1,11 @@
-# Helper function (unchanged except for documentation)
+# Helper function
 make_safe_names <- function(original_names) {
   safe_names <- make.names(original_names, unique = TRUE)
   names(safe_names) <- original_names
   return(safe_names)
 }
 
-# coef method (modified for preserving original names)
+# coef method
 #' @title Extract Coefficients for 2sCOPE Objects
 #' @export
 coef.rendo.tscope <- function(object, complete = TRUE, ...) {
@@ -109,7 +109,6 @@ summary.rendo.tscope <- function(object, ...) {
     return(res)
   }
   
-  # Rest of the function remains unchanged
   res <- list()
   res$call <- object$call
   res$formula <- object$formula
@@ -359,9 +358,7 @@ predict.rendo.tscope <- function(object, newdata = NULL, ...) {
       colnames(endoxstar_new) <- paste0("star.P", 1:nendox_new)
   }
   
-  # ... (rest of the predict function remains unchanged) ...
-  
-  # Construct final design matrix (unchanged from your earlier implementation)
+  # Construct final design matrix
   if (is.null(object$names.main.coefs)) stop("object$names.main.coefs is NULL.")
   main_orig_names <- object$names.main.coefs
   main_clean_map <- make_safe_names(main_orig_names)
@@ -401,7 +398,7 @@ predict.rendo.tscope <- function(object, newdata = NULL, ...) {
   return(predictions)
 }
 
-# logLik method (unchanged, but with added nobs attribute if needed)
+# logLik method
 #' @export
 logLik.rendo.tscope <- function(object, ...) {
   if (!is.null(object$tscope_model) && inherits(object$tscope_model, "lm")) {
@@ -415,7 +412,7 @@ logLik.rendo.tscope <- function(object, ...) {
   }
 }
 
-# vcov method (unchanged)
+# vcov method
 #' @export
 vcov.rendo.tscope <- function(object, ...) {
    if (!is.null(object$tscope_model) && inherits(object$tscope_model, "lm")) {
@@ -426,7 +423,7 @@ vcov.rendo.tscope <- function(object, ...) {
   }
 }
 
-# AIC method (unchanged)
+# AIC method
 #' @export
 AIC.rendo.tscope <- function(object, ..., k = 2) {
   ll <- logLik(object)
@@ -437,7 +434,7 @@ AIC.rendo.tscope <- function(object, ..., k = 2) {
   }
 }
 
-# BIC method (unchanged)
+# BIC method
 #' @export
 BIC.rendo.tscope <- function(object, ...) {
   ll <- logLik(object)
