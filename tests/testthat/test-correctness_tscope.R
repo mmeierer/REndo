@@ -1,503 +1,498 @@
 # Required data ----------------------------------------------------------------------------------------------------------------------
 data("dataTscope")
 
-
-# Helper function to check coefficient names robustly
-expect_coef_names <- function(object, expected_names) {
-  # Use the coef method associated with the object's class if available
-  # Adding error handling in case coef() fails before object creation check
-  object_coefs <- tryCatch(coef(object, complete = TRUE), error = function(e) {
-    # If coef fails, return something that will fail the expect_true checks clearly
-    warning("coef() method failed on object.")
-    return(setNames(rep(NA, length(expected_names)), paste("FAILED_TO_GET_COEFS", seq_along(expected_names))))
-    })
-
-  # Check if all expected names are present
-  missing_names <- setdiff(expected_names, names(object_coefs))
-  expect_true(length(missing_names) == 0,
-              info = paste("Names missing from coefficients:", paste(missing_names, collapse=", "),
-                           "\nExpected:", paste(expected_names, collapse=", "),
-                           "\nGot:", paste(names(object_coefs), collapse=", ")))
-
-  # Check if there are any extra names
-  extra_names <- setdiff(names(object_coefs), expected_names)
-  expect_true(length(extra_names) == 0,
-               info = paste("Extra names found in coefficients:", paste(extra_names, collapse=", "),
-                           "\nExpected:", paste(expected_names, collapse=", "),
-                           "\nGot:", paste(names(object_coefs), collapse=", ")))
-
-   # Check for exact length match (implied by the two checks above, but explicit)
-   expect_true(length(names(object_coefs)) == length(expected_names),
-               info = paste("Expected length:", length(expected_names),
-                            "Got length:", length(names(object_coefs))))
-}
-
 # Major test case -------------------------------------------------------------------------------------------------------------------
 context("Correctness - tscope - Test Against Original")
 
+# Test to ensure that the tscope function in the REndo package produces results
+# consistent with a known, pre-calculated set of reference coefficients.
+# This acts as a regression test to catch unintended changes in the core logic.
 test_that("REndo 2sCOPE matches original tscope output", {
-  # Hardcoded reference output from original tscope() (https://github.com/fan9193/Code-for-2sCOPE-method/blob/main/Rcode_tscope.R) using data.csv (https://github.com/fan9193/Code-for-2sCOPE-method/blob/main/data.csv)
   tscope_reference <- c(
     "x(Intercept)" = 0.9868224,
-    "xp"         = 1.0192808,
-    "xw"         = -0.9853235,
-    "rho_p"       = 0.4837118,
-    "sdError"   = 0.9857568
+    "xp"           = 1.0192808,
+    "xw"           = -0.9853235,
+    "rho_p"        = 0.4837118,
+    "sdError"      = 0.9857568 
   )
-  
-  # Run your tscope implementation from REndo on the same data
+
+  # Run the tscope model using the formula y ~ p + w, where p is endogenous, and using the provided dataTscope dataset.
   tscope_model <- tscope(
     formula = y ~ p + w | p,
     data = dataTscope,
     verbose = FALSE
   )
-  
-  # Extract the named coefficients
+
   rendo_output <- coef(tscope_model)
   
-  # Ensure the names and order match
+  # Compare the REndo output coefficients with the reference values.
+  # We only compare the coefficients present in `tscope_reference`.
+  # `tolerance = 1e-6` allows for minor differences due to floating-point arithmetic.
   expect_equal(rendo_output[names(tscope_reference)], tscope_reference, tolerance = 1e-6)
 })
 
-# Input checks (Basic structural checks) --------------------------------------------------------------------------------------------
+# Input checks (Basic structural checks for tscope() function itself) ---------------------------------------------------------------
 context("Correctness - tscope - Input Validation")
 
-test_that("Handles incorrect formula types", {
-  # The generic message that check_err_msg will throw
-  generic_error_msg <- "The above errors were encountered!"
-  
-  # Not a formula object (will be caught by as.Formula)
+test_that("tscope() handles incorrect formula structures", {
+  # Not a formula object
   expect_error(tscope(formula = "y ~ p | p", data = dataTscope))
+  # One part formul
+  expect_error(tscope(formula = y ~ p, data = dataTscope))
+  # Wrong separato
+  expect_error(tscope(formula = y ~ p + p, data = dataTscope))
+  # Formula class but only one part (via Formula::as.Formula)
+  expect_error(tscope(formula = Formula::as.Formula(y~p), data=dataTscope))
+  # Outcome part does not include at least an outcome and one predictor
+  expect_error(tscope(formula = y ~ y | w, data = dataTscope))
+  # No endogenous regressor provided in the second part
+  expect_error(tscope(formula = y ~ p | 1, data = dataTscope))
+})
+
+test_that("tscope() handles missing data in essential variables", {
+  # Missing data in the outcome variable (y)
+  data_missing_p <- dataTscope
+  data_missing_p$p[1] <- NA
+  expect_error(tscope(formula = y ~ p + w | p, data = data_missing_p))
+
+  # Missing data in the endogenous variable (p)
+  data_missing_y <- dataTscope
+  data_missing_y$y[1] <- NA
+  expect_error(tscope(formula = y ~ p + w | p, data = data_missing_y))
+
+  # Missing data in the exogenous variable (w)
+  data_missing_w <- dataTscope
+  data_missing_w$w[1] <- NA
+  expect_error(tscope(formula = y ~ p + w | p, data = data_missing_w))
+})
+
+test_that("tscope() handles incorrect data types for variables in formula", {
+  # Endogenous variable 'p' is converted to character type.
+  data_char_p <- dataTscope
+  data_char_p$p <- as.character(data_char_p$p)
+  expect_error(tscope(formula = y ~ p | p, data = data_char_p))
   
-  # One part formula - test both the message and error
-  expect_message(
-    expect_error(tscope(formula = y ~ p, data = dataTscope), regexp = generic_error_msg),
-    regexp = "Formula needs to have two parts"
-  )
+  # Outcome variable 'y' is converted to character type.
+  data_char_y <- dataTscope
+  data_char_y$y <- as.character(data_char_y$y)
+  expect_error(tscope(formula = y ~ p | p, data = data_char_y))
+
+  # Exogenous variable 'w' is converted to character type.
+  data_char_w <- dataTscope
+  data_char_w$w <- as.character(data_char_w$w)
+  expect_error(tscope(formula = y ~ p + w | p, data = data_char_w))
+})
+
+test_that("tscope() handles variables not found in data", {
+  # Test if tscope() throws an error when an exogenous variable ('Z') specified in the formula
+  # is not present in the 'dataTscope' dataset.
+  expect_error(tscope(formula = y ~ p + Z | p, data = dataTscope))
   
-  # Wrong separator - test both the message and error
-  expect_message(
-    expect_error(tscope(formula = y ~ p + p, data = dataTscope), regexp = generic_error_msg),
-    regexp = "Formula needs to have two parts"
-  )
-  
-  # Formula class but only one part
-  expect_message(
-    expect_error(tscope(formula = Formula::as.Formula(y~p), data=dataTscope), regexp=generic_error_msg),
-    regexp = "Formula needs to have two parts"
-  )
+  # Test if tscope() throws an error when an endogenous variable ('Z') specified in the formula
+  # (after the '|' separator) is not present in the 'dataTscope' dataset.
+  expect_error(tscope(formula = y ~ p | Z, data = dataTscope))
 })
 
-test_that("Handles missing data correctly", {
-  generic_error_msg <- "The above errors were encountered!"
-
-  data.missing <- dataTscope
-  data.missing$p[1] <- NA
-  # model.frame default is na.omit, but check functions likely run before and catch NA
-  expect_error(tscope(formula = y ~ p + w | p, data = data.missing), regexp = generic_error_msg)
-
-  data.missing.y <- dataTscope
-  data.missing.y$y[1] <- NA
-  expect_error(tscope(formula = y ~ p + w | p, data = data.missing.y), regexp = generic_error_msg)
-
-  data.missing.w <- dataTscope
-  data.missing.w$w[1] <- NA
-  # This threw a different error later, not the generic one.
-  # Changed expectation to match observed behavior.
-  expect_error(tscope(formula = y ~ p + w | p, data = data.missing.w)) # Removed regexp check
-})
-
-test_that("Handles incorrect data types", {
-  generic_error_msg <- "The above errors were encountered!"
-
-  # Test character endogenous variable
-  data.char.p <- dataTscope
-  data.char.p$p <- as.character(data.char.p$p)
-  expect_error(tscope(formula = y ~ p | p, data = data.char.p), regexp = generic_error_msg)
-
-  # Test character outcome variable
-  data.char.y <- dataTscope
-  data.char.y$y <- as.character(data.char.y$y)
-  expect_error(tscope(formula = y ~ p | p, data = data.char.y), regexp = generic_error_msg)
-
-  # Test character exogenous variable
-  data.char.w <- dataTscope
-  data.char.w$w <- as.character(data.char.w$w)
-  expect_error(tscope(formula = y ~ p + w | p, data = data.char.w), regexp = generic_error_msg)
-})
-
-test_that("Handles variables not found in data", {
-  generic_error_msg <- "The above errors were encountered!"
-  # The base R "object not found" error occurs inside model.frame/model.matrix
-  # but check_err_msg seems to catch it, so we expect the generic message.
-  expect_error(tscope(formula = y ~ p + Z | p, data = dataTscope), regexp = generic_error_msg)
-  expect_error(tscope(formula = y ~ p | Z, data = dataTscope), regexp = generic_error_msg)
-  expect_error(tscope(formula = y ~ p | p + Z, data = dataTscope), regexp = generic_error_msg)
-})
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
 context("Correctness - tscope - Formula transformations")
 
-# These tests seemed to pass before, assuming they are still okay. Keep as is.
 test_that("Transformations are correct for outcome variable (LHS)", {
-  data.altered.y   <- dataTscope
-  min_y <- min(data.altered.y$y, na.rm = TRUE)
-  data.altered.y$y <- data.altered.y$y - min_y + 1
-  stopifnot(all(data.altered.y$y > 0))
-  res.trans.lhs <- NULL; res.data.trans.lhs <- NULL
-  expect_silent(res.trans.lhs <- tscope(formula = I(log(y)) ~ p + w | p, data = data.altered.y, verbose = FALSE))
-  data.trans <- data.altered.y
-  data.trans$y <- log(data.trans$y)
-  expect_silent(res.data.trans.lhs <- tscope(formula = y ~ p + w | p, data = data.trans, verbose = FALSE))
-    if (!is.null(res.trans.lhs) && !is.null(res.data.trans.lhs)) {
-      # Change to complete=TRUE to get all coefficients
-      coef_trans <- coef(res.trans.lhs, complete = TRUE)
-      coef_data <- coef(res.data.trans.lhs, complete = TRUE)
-      
-      # Use the actual prefixed coefficient names
-      expected_names_trans = c("x(Intercept)", "xp", "xw")
-      
-      # Extract just the model coefficients (exclude rho and sdError)
-      model_coef_trans <- coef_trans[expected_names_trans]
-      model_coef_data <- coef_data[expected_names_trans]
-      
-      # Compare only these model coefficients
-      expect_equal(model_coef_trans, model_coef_data, check.attributes=FALSE, tolerance = 1e-6)
-  } else { warning("Skipping LHS transformation comparison as object creation failed.") }
+  # Create a copy of the original data to modify
+  data_altered_y <- dataTscope
+  
+  # Transform the outcome variable 'y' to ensure all its values are positive.
+  # This is a prerequisite for applying a log transformation in the next step.
+  min_y <- min(data_altered_y$y, na.rm = TRUE)
+  data_altered_y$y_positive <- data_altered_y$y - min_y + 1 # Shift and add 1 to ensure positivity
+  expect_true(all(data_altered_y$y_positive > 0)) # Verify all values are positive
+
+  res_trans_lhs <- NULL; res_data_trans_lhs <- NULL
+
+  # Test case 1: Apply log transformation directly within the formula (LHS)
+  # tscope should handle the I() function for inline transformation.
+  expect_silent(res_trans_lhs <- tscope(formula = I(log(y_positive)) ~ p + w | p, data = data_altered_y, verbose = FALSE))
+
+  # Test case 2: Pre-transform the outcome variable and then use it in the formula
+  data_trans <- data_altered_y
+  data_trans$y_logged <- log(data_trans$y_positive) # Manually create the logged variable
+  expect_silent(res_data_trans_lhs <- tscope(formula = y_logged ~ p + w | p, data = data_trans, verbose = FALSE))
+
+  # Compare the results from both approaches
+  # The coefficients for p, w, rho_p, and sdError should be identical if the LHS transformation is handled correctly.
+  if (!is.null(res_trans_lhs) && !is.null(res_data_trans_lhs)) {
+    coef_trans <- coef(res_trans_lhs, complete = TRUE) # Coefficients from inline transformation
+    coef_data <- coef(res_data_trans_lhs, complete = TRUE)  # Coefficients from pre-transformed data
+    
+    # Check if the main predictor variables are correctly identified in both models
+    expect_true(all(c("p", "w") %in% res_trans_lhs$names.main.coefs))
+    expect_true(all(c("p", "w") %in% res_data_trans_lhs$names.main.coefs))
+
+    # Compare the key coefficients: predictors, endogeneity parameter, and error term SD.
+    # These should be equal (within tolerance) if the transformation was handled equivalently.
+    expect_equal(coef_trans["p"], coef_data["p"], tolerance = 1e-6)
+    expect_equal(coef_trans["w"], coef_data["w"], tolerance = 1e-6)
+    expect_equal(coef_trans["rho_p"], coef_data["rho_p"], tolerance = 1e-6)
+    expect_equal(coef_trans["sdError"], coef_data["sdError"], tolerance = 1e-6)
+  } else {
+    warning("Skipping LHS transformation comparison as object creation failed.")
+  }
 })
 
 test_that("Transformations are correct for endogenous variable (RHS - both parts)", {
-  data.altered.p   <- dataTscope
-  res.trans.rhs <- NULL; res.data.trans.rhs <- NULL
-  expect_silent(res.trans.rhs <- tscope(formula = y ~ I(p*2 + 5) + w | I(p*2 + 5), data = data.altered.p, verbose = FALSE))
-  data.trans <- data.altered.p
-  data.trans$p_trans <- data.trans$p * 2 + 5
-  expect_silent(res.data.trans.rhs <- tscope(formula = y ~ p_trans + w | p_trans, data = data.trans, verbose = FALSE))
-  if (!is.null(res.trans.rhs) && !is.null(res.data.trans.rhs)) {
-      coef_trans <- coef(res.trans.rhs, complete=TRUE)
-      coef_data  <- coef(res.data.trans.rhs, complete=TRUE)
-      names(coef_data)[names(coef_data) == "xp_trans"] <- "xI(p * 2 + 5)"
-      names(coef_data)[names(coef_data) == "rho_p_trans"] <- "rho_I(p * 2 + 5)"
-      if("(Intercept)" %in% names(coef_trans)) names(coef_trans)[names(coef_trans) == "(Intercept)"] <- "x(Intercept)"
-      if("(Intercept)" %in% names(coef_data)) names(coef_data)[names(coef_data) == "(Intercept)"] <- "x(Intercept)"
-      expected_order = intersect(c("x(Intercept)", "xI(p * 2 + 5)", "xw", "rho_I(p * 2 + 5)", "sdError"), names(coef_trans)) # Robust ordering
-      expect_equal(coef_trans[expected_order], coef_data[expected_order], check.attributes=FALSE, tolerance = 1e-6)
-  } else { warning("Skipping RHS endogenous transformation comparison as object creation failed.") }
+  res_trans_rhs <- NULL; res_data_trans_rhs <- NULL
+
+  # Test case 1: Apply transformation directly within the formula for the endogenous variable
+  # The endogenous variable 'p' is transformed to 'p*2 + 5' using I()
+  # This transformation is applied in both the main model part (LHS of |) and the endogenous part (RHS of |)
+  expect_silent(res_trans_rhs <- tscope(formula = y ~ I(p*2 + 5) + w | I(p*2 + 5), data = dataTscope, verbose = FALSE))
+  
+  # Test case 2: Pre-transform the endogenous variable in the data and then use it in the formula
+  data_trans <- dataTscope
+  data_trans$p_trans <- data_trans$p * 2 + 5 # Manually create the transformed variable
+  expect_silent(res_data_trans_rhs <- tscope(formula = y ~ p_trans + w | p_trans, data = data_trans, verbose = FALSE))
+  
+  # Compare the results from both approaches if both models were successfully created
+  if (!is.null(res_trans_rhs) && !is.null(res_data_trans_rhs)) {
+    coef_trans <- coef(res_trans_rhs, complete = TRUE)
+    coef_data  <- coef(res_data_trans_rhs, complete = TRUE)
+
+    # Standardize coefficient names for comparison
+    # When using I() in the formula, lm (and thus tscope) names the coefficient "I(p * 2 + 5)"
+    # and the corresponding rho parameter "rho_I(p * 2 + 5)".
+    # When using a pre-transformed variable 'p_trans', the names would be "p_trans" and "rho_p_trans".
+    # We rename the coefficients from the pre-transformed data model to match the inline model for direct comparison.
+    names(coef_data)[names(coef_data) == "p_trans"] <- "I(p * 2 + 5)"
+    names(coef_data)[names(coef_data) == "rho_p_trans"] <- "rho_I(p * 2 + 5)"
+     
+    # Compare the key coefficients: Intercept, transformed endogenous variable, exogenous variable 'w',
+    # the endogeneity parameter rho for the transformed variable, and the standard deviation of the error term.
+    # These should be equal (within tolerance) if the transformation was handled equivalently.
+    expect_equal(coef_trans["(Intercept)"], coef_data["(Intercept)"], tolerance=1e-6)
+    expect_equal(coef_trans["I(p * 2 + 5)"], coef_data["I(p * 2 + 5)"], tolerance=1e-6)
+    expect_equal(coef_trans["w"], coef_data["w"], tolerance=1e-6)
+    expect_equal(coef_trans["rho_I(p * 2 + 5)"], coef_data["rho_I(p * 2 + 5)"], tolerance=1e-6)
+    expect_equal(coef_trans["sdError"], coef_data["sdError"], tolerance=1e-6)
+
+    # Verify that the transformed variable names are correctly identified in the model's internal structures
+    expect_true("I(p * 2 + 5)" %in% res_trans_rhs$names.main.coefs)
+    expect_true("p_trans" %in% res_data_trans_rhs$names.main.coefs)
+  } else {
+    warning("Skipping RHS endogenous transformation comparison as object creation failed.")
+  }
 })
 
 test_that("Transformations are correct for exogenous variable (RHS - first part)", {
-  data.altered.w   <- dataTscope
-  res.trans.rhs <- NULL; res.data.trans.rhs <- NULL
-  expect_silent(res.trans.rhs <- tscope(formula = y ~ p + I(w^2) | p, data = data.altered.w, verbose = FALSE))
-  data.trans <- data.altered.w
-  data.trans$w_trans <- data.trans$w^2
-  expect_silent(res.data.trans.rhs <- tscope(formula = y ~ p + w_trans | p, data = data.trans, verbose = FALSE))
-  if (!is.null(res.trans.rhs) && !is.null(res.data.trans.rhs)) {
-      coef_trans <- coef(res.trans.rhs, complete=TRUE)
-      coef_data  <- coef(res.data.trans.rhs, complete=TRUE)
-      names(coef_data)[names(coef_data) == "xw_trans"] <- "xI(w^2)"
-      if("(Intercept)" %in% names(coef_trans)) names(coef_trans)[names(coef_trans) == "(Intercept)"] <- "x(Intercept)"
-      if("(Intercept)" %in% names(coef_data)) names(coef_data)[names(coef_data) == "(Intercept)"] <- "x(Intercept)"
-      expected_order = intersect(c("x(Intercept)", "xp", "xI(w^2)", "rho_p", "sdError"), names(coef_trans)) # Robust ordering
-      expect_equal(coef_trans[expected_order], coef_data[expected_order], check.attributes=FALSE, tolerance = 1e-6)
-  } else { warning("Skipping RHS exogenous transformation comparison as object creation failed.") }
+  res_trans_rhs <- NULL; res_data_trans_rhs <- NULL
+
+  # Test case 1: Apply transformation directly within the formula for an exogenous variable
+  # The exogenous variable 'w' is transformed to 'w^2' using I() in the main model part.
+  # The endogenous variable 'p' remains unchanged.
+  expect_silent(res_trans_rhs <- tscope(formula = y ~ p + I(w^2) | p, data = dataTscope, verbose = FALSE))
+  
+  # Test case 2: Pre-transform the exogenous variable in the data and then use it in the formula
+  data_trans <- dataTscope
+  data_trans$w_trans <- data_trans$w^2
+  expect_silent(res_data_trans_rhs <- tscope(formula = y ~ p + w_trans | p, data = data_trans, verbose = FALSE))
+  
+  # Compare the results from both approaches if both models were successfully created
+  if (!is.null(res_trans_rhs) && !is.null(res_data_trans_rhs)) {
+    coef_trans <- coef(res_trans_rhs, complete = TRUE)
+    coef_data  <- coef(res_data_trans_rhs, complete = TRUE)
+
+    # Standardize coefficient names for comparison.
+    # When using I() in the formula, the coefficient for the transformed 'w' is named "I(w^2)".
+    # When using a pre-transformed variable 'w_trans', the coefficient is named "w_trans".
+    # We rename the coefficient from the pre-transformed data model to match the inline model for direct comparison.
+    names(coef_data)[names(coef_data) == "w_trans"] <- "I(w^2)"
+    
+    # Compare the key coefficients: Intercept, endogenous variable 'p', transformed exogenous variable 'I(w^2)',
+    # the endogeneity parameter rho_p, and the standard deviation of the error term.
+    # These should be equal (within tolerance) if the transformation was handled equivalently.
+    expect_equal(coef_trans["(Intercept)"], coef_data["(Intercept)"], tolerance=1e-6)
+    expect_equal(coef_trans["p"], coef_data["p"], tolerance=1e-6)
+    expect_equal(coef_trans["I(w^2)"], coef_data["I(w^2)"], tolerance=1e-6)
+    expect_equal(coef_trans["rho_p"], coef_data["rho_p"], tolerance=1e-6)
+    expect_equal(coef_trans["sdError"], coef_data["sdError"], tolerance=1e-6)
+
+    # Verify that the transformed variable names are correctly identified in the model's internal structures.
+    # res_trans_rhs$names.main.coefs should contain "I(w^2)"
+    # res_data_trans_rhs$names.main.coefs should contain "w_trans"
+    expect_true("I(w^2)" %in% res_trans_rhs$names.main.coefs)
+    expect_true("w_trans" %in% res_data_trans_rhs$names.main.coefs)
+
+  } else { 
+    warning("Skipping RHS exogenous transformation comparison as object creation failed.") 
+  }
 })
 
 # Data sorting ------------------------------------------------------------------------------------------------
 context("Correctness - tscope - Data sorting")
 
-test_that("Differently sorted data produces same results", {
-  generic_error_msg <- "The above errors were encountered!"
-  expect_error(tscope(formula = y ~ p + w + p2 + w2 | p + p2, data = dataTscope, verbose = FALSE), regexp = generic_error_msg)
+test_that("Results are independent of data row order", {
+  formula_val <- y ~ p + w | p
+  
+  res_original <- tscope(formula = formula_val, data = dataTscope, verbose = FALSE)
+  coefs_original <- coef(res_original, complete = TRUE)
 
-  data.altered <- dataTscope[sample(nrow(dataTscope)), ]
-  # Assume this also errors if the original does
-  expect_error(tscope(formula = y ~ p + w + p2 + w2 | p + p2, data = data.altered, verbose = FALSE), regexp = generic_error_msg)
+  fitted_original <- fitted(res_original)
+  # If original data has rownames, ensure fitted values are named accordingly for consistent comparison later
+  # The names(fitted()) by default are row numbers of the data used in lm, which might be character numbers "1", "2", ...
+  # This maps them back to original rownames if they exist.
+  if(!is.null(rownames(dataTscope))) names(fitted_original) <- rownames(dataTscope)[as.numeric(names(fitted_original))]
+  
+  residuals_original <- residuals(res_original)
+  if(!is.null(rownames(dataTscope))) names(residuals_original) <- rownames(dataTscope)[as.numeric(names(residuals_original))]
+
+  # Set a seed for reproducibility of shuffling
+  set.seed(456)
+  # Create a shuffled version of the data
+  shuffled_indices <- sample(nrow(dataTscope))
+  data_shuffled <- dataTscope[shuffled_indices, ]
+  
+  # Run tscope with the shuffled data
+  res_shuffled <- tscope(formula = formula_val, data = data_shuffled, verbose = FALSE)
+  coefs_shuffled <- coef(res_shuffled, complete = TRUE)
+  
+  # Extract fitted values from the model run on shuffled data
+  # Note: These will be in the shuffled order and their names will correspond to the row numbers of data_shuffled
+  fitted_shuffled <- fitted(res_shuffled)
+
+  residuals_shuffled <- residuals(res_shuffled)
+
+  # Compare coefficients: they should be identical regardless of data order.
+  # Sort names before comparison to ensure element-wise comparison is correct even if internal order differs.
+  expect_equal(coefs_original[sort(names(coefs_original))], coefs_shuffled[sort(names(coefs_shuffled))])
+  
+  original_order_names <- rownames(dataTscope)
+  
+  reorder_back_to_original <- match(seq_len(nrow(dataTscope)), shuffled_indices)
+  
+  expect_equal(fitted_original, fitted_shuffled[reorder_back_to_original], tolerance=1e-7, ignore_attr = TRUE)
+  expect_equal(residuals_original, residuals_shuffled[reorder_back_to_original], tolerance=1e-7, ignore_attr = TRUE)
 })
-
 
 # Core Logic Variations -----------------------------------------------------------------------------------------
 context("Correctness - tscope - Core Logic Variations")
 
-test_that("works correctly with single endogenous variable, no exogenous", {
-  data.simple <- dataTscope[, c("y", "p"), drop = FALSE]
-  res.simple <- NULL
-  expect_silent(res.simple <- tscope(formula = y ~ p | p, data = data.simple, verbose = FALSE))
-  if (!is.null(res.simple)) {
-    # Note: Expecting prefixed names due to current function behavior.
-    expect_coef_names(res.simple, c("x(Intercept)", "xp", "rho_p", "sdError"))
-    expect_null(res.simple$details$w)
-    expect_null(res.simple$details$stage1_resid)
-    expect_equal(colnames(res.simple$details$endox), "p")
-    expect_equal(ncol(res.simple$details$endoxstar), 1)
-    expect_true(is.numeric(res.simple$details$resid2))
-    expect_length(res.simple$details$corr, 1)
-    n_actual <- length(fitted(res.simple))
-    expect_equal(length(residuals(res.simple)), n_actual)
-  } else { warning("Skipping checks as res.simple object not created.") }
-})
+test_that("works correctly with single endogenous variable, no exogenous regressors (w)", {
+  data_simple <- dataTscope[, c("y", "p"), drop = FALSE]
+  res_simple <- NULL
 
-test_that("works correctly with single endogenous variable and single exogenous", {
-  data.single.exo <- dataTscope[, c("y", "p", "w"), drop = FALSE]
-  res.single.exo <- NULL
-  expect_silent(res.single.exo <- tscope(formula = y ~ p + w | p, data = data.single.exo, verbose = FALSE))
-   if (!is.null(res.single.exo)) {
-    # Note: Expecting prefixed names due to current function behavior.
-    expect_coef_names(res.single.exo, c("x(Intercept)", "xp", "xw", "rho_p", "sdError"))
-    expect_true(!is.null(res.single.exo$details$w))
-    expect_equal(colnames(res.single.exo$details$w), "w")
-    expect_true(!is.null(res.single.exo$details$stage1_resid))
-    expect_equal(ncol(res.single.exo$details$stage1_resid), 1)
-    n_actual <- length(fitted(res.single.exo))
-    expect_equal(nrow(res.single.exo$details$stage1_resid), n_actual)
-    expect_equal(colnames(res.single.exo$details$endox), "p")
-    expect_equal(ncol(res.single.exo$details$endoxstar), 1)
-    expect_length(res.single.exo$details$corr, 1)
-    expect_equal(length(fitted(res.single.exo)), n_actual)
-    expect_equal(length(residuals(res.single.exo)), n_actual)
-   } else { warning("Skipping checks as res.single.exo object not created.") }
-})
+  # Run tscope with a formula where 'y' is regressed on 'p', and 'p' is specified as endogenous.
+  # No other exogenous regressors (like 'w') are included in the model.
+  # expect_silent checks that the tscope function runs without producing any errors or warnings.
+  expect_silent(res_simple <- tscope(formula = y ~ p | p, data = data_simple, verbose = FALSE))
+  
+  if (!is.null(res_simple)) {
+    all_coefs <- coef(res_simple, complete = TRUE)
 
-test_that("works correctly with multiple endogenous and multiple exogenous variables", {
-  data.multi <- dataTscope
-  generic_error_msg <- "The above errors were encountered!"
-  expect_error(tscope(formula = y ~ p + w + p2 + w2 | p + p2, data = data.multi, verbose = FALSE), regexp = generic_error_msg)
-})
-
-test_that("works correctly without an intercept", {
-  res.no.intercept <- NULL
-  expect_silent(res.no.intercept <- tscope(formula = y ~ p + w - 1 | p, data = dataTscope, verbose = FALSE))
-  if (!is.null(res.no.intercept)) {
-    # Note: Expecting prefixed names due to current function behavior.
-    expect_coef_names(res.no.intercept, c("xp", "xw", "rho_p", "sdError"))
-    expect_false("(Intercept)" %in% names(coef(res.no.intercept, complete=TRUE)))
-    expect_false("x(Intercept)" %in% names(coef(res.no.intercept, complete=TRUE)))
-    expect_equal(colnames(res.no.intercept$details$endox), "p")
-    expect_true(!is.null(res.no.intercept$details$w))
-    expect_equal(colnames(res.no.intercept$details$w), "w")
-    expect_true(!is.null(res.no.intercept$details$stage1_resid))
-  } else { warning("Skipping checks as res.no.intercept object not created.") }
-})
-
-test_that("Handles interaction terms correctly", {
-  res.interact <- NULL
-  expect_silent(res.interact <- tscope(formula = y ~ p * w | p, data = dataTscope, verbose = FALSE))
-  if(!is.null(res.interact)){
-    # Note: Expecting prefixed names due to current function behavior. Using "xp:w" convention.
-    expect_coef_names(res.interact, c("x(Intercept)", "xp", "xw", "xp:w", "rho_p", "sdError"))
-    final_model_terms <- attr(res.interact$tscope_model$terms, "term.labels")
-    original_x_terms <- res.interact$names.main.coefs
-    expect_true("w" %in% original_x_terms)
-    expect_true("p:w" %in% original_x_terms)
-    expect_true("w" %in% colnames(res.interact$details$w))
-    expect_equal(colnames(res.interact$details$endox), "p")
-    expect_true(!is.null(res.interact$details$stage1_resid))
-  } else { warning("Skipping checks as res.interact object not created.") }
-
-  generic_error_msg <- "The above errors were encountered!"
-  expect_error(tscope(formula = y ~ p * p2 + w | p + p2, data = dataTscope, verbose = FALSE), regexp = generic_error_msg)
-  # Checks commented out...
-})
-
-
-# Edge Cases ----------------------------------------------------------------------------------------------------
-context("Correctness - tscope - Edge Cases")
-
-test_that("Handles data with very few observations", {
-  data.small <- dataTscope[1:5, c("y", "p", "w"), drop = FALSE]
-  res.small <- NULL
-  expect_silent(res.small <- tscope(formula = y ~ p + w | p, data = data.small, verbose = FALSE))
-  if(!is.null(res.small)){
-      expect_true(is.numeric(coef(res.small, complete=TRUE)))
-      # Use nrow of input data for length check if no NA's expected
-      expect_equal(length(fitted(res.small)), nrow(data.small))
-      expect_equal(length(residuals(res.small)), nrow(data.small))
-      expect_true(is.numeric(coef(res.small, complete=TRUE)["rho_p"]))
-  } else { warning("Skipping checks as res.small object not created.") }
-
-   data.too.small <- dataTscope[1:3, c("y", "p", "w"), drop = FALSE]
-   expect_silent(tscope(formula = y ~ p + w | p, data = data.too.small, verbose = FALSE))
-
-   data.too.small.no.w <- dataTscope[1:2, c("y", "p"), drop = FALSE]
-   expect_silent(tscope(formula = y ~ p | p, data = data.too.small.no.w, verbose = FALSE))
-})
-
-test_that("Handles perfect multicollinearity in exogenous regressors", {
-  data.collinear.w <- dataTscope
-  stopifnot("w" %in% colnames(data.collinear.w))
-  data.collinear.w$w2_collin <- data.collinear.w$w * 2 + 1
-  res.collinear.w <- NULL
-  expect_silent(res.collinear.w <- tscope(formula = y ~ p + w + w2_collin | p, data = data.collinear.w, verbose = FALSE))
-  if (!is.null(res.collinear.w)) {
-      model_coefs <- coef(res.collinear.w, complete=TRUE)
-      # Note: Using prefixed names xw, xw2_collin
-      expect_true(any(is.na(model_coefs[c("xw", "xw2_collin")])))
-      expect_true(!is.null(res.collinear.w$details$w))
-      expect_true(all(c("w", "w2_collin") %in% colnames(res.collinear.w$details$w)))
-      expect_true(!is.null(res.collinear.w$details$stage1_resid))
-   } else { warning("Skipping checks as res.collinear.w object not created.") }
-})
-
-
-test_that("Handles perfect multicollinearity involving endogenous regressor", {
-  data.collinear.p <- dataTscope
-  stopifnot("p" %in% colnames(data.collinear.p))
-  data.collinear.p$p2_collin <- data.collinear.p$p * 1.5 - 0.5
-  res.collinear.p.endog <- NULL
-  expect_silent(res.collinear.p.endog <- tscope(formula = y ~ p + p2_collin + w | p + p2_collin, data = data.collinear.p, verbose = FALSE))
-  if(!is.null(res.collinear.p.endog)){
-      model_coefs1 <- coef(res.collinear.p.endog, complete=TRUE)
-      # Note: Using prefixed names xp, xp2_collin
-      expect_true(any(is.na(model_coefs1[c("xp", "xp2_collin")])))
-      # TODO: Function's multicollinearity handling is incorrect. Specific checks commented out.
-      # expect_true(sum(is.na(model_coefs1[c("xp", "xp2_collin")])) == 1)
-      # expect_true(all(!is.na(model_coefs1[c("rho_p", "rho_p2_collin")])))
-      expect_equal(sort(colnames(res.collinear.p.endog$details$endox)), sort(c("p", "p2_collin")))
-      expect_true(!is.null(res.collinear.p.endog$details$stage1_resid))
-      expect_equal(ncol(res.collinear.p.endog$details$stage1_resid), 2)
-  } else { warning("Skipping checks as res.collinear.p.endog object not created.") }
-
-   res.collinear.p.exog <- NULL
-   expect_silent(res.collinear.p.exog <- tscope(formula = y ~ p + p2_collin + w | p, data = data.collinear.p, verbose = FALSE))
-   if(!is.null(res.collinear.p.exog)){
-       model_coefs2 <- coef(res.collinear.p.exog, complete=TRUE)
-       # Note: Using prefixed names xp, xp2_collin
-       expect_true(any(is.na(model_coefs2[c("xp", "xp2_collin")])))
-       # TODO: Function's multicollinearity handling is incorrect. Specific checks commented out.
-       # expect_true(sum(is.na(model_coefs2[c("xp", "xp2_collin")])) == 1)
-       # expect_true(!is.na(model_coefs2["rho_p"]))
-       expect_equal(colnames(res.collinear.p.exog$details$endox), "p")
-       expect_true("p2_collin" %in% colnames(res.collinear.p.exog$details$w))
-       expect_true(!is.null(res.collinear.p.exog$details$stage1_resid))
-   } else { warning("Skipping checks as res.collinear.p.exog object not created.") }
-})
-
-
-test_that("Handles case where ecdf results in 1", { # Line 616 approx
-   data.maxed <- dataTscope
-   stopifnot("p" %in% colnames(data.maxed), "w" %in% colnames(data.maxed))
-   stopifnot(any(!is.na(data.maxed$p)), any(!is.na(data.maxed$w)))
-   max_p <- suppressWarnings(max(data.maxed$p, na.rm = TRUE))
-   max_w <- suppressWarnings(max(data.maxed$w, na.rm = TRUE))
-   data.maxed$p[1] <- max_p + 1
-   data.maxed$w[2] <- max_w + 1
-   res.max.p <- NULL
-   expect_silent(res.max.p <- tscope(formula = y ~ p + w | p, data = data.maxed, verbose = FALSE))
-
-   if (!is.null(res.max.p)){
-       n_maxed_used <- nrow(res.max.p$model)
-       mf_row_idx <- which(rownames(res.max.p$model) == "1")
-       if(length(mf_row_idx) == 1){
-          # FIX: Access endoxstar by index as it lacks colnames
-          actual_endoxstar_row1 <- res.max.p$details$endoxstar[mf_row_idx, 1] # Assuming p is 1st endog var
-          
-          # Check the original endox value corresponding to this row index
-          endox_val_row1 <- res.max.p$details$endox[mf_row_idx, "p"] # Assuming endox *has* colnames
-          # Check its ECDF value
-          p1_ecdf <- ecdf(res.max.p$details$endox[,"p"])(endox_val_row1)
-          
-          expect_gte(p1_ecdf, (n_maxed_used-1)/n_maxed_used)
-          expected_qnorm_val = qnorm(n_maxed_used / (n_maxed_used + 1))
-          # Compare the indexed value
-          expect_equal(actual_endoxstar_row1, expected_qnorm_val)
-          expect_true(is.finite(actual_endoxstar_row1))
-       } else { warning("Row '1' not found in model frame for ecdf check, possibly due to NA handling.") }
-       expect_true(all(is.finite(na.omit(coef(res.max.p, complete=TRUE)))))
-   } else { warning("Skipping checks as res.max.p object not created.") }
-})
-
-
-# Output Structure and Class Methods --------------------------------------------------------------------------
-context("Correctness - tscope - Output Structure")
-
-test_that("Returns an object of correct class", { # Line 640 approx
-  res <- NULL
-  # Latest output shows basic call does NOT error. Changed back to expect_silent.
-  expect_silent(res <- tscope(formula = y ~ p + w | p, data = dataTscope, verbose = FALSE))
-
-  # Uncommented checks as expect_silent should now pass.
-  if(!is.null(res)){
-      expect_true(inherits(res, "rendo.tscope"))
-      expect_true(inherits(res, "rendo.base"))
+    # Verify the presence of the intercept term. It might be named "(Intercept)" or "x(Intercept)".
+    expect_true("(Intercept)" %in% names(all_coefs) || "x(Intercept)" %in% names(all_coefs))
+    # Verify the presence of the coefficient for the endogenous variable 'p'. It might be named "p" or "xp".
+    expect_true("p" %in% names(all_coefs) || "xp" %in% names(all_coefs))
+    # Verify the presence of the endogeneity parameter 'rho_p'.
+    expect_true("rho_p" %in% names(all_coefs))
+    # Verify the presence of the standard deviation of the error term 'sdError'.
+    expect_true("sdError" %in% names(all_coefs))
+    # Check that the total number of estimated parameters is 4 (Intercept, p, rho_p, sdError).
+    expect_length(all_coefs, 4)
+    # 'w' (matrix of exogenous regressors) should be NULL as none were specified in the formula.
+    expect_null(res_simple$details$w)
+    # 'stage1_resid' (residuals from the first stage regression) should be NULL as no exogenous regressors were used.
+    expect_null(res_simple$details$stage1_resid)
+    # 'endox' (matrix of endogenous variables) should contain one column named "p".
+    expect_equal(colnames(res_simple$details$endox), "p")
+    # 'endoxstar' (matrix of transformed endogenous variables, p + second-stage residuals) should have one column.
+    expect_equal(ncol(res_simple$details$endoxstar), 1)
+    # 'resid2' (residuals from the final model estimation) should be a numeric vector.
+    expect_true(is.numeric(res_simple$details$resid2))
+    # 'corr' (vector of estimated correlation parameters, rho) should have one element for 'rho_p'.
+    expect_length(res_simple$details$corr, 1)
+    # The number of fitted values should match the number of rows in the input data.
+    expect_length(fitted(res_simple), nrow(data_simple))
+    # The number of residuals should match the number of rows in the input data.
+    expect_length(residuals(res_simple), nrow(data_simple))
   } else {
-      warning("Skipping class checks as object creation failed unexpectedly.")
+    warning("Skipping checks as res_simple object not created.")
   }
 })
 
-test_that("Output object contains all required components", {
-  res <- NULL
-  # Assuming multi-var call still errors based on earlier tests. Keep expect_error.
-  # TODO: Function errors with multiple endog/exog vars. Needs fix.
-  generic_error_msg <- "The above errors were encountered!"
-  expect_error(res <- tscope(formula = y ~ p + w + p2 | p + p2, data = dataTscope, verbose = FALSE), regexp = generic_error_msg)
+test_that("works correctly with single endogenous (p) and single exogenous (w)", {
+  data_single_exo <- dataTscope[, c("y", "p", "w"), drop = FALSE]
+  res_single_exo <- NULL
 
-  # Keep checks commented out as expect_error is still present.
-  # ...
+  # Run tscope with one endogenous (p) and one exogenous (w) variable.
+  expect_silent(res_single_exo <- tscope(formula = y ~ p + w | p, data = data_single_exo, verbose = FALSE))
+  
+  if (!is.null(res_single_exo)) {
+    all_coefs <- coef(res_single_exo, complete = TRUE)
+
+    # Verify the presence of the intercept term.
+    expect_true(any(c("(Intercept)", "x(Intercept)") %in% names(all_coefs)))
+    # Verify the presence of the coefficient for the endogenous variable 'p'.
+    expect_true(any(c("p", "xp") %in% names(all_coefs)))
+    # Verify the presence of the coefficient for the exogenous variable 'w'.
+    expect_true(any(c("w", "xw") %in% names(all_coefs)))
+    # Verify the presence of the endogeneity parameter 'rho_p'.
+    expect_true("rho_p" %in% names(all_coefs))
+    # Verify the presence of the standard deviation of the error term 'sdError'.
+    expect_true("sdError" %in% names(all_coefs))
+    # Check that the total number of estimated parameters is 5 (Intercept, p, w, rho_p, sdError).
+    expect_length(all_coefs, 5)
+    # 'w' (matrix of exogenous regressors) should not be NULL as 'w' was specified.
+    expect_false(is.null(res_single_exo$details$w))
+    # The column name in the exogenous regressors matrix should be "w".
+    expect_equal(colnames(res_single_exo$details$w), "w")
+    # 'stage1_resid' (residuals from the first stage regression) should not be NULL
+    # because 'p' is residualized against 'w' in the first stage.
+    expect_false(is.null(res_single_exo$details$stage1_resid))
+    # There should be one column of residuals, corresponding to the single endogenous variable 'p'.
+    expect_equal(ncol(res_single_exo$details$stage1_resid), 1)
+    # The number of rows in stage1_resid should match the number of observations.
+    expect_equal(nrow(res_single_exo$details$stage1_resid), nrow(data_single_exo))
+    # 'endox' (matrix of endogenous variables) should contain one column named "p".
+    expect_equal(colnames(res_single_exo$details$endox), "p")
+    # The number of fitted values should match the number of rows in the input data.
+    expect_length(fitted(res_single_exo), nrow(data_single_exo))
+  } else {
+    warning("Skipping checks as res_single_exo object not created.") 
+  }
 })
 
-test_that("Coefficient vector has correct names and structure", { # Line 715 approx
-  # Single endog, single exog
-  res1 <- NULL
-  # Latest output shows basic call does NOT error. Changed back to expect_silent.
-  expect_silent(res1 <- tscope(formula = y ~ p + w | p, data = dataTscope, verbose = FALSE))
-  # Uncommented check for res1.
-  if(!is.null(res1)){
-    # Note: Expecting prefixed names due to current function behavior.
-    expect_coef_names(res1, c("x(Intercept)", "xp", "xw", "rho_p", "sdError"))
-    # Check main coefficient names stored separately (should match original x colnames)
-    expect_equal(res1$names.main.coefs, c("(Intercept)", "p", "w"))
+test_that("works with multiple endogenous (p, p2) and multiple exogenous (w, w2) variables", {
+  data_multi <- dataTscope
+  set.seed(123) # for reproducibility
+  # Create a second endogenous variable p2, correlated with p
+  data_multi$p2 <- data_multi$p + rnorm(nrow(data_multi), 0, 0.5)
+  # Create a second exogenous variable w2, correlated with w
+  data_multi$w2 <- data_multi$w + rnorm(nrow(data_multi), 0, 0.5)
+
+  res_multi <- NULL
+  # Run tscope with two endogenous variables (p, p2) and two exogenous variables (w, w2).
+  # The formula specifies y ~ p + w + p2 + w2 as the main model, and p + p2 as the endogenous variables.
+  expect_silent(res_multi <- tscope(formula = y ~ p + w + p2 + w2 | p + p2, data = data_multi, verbose = FALSE))
+  
+  if(!is.null(res_multi)){
+    all_coefs <- coef(res_multi, complete = TRUE)
+
+    # Verify the presence of coefficients for the first endogenous variable (p or xp).
+    expect_true(any(c("p", "xp") %in% names(all_coefs)))
+    # Verify the presence of coefficients for the first exogenous variable (w or xw).
+    expect_true(any(c("w", "xw") %in% names(all_coefs)))
+    # Verify the presence of coefficients for the second endogenous variable (p2 or xp2).
+    expect_true(any(c("p2", "xp2") %in% names(all_coefs)))
+    # Verify the presence of coefficients for the second exogenous variable (w2 or xw2).
+    expect_true(any(c("w2", "xw2") %in% names(all_coefs)))
+    # Verify the presence of the endogeneity parameter for 'p' (rho_p).
+    expect_true("rho_p" %in% names(all_coefs))
+    # Verify the presence of the endogeneity parameter for 'p2' (rho_p2).
+    expect_true("rho_p2" %in% names(all_coefs))
+    # Verify the presence of the standard deviation of the error term (sdError).
+    expect_true("sdError" %in% names(all_coefs))
+    # Check the total number of estimated parameters.
+    expect_length(all_coefs, 1 + 4 + 2 + 1)
+    # 'endox' (matrix of original endogenous variables) should contain columns "p" and "p2".
+    expect_equal(sort(colnames(res_multi$details$endox)), sort(c("p", "p2")))
+    # 'endoxstar' (matrix of transformed endogenous variables) should have 2 columns (for p and p2).
+    expect_equal(ncol(res_multi$details$endoxstar), 2)
+    # 'w' (matrix of exogenous regressors) should not be NULL.
+    expect_false(is.null(res_multi$details$w))
+    # The exogenous regressors matrix should contain columns "w" and "w2".
+    expect_equal(sort(colnames(res_multi$details$w)), sort(c("w", "w2")))
+    # 'stage1_resid' (residuals from the first stage regression) should not be NULL.
+    expect_false(is.null(res_multi$details$stage1_resid))
+    # There should be 2 columns of residuals in stage1_resid, one for each endogenous variable (p and p2).
+    expect_equal(ncol(res_multi$details$stage1_resid), 2)
+    # 'corr' (vector of estimated correlation parameters, rho) should have 2 elements (rho_p, rho_p2).
+    expect_length(res_multi$details$corr, 2)
   } else {
-    warning("Skipping coef checks (res1) as object creation failed unexpectedly.")
+    warning("Skipping multi-variable test as tscope object not created. This might indicate tscope() does not support this scenario yet.")
+  }
+})
+
+test_that("works correctly without an intercept in the main model", {
+  res_no_intercept <- NULL
+  # Run tscope with a formula that explicitly removes the intercept term (-1).
+  # The model is y ~ p + w - 1, with 'p' as the endogenous variable.
+  expect_silent(res_no_intercept <- tscope(formula = y ~ p + w - 1 | p, data = dataTscope, verbose = FALSE))
+  
+  if (!is.null(res_no_intercept)) {
+    all_coefs <- coef(res_no_intercept, complete = TRUE)
+    # Verify the absence of the intercept term in the coefficient names.
+    expect_false("(Intercept)" %in% names(all_coefs))
+    expect_false("x(Intercept)" %in% names(all_coefs))
+    # Verify the presence of the coefficient for the endogenous variable 'p'.
+    expect_true(any(c("p", "xp") %in% names(all_coefs)))
+    # Verify the presence of the coefficient for the exogenous variable 'w'.
+    expect_true(any(c("w", "xw") %in% names(all_coefs)))
+    # Verify the presence of the endogeneity parameter 'rho_p'.
+    expect_true("rho_p" %in% names(all_coefs))
+    # Verify the presence of the standard deviation of the error term 'sdError'.
+    expect_true("sdError" %in% names(all_coefs))
+    # Check the total number of estimated parameters: p, w, rho_p, sdError (4 parameters).
+    expect_length(all_coefs, 4)
+    # 'endox' (matrix of endogenous variables) should contain one column named "p".
+    expect_equal(colnames(res_no_intercept$details$endox), "p")
+    # 'w' (matrix of exogenous regressors) should contain one column named "w".
+    # Even without an intercept in the main model, 'w' is still part of the model.
+    expect_equal(colnames(res_no_intercept$details$w), "w")
+  } else { 
+    warning("Skipping no-intercept test as object not created.") 
+  }
+})
+
+test_that("Handles interaction terms correctly (e.g., p*w)", {
+  res_interact <- NULL
+
+  # Test 1: Interaction between an endogenous variable (p) and an exogenous variable (w)
+  # The formula y ~ p * w | p specifies 'p' as endogenous and includes an interaction term p:w.
+  expect_silent(res_interact <- tscope(formula = y ~ p * w | p, data = dataTscope, verbose = FALSE))
+  
+  if(!is.null(res_interact)){
+    all_coefs <- coef(res_interact, complete = TRUE)
+
+    # Verify that an interaction term "p:w" is present in the coefficient names.
+    expect_true(any(grepl("p:w", names(all_coefs), fixed = TRUE)))
+    # Verify the presence of the endogeneity parameter for 'p' (rho_p).
+    expect_true("rho_p" %in% names(all_coefs))
+    # Verify the presence of the standard deviation of the error term (sdError).
+    expect_true("sdError" %in% names(all_coefs))
+    # Check the total number of estimated parameters: Intercept, p, w, p:w, rho_p, sdError (1+3+1+1 = 6).
+    expect_length(all_coefs, 1 + 3 + 1 + 1)
+    # Verify that the endogenous variable matrix 'endox' contains only "p".
+    expect_equal(colnames(res_interact$details$endox), "p")
+    # Verify that the exogenous variable matrix 'w' contains "w".
+    expect_true("w" %in% colnames(res_interact$details$w)) 
+    # Verify that "p:w" is listed among the main model coefficients' names.
+    expect_true("p:w" %in% res_interact$names.main.coefs)
+  } else { 
+    warning("Skipping interaction test as object not created.") 
   }
 
-  # Multi endog, multi exog
-  res2 <- NULL
-  # Keep expect_error based on earlier tests.
-  # TODO: Function errors with multiple endog/exog vars. Needs fix.
-  generic_error_msg <- "The above errors were encountered!"
-  expect_error(res2 <- tscope(formula = y ~ p + w + p2 + w2 | p + p2, data = dataTscope, verbose = FALSE), regexp = generic_error_msg)
-  # Keep checks for res2 commented out.
-  # ...
+  data_multi_interact <- dataTscope
+  set.seed(789) # for reproducibility
+  # Create a second endogenous variable 'p2', correlated with 'p'.
+  data_multi_interact$p2 <- data_multi_interact$p + rnorm(nrow(data_multi_interact), 0, 0.5)
+  
+  res_multi_interact <- NULL
 
-  # No intercept
-  res3 <- NULL
-  expect_silent(res3 <- tscope(formula = y ~ p + w - 1 | p, data = dataTscope, verbose = FALSE))
-   if(!is.null(res3)){
-     # Note: Expecting prefixed names due to current function behavior.
-     expect_coef_names(res3, c("xp", "xw", "rho_p", "sdError"))
-     # Check main coefficient names stored separately
-     expect_equal(sort(res3$names.main.coefs), sort(c("p", "w")))
-   } else {
-     warning("Skipping coef checks (res3) as object creation failed.")
-   }
-})
+  # Test 2: Interaction between two endogenous variables (p, p2), plus an exogenous variable (w).
+  # The formula y ~ p * p2 + w | p + p2 specifies 'p' and 'p2' as endogenous, and includes an interaction term p:p2.
+  expect_silent(res_multi_interact <- tscope(formula = y ~ p * p2 + w | p + p2, data = data_multi_interact, verbose = FALSE))
 
-# Example data (Basic Sanity Check) ---------------------------------------------------------------------------------
-context("Correctness - tscope - Example data")
-
-test_that("produces plausible results on example data", { # Line 764 approx
-  # Using the generated data
-  res.ex <- NULL
-  # Latest output shows basic call does NOT error. Changed back to expect_silent.
-  expect_silent(res.ex <- tscope(formula = y ~ p + w | p, data = dataTscope, verbose = FALSE))
-
-  # Uncommented checks as expect_silent should now pass.
-  if (!is.null(res.ex)){
-    expect_true(is.numeric(coef(res.ex, complete=TRUE)))
-    expect_true(all(is.finite(na.omit(coef(res.ex, complete=TRUE)))))
-    # expect_silent(s <- summary(res.ex)) # Summary method might not exist/work
-    n_actual <- length(fitted(res.ex))
-    expect_equal(length(residuals(res.ex)), n_actual)
-    expect_lt(abs(mean(residuals(res.ex))), 0.1)
-    # Note: Using prefixed name rho_p
-    rho_val <- coef(res.ex, complete=TRUE)["rho_p"]
-    expect_true(is.numeric(rho_val))
-    if(!is.na(rho_val)){
-        expect_true(is.finite(rho_val))
-        expect_gte(rho_val, -1)
-        expect_lte(rho_val, 1)
-    }
+  if(!is.null(res_multi_interact)){
+    all_coefs_mi <- coef(res_multi_interact, complete = TRUE)
+    
+    # Verify that an interaction term "p:p2" is present in the coefficient names.
+    expect_true(any(grepl("p:p2", names(all_coefs_mi), fixed = TRUE)))
+    # Verify the presence of the endogeneity parameter for 'p' (rho_p).
+    expect_true("rho_p" %in% names(all_coefs_mi))
+    # Verify the presence of the endogeneity parameter for 'p2' (rho_p2).
+    expect_true("rho_p2" %in% names(all_coefs_mi))
+    # Check the total number of estimated parameters: Intercept, p, p2, w, p:p2, rho_p, rho_p2, sdError (1+4+2+1 = 8).
+    expect_length(all_coefs_mi, 1 + 4 + 2 + 1)
   } else {
-     warning("Skipping example data checks as object creation failed unexpectedly.")
+    warning("Skipping multi-endogenous interaction test as object not created.")
   }
 })

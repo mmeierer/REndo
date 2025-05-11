@@ -229,12 +229,6 @@ tscope <- function(formula, data, verbose = TRUE) {
                    setNames(corr_xerror, paste0("rho_", colnames(endox))),
                    sdError = sd(resid2))
   
-  if (verbose) {
-    cat("========================================================\n")
-    cat("2sCOPE estimates\n")
-    print(summary(final_model))
-  }
-  
   # Prepare details ----------------------------------------------------------------------------
   details <- list(endox = endox,
                   endoxstar = endoxstar,
