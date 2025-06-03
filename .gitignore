@@ -6,3 +6,4 @@ doc
 inst/doc
 .lintr
 .DS_Store
+/doc/

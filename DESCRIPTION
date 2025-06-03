@@ -40,7 +40,9 @@ Imports:
 Suggests:
     testthat,
     covr,
-    R.rsp
+    R.rsp,
+    knitr,
+    rmarkdown
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
 RoxygenNote: 7.3.2
