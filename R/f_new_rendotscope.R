@@ -13,12 +13,11 @@
 #' @param details A list with additional details.
 #'
 #' @return An object of class \code{rendo.tscope} and \code{rendo.base}.
-#' @export
 new_rendo_tscope <- function(call, F.formula, mf, coefficients, names.main.coefs,
-                                fitted.values, residuals, tscope_model, details) {
+                              fitted.values, residuals, tscope_model, details) {
   .new_rendo_base(
     call = call,
-    F.formula = as.Formula(F.formula), #to be sure its a Formula
+    F.formula = as.Formula(F.formula),
     mf = mf,
     coefficients = coefficients,
     names.main.coefs = names.main.coefs,

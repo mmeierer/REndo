@@ -7,21 +7,19 @@
 tscope(formula, data, verbose = TRUE)
 }
 \arguments{
-\item{formula}{A formula object following the standard two-part format. The first part specifies the dependent variable and all regressors
-(exogenous and endogenous, e.g., `y ~ x1 + x2 + p1`), and the second part, separated by `|`, specifies which of these regressors are endogenous (e.g., `| p1`).
-Thus, a full formula might look like `y ~ x1 + x2 + p1 + p2 | p1 + p2`. An intercept is included automatically unless explicitly removed.}
+\item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A `data.frame` or `tibble` containing the variables specified in the formula.}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
 
-\item{verbose}{A logical value indicating whether to print messages during the estimation process, including a summary of the final stage model. Defaults to `TRUE`.}
+\item{verbose}{Show details about the running of the function.}
 }
 \value{
 An object of class `rendo.tscope` (inheriting from `rendo.base`) is returned. This object is a list containing the following components:
 \item{call}{The original function call.}
 \item{F.formula}{The processed `Formula` object.}
 \item{mf}{The model frame used for fitting.}
-\item{coefficients}{A named vector of estimated coefficients. This includes coefficients for all regressors in the first part of the formula (corresponding to the columns in the initial `x` matrix), the diagnostic correlations (`rho_...` for each endogenous regressor), and the standard deviation of the final model's residuals (`sdError`).}
-\item{names.main.coefs}{A character vector containing the names of the coefficients corresponding to the regressors in the first part of the formula (matching the columns in the initial `x` matrix, excluding `rho_...` and `sdError`).}
+\item{coefficients}{A named vector of estimated coefficients. This includes coefficients for all regressors in the first part of the formula, the diagnostic correlations (`rho_...` for each endogenous regressor), and the standard deviation of the final model's residuals (`sdError`).}
+\item{names.main.coefs}{A character vector containing the names of the coefficients corresponding to the regressors in the first part of the formula (excluding `rho_...` and `sdError`).}
 \item{fitted.values}{The fitted values from the final (Stage 2) linear model.}
 \item{residuals}{The residuals from the final (Stage 2) linear model.}
 \item{tscope_model}{The `lm` object resulting from the final (Stage 2) regression.}
@@ -96,10 +94,6 @@ The example section below demonstrates the function call, but not the bootstrap 
 }
 \examples{
 \donttest{
-# Load Formula package for the formula syntax
-# Ensure Formula package is installed: install.packages("Formula")
-library(Formula)
-
 # Generate some data with endogeneity
 set.seed(123)
 n <- 100
@@ -122,11 +116,14 @@ dat <- data.frame(y, x1, p1)
 # Formula: y ~ x1 + p1 | p1
 tscope_fit <- tscope(y ~ x1 + p1 | p1, data = dat, verbose = FALSE)
 
-# Display summary (based on the second stage lm - see warning about SEs)
+# Display summary with diagnostic correlations and SE warning
 summary(tscope_fit)
 
 # View estimated coefficients, including rho and sdError
 coef(tscope_fit)
+
+# View only the main model coefficients (excluding rho and sdError)
+coef(tscope_fit, complete = FALSE)
 
 # Compare with a naive OLS model (likely biased)
 naive_ols <- lm(y ~ x1 + p1, data = dat)
@@ -148,14 +145,11 @@ coef(tscope_fit2)
 # The original authors' code provides an example of a bootstrap procedure.
 
 }
+
 }
 \references{
 Yang, F., Qian, Y., & Xie, H. (2024). EXPRESS: Addressing Endogeneity Using a Two-stage Copula Generated Regressor Approach. *Journal of Marketing Research*, 0(ja). \doi{10.1177/00222437241296453}
-
-Yang, F., Qian, Y., & Xie, H. (2022). *Addressing endogeneity using a two-stage copula generated regressor approach* (Working Paper No. w29708). National Bureau of Economic Research.
 }
 \seealso{
-\code{\link[Formula]{Formula}} for the formula syntax, \code{\link[stats]{lm}} for the underlying regression function.
-
 \code{copulaCorrection} for another copula-based endogeneity correction method.
 }

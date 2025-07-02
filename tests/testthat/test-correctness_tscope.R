@@ -9,11 +9,11 @@ context("Correctness - tscope - Test Against Original")
 # This acts as a regression test to catch unintended changes in the core logic.
 test_that("REndo 2sCOPE matches original tscope output", {
   tscope_reference <- c(
-    "x(Intercept)" = 0.9868224,
-    "xp"           = 1.0192808,
-    "xw"           = -0.9853235,
-    "rho_p"        = 0.4837118,
-    "sdError"      = 0.9857568 
+    "(Intercept)" = 0.9868224,
+    "p"           = 1.0192808,
+    "w"           = -0.9853235,
+    "rho_p"       = 0.4837118,
+    "sdError"     = 0.9857568 
   )
 
   # Run the tscope model using the formula y ~ p + w, where p is endogenous, and using the provided dataTscope dataset.

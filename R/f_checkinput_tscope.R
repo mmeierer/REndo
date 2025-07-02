@@ -4,7 +4,7 @@ checkinput_tscope_formula <- function(formula, data) {
   if(length(err.msg) > 0)
     return(err.msg)
 
-  F.formula <- Formula::as.Formula(formula)
+  F.formula <- as.Formula(formula)
   err.msg <- character() # Initialize err.msg here
 
   # Check number of RHS parts FIRST
@@ -32,7 +32,7 @@ checkinput_tscope_data <- function(data) {
 }
 
 checkinput_tscope_dataVSformula <- function(formula, data) {
-  return(.checkinputhelper_dataVSformula_basicstructure(formula = formula, data = data, rhs.rel.regr = 2, num.only.cols = all.vars(formula)))
+  return(.checkinputhelper_dataVSformula_basicstructure(formula = formula, data = data, rhs.rel.regr = 1, num.only.cols = all.vars(formula)))
 }
 
 checkinput_tscope_verbose <- function(verbose) {

@@ -199,7 +199,7 @@
 
 
 #' @title Simulated Dataset from Tscope IV Data
-#' @description A dataset originating from the Tscope IV study. It contains a dependent variable \code{y} along with two explanatory variables, \code{p} and \code{w}. The variable \code{p} represents the primary regressor, potentially endogenous in certain models, while \code{w} serves as an auxiliary covariate. This dataset is designed for simulation studies involving instrumental variable estimation techniques and is used in conjunction with the two-stage copula generated regressor approach (2sCOPE method). For details on the 2sCOPE method, please refer to the function implementation in the first part and the usage example in the second part of the accompanying R code file \code{Rcode_tscope.R}. Please cite as: Yang, F., Qian, Y., & Xie, H. (2024). EXPRESS: Addressing Endogeneity Using a Two-stage Copula Generated Regressor Approach. Journal of Marketing Research, 0(ja). \url{https://doi.org/10.1177/00222437241296453}.#' @description A dataset originating from the Tscope IV study. It contains a dependent variable \code{y} along with two explanatory variables, \code{p} and \code{w}. The variable \code{p} represents the primary regressor, potentially endogenous in certain models, while \code{w} serves as an auxiliary covariate. This dataset is designed for simulation studies involving instrumental variable estimation techniques and is used in conjunction with the two-stage copula generated regressor approach (2sCOPE method). For details on the 2sCOPE method, please refer to the function implementation in the first part and the usage example in the second part of the accompanying R code file \code{Rcode_tscope.R}. Please cite as: Yang, F., Qian, Y., & Xie, H. (2024). EXPRESS: Addressing Endogeneity Using a Two-stage Copula Generated Regressor Approach. Journal of Marketing Research, 0(ja). \url{https://doi.org/10.1177/00222437241296453}.
+#' @description A dataset originating from the Tscope IV study. It contains a dependent variable \code{y} along with two explanatory variables, \code{p} and \code{w}. The variable \code{p} represents the primary regressor, potentially endogenous in certain models, while \code{w} serves as an auxiliary covariate. This dataset is designed for simulation studies involving instrumental variable estimation techniques and is used in conjunction with the two-stage copula generated regressor approach (2sCOPE method).
 #' @name dataTscope
 #' @usage data("dataTscope")
 #' @format A data frame with 2500 observations on 3 variables:
@@ -208,6 +208,7 @@
 #'   \item{\code{p}}{a numeric vector representing the primary predictor, potentially endogenous.}
 #'   \item{\code{w}}{a numeric vector representing an additional covariate.}
 #' }
+#' @references Yang, F., Qian, Y., & Xie, H. (2024). EXPRESS: Addressing Endogeneity Using a Two-stage Copula Generated Regressor Approach. Journal of Marketing Research, 0(ja). \url{https://doi.org/10.1177/00222437241296453}
 #' @docType data
-#' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
+#' @author Yi Qiang \email{yi.qian@sauder.ubc.ca}
 "dataTscope"

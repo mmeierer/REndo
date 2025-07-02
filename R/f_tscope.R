@@ -8,11 +8,7 @@
 #' based on their empirical cumulative distribution functions (ECDF) and the quantile function of the standard normal distribution.
 #' If additional exogenous regressors are specified (beyond those potentially endogenous), a residualization step is performed in the first stage.
 #'
-#' @param formula A formula object following the standard two-part format. The first part specifies the dependent variable and all regressors
-#'   (exogenous and endogenous, e.g., `y ~ x1 + x2 + p1`), and the second part, separated by `|`, specifies which of these regressors are endogenous (e.g., `| p1`).
-#'   Thus, a full formula might look like `y ~ x1 + x2 + p1 + p2 | p1 + p2`. An intercept is included automatically unless explicitly removed.
-#' @param data A `data.frame` or `tibble` containing the variables specified in the formula.
-#' @param verbose A logical value indicating whether to print messages during the estimation process, including a summary of the final stage model. Defaults to `TRUE`.
+#' @template template_param_formuladataverbose
 #'
 #' @details
 #' \subsection{Method}{
@@ -69,8 +65,8 @@
 #' \item{call}{The original function call.}
 #' \item{F.formula}{The processed `Formula` object.}
 #' \item{mf}{The model frame used for fitting.}
-#' \item{coefficients}{A named vector of estimated coefficients. This includes coefficients for all regressors in the first part of the formula (corresponding to the columns in the initial `x` matrix), the diagnostic correlations (`rho_...` for each endogenous regressor), and the standard deviation of the final model's residuals (`sdError`).}
-#' \item{names.main.coefs}{A character vector containing the names of the coefficients corresponding to the regressors in the first part of the formula (matching the columns in the initial `x` matrix, excluding `rho_...` and `sdError`).}
+#' \item{coefficients}{A named vector of estimated coefficients. This includes coefficients for all regressors in the first part of the formula, the diagnostic correlations (`rho_...` for each endogenous regressor), and the standard deviation of the final model's residuals (`sdError`).}
+#' \item{names.main.coefs}{A character vector containing the names of the coefficients corresponding to the regressors in the first part of the formula (excluding `rho_...` and `sdError`).}
 #' \item{fitted.values}{The fitted values from the final (Stage 2) linear model.}
 #' \item{residuals}{The residuals from the final (Stage 2) linear model.}
 #' \item{tscope_model}{The `lm` object resulting from the final (Stage 2) regression.}
@@ -88,21 +84,11 @@
 #'
 #' @references
 #' Yang, F., Qian, Y., & Xie, H. (2024). EXPRESS: Addressing Endogeneity Using a Two-stage Copula Generated Regressor Approach. *Journal of Marketing Research*, 0(ja). \doi{10.1177/00222437241296453}
-#'
-#' Yang, F., Qian, Y., & Xie, H. (2022). *Addressing endogeneity using a two-stage copula generated regressor approach* (Working Paper No. w29708). National Bureau of Economic Research.
-#'
-#' @seealso \code{\link[Formula]{Formula}} for the formula syntax, \code{\link[stats]{lm}} for the underlying regression function.
+#' 
 #' @seealso \code{copulaCorrection} for another copula-based endogeneity correction method.
-#'
-#' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame model.matrix model.response ecdf qnorm sd cor setNames coef vcov na.omit reformulate
 #'
 #' @examples
 #' \donttest{
-#' # Load Formula package for the formula syntax
-#' # Ensure Formula package is installed: install.packages("Formula")
-#' library(Formula)
-#'
 #' # Generate some data with endogeneity
 #' set.seed(123)
 #' n <- 100
@@ -125,11 +111,14 @@
 #' # Formula: y ~ x1 + p1 | p1
 #' tscope_fit <- tscope(y ~ x1 + p1 | p1, data = dat, verbose = FALSE)
 #'
-#' # Display summary (based on the second stage lm - see warning about SEs)
+#' # Display summary with diagnostic correlations and SE warning
 #' summary(tscope_fit)
 #'
 #' # View estimated coefficients, including rho and sdError
 #' coef(tscope_fit)
+#'
+#' # View only the main model coefficients (excluding rho and sdError)
+#' coef(tscope_fit, complete = FALSE)
 #'
 #' # Compare with a naive OLS model (likely biased)
 #' naive_ols <- lm(y ~ x1 + p1, data = dat)
@@ -151,101 +140,179 @@
 #' # The original authors' code provides an example of a bootstrap procedure.
 #'
 #' }
+#'
+#' @importFrom Formula as.Formula
+#' @importFrom stats lm model.frame model.matrix model.response ecdf qnorm sd cor setNames coef vcov reformulate
+#' 
 #' @export
 tscope <- function(formula, data, verbose = TRUE) {
   cl <- match.call()
   
-  # Input checks ------------------------------------------------------------------------------
-  check_err_msg(checkinput_tscope_formula(formula, data))
-  check_err_msg(checkinput_tscope_data(data))
-  check_err_msg(checkinput_tscope_dataVSformula(formula, data))
-  check_err_msg(checkinput_tscope_verbose(verbose))
-
-  # Convert formula and build model frame -----------------------------------------------------
-  F.formula  <- as.Formula(formula)
-  rhs_parts <- attr(F.formula, "rhs")
-  mf         <- model.frame(formula = F.formula, data = data)
-  vec.data.y <- model.response(mf)
-  
-  # Extract regressors from the first part (including intercept)
-  x <- as.matrix(model.matrix(F.formula, data = data, rhs = 1))
-  
-  # Extract endogenous regressors from the second part (remove intercept)
-  endox <- as.matrix(model.matrix(F.formula, data = data, rhs = 2))
-  endox <- endox[, setdiff(colnames(endox), "(Intercept)"), drop = FALSE]
-  
-  n <- nrow(x)
-  nendox <- ncol(endox)
-  
-  # Allow one predictor column (even when no intercept is present)
-  if (ncol(x) < 1)
-    stop("No predictor variables specified for the outcome.")
-  
-  # Identify additional exogenous regressors -------------------------------------------------
-  exog_names <- setdiff(colnames(x), c("(Intercept)", colnames(endox)))
-  w <- if (length(exog_names) > 0) x[, exog_names, drop = FALSE] else NULL
-  nw <- if (!is.null(w)) ncol(w) else 0
-  
-  # Transform endogenous regressors ----------------------------------------------------------
-  endoxstar <- matrix(0, n, nendox)
-  for (i in 1:nendox) {
-    temp <- ecdf(endox[, i])(endox[, i])
-    temp[temp == 1] <- n / (n + 1)
-    endoxstar[, i] <- qnorm(temp)
+  if (verbose) {
+    message("Starting 2sCOPE estimation...")
   }
   
-  # Stage 1: residualize transformed endogenous regressors if exogenous regressors exist ------
-  if (nw == 0) {
-    if (verbose)
-      message("No additional exogenous regressors specified. Using transformed endogenous regressors directly.")
-    stage1_resid <- NULL
-    final_model <- lm(vec.data.y ~ -1 + x + endoxstar)
-  } else {
-    # Transform exogenous regressors similarly ------------------------------------------------
-    wstar <- matrix(0, n, nw)
-    for (i in 1:nw) {
-      temp <- ecdf(w[, i])(w[, i])
-      temp[temp == 1] <- n / (n + 1)
-      wstar[, i] <- qnorm(temp)
+  # Input checks ------------------------------------------------------------------------------
+  check_err_msg(checkinput_tscope_formula(formula=formula, data=data))
+  check_err_msg(checkinput_tscope_data(data=data))
+  check_err_msg(checkinput_tscope_dataVSformula(formula=formula, data=data))
+  check_err_msg(checkinput_tscope_verbose(verbose=verbose))
+
+  # Convert formula and build model frame (following original implementation) ---------------
+  F.formula <- as.Formula(formula)
+  
+  if (verbose) {
+    message("Extracting model matrices...")
+  }
+  
+  # Create model frame first to handle complex formulas properly
+  mf <- model.frame(F.formula, data = data)
+  
+  # Extract all regressors from the first part (including intercept) - following original x matrix
+  x <- as.matrix(model.matrix(F.formula, data = mf, rhs = 1))
+  
+  # Extract dependent variable - following original approach, but from model frame
+  y <- model.response(mf)
+  
+  n <- nrow(x)
+  if (ncol(x) <= 1) {
+    stop("No predictor variables specified for the outcome")
+  }
+  
+  # Extract endogenous regressors from the second part (remove intercept) - following original
+  endox <- as.matrix(model.matrix(F.formula, data = mf, rhs = length(F.formula)[2]))
+  endox <- endox[, colnames(endox) != "(Intercept)", drop = FALSE]
+  nendox <- ncol(endox)
+  
+  if (verbose) {
+    message(paste("Found", nendox, "endogenous regressor(s):", paste(colnames(endox), collapse=", ")))
+  }
+  
+  # Calculate endoxstar matrix
+  endoxstar <- matrix(0, n, nendox)
+  
+  # Extract exogenous regressors (w) - following original approach
+  w <- x[, -which(colnames(x) %in% c("(Intercept)", colnames(endox))), drop = FALSE]
+  nw <- ncol(w)
+  wstar <- matrix(0, n, nw)
+  
+  if (verbose) {
+    if (nw > 0) {
+      message(paste("Found", nw, "exogenous regressor(s) for residualization:", paste(colnames(w), collapse=", ")))
+    } else {
+      message("No additional exogenous regressors found for residualization.")
     }
+  }
+  
+  # Helper function to transform regressors using ECDF and qnorm (following original) -------
+  if (verbose) {
+    message("Transforming endogenous regressors using ECDF and qnorm...")
+  }
+  
+  # Calculate endoxstar following original implementation exactly
+  for (i in 1:nendox) {
+    endoxstartemp <- ecdf(endox[, i])(endox[, i])
+    endoxstartemp[endoxstartemp == 1] <- n / (n + 1)
+    endoxstartemp <- qnorm(endoxstartemp)
+    endoxstar[, i] <- endoxstartemp
+  }
+  colnames(endoxstar) <- colnames(endox)
+  
+  # Main algorithm following original implementation exactly ---------------------------------
+  if (nw == 0) {
+    # No exogenous regressors case - following original
+    if (verbose) {
+      message("STAGE 1: No exogenous regressors specified, using copula directly")
+    }
+    stage1_resid <- NULL
+    
+    # Following original exactly: lm(y ~ -1 + x + endoxstar)
+    combined_matrix <- cbind(x, endoxstar)
+    res <- lm(y ~ -1 + combined_matrix)
+    
+  } else {
+    # With exogenous regressors case - following original
+    if (verbose) {
+      message("STAGE 1: Transforming exogenous regressors for residualization...")
+    }
+    
+    # Calculate wstar following original implementation
+    for (i in 1:nw) {
+      wstartemp <- ecdf(w[, i])(w[, i])
+      wstartemp[wstartemp == 1] <- n / (n + 1)
+      wstartemp <- qnorm(wstartemp)
+      wstar[, i] <- wstartemp
+    }
+    colnames(wstar) <- colnames(w)
+    
+    if (verbose) {
+      message("STAGE 1: Residualizing transformed endogenous regressors...")
+      for (endox_name in colnames(endox)) {
+        message(paste("  Residualizing", endox_name, "on exogenous regressors..."))
+      }
+    }
+    
+    # Calculate stage1 residuals following original
     stage1_resid <- matrix(0, n, nendox)
     for (j in 1:nendox) {
       stage1_resid[, j] <- lm(endoxstar[, j] ~ wstar)$resid
     }
-    final_model <- lm(vec.data.y ~ -1 + x + stage1_resid)
+    colnames(stage1_resid) <- paste0(colnames(endox), "_resid")
+    
+    # Following original exactly: lm(y ~ -1 + x + stage1_resid) 
+    if (verbose) {
+      message(paste("STAGE 2: Fitting final model: y ~ (Intercept) +", paste(colnames(w), collapse=" + "), "+", paste(colnames(endox), collapse=" + ")))
+    }
+    combined_matrix <- cbind(x, stage1_resid)
+    res <- lm(y ~ -1 + combined_matrix)
   }
   
   # Diagnostic: compute correlations between each transformed endogenous regressor and residuals ---
-  coef_x <- final_model$coef[seq_len(ncol(x))]
-  fitted_x <- as.vector(x %*% coef_x)
-  resid2 <- vec.data.y - fitted_x
-  corr_xerror <- rep(NA, nendox)
-  for (j in 1:nendox) {
-    corr_xerror[j] <- cor(endoxstar[, j], resid2)
+  if (verbose) {
+    message("Computing diagnostic correlations...")
   }
   
-  # Prepare result coefficients ---------------------------------------------------------------
-  result_coef <- c(final_model$coef[seq_len(ncol(x))],
-                   setNames(corr_xerror, paste0("rho_", colnames(endox))),
-                   sdError = sd(resid2))
+  # Following original exactly: resid2=y-c(x%*%res$coef[1:ncol(x)])
+  resid2 <- y - c(x %*% res$coef[1:ncol(x)])
+  corr_xerror_tscope <- rep(0, nendox)
+  for (j in 1:nendox) {
+    corr_xerror_tscope[j] <- cor(endoxstar[, j], resid2)
+  }
+  
+  # Prepare result coefficients exactly following original ----------------------------------
+  # Following original: res.tab[1,] = c(t(res$coef[1:(ncol(x))]),t(corr_xerror_tscope),sd(resid2))
+  
+  result_coef <- c(res$coef[1:ncol(x)],
+                   corr_xerror_tscope,
+                   sd(resid2))
+  
+  # Set proper names matching the original order
+  coef_names <- c(colnames(x), 
+                  paste0("rho_", colnames(endox)),
+                  "sdError")
+  names(result_coef) <- coef_names
   
   # Prepare details ----------------------------------------------------------------------------
   details <- list(endox = endox,
                   endoxstar = endoxstar,
-                  w = w,
+                  w = if(nw > 0) w else NULL,
                   stage1_resid = stage1_resid,
                   resid2 = resid2,
-                  corr = corr_xerror)
+                  corr = corr_xerror_tscope)
+  
+  if (verbose) {
+    message("2sCOPE estimation complete.")
+  }
   
   # Return object with custom class -----------------------------------------------------------
-  res <- new_rendo_tscope(call = cl,
-                                F.formula = F.formula,
-                                mf = mf,
-                                coefficients = result_coef,
-                                names.main.coefs = colnames(x),
-                                fitted.values = final_model$fitted.values,
-                                residuals = final_model$residuals,
-                                tscope_model = final_model,
-                                details = details)
-  return(res)
+  result <- new_rendo_tscope(call = cl,
+                          F.formula = F.formula,
+                          mf = mf,
+                          coefficients = result_coef,
+                          names.main.coefs = colnames(x),
+                          fitted.values = res$fitted.values,
+                          residuals = res$residuals,
+                          tscope_model = res,
+                          details = details)
+  return(result)
 }
