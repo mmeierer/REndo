@@ -19,7 +19,7 @@ summary.rendo.tscope <- function(object, ...) {
   
   # Add diagnostic correlations to the summary object
   lm_summary$diagnostic_correlations <- object$details$corr
-  lm_summary$endogenous_vars <- colnames(object$details$endoX)
+  lm_summary$endogenous_vars <- colnames(object$details$endox)
   
   # Return the enhanced summary object
   return(lm_summary)

@@ -205,17 +205,20 @@ tscope <- function(formula, data, verbose = TRUE) {
   }
   
   # Helper function to transform regressors using ECDF and qnorm (following original) -------
+  ecdf_transform_regressors <- function(regressor_matrix) {
+    apply(regressor_matrix, 2, function(x) {
+      temp <- ecdf(x)(x)
+      temp[temp == 1] <- length(x) / (length(x) + 1)
+      qnorm(temp)
+    })
+  }
+  
   if (verbose) {
     message("Transforming endogenous regressors using ECDF and qnorm...")
   }
   
-  # Calculate endoxstar following original implementation exactly
-  for (i in 1:nendox) {
-    endoxstartemp <- ecdf(endox[, i])(endox[, i])
-    endoxstartemp[endoxstartemp == 1] <- n / (n + 1)
-    endoxstartemp <- qnorm(endoxstartemp)
-    endoxstar[, i] <- endoxstartemp
-  }
+  # Calculate endoxstar using helper function
+  endoxstar <- ecdf_transform_regressors(endox)
   colnames(endoxstar) <- colnames(endox)
   
   # Main algorithm following original implementation exactly ---------------------------------
@@ -228,7 +231,7 @@ tscope <- function(formula, data, verbose = TRUE) {
     
     # Following original exactly: lm(y ~ -1 + x + endoxstar)
     combined_matrix <- cbind(x, endoxstar)
-    res <- lm(y ~ -1 + combined_matrix)
+    res <- lm(y ~ -1 + ., data = data.frame(y = y, combined_matrix))
     
   } else {
     # With exogenous regressors case - following original
@@ -236,13 +239,8 @@ tscope <- function(formula, data, verbose = TRUE) {
       message("STAGE 1: Transforming exogenous regressors for residualization...")
     }
     
-    # Calculate wstar following original implementation
-    for (i in 1:nw) {
-      wstartemp <- ecdf(w[, i])(w[, i])
-      wstartemp[wstartemp == 1] <- n / (n + 1)
-      wstartemp <- qnorm(wstartemp)
-      wstar[, i] <- wstartemp
-    }
+    # Calculate wstar using helper function
+    wstar <- ecdf_transform_regressors(w)
     colnames(wstar) <- colnames(w)
     
     if (verbose) {
@@ -255,7 +253,7 @@ tscope <- function(formula, data, verbose = TRUE) {
     # Calculate stage1 residuals following original
     stage1_resid <- matrix(0, n, nendox)
     for (j in 1:nendox) {
-      stage1_resid[, j] <- lm(endoxstar[, j] ~ wstar)$resid
+      stage1_resid[, j] <- residuals(lm(endoxstar[, j] ~ wstar))
     }
     colnames(stage1_resid) <- paste0(colnames(endox), "_resid")
     
@@ -264,7 +262,7 @@ tscope <- function(formula, data, verbose = TRUE) {
       message(paste("STAGE 2: Fitting final model: y ~ (Intercept) +", paste(colnames(w), collapse=" + "), "+", paste(colnames(endox), collapse=" + ")))
     }
     combined_matrix <- cbind(x, stage1_resid)
-    res <- lm(y ~ -1 + combined_matrix)
+    res <- lm(y ~ -1 + ., data = data.frame(y = y, combined_matrix))
   }
   
   # Diagnostic: compute correlations between each transformed endogenous regressor and residuals ---
@@ -272,17 +270,15 @@ tscope <- function(formula, data, verbose = TRUE) {
     message("Computing diagnostic correlations...")
   }
   
-  # Following original exactly: resid2=y-c(x%*%res$coef[1:ncol(x)])
-  resid2 <- y - c(x %*% res$coef[1:ncol(x)])
-  corr_xerror_tscope <- rep(0, nendox)
-  for (j in 1:nendox) {
-    corr_xerror_tscope[j] <- cor(endoxstar[, j], resid2)
-  }
+  # Following original exactly: resid2=y-c(x%*%coef(res)[1:ncol(x)])
+  coef_x <- coef(res)[1:ncol(x)]
+  resid2 <- y - c(x %*% coef_x)
+  corr_xerror_tscope <- apply(endoxstar, 2, function(endox_col) cor(endox_col, resid2))
   
   # Prepare result coefficients exactly following original ----------------------------------
-  # Following original: res.tab[1,] = c(t(res$coef[1:(ncol(x))]),t(corr_xerror_tscope),sd(resid2))
+  # Following original: res.tab[1,] = c(t(coef_x),t(corr_xerror_tscope),sd(resid2))
   
-  result_coef <- c(res$coef[1:ncol(x)],
+  result_coef <- c(coef_x,
                    corr_xerror_tscope,
                    sd(resid2))
   
