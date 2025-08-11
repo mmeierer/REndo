@@ -121,13 +121,21 @@ summary.rendo.boots <- function(object, ...){
 
   all.coefs <- coef(object, complete = TRUE)
 
-  res$vcov <- vcov(object)
+  res$vcov <- suppressWarnings(vcov(object))
   se       <- sqrt(diag(res$vcov))
+  # Align standard errors with the coefficient vector (drop rows for auxiliary/generated vars)
+  se       <- se[names(all.coefs)]
 
   # If confint is not available because not enough bootstraps, show NA
   ci <- tryCatch(confint(object=object, level = 0.95), error=function(e)return(e))
-  if(is(ci, "error"))
+  if(is(ci, "error")) {
     ci <- array(data = NA, dim = c(length(all.coefs), 2L))
+  } else {
+    # Keep only the rows corresponding to the main coefficients so that dimensions match
+    if(!is.null(rownames(ci))) {
+      ci <- ci[names(all.coefs), , drop = FALSE]
+    }
+  }
 
   res$coefficients <- cbind(all.coefs,
                             se,

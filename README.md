@@ -43,7 +43,9 @@ REndo implements the following instrument-free methods:
 
 4)  joint estimation using copula (Park and Gupta 2012)
 
-5)  multilevel GMM (Kim and Frees 2007)
+5)  two-stage copula generated regressor (Yang, Qian, and Xie 2024)
+
+6)  multilevel GMM (Kim and Frees 2007)
 
 ## The new version - REndo 2.0.0
 
@@ -52,7 +54,7 @@ of code optimization as well as different syntax for all functions.
 
 ## Walk-Through
 
-Below, we present the syntax for each of the 5 implemented
+Below, we present the syntax for each of the 6 implemented
 instrument-free methods:
 
 ### **Latent Instrumental Variables**
@@ -147,6 +149,17 @@ variables is a convenient feature of the function, since it increases
 the efficiency of the estimates. Transformation of the explanatory
 variables, such as I(X), ln(X) are possible both in the model
 specification as well as in the IIV() specification.
+
+### Two-Stage Copula Generated Regressor (tscope)
+
+    tscope(formula, data, ...)
+
+The tscope function implements the two-stage copula generated regressor
+approach by Yang, Qian, and Xie (2024). The first argument is the model
+formula, and the second is the dataset. Additional arguments are used to
+control the specifics of the estimation procedure. Please refer to the
+tscope function documentation for detailed usage instructions and
+parameter descriptions.
 
 ### **Multilevel GMM**
 

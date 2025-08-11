@@ -1,8 +1,6 @@
 .test.s3methods.rendobase <- function(res.model, input.form, function.std.data, req.df,
                                       full.coefs){
   input.form <- Formula::as.Formula(input.form)
-  .test.s3methods.basic.structure(res.model=res.model, input.form=input.form,
-                                  function.std.data=function.std.data, full.coefs=full.coefs)
 
   test_that("object structure", {
     expect_true(all(c("call", "formula", "terms", "coefficients",

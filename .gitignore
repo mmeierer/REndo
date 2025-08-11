@@ -1,6 +1,40 @@
 Meta
-doc
 .Rproj.user
 .Rhistory
 .RData
 inst/doc
+.lintr
+.DS_Store
+/doc/
+
+REndo.Rcheck/
+
+# R session/user
+.Ruserdata
+.Renviron
+.Rprofile
+Rplots.pdf
+
+# Build outputs
+/REndo_*.tar.gz
+
+# pkgdown site
+docs/
+
+# knitr README artefacts
+/README_files/
+
+# Editors/OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+
+# Windows compiled subdirs from R CMD INSTALL
+src-i386/
+src-x64/
+
+# R CMD check directories (any package name variants)
+*.Rcheck/

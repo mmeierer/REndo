@@ -1,3 +1,6 @@
 *.o
 *.so
 *.dll
+*.dylib
+*.a
+*.dSYM/

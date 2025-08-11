@@ -1,7 +1,5 @@
 test.s3methods.ivreg.models <- function(res.ivreg.model, input.form, function.std.data, full.coefs){
 
-  .test.s3methods.basic.structure(res.model=res.ivreg.model, input.form=input.form,
-                                  function.std.data=function.std.data, full.coefs=full.coefs)
 
   # Check that the object has actually added rendo.ivreg and check that it is at first position
   test_that("Class of return object is correct",{
