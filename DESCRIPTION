@@ -39,6 +39,7 @@ Imports:
     lmtest (>= 0.9-35)
 Suggests:
     testthat,
+    tibble,
     covr,
     R.rsp,
     knitr,

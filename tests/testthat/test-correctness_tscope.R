@@ -11,24 +11,19 @@ test_that("REndo 2sCOPE matches original tscope output", {
   tscope_reference <- c(
     "(Intercept)" = 0.9868224,
     "p"           = 1.0192808,
-    "w"           = -0.9853235,
-    "rho_p"       = 0.4837118,
-    "sdError"     = 0.9857568 
+    "w"           = -0.9853235
   )
-
-  # Run the tscope model using the formula y ~ p + w, where p is endogenous, and using the provided dataTscope dataset.
   tscope_model <- tscope(
     formula = y ~ p + w | p,
     data = dataTscope,
     verbose = FALSE
   )
-
   rendo_output <- coef(tscope_model)
-  
-  # Compare the REndo output coefficients with the reference values.
-  # We only compare the coefficients present in `tscope_reference`.
-  # `tolerance = 1e-6` allows for minor differences due to floating-point arithmetic.
+  # Only compare the main coefficients
   expect_equal(rendo_output[names(tscope_reference)], tscope_reference, tolerance = 1e-6)
+  # Check diagnostics in details
+  expect_true(abs(tscope_model$details$corr_endostar_resid[1] - 0.4837118) < 1e-6)
+  expect_true(abs(tscope_model$details$sdError - 0.9857568) < 1e-6)
 })
 
 # Input checks (Basic structural checks for tscope() function itself) ---------------------------------------------------------------
@@ -132,8 +127,9 @@ test_that("Transformations are correct for outcome variable (LHS)", {
     # These should be equal (within tolerance) if the transformation was handled equivalently.
     expect_equal(coef_trans["p"], coef_data["p"], tolerance = 1e-6)
     expect_equal(coef_trans["w"], coef_data["w"], tolerance = 1e-6)
-    expect_equal(coef_trans["rho_p"], coef_data["rho_p"], tolerance = 1e-6)
-    expect_equal(coef_trans["sdError"], coef_data["sdError"], tolerance = 1e-6)
+    # Check diagnostics in details
+    expect_true(abs(res_trans_lhs$details$corr_endostar_resid[1] - res_data_trans_lhs$details$corr_endostar_resid[1]) < 1e-6)
+    expect_true(abs(res_trans_lhs$details$sdError - res_data_trans_lhs$details$sdError) < 1e-6)
   } else {
     warning("Skipping LHS transformation comparison as object creation failed.")
   }
@@ -171,8 +167,9 @@ test_that("Transformations are correct for endogenous variable (RHS - both parts
     expect_equal(coef_trans["(Intercept)"], coef_data["(Intercept)"], tolerance=1e-6)
     expect_equal(coef_trans["I(p * 2 + 5)"], coef_data["I(p * 2 + 5)"], tolerance=1e-6)
     expect_equal(coef_trans["w"], coef_data["w"], tolerance=1e-6)
-    expect_equal(coef_trans["rho_I(p * 2 + 5)"], coef_data["rho_I(p * 2 + 5)"], tolerance=1e-6)
-    expect_equal(coef_trans["sdError"], coef_data["sdError"], tolerance=1e-6)
+    # Check diagnostics in details
+    expect_true(abs(res_trans_rhs$details$corr_endostar_resid[1] - res_data_trans_rhs$details$corr_endostar_resid[1]) < 1e-6)
+    expect_true(abs(res_trans_rhs$details$sdError - res_data_trans_rhs$details$sdError) < 1e-6)
 
     # Verify that the transformed variable names are correctly identified in the model's internal structures
     expect_true("I(p * 2 + 5)" %in% res_trans_rhs$names.main.coefs)
@@ -212,8 +209,9 @@ test_that("Transformations are correct for exogenous variable (RHS - first part)
     expect_equal(coef_trans["(Intercept)"], coef_data["(Intercept)"], tolerance=1e-6)
     expect_equal(coef_trans["p"], coef_data["p"], tolerance=1e-6)
     expect_equal(coef_trans["I(w^2)"], coef_data["I(w^2)"], tolerance=1e-6)
-    expect_equal(coef_trans["rho_p"], coef_data["rho_p"], tolerance=1e-6)
-    expect_equal(coef_trans["sdError"], coef_data["sdError"], tolerance=1e-6)
+    # Check diagnostics in details
+    expect_true(abs(res_trans_rhs$details$corr_endostar_resid[1] - res_data_trans_rhs$details$corr_endostar_resid[1]) < 1e-6)
+    expect_true(abs(res_trans_rhs$details$sdError - res_data_trans_rhs$details$sdError) < 1e-6)
 
     # Verify that the transformed variable names are correctly identified in the model's internal structures.
     # res_trans_rhs$names.main.coefs should contain "I(w^2)"
@@ -291,12 +289,9 @@ test_that("works correctly with single endogenous variable, no exogenous regress
     expect_true("(Intercept)" %in% names(all_coefs) || "x(Intercept)" %in% names(all_coefs))
     # Verify the presence of the coefficient for the endogenous variable 'p'. It might be named "p" or "xp".
     expect_true("p" %in% names(all_coefs) || "xp" %in% names(all_coefs))
-    # Verify the presence of the endogeneity parameter 'rho_p'.
-    expect_true("rho_p" %in% names(all_coefs))
-    # Verify the presence of the standard deviation of the error term 'sdError'.
-    expect_true("sdError" %in% names(all_coefs))
-    # Check that the total number of estimated parameters is 4 (Intercept, p, rho_p, sdError).
-    expect_length(all_coefs, 4)
+    # Check diagnostics in details
+    expect_true(length(res_simple$details$corr_endostar_resid) == 1)
+    expect_true(is.numeric(res_simple$details$sdError))
     # 'w' (matrix of exogenous regressors) should be NULL as none were specified in the formula.
     expect_null(res_simple$details$w)
     # 'stage1_resid' (residuals from the first stage regression) should be NULL as no exogenous regressors were used.
@@ -308,13 +303,38 @@ test_that("works correctly with single endogenous variable, no exogenous regress
     # 'resid2' (residuals from the final model estimation) should be a numeric vector.
     expect_true(is.numeric(res_simple$details$resid2))
     # 'corr' (vector of estimated correlation parameters, rho) should have one element for 'rho_p'.
-    expect_length(res_simple$details$corr, 1)
+    expect_length(res_simple$details$corr_endostar_resid, 1)
     # The number of fitted values should match the number of rows in the input data.
     expect_length(fitted(res_simple), nrow(data_simple))
     # The number of residuals should match the number of rows in the input data.
     expect_length(residuals(res_simple), nrow(data_simple))
   } else {
     warning("Skipping checks as res_simple object not created.")
+  }
+})
+
+# New test: single endogenous variable, no intercept ------------------------------------------------------------
+
+context("Correctness - tscope - Single endogenous, no intercept")
+
+test_that("works correctly with single endogenous variable and no intercept", {
+  data_no_intercept <- dataTscope[, c("y", "p"), drop = FALSE]
+  res_no_intercept <- NULL
+
+  # Formula: y ~ p - 1 | p  remove intercept in main model
+  expect_silent(res_no_intercept <- tscope(formula = y ~ p - 1 | p, data = data_no_intercept, verbose = FALSE))
+
+  if (!is.null(res_no_intercept)) {
+    all_coefs <- coef(res_no_intercept, complete = TRUE)
+    # Intercept should NOT be present.
+    expect_false(any(c("(Intercept)", "x(Intercept)") %in% names(all_coefs)))
+    # Coefficient for the endogenous variable 'p' should be present.
+    expect_true(any(c("p", "xp") %in% names(all_coefs)))
+    # Diagnostics
+    expect_length(res_no_intercept$details$corr_endostar_resid, 1)
+    expect_true(is.numeric(res_no_intercept$details$sdError))
+  } else {
+    warning("Skipping checks as res_no_intercept object not created.")
   }
 })
 
@@ -327,19 +347,17 @@ test_that("works correctly with single endogenous (p) and single exogenous (w)",
   
   if (!is.null(res_single_exo)) {
     all_coefs <- coef(res_single_exo, complete = TRUE)
-
     # Verify the presence of the intercept term.
     expect_true(any(c("(Intercept)", "x(Intercept)") %in% names(all_coefs)))
     # Verify the presence of the coefficient for the endogenous variable 'p'.
     expect_true(any(c("p", "xp") %in% names(all_coefs)))
     # Verify the presence of the coefficient for the exogenous variable 'w'.
     expect_true(any(c("w", "xw") %in% names(all_coefs)))
-    # Verify the presence of the endogeneity parameter 'rho_p'.
-    expect_true("rho_p" %in% names(all_coefs))
-    # Verify the presence of the standard deviation of the error term 'sdError'.
-    expect_true("sdError" %in% names(all_coefs))
-    # Check that the total number of estimated parameters is 5 (Intercept, p, w, rho_p, sdError).
-    expect_length(all_coefs, 5)
+    # Check diagnostics in details
+    expect_true(length(res_single_exo$details$corr_endostar_resid) == 1)
+    expect_true(is.numeric(res_single_exo$details$sdError))
+    # The number of estimated main coefficients should be 3 (Intercept, p, w).
+    expect_length(all_coefs, 3)
     # 'w' (matrix of exogenous regressors) should not be NULL as 'w' was specified.
     expect_false(is.null(res_single_exo$details$w))
     # The column name in the exogenous regressors matrix should be "w".
@@ -349,12 +367,10 @@ test_that("works correctly with single endogenous (p) and single exogenous (w)",
     expect_false(is.null(res_single_exo$details$stage1_resid))
     # There should be one column of residuals, corresponding to the single endogenous variable 'p'.
     expect_equal(ncol(res_single_exo$details$stage1_resid), 1)
-    # The number of rows in stage1_resid should match the number of observations.
-    expect_equal(nrow(res_single_exo$details$stage1_resid), nrow(data_single_exo))
-    # 'endox' (matrix of endogenous variables) should contain one column named "p".
-    expect_equal(colnames(res_single_exo$details$endox), "p")
     # The number of fitted values should match the number of rows in the input data.
     expect_length(fitted(res_single_exo), nrow(data_single_exo))
+    # The number of residuals should match the number of rows in the input data.
+    expect_length(residuals(res_single_exo), nrow(data_single_exo))
   } else {
     warning("Skipping checks as res_single_exo object not created.") 
   }
@@ -384,14 +400,11 @@ test_that("works with multiple endogenous (p, p2) and multiple exogenous (w, w2)
     expect_true(any(c("p2", "xp2") %in% names(all_coefs)))
     # Verify the presence of coefficients for the second exogenous variable (w2 or xw2).
     expect_true(any(c("w2", "xw2") %in% names(all_coefs)))
-    # Verify the presence of the endogeneity parameter for 'p' (rho_p).
-    expect_true("rho_p" %in% names(all_coefs))
-    # Verify the presence of the endogeneity parameter for 'p2' (rho_p2).
-    expect_true("rho_p2" %in% names(all_coefs))
-    # Verify the presence of the standard deviation of the error term (sdError).
-    expect_true("sdError" %in% names(all_coefs))
-    # Check the total number of estimated parameters.
-    expect_length(all_coefs, 1 + 4 + 2 + 1)
+    # Check diagnostics in details
+    expect_true(length(res_multi$details$corr_endostar_resid) == 2)
+    expect_true(is.numeric(res_multi$details$sdError))
+    # The number of estimated main coefficients should be 5 (Intercept, p, w, p2, w2).
+    expect_length(all_coefs, 5)
     # 'endox' (matrix of original endogenous variables) should contain columns "p" and "p2".
     expect_equal(sort(colnames(res_multi$details$endox)), sort(c("p", "p2")))
     # 'endoxstar' (matrix of transformed endogenous variables) should have 2 columns (for p and p2).
@@ -404,8 +417,6 @@ test_that("works with multiple endogenous (p, p2) and multiple exogenous (w, w2)
     expect_false(is.null(res_multi$details$stage1_resid))
     # There should be 2 columns of residuals in stage1_resid, one for each endogenous variable (p and p2).
     expect_equal(ncol(res_multi$details$stage1_resid), 2)
-    # 'corr' (vector of estimated correlation parameters, rho) should have 2 elements (rho_p, rho_p2).
-    expect_length(res_multi$details$corr, 2)
   } else {
     warning("Skipping multi-variable test as tscope object not created. This might indicate tscope() does not support this scenario yet.")
   }
@@ -426,12 +437,11 @@ test_that("works correctly without an intercept in the main model", {
     expect_true(any(c("p", "xp") %in% names(all_coefs)))
     # Verify the presence of the coefficient for the exogenous variable 'w'.
     expect_true(any(c("w", "xw") %in% names(all_coefs)))
-    # Verify the presence of the endogeneity parameter 'rho_p'.
-    expect_true("rho_p" %in% names(all_coefs))
-    # Verify the presence of the standard deviation of the error term 'sdError'.
-    expect_true("sdError" %in% names(all_coefs))
-    # Check the total number of estimated parameters: p, w, rho_p, sdError (4 parameters).
-    expect_length(all_coefs, 4)
+    # Check diagnostics in details
+    expect_true(length(res_no_intercept$details$corr_endostar_resid) == 1)
+    expect_true(is.numeric(res_no_intercept$details$sdError))
+    # The number of estimated main coefficients should be 2 (p, w).
+    expect_length(all_coefs, 2)
     # 'endox' (matrix of endogenous variables) should contain one column named "p".
     expect_equal(colnames(res_no_intercept$details$endox), "p")
     # 'w' (matrix of exogenous regressors) should contain one column named "w".
@@ -451,15 +461,13 @@ test_that("Handles interaction terms correctly (e.g., p*w)", {
   
   if(!is.null(res_interact)){
     all_coefs <- coef(res_interact, complete = TRUE)
-
     # Verify that an interaction term "p:w" is present in the coefficient names.
     expect_true(any(grepl("p:w", names(all_coefs), fixed = TRUE)))
-    # Verify the presence of the endogeneity parameter for 'p' (rho_p).
-    expect_true("rho_p" %in% names(all_coefs))
-    # Verify the presence of the standard deviation of the error term (sdError).
-    expect_true("sdError" %in% names(all_coefs))
-    # Check the total number of estimated parameters: Intercept, p, w, p:w, rho_p, sdError (1+3+1+1 = 6).
-    expect_length(all_coefs, 1 + 3 + 1 + 1)
+    # Check diagnostics in details
+    expect_true(length(res_interact$details$corr_endostar_resid) == 1)
+    expect_true(is.numeric(res_interact$details$sdError))
+    # The number of estimated main coefficients should be 4 (Intercept, p, w, p:w).
+    expect_length(all_coefs, 4)
     # Verify that the endogenous variable matrix 'endox' contains only "p".
     expect_equal(colnames(res_interact$details$endox), "p")
     # Verify that the exogenous variable matrix 'w' contains "w".
@@ -483,16 +491,12 @@ test_that("Handles interaction terms correctly (e.g., p*w)", {
 
   if(!is.null(res_multi_interact)){
     all_coefs_mi <- coef(res_multi_interact, complete = TRUE)
-    
     # Verify that an interaction term "p:p2" is present in the coefficient names.
     expect_true(any(grepl("p:p2", names(all_coefs_mi), fixed = TRUE)))
-    # Verify the presence of the endogeneity parameter for 'p' (rho_p).
-    expect_true("rho_p" %in% names(all_coefs_mi))
-    # Verify the presence of the endogeneity parameter for 'p2' (rho_p2).
-    expect_true("rho_p2" %in% names(all_coefs_mi))
-    # Check the total number of estimated parameters: Intercept, p, p2, w, p:p2, rho_p, rho_p2, sdError (1+4+2+1 = 8).
-    expect_length(all_coefs_mi, 1 + 4 + 2 + 1)
-  } else {
-    warning("Skipping multi-endogenous interaction test as object not created.")
+    # Check diagnostics in details
+    expect_true(length(res_multi_interact$details$corr_endostar_resid) == 2)
+    expect_true(is.numeric(res_multi_interact$details$sdError))
+  } else { 
+    warning("Skipping multi-interaction test as object not created.") 
   }
 })

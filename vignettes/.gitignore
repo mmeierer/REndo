@@ -1,2 +1,14 @@
 *.html
 *.R
+*_cache/
+figure/
+*.pdf
+*.pdf.asis
+*.tex
+*.log
+*.aux
+*.out
+*.toc
+*.lot
+*.lof
+*.synctex.gz

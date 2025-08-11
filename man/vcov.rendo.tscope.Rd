@@ -9,13 +9,14 @@
 \arguments{
 \item{object}{An object of class `rendo.tscope` from the `tscope` function.}
 
-\item{...}{Additional arguments passed to `vcov.lm`.}
+\item{...}{Additional arguments passed to the underlying vcov methods.}
 }
 \value{
-The variance-covariance matrix from the second-stage linear model.
+The variance-covariance matrix.
 }
 \description{
 Returns the variance-covariance matrix of the coefficients from a 2sCOPE model fit.
-Issues a warning that standard errors may not be theoretically valid due to the generated
-regressor problem.
+For bootstrapped objects (inheriting from \code{rendo.boots}), returns the bootstrap-based
+variance-covariance matrix. For non-bootstrapped objects, issues a warning that standard
+errors may not be theoretically valid due to the generated regressor problem.
 }

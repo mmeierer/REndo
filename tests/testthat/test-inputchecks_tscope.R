@@ -10,7 +10,7 @@ test_that("Fail if formula has not exactly two RHS parts", {
   res <- checkinput_tscope_formula(formula = y ~ p, data = dataTscope)
   
   # Check if the expected error message is in the result
-  expect_true(any(grepl("Formula needs to have two parts", res)),
+  expect_true(any(grepl("Formula needs to have exactly two parts", res)),
               info = paste("Expected error message not found in:", paste(res, collapse = " | "))
   )
 })

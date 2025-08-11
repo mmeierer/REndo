@@ -1,6 +1,6 @@
 ---
 title: 'Integrating New Modelling Approaches'
-author: "Your Name"
+author: "Aramis Facchinetti"
 date: "`r Sys.Date()`"
 output: pdf_document
 vignette: |

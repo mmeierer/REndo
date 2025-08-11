@@ -9,13 +9,15 @@
 \arguments{
 \item{object}{An object of class `rendo.tscope` from the `tscope` function.}
 
-\item{...}{Additional arguments passed to `summary.lm`.}
+\item{...}{Additional arguments passed to the underlying summary methods.}
 }
 \value{
-A `summary.lm` object from the second-stage linear model.
+A summary object with enhanced diagnostic information.
 }
 \description{
-Summary method for objects of class `rendo.tscope`. Returns the summary of the
-  second-stage linear model with a warning about the validity of standard errors, and
-  displays diagnostic correlations between transformed endogenous regressors and OLS residuals.
+Summary method for objects of class `rendo.tscope`. For objects with bootstrapping 
+(inheriting from `rendo.boots`), returns the bootstrap-based summary with reliable 
+standard errors. For non-bootstrapped objects, returns the summary of the second-stage 
+linear model with a warning about the validity of standard errors. In both cases,
+displays diagnostic correlations between transformed endogenous regressors and OLS residuals.
 }
