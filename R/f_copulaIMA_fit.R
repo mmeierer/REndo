@@ -14,7 +14,8 @@ CopulaIMA_fit <- function(F.formula, data, cdf,...){
   names.vars.continuous <- formula_readout_special( F.formula = F.formula,name.special = "continuous",from.rhs = 2,params.as.chars.only = TRUE)
 
   #model frame
-  mf <- model.frame(F.formula, data = data, na.action = na.omit)
+  F.formula.main <- formula(F.formula, rhs = 1, lhs = 1)
+  mf <- model.frame(F.formula.main, data = data)
   y <- model.response(mf)
 
   X.main <- model.matrix(F.formula, mf, rhs = 1 )
