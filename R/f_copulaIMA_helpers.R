@@ -1,16 +1,8 @@
-#' @param x numeric vector or matrix
-#' @param na.last passed to rank()
-#' @param ties.method passed to rank()
-#' @param lower.tail logical
-#'
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm coef model.frame update
 #' @importFrom stats ecdf qnorm
 #' @importFrom Matrix rankMatrix
 #' @importFrom copula pobs
-#'
-
-#function for adj.ecdf
 pobs_adj <- function(x, na.last = "keep", ties.method= "average", lower.tail = TRUE){
 
   if (!is.numeric(x)) stop ("x must be numeric")
