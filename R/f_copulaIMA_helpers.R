@@ -6,13 +6,17 @@
 pobs_adj <- function(x, na.last = "keep", ties.method= "average", lower.tail = TRUE){
 
   ties.method <- match.arg(ties.method)
-  U <- if (is.matrix(x)) ##rank or 2?
-    apply(x, rank, na.last = na.last, ties.method = ties.method)*((nrow(x) -1)/(nrow(x)^2)) + 1/(2*nrow(x))
-  else rank(x, na.last = na.last, ties.method = ties.method)*((length(x) - 1)/(length(x)^2)) + 1/(2*length(x))
+  U <- if (is.matrix(x)){ ##rank or 2 for a matrix?
+    U <- apply(x, 2, rank, na.last = na.last, ties.method = ties.method)*((nrow(x) -1)/(nrow(x)^2)) + 1/(2*nrow(x))
+  } else{
+    U <- rank(x, na.last = na.last, ties.method = ties.method)*((length(x) - 1)/(length(x)^2)) + 1/(2*length(x))
+  }
 
-  if (lower.tail)
-    U
-  else 1- U
+  if (lower.tail){
+    return(U)
+  } else {
+    return (1- U)
+  }
 }
 
 #' @param P numeric matrix of endogeneous regressors
