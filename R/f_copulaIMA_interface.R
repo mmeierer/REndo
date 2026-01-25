@@ -1,6 +1,6 @@
 #' @export
 #'
-copulaIMA <- function(formula, data, cdf = "adj.ecdf",num.boots = 199,verbose = TRUE)
+copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),num.boots = 199,verbose = TRUE)
  {
 
   cl <- match.call()
@@ -11,6 +11,8 @@ copulaIMA <- function(formula, data, cdf = "adj.ecdf",num.boots = 199,verbose = 
   check_err_msg(checkinput_copulaIMA_dataVSformula(data, formula))
   check_err_msg(checkinput_copulaIMA_numboots(num.boots))
   check_err_msg(checkinput_copulaIMA_verbose(verbose))
+
+  cdf <- match.arg(cdf)
 
   F.formula <- Formula::as.Formula(formula)
   mf <- model.frame(F.formula, data = data, na.action = na.omit)

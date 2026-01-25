@@ -31,9 +31,9 @@ pobs_adj <- function(x, na.last = "keep", ties.method= eval(formals(rank)$ties.m
 
 #function to calculate Pstar
 
-copulaIMA_pstar <- function(P, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")){
+copulaIMA_pstar <- function(P, cdf){
 
-  cdf <- match.arg(cdf)
+  cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
   if (cdf == "kde"){
     P.star <- apply(P, 2, function(x){
