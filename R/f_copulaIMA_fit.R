@@ -1,10 +1,6 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm model.frame model.matrix terms qnorm
-#'
-
 CopulaIMA_fit <- function(F.formula, data, cdf,...){
-
-  cl <- match.call()
 
   F.formula <- Formula::as.Formula(F.formula)
 
@@ -18,13 +14,13 @@ CopulaIMA_fit <- function(F.formula, data, cdf,...){
   mf <- model.frame(F.formula.main, data = data)
   y <- model.response(mf)
 
-  X.main <- model.matrix(F.formula, mf, rhs = 1 )
+  X.main <- model.matrix(formula(F.formula, rhs = 1, lhs = 0), mf)
 
   #checking if there are intercepts
   has.intercept <- attr(terms(F.formula, rhs = 1), "intercept") == 1
 
   #Continuous endogenous var
-  endogenous.columns <- intersect(names.vars.continuous, colnames(X.main))
+  endogenous.columns <- colnames(X.main)[colnames(X.main) %in% names.vars.continuous]
 
   if (length(endogenous.columns)==0) stop("No continuous endogenous regressors found in design matrix.")
   if (length(endogenous.columns) < length(names.vars.continuous)) {stop( "Bootstrap sample dropped at least one endogenous regressor. This happened when a regressor becomes constant in the resampling.")}
@@ -44,12 +40,13 @@ CopulaIMA_fit <- function(F.formula, data, cdf,...){
    cop.terms <- copulaIMA_residuals(P.star, P.names)
  }
 
+
   X.final <- cbind(X.main, cop.terms)
 
-  fit <- lm(y ~ X.final - 1)
+  # X.main contains intercept if specified in the original formula.
+  fit <- lm(y ~ X.final - 1) #intercept is removed to fit without an additional implicit intercept
 
   .new_rendo_base(
-    call = cl,
     F.formula = F.formula,
     mf = mf,
     coefficients = coef(fit),
