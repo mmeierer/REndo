@@ -73,7 +73,9 @@ copulaIMA_residuals <- function (P.star, P.names){
   for (j in seq_along(P.names)){
     Pj <- P.names[j]
     Z.j <- Z [, Pj, drop = FALSE]
-    Z.others <- Z[, setdiff(P.names, Pj), drop = FALSE]
+
+    others <- P.names[which(P.names != Pj)]
+    Z.others <- Z[, others, drop = FALSE]
 
     lm.j <- lm(Z.j ~ Z.others)
     res[, j] <- residuals(lm.j)
