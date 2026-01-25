@@ -5,8 +5,6 @@
 #' @importFrom copula pobs
 pobs_adj <- function(x, na.last = "keep", ties.method= "average", lower.tail = TRUE){
 
-  if (!is.numeric(x)) stop ("x must be numeric")
-
   ties.method <- match.arg(ties.method)
   U <- if (is.matrix(x)) ##rank or 2?
     apply(x, rank, na.last = na.last, ties.method = ties.method)*((nrow(x) -1)/(nrow(x)^2)) + 1/(2*nrow(x))
