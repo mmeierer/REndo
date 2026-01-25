@@ -35,7 +35,9 @@ Imports:
     data.table (>= 1.11.8),
     corpcor (>= 1.6.9),
     Rcpp (>= 1.0.3), 
-    lmtest (>= 0.9-35)
+    lmtest (>= 0.9-35),
+    copula (>= 1.0-0),
+    ks (>= 1.10.0)
 Suggests:
     testthat,
     covr,
