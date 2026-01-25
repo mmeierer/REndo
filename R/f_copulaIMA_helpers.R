@@ -11,7 +11,7 @@
 #'
 
 #function for adj.ecdf
-pobs_adj <- function(x, na.last = "keep", ties.method= eval(formals(rank)$ties.method), lower.tail = TRUE){
+pobs_adj <- function(x, na.last = "keep", ties.method= "average", lower.tail = TRUE){
 
   if (!is.numeric(x)) stop ("x must be numeric")
 
