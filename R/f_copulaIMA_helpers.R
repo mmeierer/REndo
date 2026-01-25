@@ -2,7 +2,6 @@
 #' @importFrom stats lm coef model.frame update
 #' @importFrom stats ecdf qnorm
 #' @importFrom Matrix rankMatrix
-#' @importFrom copula pobs
 pobs_adj <- function(x, na.last = "keep", ties.method= "average", lower.tail = TRUE){
 
   ties.method <- match.arg(ties.method)
@@ -19,12 +18,9 @@ pobs_adj <- function(x, na.last = "keep", ties.method= "average", lower.tail = T
   }
 }
 
-#' @param P numeric matrix of endogeneous regressors
-#' @param cdf character, one of "adj.ecdf", "resc.ecdf", "ecdf", "kde"
-#' @return matrix of Pstar in (0,1)
 
-#function to calculate Pstar
-
+#' @importFrom copula pobs
+#' @importFrom ks kcde
 copulaIMA_pstar <- function(P, cdf){
 
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
@@ -32,10 +28,10 @@ copulaIMA_pstar <- function(P, cdf){
   if (cdf == "kde"){
     P.star <- apply(P, 2, function(x){
       Fhat <- ks::kcde(x)
-      predict (Fhat, x =x )
+      predict (Fhat, x = x)
     })
   } else if (cdf == "resc.ecdf"){
-    P.star <- apply (P, 2, copula::pobs) #this is not yet working as have to mention copula as package to import?
+    P.star <- apply (P, 2, copula::pobs)
   } else if (cdf == "adj.ecdf"){
     P.star <- apply (P, 2, pobs_adj)
   } else {
