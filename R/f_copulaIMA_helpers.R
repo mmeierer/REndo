@@ -47,17 +47,17 @@ copulaIMA_pstar <- function(P, cdf){
   return (P.star)
 }
 
-#' @param P.star matrix of Pstar
-#' @param P.names names of endo regressors
-#'
-#' @return matrix of residualized copula
 
 copulaIMA_residuals <- function (P.star, P.names){
 
   Z <- qnorm(P.star)
 
-  if(!is.matrix(Z)) Z <- as.matrix(Z)
-  if(is.null(colnames(Z))) stop("P.star must have column names")
+  if(!is.matrix(Z)){
+    Z <- as.matrix(Z)
+  }
+  if(is.null(colnames(Z))){
+    stop("P.star must have column names")
+  }
 
   # only one endeogenous regressor
   if (length(P.names) ==1){
@@ -85,8 +85,4 @@ copulaIMA_residuals <- function (P.star, P.names){
 
 }
 
-#' @keywords internal
-
-#defining the 'continuous()' since the package is not recognizing it in the formula
-continuous <- function(x) x
 
