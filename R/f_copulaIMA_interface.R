@@ -11,6 +11,7 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
   check_err_msg(checkinput_copulaIMA_dataVSformula(data, formula))
   check_err_msg(checkinput_copulaIMA_numboots(num.boots))
   check_err_msg(checkinput_copulaIMA_verbose(verbose))
+  check_err_msg(checkinput_copulaIMA_cdf(cdf))
 
   cdf <- match.arg(cdf)
 
