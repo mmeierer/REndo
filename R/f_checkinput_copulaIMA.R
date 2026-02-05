@@ -118,7 +118,7 @@ checkinput_copulaIMA_numboots <- function(num.boots){
 
   if(num.boots < 1000)
     warning(
-      "It is recommended to run 199 or more bootstraps.",
+      "It is recommended to run 1000 or more bootstraps.",
       call. = FALSE,
       immediate. = TRUE
     )
@@ -128,7 +128,7 @@ checkinput_copulaIMA_numboots <- function(num.boots){
 
 #checking input for verbose
 checkinput_copulaIMA_verbose <- function(verbose){
-  checkinputhelper_single_logical(verbose, "verbose")
+  checkinputhelper_single_logical(logical=verbose, param.name="verbose")
 }
 
 #checking input for cdf
