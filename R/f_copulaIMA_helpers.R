@@ -20,8 +20,6 @@ pobs_adj <- function(x){
 #' @importFrom ks kcde
 copulaIMA_pstar <- function(P, cdf){
 
-  cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
-
   if (cdf == "kde"){
     P.star <- apply(P, 2, function(x){
       Fhat <- ks::kcde(x)

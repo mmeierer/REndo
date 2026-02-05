@@ -13,18 +13,14 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
   check_err_msg(checkinput_copulaIMA_verbose(verbose))
   check_err_msg(checkinput_copulaIMA_cdf(cdf))
 
-  cdf <- match.arg(cdf)
+  cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
   F.formula <- Formula::as.Formula(formula)
-  mf <- model.frame(F.formula, data = data, na.action = na.omit)
+  mf <- model.frame(formula(F.formula, rhs = 1, lhs = 1), data = data)
 
   # Fitting with copula IMA model
   if (verbose) message("Fitting Haschka's copula-based IMA model")
   fit <- CopulaIMA_fit(F.formula, mf, cdf)
-
-  if (num.boots <= 0) {
-    return(build_rendo_base_ima(cl, F.formula, mf, fit))
-  }
 
   # Bootstrapping
   if (verbose) message("Running ", num.boots, " bootstraps")
@@ -47,6 +43,6 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
     }
   }
 
-  build_rendo_boots_ima(cl, F.formula, mf, fit, boots)
+  return(build_rendo_boots_ima(cl, F.formula, mf, fit, boots))
 }
 
