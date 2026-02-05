@@ -2,20 +2,17 @@
 #' @importFrom stats lm coef model.frame update
 #' @importFrom stats ecdf qnorm
 #' @importFrom Matrix rankMatrix
-pobs_adj <- function(x, na.last = "keep", ties.method= "average", lower.tail = TRUE){
+pobs_adj <- function(x){
 
-  ties.method <- match.arg(ties.method)
-  U <- if (is.matrix(x)){ ##rank or 2 for a matrix?
-    U <- apply(x, 2, rank, na.last = na.last, ties.method = ties.method)*((nrow(x) -1)/(nrow(x)^2)) + 1/(2*nrow(x))
+  n <- if(is.matrix(x)) nrow(x) else length(x)
+
+  if (is.matrix(x)){
+    U <- apply(x, 2, rank, na.last = "keep", ties.method = "average")*((n-1)/ n^2) + 1/ (2*n)
   } else{
-    U <- rank(x, na.last = na.last, ties.method = ties.method)*((length(x) - 1)/(length(x)^2)) + 1/(2*length(x))
+    U <- rank(x, na.last = "keep", ties.method = "average") * ((n-1)/n^2) + 1 / (2*n)
   }
 
-  if (lower.tail){
-    return(U)
-  } else {
-    return (1- U)
-  }
+  return(U)
 }
 
 
@@ -48,14 +45,16 @@ copulaIMA_pstar <- function(P, cdf){
 }
 
 
-copulaIMA_residuals <- function (P.star, P.names){
+copulaIMA_residuals <- function (P.star){
 
   Z <- qnorm(P.star)
 
   if(!is.matrix(Z)){
     Z <- as.matrix(Z)
   }
-  if(is.null(colnames(Z))){
+
+  P.names <- colnames(Z)
+  if(is.null(P.names)){
     stop("P.star must have column names")
   }
 
@@ -71,17 +70,13 @@ copulaIMA_residuals <- function (P.star, P.names){
   colnames(res) <- paste0(P.names, "_cop")
 
   for (j in seq_along(P.names)){
-    Pj <- P.names[j]
-    Z.j <- Z [, Pj, drop = FALSE]
-
-    others <- P.names[which(P.names != Pj)]
-    Z.others <- Z[, others, drop = FALSE]
-
+    Z.j <- Z [, j, drop = FALSE]
+    Z.others <- Z[, -j, drop = FALSE]
     lm.j <- lm(Z.j ~ Z.others)
     res[, j] <- residuals(lm.j)
   }
 
-  res
+  return(res)
 
 }
 
