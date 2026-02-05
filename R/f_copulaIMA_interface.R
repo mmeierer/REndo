@@ -1,6 +1,6 @@
 #' @export
 #'
-copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),num.boots = 199,verbose = TRUE)
+copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),num.boots = 1000,verbose = TRUE)
  {
 
   cl <- match.call()
@@ -20,18 +20,33 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
 
   # Fitting with copula IMA model
   if (verbose) message("Fitting Haschka's copula-based IMA model")
-
-  estimated <- CopulaIMA_fit(F.formula, mf, cdf)
+  fit <- CopulaIMA_fit(F.formula, mf, cdf)
 
   if (num.boots <= 0) {
-    return(build_rendo_base_ima(cl, F.formula, mf, estimated))
+    return(build_rendo_base_ima(cl, F.formula, mf, fit))
   }
 
   # Bootstrapping
   if (verbose) message("Running ", num.boots, " bootstraps")
 
-  boots <- copulaIMA_bootstrap(F.formula, mf, cdf, num.boots)
+  n <- nrow(mf)
+  coef.names <-names(coef(fit))
+  #creating a matrix to add bootstrap in each column
+  boots <- matrix(NA, nrow = length(coef.names), ncol = num.boots, dimnames = list(coef.names, NULL))
 
-  build_rendo_boots_ima(cl, F.formula, mf, estimated, boots)
+  #looping over the bootstrap replicates
+  for(b in seq_len(num.boots)){
+    index <- sample.int(n, replace = TRUE) #nonpara bootstrap. n with replacement
+    mf.b <- mf[index, ,drop = FALSE]
+
+    fit.b <- try(CopulaIMA_fit(F.formula, mf.b,cdf), silent = TRUE) # fitting model on the bootstrap sample again
+
+    #storing only successful fits and not NAs
+    if (!inherits(fit.b, "try-error")){
+      boots[, b] <- coef(fit.b)
+    }
+  }
+
+  build_rendo_boots_ima(cl, F.formula, mf, fit, boots)
 }
 
