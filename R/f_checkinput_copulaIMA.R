@@ -116,7 +116,7 @@ checkinput_copulaIMA_numboots <- function(num.boots){
 
   if(length(err.msg)>0) return(err.msg)
 
-  if(num.boots < 199) #default was 199 on Haschka's rep, but <1000?
+  if(num.boots < 1000)
     warning(
       "It is recommended to run 199 or more bootstraps.",
       call. = FALSE,
