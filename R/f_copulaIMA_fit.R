@@ -7,7 +7,7 @@ CopulaIMA_fit <- function(F.formula, data, cdf){
   names.vars.continuous <- formula_readout_special( F.formula = F.formula,name.special = "continuous",from.rhs = 2,params.as.chars.only = TRUE)
 
   #model frame
-  F.formula.main <- formula(F.formula, rhs = 1, lhs = 1)
+  F.formula.main <- formula(F.formula, rhs = 1, lhs = 1) #Haschka 2025 page 164 eq. 3.1
   mf <- model.frame(F.formula.main, data = data)
   y <- model.response(mf)
 
@@ -27,6 +27,7 @@ CopulaIMA_fit <- function(F.formula, data, cdf){
 
   #checking for exogeneous variables
 
+  #Haschka 2025 page 164 Eq. 3.4
   cop.terms <- copulaIMA_residuals(P.star, P.names)
 
   X.final <- cbind(X.main, cop.terms)
