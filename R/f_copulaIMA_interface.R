@@ -31,6 +31,13 @@
 #' or kernel density estimation. These are transformed via the inverse
 #' normal distribution and used to construct copula-based control terms.
 #'
+#' Bootstrap inference is performed by resampling the data with replacement.
+#' Degenerate bootstrap samples (e.g. singular design matrices or failed
+#' model estimation) are discarded and resampled until the requested number
+#' of valid bootstrap replications is obtained. The percentage of discarded
+#' samples is reported as a warning. Confidence intervals are computed
+#' using only successful bootstrap replications.
+#'
 #' @examples
 #' \dontrun{
 #' data(dataCopIMABiExo)
@@ -76,10 +83,14 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
   boots <- matrix(NA, nrow = length(coef.names), ncol = num.boots, dimnames = list(coef.names, NULL))
 
   b <- 1 #tracking the number of successful bootstrap replications
+  failed <- 0 # tracking the number of failed attempts
+  attempt <- 0 #total attempts
 
   repeat{
 
-    if (b > num.boots) break # stop repeating if successful bootstrap is drawn
+    if (b > num.boots) break # stop repeating if successful B bootstrap is drawn
+
+    attempt <- attempt + 1
 
     index <- sample.int(n, replace = TRUE) #resampling
     mf.b <- mf[index, , drop = FALSE]
@@ -92,7 +103,17 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
       boots[, b] <- coef(fit.b)
       b <- b + 1
 
+    } else{
+
+      failed <- failed + 1
     }
+  }
+
+  if (failed >0){
+
+    fail.rate <- failed / attempt
+
+    warning(round(100 * fail.rate, 2), "% of bootstrap samples were degenerate and discarded", call. = FALSE)
   }
 
   return(build_rendo_boots_ima(cl, F.formula, mf, fit, boots))
