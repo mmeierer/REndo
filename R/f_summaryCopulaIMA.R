@@ -59,3 +59,18 @@ print.summary.rendo.copula.ima <- function(x, ...) {
   invisible(x)
 }
 
+#' @export
+print.rendo.copula.ima <- function(x, ...){
+  cat("Call:\n")
+  print(x$call)
+
+  cat("\nCoefficients:\n")
+  print(coef(x))
+
+  if (!is.null(x$boots.params)){
+    cat("\nPlease use summary() for bootstrap standard errors.\n")
+  }
+
+  invisible(x)
+}
+

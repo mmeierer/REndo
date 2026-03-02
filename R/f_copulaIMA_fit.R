@@ -28,7 +28,7 @@ CopulaIMA_fit <- function(F.formula, data, cdf){
   #checking for exogeneous variables
 
   #Haschka 2025 page 164 Eq. 3.4
-  cop.terms <- copulaIMA_residuals(P.star, P.names)
+  cop.terms <- copulaIMA_residuals(P.star)
 
   X.final <- cbind(X.main, cop.terms)
 
