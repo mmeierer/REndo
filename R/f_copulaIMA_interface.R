@@ -36,7 +36,7 @@
 #'
 #' Haschka (2025) reported that simulation results showed that copula-based IMA
 #' estimator may exhibit a slightly larger bias than alternative two-stage
-#' approachec when the sample size is very small (e.g., n = 100).
+#' approaches when the sample size is very small (e.g., n = 100).
 #' However, the bias decreases rapidly as sample size increases and become
 #' negligible for moderate sample sizes (around n >= 600). The estimator appears
 #' asymptotically unbiased.
@@ -44,7 +44,7 @@
 #' @references
 #' Haschka, R. E. (2025). Robustness of copula-correction models in causal
 #' analysis: Exploiting between-regressor correlation.IMA Journal of Management
-#' Mathematics(2025) 36, 161–180
+#' Mathematics, 36, 161–180
 #'
 #' @examples
 #' data(dataCopIMABiExo)
@@ -74,16 +74,15 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
   F.formula <- Formula::as.Formula(formula)
-  mf <- model.frame(formula(F.formula, rhs = 1, lhs = 1), data = data)
 
   # Fitting with copula IMA model
   if (verbose) message("Fitting Haschka's copula-based IMA model")
-  fit <- CopulaIMA_fit(F.formula, mf, cdf)
+  fit <- CopulaIMA_fit(F.formula, data, cdf)
 
   # Bootstrapping
   if (verbose) message("Running ", num.boots, " bootstraps")
 
-  n <- nrow(mf)
+  n <- nrow(data)
   coef.names <-names(coef(fit))
 
   #creating a matrix to add bootstrap in each column
@@ -100,10 +99,10 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
     attempt <- attempt + 1
 
     index <- sample.int(n, replace = TRUE) #resampling
-    mf.b <- mf[index, , drop = FALSE]
+    data.b <- data[index, , drop = FALSE]
 
     #estimating
-    fit.b <- try(CopulaIMA_fit(F.formula, mf.b, cdf), silent = TRUE)
+    fit.b <- try(CopulaIMA_fit(F.formula, data.b, cdf), silent = TRUE)
 
     #taking into account only adequate draws
     if(!inherits(fit.b, "try-error")){
@@ -123,6 +122,6 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
     warning(round(100 * fail.rate, 2), "% of bootstrap samples were degenerate and discarded", call. = FALSE)
   }
 
-  return(build_rendo_boots_ima(cl, F.formula, mf, fit, boots))
+  return(build_rendo_boots_ima(cl, F.formula, fit, boots))
 }
 
