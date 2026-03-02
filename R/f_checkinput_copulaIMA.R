@@ -135,21 +135,18 @@ checkinput_copulaIMA_verbose <- function(verbose){
 
 checkinput_copulaIMA_cdf <- function(cdf){
 
-  err.msg <- c()
-
   cdf.allowed <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
 
   if (!is.character(cdf) || length(cdf) !=1){
-    err.msg <-c(err.msg, "The argument 'cdf' must be a single character string." )
+    return("The argument 'cdf' must be a single character string.")
   }
 
-  if (length(err.msg)==0 && !(cdf %in% cdf.allowed)){
-
-    err.msg <- c(err.msg, paste0("Value for 'cdf' is invalid. The allowed values are: ", paste(cdf.allowed, collapse = ", ")))
+  if (!(cdf %in% cdf.allowed)){
+    return(paste0("Value for 'cdf' is invalid. The allowed values are: ", paste(cdf.allowed, collapse = ", ")))
 
   }
 
-  return(err.msg)
+  return(c())
 }
 
 
