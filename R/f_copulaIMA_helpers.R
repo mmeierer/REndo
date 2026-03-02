@@ -4,13 +4,19 @@
 #' @importFrom Matrix rankMatrix
 pobs_adj <- function(x){
 
-  n <- if(is.matrix(x)) nrow(x) else length(x)
-
-  if (is.matrix(x)){
-    U <- apply(x, 2, rank, na.last = "keep", ties.method = "average")*((n-1)/ n^2) + 1/ (2*n)
-  } else{
-    U <- rank(x, na.last = "keep", ties.method = "average") * ((n-1)/n^2) + 1 / (2*n)
+  if(!is.matrix(x)){
+    x <- matrix(x, ncol = 1)
   }
+
+  n <- nrow(x)
+
+  #Adjusted empirical CDF
+  #U_i = rank_i/n * (n-1/n) + (1/2n) and simplifies to U_i = (rank_i-1/2)/ n.
+  #This is a midrank adjustment used in nonparametric statistics to handle tied data points/identical values
+  #when calculating the empirical CDF or assigning ranks.
+  #This keeps the observations strictly inside (0,1) and avoids infinities when
+  #applying qnorm().
+  U <- apply(x, 2, rank, na.last = "keep", ties.method = "average")*((n-1)/ n^2) + 1/ (2*n)
 
   return(U)
 }
@@ -37,6 +43,9 @@ copulaIMA_pstar <- function(P, cdf){
       u[u == max(u)] <- 1 - 1e-7
       u
     })
+
+    P.star <- as.matrix(P.star)
+    colnames(P.star) <- colnames(P)
   }
 
   return (P.star) #constructing P star, from Haschka 2025, page 164
