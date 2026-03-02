@@ -56,7 +56,7 @@ using only successful bootstrap replications.
 
 Haschka (2025) reported that simulation results showed that copula-based IMA
 estimator may exhibit a slightly larger bias than alternative two-stage
-approachec when the sample size is very small (e.g., n = 100).
+approaches when the sample size is very small (e.g., n = 100).
 However, the bias decreases rapidly as sample size increases and become
 negligible for moderate sample sizes (around n >= 600). The estimator appears
 asymptotically unbiased.
@@ -76,5 +76,5 @@ summary(res)
 \references{
 Haschka, R. E. (2025). Robustness of copula-correction models in causal
 analysis: Exploiting between-regressor correlation.IMA Journal of Management
-Mathematics(2025) 36, 161–180
+Mathematics, 36, 161–180
 }
