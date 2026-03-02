@@ -3,17 +3,13 @@
 #' Fitting Haschka's copula-based Instrumental Variable Model (IMA) using
 #' Gaussian copulas to address endogeneity without external instruments.
 #'
-#' @param formula Description of the model to be fitted.
-#'   The formula follows a two-part notation separated by a vertical bar
-#'   (\code{|}), where the first part specifies the structural equation and
-#'   the second part specifies the endogenous regressors.
-#' @param data A data.frame containing all variables used in the model.
+#' @template template_param_formuladataverbose
+#'
 #' @param cdf Character string specifying the method used to estimate the
 #'   marginal distribution functions of the endogenous regressors.
 #'   One of \code{"adj.ecdf"}, \code{"resc.ecdf"}, \code{"ecdf"}, or \code{"kde"}.
 #' @param num.boots Integer giving the number of bootstrap replications
 #'   used for inference.
-#' @param verbose if \code{TRUE}, progress messages are printed.
 #'
 #' @return An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
 #'   and \code{rendo.base}, which contains the fitted model, coefficient
@@ -38,17 +34,28 @@
 #' samples is reported as a warning. Confidence intervals are computed
 #' using only successful bootstrap replications.
 #'
+#' Haschka (2025) reported that simulation results showed that copula-based IMA
+#' estimator may exhibit a slightly larger bias than alternative two-stage
+#' approachec when the sample size is very small (e.g., n = 100).
+#' However, the bias decreases rapidly as sample size increases and become
+#' negligible for moderate sample sizes (around n >= 600). The estimator appears
+#' asymptotically unbiased.
+#'
+#' @references
+#' Haschka, R. E. (2025). Robustness of copula-correction models in causal
+#' analysis: Exploiting between-regressor correlation.IMA Journal of Management
+#' Mathematics(2025) 36, 161–180
+#'
 #' @examples
-#' \dontrun{
 #' data(dataCopIMABiExo)
 #' res <- copulaIMA(
-#'   y ~ x1 + x2 | p,
+#'   y ~ X + P | continuous(P),
 #'   data = dataCopIMABiExo,
 #'   cdf = "adj.ecdf",
-#'   num.boots = 100
+#'   num.boots = 1000
 #' )
 #' summary(res)
-#' }
+#'
 #'
 #' @export
 copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),num.boots = 1000,verbose = TRUE)
@@ -105,11 +112,11 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
 
     } else{
 
-      failed <- failed + 1
+     failed <- failed + 1
     }
   }
 
-  if (failed >0){
+    if (failed >0){
 
     fail.rate <- failed / attempt
 
