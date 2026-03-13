@@ -135,7 +135,16 @@ checkinput_copulaIMA_verbose <- function(verbose){
 
 checkinput_copulaIMA_cdf <- function(cdf){
 
+  # Has to be same order as the default arguments of `copulaIMA()`
   cdf.allowed <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+
+  # `cdf` may be the exact, full vector of allowed inputs.
+  # In `match.arg()` this will select the first element of the `choices` argument
+  # (this vector). This allows to call `copulaIMA()` with no argument for `cdf`
+  # (it will use the default value of cdf which is the full vector)
+  if(identical(cdf, cdf.allowed)){
+    return(c())
+  }
 
   if (!is.character(cdf) || length(cdf) !=1){
     return("The argument 'cdf' must be a single character string.")
