@@ -58,6 +58,7 @@
 #'
 #'
 #' @export
+#' @importFrom stats coef
 copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),num.boots = 1000,verbose = TRUE)
  {
 

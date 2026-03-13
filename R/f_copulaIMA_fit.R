@@ -1,5 +1,5 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame model.matrix terms qnorm
+#' @importFrom stats lm model.frame model.matrix model.response
 CopulaIMA_fit <- function(F.formula, data, cdf){
 
   F.formula <- Formula::as.Formula(F.formula)

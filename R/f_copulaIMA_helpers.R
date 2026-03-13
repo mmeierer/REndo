@@ -1,7 +1,3 @@
-#' @importFrom Formula as.Formula
-#' @importFrom stats lm coef model.frame update
-#' @importFrom stats ecdf qnorm
-#' @importFrom Matrix rankMatrix
 copulaIMA_adjecdf <- function(x){
 
   if(!is.matrix(x)){
@@ -21,9 +17,9 @@ copulaIMA_adjecdf <- function(x){
   return(U)
 }
 
-
 #' @importFrom copula pobs
 #' @importFrom ks kcde
+#' @importFrom stats ecdf predict
 copulaIMA_pstar <- function(P, cdf){
 
   if (cdf == "kde"){
@@ -52,6 +48,7 @@ copulaIMA_pstar <- function(P, cdf){
 }
 
 
+#' @importFrom stats qnorm lm residuals
 copulaIMA_residuals <- function (P.star){
 
   Z <- qnorm(P.star)
