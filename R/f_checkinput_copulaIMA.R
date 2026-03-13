@@ -108,22 +108,7 @@ checkinput_copulaIMA_dataVSformula <- function(data, formula){
 #for num.boots and verbose
 
 checkinput_copulaIMA_numboots <- function(num.boots){
-  err.msg <- checkinputhelper_singlepositivewholenumeric(
-    num.param = num.boots,
-    parameter.name = "num.boots",
-    min.num = 2
-  )
-
-  if(length(err.msg)>0) return(err.msg)
-
-  if(num.boots < 1000)
-    warning(
-      "It is recommended to run 1000 or more bootstraps.",
-      call. = FALSE,
-      immediate. = TRUE
-    )
-
-  c()
+  return(checkinputhelper_numboots(num.boots))
 }
 
 #checking input for verbose
