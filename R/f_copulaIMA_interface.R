@@ -66,7 +66,7 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
   # input checks
   check_err_msg(checkinput_copulaIMA_formula(formula))
   check_err_msg(checkinput_copulaIMA_data(data))
-  check_err_msg(checkinput_copulaIMA_dataVSformula(data, formula))
+  check_err_msg(checkinput_copulaIMA_dataVSformula(data=data, formula=formula))
   check_err_msg(checkinput_copulaIMA_numboots(num.boots))
   check_err_msg(checkinput_copulaIMA_verbose(verbose))
   check_err_msg(checkinput_copulaIMA_cdf(cdf))
@@ -77,7 +77,7 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
 
   # Fitting with copula IMA model
   if (verbose) message("Fitting Haschka's copula-based IMA model")
-  fit <- CopulaIMA_fit(F.formula, data, cdf)
+  fit <- CopulaIMA_fit(F.formula = F.formula, data = data, cdf = cdf)
 
   # Bootstrapping
   if (verbose) message("Running ", num.boots, " bootstraps")
@@ -102,7 +102,7 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
     data.b <- data[index, , drop = FALSE]
 
     #estimating
-    fit.b <- try(CopulaIMA_fit(F.formula, data.b, cdf), silent = TRUE)
+    fit.b <- try(CopulaIMA_fit(F.formula = F.formula, data = data.b, cdf = cdf), silent = TRUE)
 
     #taking into account only adequate draws
     if(!inherits(fit.b, "try-error")){
@@ -122,6 +122,6 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
     warning(round(100 * fail.rate, 2), "% of bootstrap samples were degenerate and discarded", call. = FALSE)
   }
 
-  return(build_rendo_boots_ima(cl, F.formula, fit, boots))
+  return(build_rendo_boots_ima(call = cl, F.formula = F.formula, res.lm=fit, boots=boots))
 }
 

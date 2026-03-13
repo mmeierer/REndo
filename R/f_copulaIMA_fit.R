@@ -23,7 +23,7 @@ CopulaIMA_fit <- function(F.formula, data, cdf){
   P <- X.main[, endogenous.columns, drop = FALSE]
   P.names <- colnames(P)
 
-  P.star <- copulaIMA_pstar(P, cdf = cdf)
+  P.star <- copulaIMA_pstar(P=P, cdf = cdf)
 
   #checking for exogeneous variables
 

@@ -73,7 +73,7 @@ copulaIMA_residuals <- function (P.star){
   }
 
   # Having more than one endo regressor
-  res <- matrix (NA, nrow(Z), length(P.names))
+  res <- matrix(data=NA, nrow=nrow(Z), ncol=length(P.names))
   colnames(res) <- paste0(P.names, "_cop")
 
   for (j in seq_along(P.names)){
