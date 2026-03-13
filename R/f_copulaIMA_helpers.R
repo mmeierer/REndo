@@ -12,7 +12,7 @@ copulaIMA_adjecdf <- function(x){
   #when calculating the empirical CDF or assigning ranks.
   #This keeps the observations strictly inside (0,1) and avoids infinities when
   #applying qnorm().
-  U <- apply(x, 2, rank, na.last = "keep", ties.method = "average")*((n-1)/ n^2) + 1/ (2*n)
+  U <- apply(x, 2, rank, ties.method = "average")*((n-1)/ n^2) + 1/ (2*n)
 
   return(U)
 }
