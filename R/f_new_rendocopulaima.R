@@ -1,5 +1,5 @@
 #' @importFrom stats coef fitted residuals
-build_rendo_boots_ima <- function(call, F.formula, res.lm, boots) {
+build_rendo_boots_ima <- function(call, F.formula, cdf, res.lm, boots) {
   .new_rendo_boots(
     call = call,
     F.formula = F.formula,
@@ -9,6 +9,7 @@ build_rendo_boots_ima <- function(call, F.formula, res.lm, boots) {
     fitted.values = fitted(res.lm),
     residuals = residuals(res.lm),
     boots.params = boots,
+    cdf = cdf,
     subclass = "rendo.copula.ima"
   )
 }

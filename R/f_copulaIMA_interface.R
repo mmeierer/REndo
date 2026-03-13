@@ -154,6 +154,7 @@ copulaIMA <- function(
   return(build_rendo_boots_ima(
     call = cl,
     F.formula = F.formula,
+    cdf = cdf,
     res.lm = fit,
     boots = boots
   ))
