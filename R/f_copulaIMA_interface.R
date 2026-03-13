@@ -60,15 +60,19 @@
 #' @export
 #' @importFrom stats coef
 #' @importFrom utils txtProgressBar setTxtProgressBar close
-copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),num.boots = 1000,verbose = TRUE)
- {
-
+copulaIMA <- function(
+  formula,
+  data,
+  cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
+  num.boots = 1000,
+  verbose = TRUE
+) {
   cl <- match.call()
 
   # input checks
   check_err_msg(checkinput_copulaIMA_formula(formula))
   check_err_msg(checkinput_copulaIMA_data(data))
-  check_err_msg(checkinput_copulaIMA_dataVSformula(data=data, formula=formula))
+  check_err_msg(checkinput_copulaIMA_dataVSformula(data = data, formula = formula))
   check_err_msg(checkinput_copulaIMA_numboots(num.boots))
   check_err_msg(checkinput_copulaIMA_verbose(verbose))
   check_err_msg(checkinput_copulaIMA_cdf(cdf))
@@ -78,28 +82,36 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
   F.formula <- Formula::as.Formula(formula)
 
   # Fitting with copula IMA model
-  if (verbose) message("Fitting Haschka's copula-based IMA model")
+  if (verbose) {
+    message("Fitting Haschka's copula-based IMA model")
+  }
   fit <- CopulaIMA_fit(F.formula = F.formula, data = data, cdf = cdf)
 
   # Bootstrapping
-  if (verbose){
+  if (verbose) {
     message("Running ", num.boots, " bootstraps.")
     pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
   }
 
   n <- nrow(data)
-  coef.names <-names(coef(fit))
+  coef.names <- names(coef(fit))
 
   #creating a matrix to add bootstrap in each column
-  boots <- matrix(NA, nrow = length(coef.names), ncol = num.boots, dimnames = list(coef.names, NULL))
+  boots <- matrix(
+    NA,
+    nrow = length(coef.names),
+    ncol = num.boots,
+    dimnames = list(coef.names, NULL)
+  )
 
   b <- 1 #tracking the number of successful bootstrap replications
   failed <- 0 # tracking the number of failed attempts
   attempt <- 0 #total attempts
 
-  repeat{
-
-    if (b > num.boots) break # stop repeating if successful B bootstrap is drawn
+  repeat {
+    if (b > num.boots) {
+      break
+    } # stop repeating if successful B bootstrap is drawn
 
     attempt <- attempt + 1
 
@@ -107,33 +119,42 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
     data.b <- data[index, , drop = FALSE]
 
     #estimating
-    fit.b <- try(CopulaIMA_fit(F.formula = F.formula, data = data.b, cdf = cdf), silent = TRUE)
+    fit.b <- try(
+      CopulaIMA_fit(F.formula = F.formula, data = data.b, cdf = cdf),
+      silent = TRUE
+    )
 
     #taking into account only adequate draws
-    if(!inherits(fit.b, "try-error")){
+    if (!inherits(fit.b, "try-error")) {
       boots[, b] <- coef(fit.b)
       b <- b + 1
 
-      if(verbose){
+      if (verbose) {
         setTxtProgressBar(pb, b)
       }
-    } else{
-
-     failed <- failed + 1
+    } else {
+      failed <- failed + 1
     }
   }
 
-  if(verbose){
+  if (verbose) {
     close(pb)
   }
 
-    if (failed >0){
-
+  if (failed > 0) {
     fail.rate <- failed / attempt
 
-    warning(round(100 * fail.rate, 2), "% of bootstrap samples were degenerate and discarded", call. = FALSE)
+    warning(
+      round(100 * fail.rate, 2),
+      "% of bootstrap samples were degenerate and discarded",
+      call. = FALSE
+    )
   }
 
-  return(build_rendo_boots_ima(call = cl, F.formula = F.formula, res.lm=fit, boots=boots))
+  return(build_rendo_boots_ima(
+    call = cl,
+    F.formula = F.formula,
+    res.lm = fit,
+    boots = boots
+  ))
 }
-

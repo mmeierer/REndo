@@ -12,4 +12,3 @@ build_rendo_boots_ima <- function(call, F.formula, res.lm, boots) {
     subclass = "rendo.copula.ima"
   )
 }
-

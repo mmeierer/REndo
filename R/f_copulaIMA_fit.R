@@ -1,10 +1,14 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm model.frame model.matrix model.response
-CopulaIMA_fit <- function(F.formula, data, cdf){
-
+CopulaIMA_fit <- function(F.formula, data, cdf) {
   F.formula <- Formula::as.Formula(F.formula)
 
-  names.vars.continuous <- formula_readout_special( F.formula = F.formula,name.special = "continuous",from.rhs = 2,params.as.chars.only = TRUE)
+  names.vars.continuous <- formula_readout_special(
+    F.formula = F.formula,
+    name.special = "continuous",
+    from.rhs = 2,
+    params.as.chars.only = TRUE
+  )
 
   #model frame
   F.formula.main <- formula(F.formula, rhs = 1, lhs = 1) #Haschka 2025 page 164 eq. 3.1
@@ -16,14 +20,19 @@ CopulaIMA_fit <- function(F.formula, data, cdf){
   #Continuous endogenous var
   endogenous.columns <- colnames(X.main)[colnames(X.main) %in% names.vars.continuous]
 
-  if (length(endogenous.columns)==0) stop("No continuous endogenous regressors found in design matrix.")
-  if (length(endogenous.columns) < length(names.vars.continuous)) {stop( "Bootstrap sample dropped at least one endogenous regressor. This happened when a regressor becomes constant in the resampling.")}
-
+  if (length(endogenous.columns) == 0) {
+    stop("No continuous endogenous regressors found in design matrix.")
+  }
+  if (length(endogenous.columns) < length(names.vars.continuous)) {
+    stop(
+      "Bootstrap sample dropped at least one endogenous regressor. This happened when a regressor becomes constant in the resampling."
+    )
+  }
 
   P <- X.main[, endogenous.columns, drop = FALSE]
   P.names <- colnames(P)
 
-  P.star <- copulaIMA_pstar(P=P, cdf = cdf)
+  P.star <- copulaIMA_pstar(P = P, cdf = cdf)
 
   #checking for exogeneous variables
 
@@ -37,4 +46,3 @@ CopulaIMA_fit <- function(F.formula, data, cdf){
 
   return(fit)
 }
-
