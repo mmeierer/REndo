@@ -59,7 +59,7 @@
 #'
 #' @export
 #' @importFrom stats coef
-#' @importFrom utils txtProgressBar setTxtProgressBar close
+#' @importFrom utils txtProgressBar setTxtProgressBar
 copulaIMA <- function(
   formula,
   data,
