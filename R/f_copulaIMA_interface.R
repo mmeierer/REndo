@@ -85,7 +85,7 @@ copulaIMA <- function(
   if (verbose) {
     message("Fitting Haschka's copula-based IMA model")
   }
-  fit <- CopulaIMA_fit(F.formula = F.formula, data = data, cdf = cdf)
+  fit <- copulaIMA_fit(F.formula = F.formula, data = data, cdf = cdf)
 
   # Bootstrapping
   if (verbose) {
@@ -120,7 +120,7 @@ copulaIMA <- function(
 
     #estimating
     fit.b <- try(
-      CopulaIMA_fit(F.formula = F.formula, data = data.b, cdf = cdf),
+      copulaIMA_fit(F.formula = F.formula, data = data.b, cdf = cdf),
       silent = TRUE
     )
 
