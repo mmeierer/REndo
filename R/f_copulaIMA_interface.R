@@ -59,6 +59,7 @@
 #'
 #' @export
 #' @importFrom stats coef
+#' @importFrom utils txtProgressBar setTxtProgressBar close
 copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),num.boots = 1000,verbose = TRUE)
  {
 
@@ -81,7 +82,10 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
   fit <- CopulaIMA_fit(F.formula = F.formula, data = data, cdf = cdf)
 
   # Bootstrapping
-  if (verbose) message("Running ", num.boots, " bootstraps")
+  if (verbose){
+    message("Running ", num.boots, " bootstraps.")
+    pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
+  }
 
   n <- nrow(data)
   coef.names <-names(coef(fit))
@@ -110,10 +114,17 @@ copulaIMA <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "k
       boots[, b] <- coef(fit.b)
       b <- b + 1
 
+      if(verbose){
+        setTxtProgressBar(pb, b)
+      }
     } else{
 
      failed <- failed + 1
     }
+  }
+
+  if(verbose){
+    close(pb)
   }
 
     if (failed >0){
