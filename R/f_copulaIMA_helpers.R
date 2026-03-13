@@ -2,7 +2,7 @@
 #' @importFrom stats lm coef model.frame update
 #' @importFrom stats ecdf qnorm
 #' @importFrom Matrix rankMatrix
-pobs_adj <- function(x){
+copulaIMA_adjecdf <- function(x){
 
   if(!is.matrix(x)){
     x <- matrix(x, ncol = 1)
@@ -34,7 +34,7 @@ copulaIMA_pstar <- function(P, cdf){
   } else if (cdf == "resc.ecdf"){
     P.star <- apply (P, 2, copula::pobs)
   } else if (cdf == "adj.ecdf"){
-    P.star <- apply (P, 2, pobs_adj)
+    P.star <- apply (P, 2, copulaIMA_adjecdf)
   } else {
     ecdf0 <- apply(P, 2, ecdf)
     P.star <- sapply(seq_along(ecdf0), function(i){
