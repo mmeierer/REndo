@@ -73,7 +73,7 @@ copulaIMA_residuals <- function(P.star) {
   for (j in seq_along(P.names)) {
     Z.j <- Z[, j, drop = FALSE]
     Z.others <- Z[, -j, drop = FALSE]
-    lm.j <- lm(Z.j ~ Z.others) #Haschka 2025 Eq. 3.3
+    lm.j <- lm(Z.j ~ Z.others - 1) #Haschka 2025 Eq. 3.3
     res[, j] <- residuals(lm.j)
   }
 
