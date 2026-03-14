@@ -1,76 +1,56 @@
 #' @export
 summary.rendo.copula.ima <- function(object, ...) {
-  coefs <- object$coefficients
-  coef.names <- names(coefs)
+  # The default rendo.base summary but add some copulaIMA things
 
-  # Case where there is no bootstrap. Shows estimates only
-  if (is.null(object$boots.params)) {
-    table <- cbind(Estimate = coefs) #building a coeff table to show only estimates and no SE, Zstat or pvalue
-    res <- list(call = object$call,
-      coefficients = table,
-      has.boots = FALSE
-    )
-    class(res) <- "summary.rendo.copula.ima"
-    return(res)
-  }
+  # Get the summary from the `rendo.boots` parent class --------------------------------
+  res <- NextMethod()
 
-  # Case where there is bootstrap
-  boots <- object$boots.params #the rows are the coeffs and the cols are the bootstrap replicates
+  # Add the copulaIMA specific parts ---------------------------------------------------
+  res$names.endo.regs <- c(character(0), object$names.endo.regs)
+  res$cdf <- object$cdf
+  res$n.boots.attempted <- object$n.boots.attempted
+  res$n.boots.failed <- object$n.boots.failed
 
-  # Aligning the rows
-  boots <- boots[coef.names, , drop = FALSE] #bootstrap estimates to be the same order as the coefficients. To make sure SE is good.
+  # Keep all the inherited summary classes from `rendo.boots` to use its print function
+  class(res) <- c("summary.rendo.copula.ima", class(res))
 
-  #calculating standard error, Zstat and the pvalue
-  se <- apply(boots, 1, sd, na.rm = TRUE)
-  z  <- coefs / se
-  p  <- 2 * (1 - pnorm(abs(z)))
-
-  #building the table for the coeffs
-  table <- cbind(
-    Estimate = coefs,
-    `Std. Error` = se,
-    `z value` = z,
-    `Pr(>|z|)` = p
-  )
-
-  res <- list(call = object$call,
-    coefficients = table,
-    has.boots = TRUE,
-    num.boots = ncol(boots)
-  )
-
-  class(res) <- "summary.rendo.copula.ima"
-  res
+  return(res)
 }
 
 #' @export
-print.summary.rendo.copula.ima <- function(x, ...) {
+print.summary.rendo.copula.ima <- function(
+  x,
+  digits = max(3L, getOption("digits") - 3L),
+  signif.stars = getOption("show.signif.stars"),
+  ...
+) {
+  # Max width to not exceed the fixed width of some prints (printCoef/call)
+  max.width <- min(65, 0.9 * getOption("width"))
 
-  #print call
-  cat("Call:\n")
-  print(x$call)
+  # Print summary of inherited classes (`summary.rendo.boots`) ------------------------
+  NextMethod()
 
-  cat("\nCoefficients:\n")
-  printCoefmat(x$coefficients, P.values = "Pr(>|z|)" %in% colnames(x$coefficients), has.Pvalue = "Pr(>|z|)" %in% colnames(x$coefficients))
+  # Print copulaIMA specific parts ----------------------------------------------------
+  cat("\n")
 
-  #adding a bootstrap footnote. Standard Errors were calculated from the bootstrap
-  if (isTRUE(x$has.boots)) {cat("\n(Standard errors from bootstrap)\n")}
+  # Some more bootstrapping info before break
+  fail.rate <- round(100 * x$n.boots.failed / x$n.boots.attempted, 2)
+  cat("Num bootstraps attempted: ", x$n.boots.attempted, "\n", sep = "")
+  cat(
+    "Num bootstraps failed and discarded: ",
+    x$n.boots.failed,
+    " (",
+    fail.rate,
+    "%)\n",
+    sep = ""
+  )
+  cat("\n")
+  endo.vars <- paste0(
+    strwrap(paste0(x$names.endo.regs, collapse = ", "), width = max.width),
+    collapse = "\n"
+  )
+  cat("Continuous endogenous variables: ", endo.vars, "\n", sep = "")
+  cat("Used cdf: ", x$cdf, "\n", sep = "")
 
-  invisible(x)
+  return(invisible(x))
 }
-
-#' @export
-print.rendo.copula.ima <- function(x, ...){
-  cat("Call:\n")
-  print(x$call)
-
-  cat("\nCoefficients:\n")
-  print(coef(x))
-
-  if (!is.null(x$boots.params)){
-    cat("\nPlease use summary() for bootstrap standard errors.\n")
-  }
-
-  invisible(x)
-}
-

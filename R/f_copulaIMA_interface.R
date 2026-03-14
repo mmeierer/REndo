@@ -80,12 +80,27 @@ copulaIMA <- function(
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
   F.formula <- Formula::as.Formula(formula)
+  names.endo.regs <- formula_readout_special(
+    F.formula = F.formula,
+    name.special = "continuous",
+    from.rhs = 2,
+    params.as.chars.only = TRUE
+  )
 
   # Fitting with copula IMA model
   if (verbose) {
-    message("Fitting Haschka's copula-based IMA model")
+    message(
+      "Fitting Haschka's copula-based IMA model for ",
+      length(names.endo.regs),
+      " continuous endogenous regressors"
+    )
   }
-  fit <- copulaIMA_fit(F.formula = F.formula, data = data, cdf = cdf)
+  fit <- copulaIMA_fit(
+    F.formula = F.formula,
+    data = data,
+    cdf = cdf,
+    names.endo.regs = names.endo.regs
+  )
 
   # Bootstrapping
   if (verbose) {
@@ -120,7 +135,12 @@ copulaIMA <- function(
 
     #estimating
     fit.b <- try(
-      copulaIMA_fit(F.formula = F.formula, data = data.b, cdf = cdf),
+      copulaIMA_fit(
+        F.formula = F.formula,
+        data = data.b,
+        cdf = cdf,
+        names.endo.regs = names.endo.regs
+      ),
       silent = TRUE
     )
 
@@ -154,8 +174,11 @@ copulaIMA <- function(
   return(build_rendo_boots_ima(
     call = cl,
     F.formula = F.formula,
+    names.endo.regs = names.endo.regs,
     cdf = cdf,
     res.lm = fit,
-    boots = boots
+    boots = boots,
+    n.boots.attempted = attempt,
+    n.boots.failed = failed
   ))
 }
