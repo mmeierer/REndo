@@ -1,3 +1,11 @@
+doc_rendoboots_return_list <- function() {
+  doc_base <- doc_rendobase_return_list()
+  doc_boots <- c(
+    "\\item{\\code{boots.params}}{The bootstrapped coefficients.}"
+  )
+  return(c(doc_base, doc_boots))
+}
+
 # Extends rendo.base by bootstrapped vcov from bootstrapped params
 #' @importFrom Formula as.Formula
 .new_rendo_boots <- function(# rendo.base specific

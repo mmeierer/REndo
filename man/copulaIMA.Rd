@@ -28,8 +28,19 @@ used for inference.}
 }
 \value{
 An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
-  and \code{rendo.base}, which is a list that contains the fitted OLS model,
-  coefficient estimates, and bootstrap results:
+  and \code{rendo.base}, which is a list that contains:
+\item{\code{formula}}{The formula given to specify the fitted model.}
+\item{\code{model}}{The model.frame used for model fitting.}
+\item{\code{terms}}{The terms object used for model fitting.}
+\item{\code{coefficients}}{A named vector of all coefficients resulting from model fitting.}
+\item{\code{names.main.coefs}}{A vector specifying which coefficients are from the model. For internal usage.}
+\item{\code{fitted.values}}{Fitted values at the found solution.}
+\item{\code{residuals}}{The residuals at the found solution.}
+\item{\code{boots.params}}{The bootstrapped coefficients.}
+\item{\code{cdf}}{The used cdf function.}
+\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
+\item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
+\item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
 }
 \description{
 Fitting Haschka's copula-based Instrumental Variable Model (IMA) using

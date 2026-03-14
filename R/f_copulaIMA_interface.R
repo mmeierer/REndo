@@ -42,9 +42,7 @@
 #' analysis: Exploiting between-regressor correlation.IMA Journal of Management
 #' Mathematics, 36, 161–180
 #'
-#' @return An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
-#'   and \code{rendo.base}, which is a list that contains the fitted OLS model,
-#'   coefficient estimates, and bootstrap results:
+#' @eval doc_rendocopulaima_return()
 #'
 #' @examples
 #' data(dataCopIMABiExo)

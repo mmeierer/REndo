@@ -1,3 +1,25 @@
+doc_rendocopulaima_return_list <- function() {
+  doc_boots <- doc_rendoboots_return_list()
+  doc_copulaima <- c(
+    "\\item{\\code{cdf}}{The used cdf function.}",
+    "\\item{\\code{names.endo.regs}}{The names of the continuous endogenous regressors.}",
+    "\\item{\\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}",
+    "\\item{\\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}"
+  )
+
+  return(c(doc_boots, doc_copulaima))
+}
+
+
+doc_rendocopulaima_return <- function() {
+  doc_intro <- c(
+    "@return An object of classes \\code{rendo.copula.ima}, \\code{rendo.boots},",
+    "  and \\code{rendo.base}, which is a list that contains:"
+  )
+
+  return(c(doc_intro, doc_rendocopulaima_return_list()))
+}
+
 #' @importFrom stats coef fitted residuals
 build_rendo_boots_ima <- function(
   call,
