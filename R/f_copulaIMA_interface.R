@@ -1,7 +1,13 @@
 #' Copula-based Instrumental Variable Model (IMA)
 #'
+#' @description
 #' Fitting Haschka's copula-based Instrumental Variable Model (IMA) using
 #' Gaussian copulas to address endogeneity without external instruments.
+#'
+#' The copula-based IMA approach corrects endogeneity by constructing
+#' control functions from the marginal distributions of the endogenous
+#' regressors and incorporating them into the estimation equation.
+#' Inference is based on bootstrapping.
 #'
 #' @template template_param_formuladataverbose
 #'
@@ -10,16 +16,6 @@
 #'   One of \code{"adj.ecdf"}, \code{"resc.ecdf"}, \code{"ecdf"}, or \code{"kde"}.
 #' @param num.boots Integer giving the number of bootstrap replications
 #'   used for inference.
-#'
-#' @return An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
-#'   and \code{rendo.base}, which contains the fitted model, coefficient
-#'   estimates, and bootstrap results.
-#'
-#' @description
-#' The copula-based IMA approach corrects endogeneity by constructing
-#' control functions from the marginal distributions of the endogenous
-#' regressors and incorporating them into the estimation equation.
-#' Inference is based on bootstrapping.
 #'
 #' @details
 #' The method relies on estimating the marginal distribution functions of
@@ -45,6 +41,10 @@
 #' Haschka, R. E. (2025). Robustness of copula-correction models in causal
 #' analysis: Exploiting between-regressor correlation.IMA Journal of Management
 #' Mathematics, 36, 161–180
+#'
+#' @return An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
+#'   and \code{rendo.base}, which is a list that contains the fitted OLS model,
+#'   coefficient estimates, and bootstrap results:
 #'
 #' @examples
 #' data(dataCopIMABiExo)

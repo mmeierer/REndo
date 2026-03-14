@@ -28,20 +28,19 @@ used for inference.}
 }
 \value{
 An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
-  and \code{rendo.base}, which contains the fitted model, coefficient
-  estimates, and bootstrap results.
+  and \code{rendo.base}, which is a list that contains the fitted OLS model,
+  coefficient estimates, and bootstrap results:
 }
 \description{
+Fitting Haschka's copula-based Instrumental Variable Model (IMA) using
+Gaussian copulas to address endogeneity without external instruments.
+
 The copula-based IMA approach corrects endogeneity by constructing
 control functions from the marginal distributions of the endogenous
 regressors and incorporating them into the estimation equation.
 Inference is based on bootstrapping.
 }
 \details{
-Fitting Haschka's copula-based Instrumental Variable Model (IMA) using
-Gaussian copulas to address endogeneity without external instruments.
-
-
 The method relies on estimating the marginal distribution functions of
 the endogenous regressors using either empirical distribution functions
 or kernel density estimation. These are transformed via the inverse
