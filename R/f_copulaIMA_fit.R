@@ -1,14 +1,12 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm model.frame model.matrix model.response
-copulaIMA_fit <- function(F.formula, data, cdf, names.endo.regs) {
-  F.formula <- Formula::as.Formula(F.formula)
-
+copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
 
   # Prepare additional regressors -----------------------------------------------------
 
   # Haschka 2025 page 164 eq. 3.1
-  mf <- model.frame(F.formula, rhs = 1, lhs = 1, data = data)
-  X.main <- model.matrix(F.formula, rhs = 1, lhs = 0, data = mf)
+  mf <- model.frame(f.main, data = data)
+  X.main <- model.matrix(f.main, data = mf)
 
   # Continuous endogenous var
   endogenous.columns <- colnames(X.main)[colnames(X.main) %in% names.endo.regs]

@@ -85,6 +85,7 @@ copulaIMA <- function(
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
   F.formula <- Formula::as.Formula(formula)
+  f.main <- formula(F.formula, lhs=1, rhs=1)
   names.endo.regs <- formula_readout_special(
     F.formula = F.formula,
     name.special = "continuous",
@@ -101,7 +102,7 @@ copulaIMA <- function(
     )
   }
   fit <- copulaIMA_fit(
-    F.formula = F.formula,
+    f.main = f.main,
     data = data,
     cdf = cdf,
     names.endo.regs = names.endo.regs
@@ -140,7 +141,7 @@ copulaIMA <- function(
     # estimating
     fit.b <- try(
       copulaIMA_fit(
-        F.formula = F.formula,
+        f.main = f.main,
         data = data.b,
         cdf = cdf,
         names.endo.regs = names.endo.regs
