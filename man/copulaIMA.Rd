@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_copulaIMA_interface.R
 \name{copulaIMA}
 \alias{copulaIMA}
-\title{#' Copula-based Instrumental Variable Model (IMA)}
+\title{Copula-based Instrumental Variable Model (IMA)}
 \usage{
 copulaIMA(
   formula,

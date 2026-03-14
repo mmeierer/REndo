@@ -3,6 +3,9 @@
 copulaIMA_fit <- function(F.formula, data, cdf, names.endo.regs) {
   F.formula <- Formula::as.Formula(F.formula)
 
+
+  # Prepare additional regressors -----------------------------------------------------
+
   # Haschka 2025 page 164 eq. 3.1
   mf <- model.frame(F.formula, rhs = 1, lhs = 1, data = data)
   X.main <- model.matrix(F.formula, rhs = 1, lhs = 0, data = mf)
@@ -25,6 +28,9 @@ copulaIMA_fit <- function(F.formula, data, cdf, names.endo.regs) {
 
   # Haschka 2025 page 164 Eq. 3.4
   cop.terms <- copulaIMA_residuals(P.star)
+
+
+  # Fit final model -------------------------------------------------------------------
 
   # Fit:
   #   - formula: Main model as given by the user + additional Pcop regressors

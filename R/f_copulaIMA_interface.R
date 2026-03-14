@@ -1,4 +1,4 @@
-#' #' Copula-based Instrumental Variable Model (IMA)
+#' Copula-based Instrumental Variable Model (IMA)
 #'
 #' Fitting Haschka's copula-based Instrumental Variable Model (IMA) using
 #' Gaussian copulas to address endogeneity without external instruments.
@@ -69,13 +69,18 @@ copulaIMA <- function(
 ) {
   cl <- match.call()
 
-  # input checks
+
+  # Input checks  -------------------------------------------------------------------
+
   check_err_msg(checkinput_copulaIMA_formula(formula))
   check_err_msg(checkinput_copulaIMA_data(data))
   check_err_msg(checkinput_copulaIMA_dataVSformula(data = data, formula = formula))
   check_err_msg(checkinput_copulaIMA_numboots(num.boots))
   check_err_msg(checkinput_copulaIMA_verbose(verbose))
   check_err_msg(checkinput_copulaIMA_cdf(cdf))
+
+
+  # Fit original data ---------------------------------------------------------------
 
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
@@ -92,7 +97,7 @@ copulaIMA <- function(
     message(
       "Fitting Haschka's copula-based IMA model for ",
       length(names.endo.regs),
-      " continuous endogenous regressors"
+      " continuous endogenous regressor(s)."
     )
   }
   fit <- copulaIMA_fit(
@@ -102,26 +107,25 @@ copulaIMA <- function(
     names.endo.regs = names.endo.regs
   )
 
-  # Bootstrapping
+
+  # Bootstrapping -------------------------------------------------------------------
+
   if (verbose) {
     message("Running ", num.boots, " bootstraps.")
     pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
   }
 
-  n <- nrow(data)
-  coef.names <- names(coef(fit))
-
-  #creating a matrix to add bootstrap in each column
+  # creating a matrix to add bootstrap in each column
   boots <- matrix(
     NA,
-    nrow = length(coef.names),
+    nrow = length(coef(fit)),
     ncol = num.boots,
-    dimnames = list(coef.names, NULL)
+    dimnames = list(names(coef(fit)), NULL)
   )
 
-  b <- 1 #tracking the number of successful bootstrap replications
+  b <- 1 # tracking the number of successful bootstrap replications
   failed <- 0 # tracking the number of failed attempts
-  attempt <- 0 #total attempts
+  attempt <- 0 # total attempts
 
   repeat {
     if (b > num.boots) {
@@ -130,10 +134,10 @@ copulaIMA <- function(
 
     attempt <- attempt + 1
 
-    index <- sample.int(n, replace = TRUE) #resampling
+    index <- sample.int(nrow(data), replace = TRUE) #resampling
     data.b <- data[index, , drop = FALSE]
 
-    #estimating
+    # estimating
     fit.b <- try(
       copulaIMA_fit(
         F.formula = F.formula,
@@ -144,7 +148,7 @@ copulaIMA <- function(
       silent = TRUE
     )
 
-    #taking into account only adequate draws
+    # taking into account only adequate draws
     if (!inherits(fit.b, "try-error")) {
       boots[, b] <- coef(fit.b)
       b <- b + 1
@@ -170,6 +174,8 @@ copulaIMA <- function(
       call. = FALSE
     )
   }
+
+  # Return value ----------------------------------------------------------------------
 
   return(build_rendo_boots_ima(
     call = cl,
