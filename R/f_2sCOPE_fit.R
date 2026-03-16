@@ -19,10 +19,10 @@ copula2scope_fit <- function(F.formula, data, cdf){
   if (length(endogenous.columns) < length(names.vars.continuous)){
     stop("Bootstrap sample dropped at least one endogenous regressor. This happened when a regressor becomes constant in the resampling.")}
 
-  P <- X.main[, endogenous.columns, drop = FALSE]
-  P.star <- copula2scope_pstar(P, cdf = cdf)
 
-  cop.terms <- copula2scope_residuals(P.star)
+  X.no.intercept <- X.main[, colnames(X.main) != "(Intercept)", drop = FALSE]
+  P.star <- copula2scope_pstar(X.no.intercept, cdf = cdf)
+  cop.terms <- copula2scope_residuals(P.star, endo.cols = endogenous.columns)
 
   X.final <- cbind(X.main, cop.terms)
 
