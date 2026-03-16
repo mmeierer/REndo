@@ -32,8 +32,8 @@ copula2scope_pstar <- function(P, cdf){
     ecdf0 <- apply(P, 2, ecdf)
     P.star <- sapply(seq_along(ecdf0), function(i){
       u <- ecdf0[[i]](P[,i])
-      u[u == min(u)] <- 1e-7
-      u[u == max(u)] <- 1 - 1e-7
+      u[u == min(u)] <- 10e-7
+      u[u == max(u)] <- 1 - 10e-7
       u
     })
   }
@@ -42,7 +42,7 @@ copula2scope_pstar <- function(P, cdf){
 }
 
 
-copula2scope_residuals <- function (P.star){
+copula2scope_residuals <- function (P.star, endo.col){
 
   Z <- qnorm(P.star)
 
@@ -55,28 +55,26 @@ copula2scope_residuals <- function (P.star){
     stop("P.star must have column names")
   }
 
-  # only one endogenous regressor (should be same behavious as IMA)
-  if (length(P.names) ==1){
-    res <- matrix(Z[,P.names], ncol=1)
-    colnames(res) <- paste0(P.names, "_cop")
-    return(res)
+  #Exogenous columns are columns which are not endo
+  exo.cols <- P.names[!P.names %in% endo.cols]
+
+  res <- matrix(NA, nrow(Z), length(endo.cols))
+  colnames(res) <- paste0(endo.cols, "_cop")
+
+
+  for (j in seq_along(endo.cols)){
+    Z.j <- Z [, endo.cols[j], drop = FALSE]
+
+    if (length(exog.cols) == 0) { #when there is no exogenous regressors, correction term is just qnorm(F(P_j))
+      # This matches the single-regressor case in Park & Gupta (2012)
+      res[, j] <- Z.j
+    } else {
+      Z.exog <- Z[, exog.cols, drop = FALSE]   # W_t* exogenous only
+      lm.j   <- lm(Z.j ~ Z.exog)              # With intercept included from 2sCOPE table 1,
+      #from ADDRESSING ENDOGENEITY USING A TWO-STAGE COPULA GENERATED REGRESSOR APPROACH (From Yang et al. 2024, page 7 )
+      res[, j] <- residuals(lm.j)
+    }
   }
-
-  # Having more than one endo regressor
-  res <- matrix (NA, nrow(Z), length(P.names))
-  colnames(res) <- paste0(P.names, "_cop")
-
-  for (j in seq_along(P.names)){
-    Z.j <- Z [, j, drop = FALSE]
-    Z.others <- Z[, -j, drop = FALSE]
-<<<<<<< Updated upstream
-    lm.j <- lm(Z.j ~ Z.others) #intercept included
-=======
-    lm.j <- lm(Z.j ~ Z.others) #intercept included by default
->>>>>>> Stashed changes
-    res[, j] <- residuals(lm.j)
-  }
-
   return(res)
 
 }
