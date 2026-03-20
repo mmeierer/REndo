@@ -33,8 +33,8 @@ copulaIMA_pstar <- function(P, cdf) {
     ecdf0 <- apply(P, 2, ecdf)
     P.star <- sapply(seq_along(ecdf0), function(i) {
       u <- ecdf0[[i]](P[, i])
-      u[u == min(u)] <- 1e-7
-      u[u == max(u)] <- 1 - 1e-7
+      u[u == min(u)] <- 10e-7
+      u[u == max(u)] <- 1 - 10e-7
       u
     })
 
@@ -47,7 +47,7 @@ copulaIMA_pstar <- function(P, cdf) {
 
 
 #' @importFrom stats qnorm lm residuals
-copulaIMA_residuals <- function(P.star) {
+copulaIMA_residuals <- function(P.star, endo.cols) {
   Z <- qnorm(P.star)
 
   if (!is.matrix(Z)) {
@@ -59,23 +59,23 @@ copulaIMA_residuals <- function(P.star) {
     stop("P.star must have column names")
   }
 
-  # only one endeogenous regressor
-  if (length(P.names) == 1) {
-    res <- matrix(Z[, P.names], ncol = 1)
-    colnames(res) <- paste0(P.names, "_cop")
-    return(res)
+  # Exogenous normal scores: all the columns that are not endo
+  # chapter 3.2 step 2: regressing P*l on X1*, ..., XK* (exogenous only)
+  exo.cols <- colnames(Z)[!colnames(Z) %in% endo.cols]
+
+  res <- matrix(NA, nrow = nrow(Z), ncol = length(endo.cols))
+  colnames(res) <- paste0(endo.cols, "_cop")
+
+  for (j in seq_along(endo.cols)) {
+    Z.j <- Z[, endo.cols[j], drop = TRUE]
+
+    if (length(exo.cols) ==0){
+      res[, j] <- Z.j # no exo regressors
+    } else{
+      Z.exo <- Z[, exo.cols, drop = FALSE]
+      lm.j <- lm(Z.j ~ Z.exo - 1)
+      res[, j] <- residuals(lm.j)
+    }
   }
-
-  # Having more than one endo regressor
-  res <- matrix(data = NA, nrow = nrow(Z), ncol = length(P.names))
-  colnames(res) <- paste0(P.names, "_cop")
-
-  for (j in seq_along(P.names)) {
-    Z.j <- Z[, j, drop = FALSE]
-    Z.others <- Z[, -j, drop = FALSE]
-    lm.j <- lm(Z.j ~ Z.others - 1) #Haschka 2025 Eq. 3.3
-    res[, j] <- residuals(lm.j)
-  }
-
   return(res)
 }
