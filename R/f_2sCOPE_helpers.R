@@ -44,7 +44,7 @@ copula2scope_pstar <- function(P, cdf) {
 }
 
 
-copula2scope_residuals <- function(P.star, endo.col) {
+copula2scope_residuals <- function(P.star, endo.cols) {
   Z <- qnorm(P.star)
 
   if (!is.matrix(Z)) {
@@ -65,12 +65,12 @@ copula2scope_residuals <- function(P.star, endo.col) {
   for (j in seq_along(endo.cols)) {
     Z.j <- Z[, endo.cols[j], drop = FALSE]
 
-    if (length(exog.cols) == 0) {
+    if (length(exo.cols) == 0) {
       #when there is no exogenous regressors, correction term is just qnorm(F(P_j))
       # This matches the single-regressor case in Park & Gupta (2012)
       res[, j] <- Z.j
     } else {
-      Z.exog <- Z[, exog.cols, drop = FALSE] # W_t* exogenous only
+      Z.exog <- Z[, exo.cols, drop = FALSE] # W_t* exogenous only
       lm.j <- lm(Z.j ~ Z.exog) # With intercept included from 2sCOPE table 1,
       #from ADDRESSING ENDOGENEITY USING A TWO-STAGE COPULA GENERATED REGRESSOR APPROACH (From Yang et al. 2024, page 7 )
       res[, j] <- residuals(lm.j)
