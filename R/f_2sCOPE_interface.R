@@ -1,7 +1,12 @@
 #' @export
 #'
-copula2scope <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"), num.boots = 1000, verbose = TRUE ){
-
+copula2scope <- function(
+  formula,
+  data,
+  cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
+  num.boots = 1000,
+  verbose = TRUE
+) {
   cl <- match.call()
 
   # input checks
@@ -17,25 +22,35 @@ copula2scope <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf",
   F.formula <- Formula::as.Formula(formula)
 
   # Fitting with 2sCOPE
-  if (verbose) message("Fitting 2sCOPE model")
+  if (verbose) {
+    message("Fitting 2sCOPE model")
+  }
   fit <- copula2scope_fit(F.formula, data, cdf)
 
   # Bootstrapping
-  if (verbose) message("Running ", num.boots, " bootstraps")
+  if (verbose) {
+    message("Running ", num.boots, " bootstraps")
+  }
 
   n <- nrow(data)
-  coef.names <-names(coef(fit))
+  coef.names <- names(coef(fit))
 
   #creating a matrix to add bootstrap in each column
-  boots <- matrix(NA, nrow = length(coef.names), ncol = num.boots, dimnames = list(coef.names, NULL))
+  boots <- matrix(
+    NA,
+    nrow = length(coef.names),
+    ncol = num.boots,
+    dimnames = list(coef.names, NULL)
+  )
 
   b <- 1 #tracking the number of successful bootstrap replications
   failed <- 0 # tracking the number of failed attempts
   attempt <- 0 #total attempts
 
-  repeat{
-
-    if (b > num.boots) break # stop repeating if successful B bootstrap is drawn
+  repeat {
+    if (b > num.boots) {
+      break
+    } # stop repeating if successful B bootstrap is drawn
 
     attempt <- attempt + 1
 
@@ -46,23 +61,23 @@ copula2scope <- function(formula, data, cdf = c("adj.ecdf", "resc.ecdf", "ecdf",
     fit.b <- try(copula2scope_fit(F.formula, data.b, cdf), silent = TRUE)
 
     #taking into account only adequate draws
-    if(!inherits(fit.b, "try-error")){
+    if (!inherits(fit.b, "try-error")) {
       boots[, b] <- coef(fit.b)
       b <- b + 1
-
-    } else{
-
+    } else {
       failed <- failed + 1
     }
   }
 
-  if (failed >0){
-
+  if (failed > 0) {
     fail.rate <- failed / attempt
 
-    warning(round(100 * fail.rate, 2), "% of bootstrap samples were degenerate and discarded", call. = FALSE)
+    warning(
+      round(100 * fail.rate, 2),
+      "% of bootstrap samples were degenerate and discarded",
+      call. = FALSE
+    )
   }
 
   return(build_rendo_boots_2sCOPE(cl, F.formula, data, fit, boots)) #we need this bootstrap function
-
 }
