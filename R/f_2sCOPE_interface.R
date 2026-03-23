@@ -1,6 +1,6 @@
 #' @export
 #'
-copula2scope <- function(
+copula2sCOPE <- function(
   formula,
   data,
   cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
