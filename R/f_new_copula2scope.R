@@ -6,7 +6,8 @@ new_rendo_copula2scope <- function(
   boots.params,
   n.boots.attempted,
   n.boots.failed,
-  cdf
+  cdf,
+  names.endo.regs
 ) {
   return(.new_rendo_boots_degenerates_removed(
     # Stuff for rendo.boots.degenerates.removed
@@ -22,7 +23,8 @@ new_rendo_copula2scope <- function(
     n.boots.failed = n.boots.failed,
 
     # 2sCOPE-specific
-    subclass = "rendo.copula2scope",
-    cdf = cdf
+    subclass = "rendo.copula.2scope",
+    cdf = cdf,
+    names.endo.regs = names.endo.regs
   ))
 }

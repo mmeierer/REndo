@@ -20,10 +20,20 @@ copula2sCOPE <- function(
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
   F.formula <- Formula::as.Formula(formula)
+  names.endo.regs <- formula_readout_special(
+    F.formula = F.formula,
+    name.special = "continuous",
+    from.rhs = 1,
+    params.as.chars.only = TRUE
+  )
 
   # Fitting with 2sCOPE
   if (verbose) {
-    message("Fitting 2sCOPE model")
+    message(
+      "Fitting 2sCOPE model with ",
+      length(names.endo.regs),
+      " endogenous regressors."
+    )
   }
   fit <- copula2scope_fit(F.formula, data, cdf)
 
@@ -86,6 +96,7 @@ copula2sCOPE <- function(
     boots.params = boots,
     n.boots.attempted = attempt,
     n.boots.failed = failed,
-    cdf = cdf
+    cdf = cdf,
+    names.endo.regs = names.endo.regs
   ))
 }
