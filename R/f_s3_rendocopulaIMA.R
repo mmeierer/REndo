@@ -1,17 +1,15 @@
 #' @export
 summary.rendo.copula.ima <- function(object, ...) {
-  # The default rendo.base summary but add some copulaIMA things
+  # The default rendo.boots.degenerates.removed summary but add some copulaIMA things
 
-  # Get the summary from the `rendo.boots` parent class --------------------------------
+  # Get the summary from the `rendo.boots.degenerates.removed` parent class ------------
   res <- NextMethod()
 
   # Add the copulaIMA specific parts ---------------------------------------------------
   res$names.endo.regs <- c(character(0), object$names.endo.regs)
   res$cdf <- object$cdf
-  res$n.boots.attempted <- object$n.boots.attempted
-  res$n.boots.failed <- object$n.boots.failed
 
-  # Keep all the inherited summary classes from `rendo.boots` to use its print function
+  # Keep all the inherited summary classes from to use their print functions
   class(res) <- c("summary.rendo.copula.ima", class(res))
 
   return(res)
@@ -27,23 +25,10 @@ print.summary.rendo.copula.ima <- function(
   # Max width to not exceed the fixed width of some prints (printCoef/call)
   max.width <- min(65, 0.9 * getOption("width"))
 
-  # Print summary of inherited classes (`summary.rendo.boots`) ------------------------
+  # Print summary of inherited classes (`summary.rendo.boots.degenerates.removed`) -----
   NextMethod()
 
-  # Print copulaIMA specific parts ----------------------------------------------------
-  cat("\n")
-
-  # Some more bootstrapping info before break
-  fail.rate <- round(100 * x$n.boots.failed / x$n.boots.attempted, 2)
-  cat("Num bootstraps attempted: ", x$n.boots.attempted, "\n", sep = "")
-  cat(
-    "Num bootstraps failed and discarded: ",
-    x$n.boots.failed,
-    " (",
-    fail.rate,
-    "%)\n",
-    sep = ""
-  )
+  # Print copulaIMA specific parts -----------------------------------------------------
   cat("\n")
   endo.vars <- paste0(
     strwrap(paste0(x$names.endo.regs, collapse = ", "), width = max.width),
