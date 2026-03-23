@@ -174,7 +174,7 @@
 #'
 #' Kim, Jee-Seon and Frees, Edward W. (2007). "Multilevel Modeling with Correlated Effects". Psychometrika, 72(4), 505-533.
 #'
-#' @importFrom lme4 lmer VarCorr lFormula nobars lmerControl
+#' @importFrom lme4 lmer VarCorr lFormula lmerControl
 #' @importFrom Formula as.Formula
 #' @importFrom data.table as.data.table
 #' @export
