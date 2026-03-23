@@ -32,6 +32,7 @@ Imports:
     AER (>= 1.2-5),
     Matrix (>= 1.2-14),
     lme4 (>= 1.1-18-1),
+    reformulas (>= 0.4.4),
     data.table (>= 1.11.8),
     corpcor (>= 1.6.9),
     Rcpp (>= 1.0.3), 
@@ -42,6 +43,6 @@ Suggests:
     R.rsp
 LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 VignetteBuilder: R.rsp
 LazyData: true

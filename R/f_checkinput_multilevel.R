@@ -71,7 +71,8 @@ checkinput_multilevel_data <- function(data){
 
 #' @importFrom methods is
 #' @importFrom Formula as.Formula
-#' @importFrom lme4 lFormula nobars
+#' @importFrom lme4 lFormula
+#' @importFrom reformulas nobars
 checkinput_multilevel_dataVSformula <- function(formula,data){
 
   err.msg <- c()
@@ -109,7 +110,7 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
     err.msg <- c(err.msg, "Please specify no endogenous regressor as slopes nor as group id.")
 
   # Check that no level grouping Id is in model
-  if(any(names.groups %in% all.vars(lme4::nobars(f.lmer))))
+  if(any(names.groups %in% all.vars(reformulas::nobars(f.lmer))))
     err.msg <- c(err.msg, "Please specify no level grouping Id in the model part of the formula.")
 
   # Check that no level grouping Id is in slope
