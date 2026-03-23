@@ -79,5 +79,13 @@ copula2scope <- function(
     )
   }
 
-  return(build_rendo_boots_2sCOPE(cl, F.formula, data, fit, boots)) #we need this bootstrap function
+  return(new_rendo_copula2scope(
+    call = cl,
+    F.formula = F.formula,
+    res.lm = fit,
+    boots.params = boots,
+    n.boots.attempted = attempt,
+    n.boots.failed = failed,
+    cdf = cdf
+  ))
 }
