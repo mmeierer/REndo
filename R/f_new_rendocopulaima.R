@@ -21,7 +21,7 @@ doc_rendocopulaima_return <- function() {
 }
 
 #' @importFrom stats coef fitted residuals
-build_rendo_boots_ima <- function(
+new_rendo_copula_ima <- function(
   call,
   F.formula,
   names.endo.regs,

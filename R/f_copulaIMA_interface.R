@@ -176,7 +176,7 @@ copulaIMA <- function(
 
   # Return value ----------------------------------------------------------------------
 
-  return(build_rendo_boots_ima(
+  return(new_rendo_copula_ima(
     call = cl,
     F.formula = F.formula,
     names.endo.regs = names.endo.regs,
