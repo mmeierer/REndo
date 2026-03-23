@@ -10,12 +10,12 @@ copula2sCOPE <- function(
   cl <- match.call()
 
   # input checks
-  check_err_msg(checkinput_copula2sCOPE_formula(formula))
-  check_err_msg(checkinput_copula2sCOPE_data(data))
-  check_err_msg(checkinput_copula2sCOPE_dataVSformula(data, formula))
-  check_err_msg(checkinput_copula2sCOPE_numboots(num.boots))
-  check_err_msg(checkinput_copula2sCOPE_verbose(verbose))
-  check_err_msg(checkinput_copula2sCOPE_cdf(cdf))
+  check_err_msg(checkinput_copula2scope_formula(formula))
+  check_err_msg(checkinput_copula2scope_data(data))
+  check_err_msg(checkinput_copula2scope_dataVSformula(data, formula))
+  check_err_msg(checkinput_copula2scope_numboots(num.boots))
+  check_err_msg(checkinput_copula2scope_verbose(verbose))
+  check_err_msg(checkinput_copula2scope_cdf(cdf))
 
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 

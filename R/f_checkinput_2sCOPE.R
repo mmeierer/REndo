@@ -1,6 +1,6 @@
 #' @importFrom Formula as.Formula
 #'
-checkinput_copula2sCOPE_formula <- function(formula) {
+checkinput_copula2scope_formula <- function(formula) {
   err.msg <- .checkinputhelper_formula_basicstructure(formula = formula)
   if (length(err.msg) > 0) {
     return(err.msg)
@@ -120,14 +120,14 @@ checkinput_copula2sCOPE_formula <- function(formula) {
 
 #' @importFrom Formula as.Formula
 #'
-checkinput_copula2sCOPE_data <- function(data) {
+checkinput_copula2scope_data <- function(data) {
   .checkinputhelper_data_basicstructure(data = data)
 }
 
 
 #' @importFrom Formula as.Formula
 #'
-checkinput_copula2sCOPE_dataVSformula <- function(data, formula) {
+checkinput_copula2scope_dataVSformula <- function(data, formula) {
   F.formula <- Formula::as.Formula(formula)
 
   # Column names of the endogenous (continuous) regressors
@@ -154,7 +154,7 @@ checkinput_copula2sCOPE_dataVSformula <- function(data, formula) {
 }
 
 
-checkinput_copula2sCOPE_numboots <- function(num.boots) {
+checkinput_copula2scope_numboots <- function(num.boots) {
   err.msg <- checkinputhelper_singlepositivewholenumeric(
     num.param = num.boots,
     parameter.name = "num.boots",
@@ -177,12 +177,12 @@ checkinput_copula2sCOPE_numboots <- function(num.boots) {
 }
 
 
-checkinput_copula2sCOPE_verbose <- function(verbose) {
+checkinput_copula2scope_verbose <- function(verbose) {
   checkinputhelper_single_logical(logical = verbose, param.name = "verbose")
 }
 
 
-checkinput_copula2sCOPE_cdf <- function(cdf) {
+checkinput_copula2scope_cdf <- function(cdf) {
   cdf.allowed <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
 
   if (!is.character(cdf) || length(cdf) != 1) {
