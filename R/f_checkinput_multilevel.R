@@ -100,6 +100,11 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
   if(!(lme4formula_get_numberoflevels(l4.form = l4.form) %in% c(2,3)))
     err.msg <- c(err.msg, "Please specify exactly 2 or 3 levels in the formula.")
 
+  # Check that slopes are provided
+  if(any(sapply(l4.form$reTrms$cnms, function(s) {is.null(s) || anyNA(s)}))){
+    err.msg <- c(err.msg, "Please specify slopes.")
+  }
+
   # rely on lformula processing
   names.slopes <- lme4formula_get_namesslopes(l4.form = l4.form)
   names.groups <- lme4formula_get_namesgroups(l4.form = l4.form)
