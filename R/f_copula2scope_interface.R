@@ -1,18 +1,18 @@
 #' @export
 #'
 copula2sCOPE <- function(
-    formula,
-    data,
-    cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
-    num.boots = 1000,
-    verbose = TRUE
+  formula,
+  data,
+  cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
+  num.boots = 1000,
+  verbose = TRUE
 ) {
   cl <- match.call()
 
   # input checks
   check_err_msg(checkinput_copula2scope_formula(formula))
   check_err_msg(checkinput_copula2scope_data(data))
-  check_err_msg(checkinput_copula2scope_dataVSformula(data, formula))
+  check_err_msg(checkinput_copula2scope_dataVSformula(data = data, formula = formula))
   check_err_msg(checkinput_copula2scope_numboots(num.boots))
   check_err_msg(checkinput_copula2scope_verbose(verbose))
   check_err_msg(checkinput_copula2scope_cdf(cdf))
@@ -35,7 +35,7 @@ copula2sCOPE <- function(
       " endogenous regressors."
     )
   }
-  fit <- copula2scope_fit(F.formula, data, cdf)
+  fit <- copula2scope_fit(F.formula = F.formula, data = data, cdf = cdf)
 
   # Bootstrapping ----------------------------------------------------------------------
 

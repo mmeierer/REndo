@@ -33,10 +33,10 @@ copula2scope_fit <- function(F.formula, data, cdf) {
 
   #applying CDF to all regressors both endo and exo with no intercept column
   X.no.intercept <- X.main[, colnames(X.main) != "(Intercept)", drop = FALSE]
-  P.star <- copula2scope_pstar(X.no.intercept, cdf = cdf)
+  P.star <- copula2scope_pstar(P = X.no.intercept, cdf = cdf)
 
   #first-stage residuals: regressing each endogenous P* on exogenous W*, Eq (9) from Yang et. al 2024
-  cop.terms <- copula2scope_residuals(P.star, endo.cols = endogenous.columns)
+  cop.terms <- copula2scope_residuals(P.star = P.star, endo.cols = endogenous.columns)
 
   f.main <- formula(mf)
 
