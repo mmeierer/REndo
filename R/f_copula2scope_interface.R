@@ -23,7 +23,7 @@ copula2sCOPE <- function(
   names.endo.regs <- formula_readout_special(
     F.formula = F.formula,
     name.special = "continuous",
-    from.rhs = 1,
+    from.rhs = 2,
     params.as.chars.only = TRUE
   )
 
