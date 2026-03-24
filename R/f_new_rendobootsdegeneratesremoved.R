@@ -1,20 +1,20 @@
 .new_rendo_boots_degenerates_removed <- function(
-    call,
-    F.formula,
-    mf,
-    coefficients,
-    names.main.coefs,
-    fitted.values,
-    residuals,
-    # rendo.boot specific
-    boots.params,
-    # rendo.boots.degenerates.removed specific
-    n.boots.attempted,
-    n.boots.failed,
+  call,
+  F.formula,
+  mf,
+  coefficients,
+  names.main.coefs,
+  fitted.values,
+  residuals,
+  # rendo.boot specific
+  boots.params,
+  # rendo.boots.degenerates.removed specific
+  n.boots.attempted,
+  n.boots.failed,
 
-    # Can be further extended
-    subclass = character(),
-    ...
+  # Can be further extended
+  subclass = character(),
+  ...
 ) {
   return(.new_rendo_boots(
     # Stuff for rendo.boots
@@ -39,7 +39,6 @@
 
 
 bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verbose) {
-
   if (verbose) {
     message("Running ", num.boots, " bootstraps.")
     pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
