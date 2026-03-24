@@ -40,6 +40,7 @@ copula2scope_pstar <- function(P, cdf) {
     })
   }
 
+  colnames(P.star) <- colnames(P)
   return(P.star)
 }
 
