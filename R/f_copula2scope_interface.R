@@ -1,11 +1,11 @@
 #' @export
 #'
 copula2sCOPE <- function(
-  formula,
-  data,
-  cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
-  num.boots = 1000,
-  verbose = TRUE
+    formula,
+    data,
+    cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
+    num.boots = 1000,
+    verbose = TRUE
 ) {
   cl <- match.call()
 
@@ -37,65 +37,29 @@ copula2sCOPE <- function(
   }
   fit <- copula2scope_fit(F.formula, data, cdf)
 
-  # Bootstrapping
-  if (verbose) {
-    message("Running ", num.boots, " bootstraps")
+  # Bootstrapping ----------------------------------------------------------------------
+
+  fn.fit.boots <- function(data.b) {
+    return(copula2scope_fit(F.formula = F.formula, data = data.b, cdf = cdf))
   }
 
-  n <- nrow(data)
-  coef.names <- names(coef(fit))
-
-  #creating a matrix to add bootstrap in each column
-  boots <- matrix(
-    NA,
-    nrow = length(coef.names),
-    ncol = num.boots,
-    dimnames = list(coef.names, NULL)
+  res.boots <- bootstrap_skip_degenerates(
+    fn.fit = fn.fit.boots,
+    data = data,
+    num.boots = num.boots,
+    coef.names = names(coef(fit)),
+    verbose = verbose
   )
 
-  b <- 1 #tracking the number of successful bootstrap replications
-  failed <- 0 # tracking the number of failed attempts
-  attempt <- 0 #total attempts
-
-  repeat {
-    if (b > num.boots) {
-      break
-    } # stop repeating if successful B bootstrap is drawn
-
-    attempt <- attempt + 1
-
-    index <- sample.int(n, replace = TRUE) #resampling
-    data.b <- data[index, , drop = FALSE]
-
-    #estimating
-    fit.b <- try(copula2scope_fit(F.formula, data.b, cdf), silent = TRUE)
-
-    #taking into account only adequate draws
-    if (!inherits(fit.b, "try-error")) {
-      boots[, b] <- coef(fit.b)
-      b <- b + 1
-    } else {
-      failed <- failed + 1
-    }
-  }
-
-  if (failed > 0) {
-    fail.rate <- failed / attempt
-
-    warning(
-      round(100 * fail.rate, 2),
-      "% of bootstrap samples were degenerate and discarded",
-      call. = FALSE
-    )
-  }
+  # Return object ----------------------------------------------------------------------
 
   return(new_rendo_copula2scope(
     call = cl,
     F.formula = F.formula,
     res.lm = fit,
-    boots.params = boots,
-    n.boots.attempted = attempt,
-    n.boots.failed = failed,
+    boots.params = res.boots$boots.params,
+    n.boots.attempted = res.boots$n.attempted,
+    n.boots.failed = res.boots$n.failed,
     cdf = cdf,
     names.endo.regs = names.endo.regs
   ))
