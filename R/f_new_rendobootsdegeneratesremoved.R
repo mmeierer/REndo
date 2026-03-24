@@ -38,6 +38,7 @@
 }
 
 
+#' @importFrom utils txtProgressBar setTxtProgressBar
 bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verbose) {
   if (verbose) {
     message("Running ", num.boots, " bootstraps.")
@@ -79,7 +80,7 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
       b <- b + 1
 
       if (verbose) {
-        setTxtProgressBar(pb, b)
+        setTxtProgressBar(pb=pb, value=b)
       }
     } else {
       failed <- failed + 1
