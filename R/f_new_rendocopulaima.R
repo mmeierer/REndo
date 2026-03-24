@@ -21,7 +21,7 @@ doc_rendocopulaima_return <- function() {
 }
 
 #' @importFrom stats coef fitted residuals
-build_rendo_boots_ima <- function(
+new_rendo_copula_ima <- function(
   call,
   F.formula,
   names.endo.regs,
@@ -31,8 +31,8 @@ build_rendo_boots_ima <- function(
   n.boots.attempted,
   n.boots.failed
 ) {
-  return(.new_rendo_boots(
-    # Stuff for rendo.boots class
+  return(.new_rendo_boots_degenerates_removed(
+    # Stuff for rendo.boots.degenerates.removed class
     call = call,
     F.formula = F.formula,
     mf = res.lm$model,
@@ -41,11 +41,12 @@ build_rendo_boots_ima <- function(
     fitted.values = fitted(res.lm),
     residuals = residuals(res.lm),
     boots.params = boots,
+    n.boots.attempted = n.boots.attempted,
+    n.boots.failed = n.boots.failed,
+
     # Stuff specific to copula ima
     subclass = "rendo.copula.ima",
     cdf = cdf,
-    names.endo.regs = names.endo.regs,
-    n.boots.attempted = n.boots.attempted,
-    n.boots.failed = n.boots.failed
+    names.endo.regs = names.endo.regs
   ))
 }
