@@ -36,3 +36,74 @@
     ...
   ))
 }
+
+
+bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verbose) {
+
+  if (verbose) {
+    message("Running ", num.boots, " bootstraps.")
+    pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
+  }
+
+  n <- nrow(data)
+
+  # creating a matrix to add bootstrap in each column
+  boots <- matrix(
+    NA,
+    nrow = length(coef.names),
+    ncol = num.boots,
+    dimnames = list(coef.names, NULL)
+  )
+
+  b <- 1 # the number of successful bootstrap replications
+  failed <- 0 # the number of failed attempts
+  attempt <- 0 # the number of total attempts
+
+  repeat {
+    # stop repeating if successful B bootstrap have been drawn
+    if (b > num.boots) {
+      break
+    }
+
+    attempt <- attempt + 1
+
+    # resampling
+    index <- sample.int(n, replace = TRUE)
+    data.b <- data[index, , drop = FALSE]
+
+    # estimating
+    fit.b <- try(fn.fit(data.b = data.b), silent = TRUE)
+
+    # taking into account only adequate draws
+    if (!inherits(fit.b, "try-error")) {
+      boots[, b] <- coef(fit.b)
+      b <- b + 1
+
+      if (verbose) {
+        setTxtProgressBar(pb, b)
+      }
+    } else {
+      failed <- failed + 1
+    }
+  }
+
+  if (verbose) {
+    close(pb)
+  }
+
+  if (failed > 0) {
+    fail.rate <- failed / attempt
+
+    warning(
+      round(100 * fail.rate, 2),
+      "% of bootstrap samples were degenerate and discarded",
+      call. = FALSE
+    )
+  }
+
+  return(list(
+    boots.params = boots,
+    n.failed = failed,
+    n.attempted = attempt
+  ))
+}
