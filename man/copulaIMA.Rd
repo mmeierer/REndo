@@ -118,7 +118,7 @@ asymptotically unbiased.
 #------------------------------------------------------------------------
 data(dataCopIMAContExo)
 res <- copulaIMA(
-  y ~ X + P | continuous(P),
+  y ~ X + P - 1 | continuous(P),
   data = dataCopIMAContExo,
   cdf = "adj.ecdf",
   num.boots = 1000
@@ -132,7 +132,7 @@ summary(res)
 #------------------------------------------------------------------------
 data("dataCopIMAMultiEndo")
 res2 <- copulaIMA(
-  y ~ X + P1 + P2 | continuous(P1) + continuous(P2),
+  y ~ X + P1 + P2 - 1 | continuous(P1) + continuous(P2),
   data      = dataCopIMAMultiEndo,
   cdf       = "adj.ecdf",
   num.boots = 1000
