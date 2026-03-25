@@ -149,3 +149,8 @@ Park, S. and Gupta, S. (2012). Handling endogenous regressors by joint
 estimation using copulas. \emph{Marketing Science}, 31(4), 567--586.
 \doi{10.1287/mksc.1120.0718}
 }
+\seealso{
+Other copula-based methods: 
+\code{\link{copulaCorrection}()}
+}
+\concept{copula-based methods}

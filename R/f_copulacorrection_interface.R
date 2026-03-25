@@ -132,6 +132,8 @@
 #' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
+#' @family copula-based methods
+#'
 #' @references
 #' Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
 #'

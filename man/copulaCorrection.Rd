@@ -228,4 +228,8 @@ Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consume
 \code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 
 \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
+
+Other copula-based methods: 
+\code{\link{copulaIMA}()}
 }
+\concept{copula-based methods}

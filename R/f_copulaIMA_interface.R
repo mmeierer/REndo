@@ -72,6 +72,8 @@
 #'
 #' @eval doc_rendocopulaima_return()
 #'
+#' @family copula-based methods
+#'
 #' @examples
 #' #------------------------------------------------------------------------
 #' # Example 1: Single endogenous regressor with continuous
