@@ -196,3 +196,89 @@
 #' @docType data
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataMultilevelIV"
+
+#' @title Simulated Dataset for Copula IMA - Continuous Exogenous Regressor
+#' @description A dataset simulated with one exogenous regressor \code{X} and one
+#'   endogenous continuous regressor \code{P}, and a dependent variable \code{y}.
+#'   The exogenous regressor \code{X} follows a normal distribution with mean 1
+#'   and is correlated with \code{P} (r = 0.5). The endogenous regressor \code{P}
+#'   follows a bounded continuous distribution (Phi(P*) + 0.5). The endogeneity
+#'   strength is rho = 0.5. There is no intercept in the data generating process.
+#'   The true parameter values are given as \code{alpha = 1} for \code{P} and
+#'   \code{beta = 1} for \code{X}.
+#' @name dataCopIMAContExo
+#' @usage data("dataCopIMAContExo")
+#' @format A data frame with 1000 observations on 3 variables:
+#' \describe{
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X}}{a numeric vector, normally distributed with mean 1, exogenous
+#'   and correlated with \code{P}.}
+#' \item{\code{P}}{a numeric vector, continuous and endogenous, following a
+#'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
+#' }
+#' @docType data
+#' @references Haschka, R. E. (2024). Robustness of copula-correction models
+#'   in causal analysis: Exploiting between-regressor correlation. IMA Journal
+#'   of Management Mathematics, 36, 161-180.
+#'   https://doi.org/10.1093/imaman/dpae018
+"dataCopIMAContExo"
+
+
+#' @title Simulated Dataset for Copula IMA - Binary Exogenous Regressor
+#' @description A dataset simulated with one binary exogenous regressor \code{X}
+#'   and one endogenous continuous regressor \code{P}, and a dependent variable \code{y}.
+#'   The exogenous regressor \code{X} is a binary variable (0 or 1) derived from
+#'   a latent standard normal variable and is correlated with \code{P} (r = 0.5).
+#'   The endogenous regressor \code{P} follows a bounded continuous distribution
+#'   (Phi(P*) + 0.5). The endogeneity strength is given by rho = 0.5. This dataset
+#'   illustrates that the IMA estimator does not require the exogenous regressor
+#'   to be continuously or normally distributed. There is no intercept in the
+#'   data generating process. The true parameter values are \code{alpha = 1}
+#'   for \code{P} and \code{beta = 1} for \code{X}.
+#' @name dataCopIMABinExo
+#' @usage data("dataCopIMABinExo")
+#' @format A data frame with 1000 observations on 3 variables:
+#' \describe{
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X}}{a numeric vector, binary (0 or 1) and exogenous,
+#'   correlated with \code{P}.}
+#' \item{\code{P}}{a numeric vector, continuous and endogenous, following a
+#'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
+#' }
+#' @docType data
+#' @references Haschka, R. E. (2025). Robustness of copula-correction models
+#'   in causal analysis: Exploiting between-regressor correlation. IMA Journal
+#'   of Management Mathematics, 36, 161-180.
+#'   https://doi.org/10.1093/imaman/dpae018
+"dataCopIMABinExo"
+
+#' @title Simulated Dataset for Copula IMA - Two Continuous Endogenous Regressors
+#' @description A dataset simulated with one exogenous regressor \code{X} and two
+#'   endogenous continuous regressors \code{P1} and \code{P2}, and a dependent
+#'   variable \code{y}. Both endogenous regressors follow a bounded continuous
+#'   distribution (Phi(P*) + 0.5) and are correlated with each other (r = 0.3),
+#'   with the exogenous regressor \code{X} (r = 0.5), and with the structural
+#'   error (endogeneity strength rho = 0.5). The exogenous regressor \code{X}
+#'   follows a normal distribution with mean 1 and is uncorrelated with the
+#'   structural error. This dataset is designed to exercise the
+#'   multi-endogenous-regressor estimation path of \code{copulaIMA()}, which
+#'   is not covered by \code{dataCopIMAContExo}. There is no intercept in the
+#'   data generating process. The true parameter values are \code{alpha1 = 1}
+#'   for \code{P1}, \code{alpha2 = 1} for \code{P2}, and \code{beta = 1}
+#'   for \code{X}.This was simulated as an extension to the dataset 'dataCopIMAContExo'
+#' @name dataCopIMAMultiEndo
+#' @usage data("dataCopIMAMultiEndo")
+#' @format A data frame with 1000 observations on 4 variables:
+#' \describe{
+#' \item{\code{y}}{a numeric vector representing the dependent variable.}
+#' \item{\code{X}}{a numeric vector, normally distributed with mean 1, exogenous
+#'   and correlated with \code{P1} and \code{P2}.}
+#' \item{\code{P1}}{a numeric vector, continuous and endogenous, following a
+#'   bounded distribution Phi(P1*) + 0.5 with values in (0.5, 1.5), correlated
+#'   with \code{P2} (r = 0.3).}
+#' \item{\code{P2}}{a numeric vector, continuous and endogenous, following a
+#'   bounded distribution Phi(P2*) + 0.5 with values in (0.5, 1.5), correlated
+#'   with \code{P1} (r = 0.3).}
+#' }
+#' @docType data
+"dataCopIMAMultiEndo"

@@ -1,7 +1,8 @@
 ## code to prepare `dataCopIMAContExo` dataset goes here
 
-## Generate dataCopCont (IMA – single endogenous continuous regressor)
+## Generate dataCopIMAContExo (IMA – single endogenous continuous regressor)
 
+#Scenario 1: continuous exogenous, N(1,1)
 set.seed(123)
 
 n <- 1000
@@ -23,7 +24,10 @@ alpha <- 1
 # P is endo, X is exo, and xi is error term
 
 #Finding sigma
-Sigma <- matrix(c(1,  0.5, 0.5, 0.5, 1, 0, 0.5, 0,   1), nrow = 3, ncol = 3)
+Sigma <- matrix(c(1,  0.5, 0.5,
+                  0.5, 1, 0,
+                  0.5, 0,   1),
+                nrow = 3, ncol = 3)
 
 #Finding Eq 4.2 (Haschka's IMA 2024), components follow a 3-D multivariate normal distribution
 latent <- MASS::mvrnorm(n = n, mu = c(0, 0, 0), Sigma = Sigma)
@@ -34,11 +38,15 @@ Xstar <- latent[, 2]
 xistar <- latent[, 3]
 
 # Marginal transformations
-P  <- qt(pnorm(Pstar), df = 3) + 0.5 # page 168 of Haschka's IMA 2024, P_t = psi(Pstar_t + .5)
-X <- qnorm(pnorm(Xstar, mean = 1)) #Eq 4.3 from Haschka's IMA 2024, scenario 1 : X_t = psi^{-1} [ psi (Xstar_t ) , mu = 1]
-xi <- xistar
+P  <- pnorm(Pstar) + 0.5 # page 168 of Haschka's IMA 2024, P_t = psi(Pstar_t) + .5
+#X <- qnorm(pnorm(Xstar, mean = 1)) #Eq 4.3 from Haschka's IMA 2024, scenario 1 : X_t = psi^{-1} [ psi (Xstar_t ) , mu = 1]
+# X here shifts distribution back to mean 0 instead of doing X ~N(1,1)
+
+X <- Xstar + 1 # scenario 1, eq. 4.3: X_t = Phi^{-1} [phi (X*_t), mu =1] giving X~N(1,1)
+xi <- xistar #xi_t = phi^{-1} [phi(xi*_t)] = xi*_t (identity transofrmation)
 
 # outcome equation from Equation 4.1 page 168 IMA Journal of Management Mathematics (2025) 36, 151-180
+#From the equation of the outcome, eq. 4.1, there is no intercept
 y <- beta * X + alpha * P + xi
 
 # Final dataset
