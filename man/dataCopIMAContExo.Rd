@@ -28,9 +28,8 @@ A dataset simulated with one exogenous regressor \code{X} and one
   \code{beta = 1} for \code{X}.
 }
 \references{
-Haschka, R. E. (2024). Robustness of copula-correction models
-  in causal analysis: Exploiting between-regressor correlation. IMA Journal
-  of Management Mathematics, 36, 161-180.
-  https://doi.org/10.1093/imaman/dpae018
+Haschka, R. E. (2025). Robustness of copula-correction models in causal
+  analysis: Exploiting between-regressor correlation.
+  IMA Journal of Management Mathematics, 36, 161-180. \doi{10.1093/imaman/dpae018}
 }
 \keyword{datasets}

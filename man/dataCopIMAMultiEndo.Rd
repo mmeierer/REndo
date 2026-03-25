@@ -36,4 +36,9 @@ A dataset simulated with one exogenous regressor \code{X} and two
   for \code{P1}, \code{alpha2 = 1} for \code{P2}, and \code{beta = 1}
   for \code{X}.This was simulated as an extension to the dataset 'dataCopIMAContExo'
 }
+\references{
+Haschka, R. E. (2025). Robustness of copula-correction models in causal
+  analysis: Exploiting between-regressor correlation.
+  IMA Journal of Management Mathematics, 36, 161-180. \doi{10.1093/imaman/dpae018}
+}
 \keyword{datasets}

@@ -59,16 +59,8 @@
 #'
 #' @template template_text_details_bootsdegenerates
 #'
-#'
-#' @references
-#' Haschka, R. E. (2025). Robustness of copula-correction models in causal
-#' analysis: Exploiting between-regressor correlation.IMA Journal of Management
-#' Mathematics, 36, 161–180
-#' \doi{10.1093/imaman/dpae018}
-#'
-#' Park, S. and Gupta, S. (2012). Handling endogenous regressors by joint
-#' estimation using copulas. \emph{Marketing Science}, 31(4), 567--586.
-#' \doi{10.1287/mksc.1120.0718}
+#' @template template_references_haschka2025ima
+#' @template template_references_parkgupta2012
 #'
 #' @eval doc_rendocopulaima_return()
 #'

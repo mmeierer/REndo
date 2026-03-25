@@ -206,6 +206,7 @@
 #'   strength is rho = 0.5. There is no intercept in the data generating process.
 #'   The true parameter values are given as \code{alpha = 1} for \code{P} and
 #'   \code{beta = 1} for \code{X}.
+#' @template template_references_haschka2025ima
 #' @name dataCopIMAContExo
 #' @usage data("dataCopIMAContExo")
 #' @format A data frame with 1000 observations on 3 variables:
@@ -217,10 +218,6 @@
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
 #' @docType data
-#' @references Haschka, R. E. (2024). Robustness of copula-correction models
-#'   in causal analysis: Exploiting between-regressor correlation. IMA Journal
-#'   of Management Mathematics, 36, 161-180.
-#'   https://doi.org/10.1093/imaman/dpae018
 "dataCopIMAContExo"
 
 
@@ -235,6 +232,7 @@
 #'   to be continuously or normally distributed. There is no intercept in the
 #'   data generating process. The true parameter values are \code{alpha = 1}
 #'   for \code{P} and \code{beta = 1} for \code{X}.
+#' @template template_references_haschka2025ima
 #' @name dataCopIMABinExo
 #' @usage data("dataCopIMABinExo")
 #' @format A data frame with 1000 observations on 3 variables:
@@ -246,10 +244,6 @@
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
 #' @docType data
-#' @references Haschka, R. E. (2025). Robustness of copula-correction models
-#'   in causal analysis: Exploiting between-regressor correlation. IMA Journal
-#'   of Management Mathematics, 36, 161-180.
-#'   https://doi.org/10.1093/imaman/dpae018
 "dataCopIMABinExo"
 
 #' @title Simulated Dataset for Copula IMA - Two Continuous Endogenous Regressors
@@ -266,6 +260,7 @@
 #'   data generating process. The true parameter values are \code{alpha1 = 1}
 #'   for \code{P1}, \code{alpha2 = 1} for \code{P2}, and \code{beta = 1}
 #'   for \code{X}.This was simulated as an extension to the dataset 'dataCopIMAContExo'
+#' @template template_references_haschka2025ima
 #' @name dataCopIMAMultiEndo
 #' @usage data("dataCopIMAMultiEndo")
 #' @format A data frame with 1000 observations on 4 variables:
