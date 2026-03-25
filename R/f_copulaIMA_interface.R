@@ -63,6 +63,13 @@
 #' or kernel density estimation. These are transformed via the inverse
 #' normal distribution and used to construct copula-based control terms.
 #'
+#' Haschka (2025) reported that simulation results showed that copula-based IMA
+#' estimator may exhibit a slightly larger bias than alternative two-stage
+#' approaches when the sample size is very small (e.g., n = 100) and with intercept.
+#' However, the bias decreases rapidly as sample size increases and become
+#' negligible for moderate sample sizes (around n >= 600). The estimator appears
+#' asymptotically unbiased.
+#'
 #' Bootstrap inference is performed by resampling the data with replacement.
 #' Degenerate bootstrap samples (e.g. singular design matrices or failed
 #' model estimation) are discarded and resampled until the requested number
@@ -70,12 +77,6 @@
 #' samples is reported as a warning. Confidence intervals are computed
 #' using only successful bootstrap replications.
 #'
-#' Haschka (2025) reported that simulation results showed that copula-based IMA
-#' estimator may exhibit a slightly larger bias than alternative two-stage
-#' approaches when the sample size is very small (e.g., n = 100) and with intercept.
-#' However, the bias decreases rapidly as sample size increases and become
-#' negligible for moderate sample sizes (around n >= 600). The estimator appears
-#' asymptotically unbiased.
 #'
 #' @references
 #' Haschka, R. E. (2025). Robustness of copula-correction models in causal

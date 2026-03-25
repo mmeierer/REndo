@@ -1,3 +1,14 @@
+doc_rendobootsdegeneratesremoved_return_list <- function() {
+  doc_boots <- doc_rendoboots_return_list()
+  doc_boots_removed <- c(
+    "\\item{\\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}",
+    "\\item{\\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}"
+  )
+
+  return(c(doc_boots, doc_boots_removed))
+}
+
+
 .new_rendo_boots_degenerates_removed <- function(
   call,
   F.formula,

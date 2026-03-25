@@ -37,8 +37,7 @@ used for standard error estimation. A minimum of 1000 is recommended.}
 \item{verbose}{Show details about the running of the function.}
 }
 \value{
-An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
-  and \code{rendo.base}, which is a list that contains:
+An object of class \code{rendo.copula.ima} which is a list that contains:
 \item{\code{formula}}{The formula given to specify the fitted model.}
 \item{\code{model}}{The model.frame used for model fitting.}
 \item{\code{terms}}{The terms object used for model fitting.}
@@ -47,10 +46,10 @@ An object of classes \code{rendo.copula.ima}, \code{rendo.boots},
 \item{\code{fitted.values}}{Fitted values at the found solution.}
 \item{\code{residuals}}{The residuals at the found solution.}
 \item{\code{boots.params}}{The bootstrapped coefficients.}
-\item{\code{cdf}}{The used cdf function.}
-\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
 \item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
+\item{\code{cdf}}{The used cdf function.}
+\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
 }
 \description{
 Fitting Haschka's copula-based Instrumental Variable Model (IMA) using
@@ -96,19 +95,19 @@ the endogenous regressors using either empirical distribution functions
 or kernel density estimation. These are transformed via the inverse
 normal distribution and used to construct copula-based control terms.
 
-Bootstrap inference is performed by resampling the data with replacement.
-Degenerate bootstrap samples (e.g. singular design matrices or failed
-model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
-
 Haschka (2025) reported that simulation results showed that copula-based IMA
 estimator may exhibit a slightly larger bias than alternative two-stage
 approaches when the sample size is very small (e.g., n = 100) and with intercept.
 However, the bias decreases rapidly as sample size increases and become
 negligible for moderate sample sizes (around n >= 600). The estimator appears
 asymptotically unbiased.
+
+Bootstrap inference is performed by resampling the data with replacement.
+Degenerate bootstrap samples (e.g. singular design matrices or failed
+model estimation) are discarded and resampled until the requested number
+of valid bootstrap replications is obtained. The percentage of discarded
+samples is reported as a warning. Confidence intervals are computed
+using only successful bootstrap replications.
 }
 \examples{
 #------------------------------------------------------------------------
