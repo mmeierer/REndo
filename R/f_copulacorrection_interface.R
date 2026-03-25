@@ -6,7 +6,7 @@
 #' The corrections proposed by Qian, Koschmann, and Xie (2024, p.19-22) are implemented. These mitigate the bias of the original paper for small and moderate sample sizes.
 #'
 #' @template template_param_formuladataverbose
-#' @param num.boots Number of bootstrapping iterations. Defaults to 1000.
+#' @template template_param_numboots
 #' @param ... Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
 #'  regressor. Ignored with a warning otherwise.
 #' \describe{

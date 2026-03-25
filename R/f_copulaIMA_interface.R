@@ -21,6 +21,7 @@
 #'
 #'
 #' @template template_param_formuladataverbose
+#' @template template_param_numboots
 #'
 #' @param cdf Character string specifying the method used to estimate the
 #'   marginal distribution functions of the endogenous regressors.
@@ -35,8 +36,6 @@
 #'     \item{\code{"kde"}}{Kernel CDF via \code{ks::kcde}
 #'       (Park and Gupta, 2012). Computationally slower.}
 #'   }
-#' @param num.boots Positive integer giving the number of bootstrap replications
-#'   used for standard error estimation. A minimum of 1000 is recommended.
 #'
 #' @details
 #'

@@ -11,7 +11,8 @@ copulaCorrection(formula, data, num.boots = 1000, verbose = TRUE, ...)
 
 \item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
 
-\item{num.boots}{Number of bootstrapping iterations. Defaults to 1000.}
+\item{num.boots}{Positive integer giving the number of bootstrap replications
+used for standard error estimation. A minimum of 1000 is recommended.}
 
 \item{verbose}{Show details about the running of the function.}
 
