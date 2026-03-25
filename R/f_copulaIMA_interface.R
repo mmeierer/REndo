@@ -61,6 +61,7 @@
 #'
 #' @template template_references_haschka2025ima
 #' @template template_references_parkgupta2012
+#' @template template_param_cdf_references
 #'
 #' @eval doc_rendocopulaima_return()
 #'

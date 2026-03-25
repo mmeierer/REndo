@@ -8,6 +8,6 @@
 #'       \code{copula::pobs} (Qian et al., 2024).}
 #'     \item{\code{"ecdf"}}{Empirical CDF with boundary replacement
 #'       (Becker et al., 2022).}
-#'     \item{\code{"kde"}}{Kernel CDF via \code{ks::kcde}
-#'       (Park and Gupta, 2012). Computationally slower.}
+#'     \item{\code{"kde"}}{Integral of a density estimator via \code{ks::kcde}
+#'       used in (Park and Gupta, 2012).}
 #'   }
