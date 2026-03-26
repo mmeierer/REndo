@@ -218,6 +218,7 @@
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
 #' @docType data
+#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
 "dataCopIMAContExo"
 
 
@@ -244,30 +245,26 @@
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
 #' @docType data
+#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
 "dataCopIMABinExo"
 
-#' @title Simulated Dataset for Copula IMA - Two Continuous Endogenous Regressors
-#' @description A dataset simulated with one exogenous regressor \code{X} and two
-#'   endogenous continuous regressors \code{P1} and \code{P2}, and a dependent
-#'   variable \code{y}. Both endogenous regressors follow a bounded continuous
+#' @title Simulated Dataset for Copula IMA - Two Continuous Endogenous Regressors,
+#' Intercept and No Exogenous Regressor
+#' @description A dataset simulated with two endogenous continuous regressors
+#'  \code{P1} and \code{P2}, an intercept, and a dependent variable \code{y}.
+#'   No exgenous regressor. Both endogenous regressors follow a bounded continuous
 #'   distribution (Phi(P*) + 0.5) and are correlated with each other (r = 0.3),
-#'   with the exogenous regressor \code{X} (r = 0.5), and with the structural
-#'   error (endogeneity strength rho = 0.5). The exogenous regressor \code{X}
-#'   follows a normal distribution with mean 1 and is uncorrelated with the
-#'   structural error. This dataset is designed to exercise the
-#'   multi-endogenous-regressor estimation path of \code{copulaIMA()}, which
-#'   is not covered by \code{dataCopIMAContExo}. There is no intercept in the
-#'   data generating process. The true parameter values are \code{alpha1 = 1}
-#'   for \code{P1}, \code{alpha2 = 1} for \code{P2}, and \code{beta = 1}
-#'   for \code{X}.This was simulated as an extension to the dataset 'dataCopIMAContExo'
+#'   and with the structural error (endogeneity strength rho = 0.5).
+#'   The true parameter values are \code{alpha1 = 1} for \code{P1}, \code{alpha2 = 1}
+#'   for \code{P2}, and \code{mu = 10} for the intercept.This was simulated as
+#'   an extension to the dataset 'dataCopIMAContExo'. This dataset was created to test
+#'   how well \code{copulaIMA()} works with an intercept and no exogenous regressor.
 #' @template template_references_haschka2025ima
 #' @name dataCopIMAMultiEndo
 #' @usage data("dataCopIMAMultiEndo")
 #' @format A data frame with 1000 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
-#' \item{\code{X}}{a numeric vector, normally distributed with mean 1, exogenous
-#'   and correlated with \code{P1} and \code{P2}.}
 #' \item{\code{P1}}{a numeric vector, continuous and endogenous, following a
 #'   bounded distribution Phi(P1*) + 0.5 with values in (0.5, 1.5), correlated
 #'   with \code{P2} (r = 0.3).}
@@ -276,4 +273,5 @@
 #'   with \code{P1} (r = 0.3).}
 #' }
 #' @docType data
+#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
 "dataCopIMAMultiEndo"

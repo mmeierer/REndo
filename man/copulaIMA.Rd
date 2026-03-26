@@ -125,18 +125,37 @@ res <- copulaIMA(
 summary(res)
 
 #------------------------------------------------------------------------
-# Example 2: Two endogenous regressors
-# True values: alpha1 = 1 (P1), alpha2 = 1 (P2), beta = 1 (X), no intercept
+# Example 2: Two endogenous regressors with intercept and no exogenous regressor
+# True values: mu=10, alpha1 = 1 (P1), alpha2 = 1 (P2)
 # Extension of the first example
 #------------------------------------------------------------------------
 data("dataCopIMAMultiEndo")
 res2 <- copulaIMA(
-  y ~ X + P1 + P2 - 1 | continuous(P1) + continuous(P2),
+  y ~ P1 + P2 | continuous(P1) + continuous(P2),
   data      = dataCopIMAMultiEndo,
   cdf       = "adj.ecdf",
   num.boots = 1000
 )
 summary(res2)
+
+#------------------------------------------------------------------------
+# Example 3: Single endogenous regressor with binary exogenous regressor
+# (Haschka 2025, section 4.1 scenario 2)
+
+# This example shows one of the key example of IMA method, i.e., the exogenous
+# regressor does not need to be continuous or normally distributed.
+# X the exogenous regressor is binary (0 or 1).
+# True values: alpha = 1 (P), beta = 1 (X), no intercept.
+#------------------------------------------------------------------------
+data("dataCopIMABinExo")
+res3 <- copulaIMA(
+   y ~ X + P | continuous(P),
+   data = dataCopIMABinExo,
+   cdf = "adj.ecdf",
+   num.boots = 1000
+)
+summary(res3)
+
 
 }
 \references{
