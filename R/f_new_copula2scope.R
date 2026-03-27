@@ -1,5 +1,5 @@
 #' @importFrom stats coef fitted residuals
-new_rendo_copula2scope <- function(
+new_rendo_copula2sCOPE <- function(
   call,
   F.formula,
   res.lm,
@@ -23,7 +23,7 @@ new_rendo_copula2scope <- function(
     n.boots.failed = n.boots.failed,
 
     # 2sCOPE-specific
-    subclass = "rendo.copula.2scope",
+    subclass = "rendo.copula.2sCOPE",
     cdf = cdf,
     names.endo.regs = names.endo.regs
   ))
