@@ -26,6 +26,62 @@ used for inference.}
 Fitting the two-stage copula generator regressor approach (2sCOPE) estimator of
 Yang et al. (2024) to address endogeneity.
 }
+\examples{
+# -------------------------------------------------------------------
+# Example 1: Nonnormal endogenous and exogenous regressors
+# (Yang et al. 2025, Table 5, Case 1, rho_px = 0.5)
+#
+# Demonstrates 2sCOPE's core contribution: consistent estimation when
+# the endogenous regressor P and exogenous regressor X
+# are correlated.
+# True values: mu = 1, alpha = 1 (P), beta = -1 (X).
+# -------------------------------------------------------------------
+data("dataCopula2sCOPECase1")
+res1 <- copula2sCOPE(
+  y ~ P + X | continuous(P),
+  data      = dataCopula2sCOPECase1,
+  cdf       = "adj.ecdf",
+  num.boots = 1000
+)
+summary(res1)
+
+# -------------------------------------------------------------------
+# Example 2: Nonnormal endogenous P but normally distributed exogenous X
+# (Yang et al. 2025, case 2)
+#
+# To demonstrate that 2sCOPE remains consistent when the exogenous
+# regressor X is normally distributed.
+# True values: mu = 1, alpha = 1 (P), beta = -1 (X).
+# -------------------------------------------------------------------
+data("dataCopula2sCOPECase2")
+res2 <- copula2sCOPE(
+  y ~ P + X | continuous(P),
+  data      = dataCopula2sCOPECase2,
+  cdf       = "adj.ecdf",
+  num.boots = 1000
+)
+summary(res2)
+
+# -------------------------------------------------------------------
+# Example 3: Normally distributed endogenous P, nonnormal exogenous X
+# (Yang et al. 2025, case 3)
+#
+# This example is used to demonstrates that one of 2sCOPE's advantage
+# is that there is a consistent estimation even when
+# the endogenous regressor P is normally distributed, because
+# identification comes from the nonnormal exogenous regressor X.
+# True values: mu = 1, alpha = 1 (P), beta = -1 (X).
+# -------------------------------------------------------------------
+data("dataCopula2sCOPECase3")
+res3 <- copula2sCOPE(
+  y ~ P + X | continuous(P),
+  data      = dataCopula2sCOPECase3,
+  cdf       = "adj.ecdf",
+  num.boots = 1000
+)
+summary(res3)
+
+}
 \references{
 Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
 Two-Stage Copula Generated Regressor Approach. \emph{EXPRESS: Journal of
