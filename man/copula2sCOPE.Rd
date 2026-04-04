@@ -24,7 +24,43 @@ used for inference.}
 }
 \description{
 Fitting the two-stage copula generator regressor approach (2sCOPE) estimator of
-Yang et al. (2024) to address endogeneity.
+Yang et al. (2025) to address endogeneity without any external instruments.This method
+generalises the Park and Gupta (2012) copula correction method to allow for the correlation
+between endogenous and exogenous regressors, while also relaxing the required assumption that
+endogenous need to be nonnormally distributed.
+
+Compared to Park and Gupta (2012), the 2sCOPE method does notr require the endogenous and exogenous
+regressors to be independent. Moreover, 2sCOPE remains consistent when
+endogenous regressors are both normally or near-normally distributed, given
+that at least one exogenous regressor is nonnormally distributed. In that case, the identification
+would then come from the nonnormal exogenous regressor instead of the endogenous regressor itself.
+}
+\details{
+\strong{Methodology}
+
+2sCope is an augmented OLS estimator which can be described in the following 3 steps
+Yang et al. (2025):
+
+\enumerate{
+  \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_K,
+        P_1, \ldots, P_L\}}, compute the normal score
+        \eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
+        the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
+        standard normal quantile function.
+  \item For each endogenous regressor \eqn{P_l^*}, regress it on the normal
+        scores of the exogenous regressors \eqn{X_1^*, \ldots, X_K^*}
+        \emph{with intercept} and retain the residuals
+        \eqn{\hat{\varepsilon}_l} as the copula correction terms. This
+        first-stage regression exploits the informational content of the
+        exogenous regressors in a way analogous to instrumental variable
+        identification.
+  \item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
+        \hat{\varepsilon}_L} as additional regressors and estimate by OLS.
+}
+
+When no exogenous regressors are present, the correction terms reduce to
+the normal scores of each endogenous regressor directly, equivalent to
+the approach of Park and Gupta (2012).
 }
 \examples{
 # -------------------------------------------------------------------
