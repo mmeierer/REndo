@@ -71,7 +71,7 @@ copula2sCOPE_residuals <- function(P.star, endo.cols) {
       if (length(endo.cols) ==1){
         # when there is no exogenous regressors, correction term is just qnorm(F(P_j))
         # This matches the single regressor case in Park & Gupta (2012)
-        res[, j] <- Z.j # I tried replicating the steps in Yang et al. 2024
+        res[, j] <- Z.j # I tried replicating the steps in Yang et al. 2025
         #but when it comes to the intercept, since when there is no exo regressors,it should just be
         #correction term qnorm(F(P_j)), this code will still remove the intercept first, before
         # doing the CDF and then applying the P*, then implicitly add the intercept at the end
@@ -92,7 +92,7 @@ copula2sCOPE_residuals <- function(P.star, endo.cols) {
       #projecting on exogenous W* with intercept
       Z.exog <- Z[, exo.cols, drop = FALSE] # W_t* exogenous only
       lm.j <- lm(Z.j ~ Z.exog) # With intercept included from 2sCOPE table 1,
-      #from ADDRESSING ENDOGENEITY USING A TWO-STAGE COPULA GENERATED REGRESSOR APPROACH (From Yang et al. 2024, page 7 )
+      #from ADDRESSING ENDOGENEITY USING A TWO-STAGE COPULA GENERATED REGRESSOR APPROACH (From Yang et al. 2025, page 7 )
       res[, j] <- residuals(lm.j)
     }
   }
