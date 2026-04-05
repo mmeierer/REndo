@@ -25,30 +25,53 @@
 #' @template template_param_cdf
 #'
 #' @details
+#' \strong{Model}
+#'
+#' Consider the structural regression model with \eqn{K} endogenous regressors:
+#'
+#' \deqn{Y_i = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k + X_i' \beta +
+#'       \varepsilon_i}
+#'
+#' where \eqn{i = 1, \ldots, n} is the number of observations,
+#' \eqn{Y_i} is the dependent variable, \eqn{P_{i,k}} are continuous endogenous regressors
+#' that may be correlated with both the structural error \eqn{\varepsilon_i}
+#' and the exogenous regressors \eqn{X_i},
+#' \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
+#' \eqn{\mu, \alpha_k, \beta} are the structural model parameters.
 #'
 #' IMA is an augmented OLS estimator. The estimation proceeds in three steps:
 #'
 #' \enumerate{
-#'   \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_K,
-#'         P_1, \ldots, P_L\}}, compute the normal score
+#'   \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
+#'         P_1, \ldots, P_K\}}, compute the normal score
 #'         \eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
 #'         the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
 #'         standard normal quantile function.
-#'   \item For each endogenous regressor \eqn{P_l^*}, regress it on the normal
-#'         scores of the exogenous regressors \eqn{X_1^*, \ldots, X_K^*}
+#'   \item For each endogenous regressor \eqn{P_k^*}, regress it on the normal
+#'         scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
 #'         \emph{without intercept} and retain the residuals
-#'         \eqn{\hat{\varepsilon}_l} as the copula correction terms. This
+#'         \eqn{\hat{\varepsilon}_k} as the copula correction terms. This
 #'         first-stage regression exploits the dependence between endogenous
 #'         and exogenous regressors in a way analogous to instrumental variable
 #'         identification.
 #'   \item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
-#'         \hat{\varepsilon}_L} as additional regressors and estimate by OLS.
+#'         \hat{\varepsilon}_{K}} as additional regressors and estimate by OLS.
 #' }
 #'
-#' The method relies on estimating the marginal distribution functions of
-#' the endogenous regressors using either empirical distribution functions
-#' or kernel density estimation. These are transformed via the inverse
-#' normal distribution and used to construct copula-based control terms.
+#' \strong{Formula interface}
+#'
+#' The \code{formula} argument follows a two-part notation separated by
+#' \code{|}. The first part specifies the structural model. The second part
+#' identifies the continuous endogenous regressors using \code{continuous()}:
+#'
+#' \preformatted{y ~ X + P | continuous(P)                          # typical use: with intercept}
+#' \preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endogenous regressors}
+#' \preformatted{y ~ X + P - 1 | continuous(P)                      # no intercept (in simulation settings)}
+#'
+#' In typical applied settings the model includes an intercept. The
+#' no-intercept specification (\code{-1}) is primarily used in simulation
+#' studies following the design of (Haschka (2025)  Section 4.1)
+#' and is unlikely to be appropriate for real datasets.
 #'
 #' Haschka (2025) reported that simulation results showed that copula-based IMA
 #' estimator may exhibit a slightly larger bias than alternative two-stage
