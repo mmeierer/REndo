@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.11</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
 External Instrumental Variables</h1>
                         <h4 data-toc-skip class="author">Raluca Gui</h4>
             
-            <h4 data-toc-skip class="date">2024-07-12</h4>
+            <h4 data-toc-skip class="date">2026-04-08</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/vignettes/REndo-introduction.Rmd" class="external-link"><code>vignettes/REndo-introduction.Rmd</code></a></small>
       <div class="hidden name"><code>REndo-introduction.Rmd</code></div>
@@ -750,9 +750,6 @@ external IV, we can estimate a two-stage least squares model, using
 <span>           <span class="va">county</span> , data<span class="op">=</span><span class="va">school</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m2.2sls</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
-<span><span class="co">#&gt; Warning in printHypothesis(L, rhs, names(b)): one or more coefficients in the hypothesis include</span></span>
-<span><span class="co">#&gt;      arithmetic operators in their names;</span></span>
-<span><span class="co">#&gt;   the printed representation of the hypothesis will be omitted</span></span>
 <span><span class="co">#&gt;                 Estimate  Std. Error     t value      Pr(&gt;|t|)</span></span>
 <span><span class="co">#&gt; (Intercept) 700.47891593 13.58064436  51.5792106 8.950497e-171</span></span>
 <span><span class="co">#&gt; stratio      -1.13674002  0.53533638  -2.1234126  3.438427e-02</span></span>
@@ -846,9 +843,6 @@ together with external ones, could lead to improved efficiency.</p>
 <span><span class="co">#&gt; weak.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m5.hetEr</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
-<span><span class="co">#&gt; Warning in printHypothesis(L, rhs, names(b)): one or more coefficients in the hypothesis include</span></span>
-<span><span class="co">#&gt;      arithmetic operators in their names;</span></span>
-<span><span class="co">#&gt;   the printed representation of the hypothesis will be omitted</span></span>
 <span><span class="co">#&gt;                 Estimate  Std. Error    t value     Pr(&gt;|t|)</span></span>
 <span><span class="co">#&gt; (Intercept) 662.78791557 27.90173069 23.7543657 2.380436e-76</span></span>
 <span><span class="co">#&gt; stratio       0.71480686  1.31077325  0.5453322 5.858545e-01</span></span>
@@ -866,9 +860,6 @@ squares and control function methods, namely <strong>-1.30</strong>:</p>
 <span>                 <span class="va">grades</span> <span class="op">+</span> <span class="va">county</span><span class="op">|</span> <span class="va">stratio</span> <span class="op">|</span> <span class="fu">IIV</span><span class="op">(</span>g <span class="op">=</span> <span class="va">x3</span>,iiv <span class="op">=</span> <span class="va">gp</span>, <span class="va">income</span><span class="op">)</span>, data<span class="op">=</span><span class="va">school</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m6.highMoment</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
-<span><span class="co">#&gt; Warning in printHypothesis(L, rhs, names(b)): one or more coefficients in the hypothesis include</span></span>
-<span><span class="co">#&gt;      arithmetic operators in their names;</span></span>
-<span><span class="co">#&gt;   the printed representation of the hypothesis will be omitted</span></span>
 <span><span class="co">#&gt;                 Estimate  Std. Error    t value     Pr(&gt;|t|)</span></span>
 <span><span class="co">#&gt; (Intercept) 703.95605932 56.18284961 12.5297322 2.974075e-30</span></span>
 <span><span class="co">#&gt; stratio      -1.30755252  2.73072188 -0.4788304 6.323429e-01</span></span>
@@ -932,7 +923,7 @@ below:</p>
 <span><span class="va">m8.multilevel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/multilevelIV.html">multilevelIV</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">formula1</span>, data <span class="op">=</span> <span class="va">dataMultilevelIV</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m8.multilevel</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                    REF     FE_L2      FE_L3     GMM_L2     GMM_L3</span></span>
-<span><span class="co">#&gt; (Intercept) 64.3640774  0.000000  0.0000000 64.6642061 64.3644220</span></span>
+<span><span class="co">#&gt; (Intercept) 64.3640774  0.000000  0.0000000 64.6642061 64.3644221</span></span>
 <span><span class="co">#&gt; X11          3.0356390  3.047931  3.0353448  3.0356094  3.0356389</span></span>
 <span><span class="co">#&gt; X12          9.0005462  8.996679  8.9999438  8.9966073  9.0005417</span></span>
 <span><span class="co">#&gt; X13         -2.0082559 -2.000106 -2.0090020 -2.0215816 -2.0082712</span></span>
@@ -1041,8 +1032,8 @@ GMM_L3).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Omitted variable tests for model REF:</span></span>
 <span><span class="co">#&gt;               df    Chisq  p-value    </span></span>
-<span><span class="co">#&gt; GMM_L2_vs_REF  7    26.57 0.000398 ***</span></span>
-<span><span class="co">#&gt; GMM_L3_vs_REF 13 -3112.40 1.000000    </span></span>
+<span><span class="co">#&gt; GMM_L2_vs_REF  7   -33.11 1.000000    </span></span>
+<span><span class="co">#&gt; GMM_L3_vs_REF 13 -3259.64 1.000000    </span></span>
 <span><span class="co">#&gt; FE_L2_vs_REF  13    40.00 0.000138 ***</span></span>
 <span><span class="co">#&gt; FE_L3_vs_REF  13    39.99 0.000139 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
@@ -1070,19 +1061,19 @@ effects estimators, FE_L2 versus FE_L3:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients for model FE_L2:</span></span>
 <span><span class="co">#&gt;               Estimate Std. Error z-score Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; (Intercept)  0.000e+00  5.923e-19    0.00        1    </span></span>
+<span><span class="co">#&gt; (Intercept)  0.000e+00  1.273e-18    0.00        1    </span></span>
 <span><span class="co">#&gt; X11          3.048e+00  3.193e-02   95.47   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X12          8.997e+00  3.377e-02  266.43   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X13         -2.000e+00  3.211e-02  -62.29   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X14          2.002e+00  3.437e-02   58.24   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X15         -1.037e+00  3.301e-02  -31.41   &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; X21          0.000e+00  8.887e-19    0.00        1    </span></span>
-<span><span class="co">#&gt; X22          0.000e+00  3.935e-19    0.00        1    </span></span>
-<span><span class="co">#&gt; X23          0.000e+00  1.825e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X24          0.000e+00  2.982e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X31          0.000e+00  1.567e-17    0.00        1    </span></span>
-<span><span class="co">#&gt; X32          0.000e+00  1.390e-17    0.00        1    </span></span>
-<span><span class="co">#&gt; X33          0.000e+00  5.620e-17    0.00        1    </span></span>
+<span><span class="co">#&gt; X21          0.000e+00  1.245e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X22          0.000e+00  7.622e-19    0.00        1    </span></span>
+<span><span class="co">#&gt; X23          0.000e+00  4.024e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X24          0.000e+00  6.984e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X31          0.000e+00  2.546e-17    0.00        1    </span></span>
+<span><span class="co">#&gt; X32          0.000e+00  2.485e-17    0.00        1    </span></span>
+<span><span class="co">#&gt; X33          0.000e+00  1.202e-16    0.00        1    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1149,7 +1140,7 @@ Estimation Using Cop- ulas.” Marketing Science, 31(4), 567–586.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

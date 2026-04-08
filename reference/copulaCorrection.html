@@ -26,7 +26,7 @@ The corrections proposed by Qian, Koschmann, and Xie (2024, p.19-22) are impleme
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.11</span>
       </span>
     </div>
 
@@ -189,7 +189,9 @@ E(ε<sup>2</sup>)=σ<sub>ε</sub><sup>2</sup>,
 kernel density estimator (Epanechnikov, 1969), as below:</p>
 <p><br></p><div style="text-align:center">ĥ(p)=1/(T·b) ∑(K·((p-P<sub>t</sub>)/b))</div>
 <p>where P<sub>t</sub> is the endogenous regressor,
-K(x)=0.75·(1-x<sup>2</sup>)·I(|x|-1.5·min(s, IQR/1.34).
+K(x)=0.75·(1-x<sup>2</sup>)·I(|x|&lt;=1)
+and the bandwidth \(b\) is the one proposed by Silverman (1986),
+and is equal to b=0.9·T<sup>-1.5</sup>·min(s, IQR/1.34).
 \(IQR\) is the interquartile range while \(s\) is the data sample standard deviation
 and \(T\) is the number of time periods observed in the data.
 After obtaining the joint distribution of the error term and the continuous endogenous regressor, the model parameters are estimated using
@@ -337,7 +339,7 @@ but as symbols without quotation marks.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
