@@ -1,8 +1,8 @@
 # Comment from the authors
 
-This is version 2.4.10 which:
-- Addressed the concerns underlined in the paper https://www.nber.org/papers/w32231 which show that our fixing of the percentile creates large bias in estimates for small to moderate samples.
-- Fixes CRAN notes regarding documentation
+This is version 2.4.11 which:
+
+- Fixes CRAN notes regarding tests for `multilevelIV`
 
 
 
