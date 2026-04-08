@@ -71,7 +71,7 @@ variables through a first-stage auxiliary regression, in a similar way to
 instrumental variable identification.
 }
 \details{
-\strong{Model}
+\subsection{Model}{
 
 Consider the structural regression model with \eqn{K} endogenous regressors:
 
@@ -104,7 +104,22 @@ IMA is an augmented OLS estimator. The estimation proceeds in three steps:
         \hat{\varepsilon}_{K}} as additional regressors and estimate by OLS.
 }
 
-\strong{Formula interface}
+Haschka (2025) reported that simulation results showed that copula-based IMA
+estimator may exhibit a slightly larger bias than alternative two-stage
+approaches when the sample size is very small (e.g., n = 100) and with intercept.
+However, the bias decreases rapidly as sample size increases and become
+negligible for moderate sample sizes (around n >= 600). The estimator appears
+asymptotically unbiased.
+}
+
+Bootstrap inference is performed by resampling the data with replacement.
+Degenerate bootstrap samples (e.g. singular design matrices or failed
+model estimation) are discarded and resampled until the requested number
+of valid bootstrap replications is obtained. The percentage of discarded
+samples is reported as a warning. Confidence intervals are computed
+using only successful bootstrap replications.
+
+\subsection{Formula interface}{
 
 The \code{formula} argument follows a two-part notation separated by
 \code{|}. The first part specifies the structural model. The second part
@@ -118,20 +133,7 @@ In typical applied settings the model includes an intercept. The
 no-intercept specification (\code{-1}) is primarily used in simulation
 studies following the design of (Haschka (2025)  Section 4.1)
 and is unlikely to be appropriate for real datasets.
-
-Haschka (2025) reported that simulation results showed that copula-based IMA
-estimator may exhibit a slightly larger bias than alternative two-stage
-approaches when the sample size is very small (e.g., n = 100) and with intercept.
-However, the bias decreases rapidly as sample size increases and become
-negligible for moderate sample sizes (around n >= 600). The estimator appears
-asymptotically unbiased.
-
-Bootstrap inference is performed by resampling the data with replacement.
-Degenerate bootstrap samples (e.g. singular design matrices or failed
-model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
+}
 }
 \examples{
 #------------------------------------------------------------------------
@@ -155,9 +157,10 @@ summary(res)
 #------------------------------------------------------------------------
 data("dataCopIMAMultiEndo")
 res2 <- copulaIMA(
+  # Alternative: y ~ P1 + P2 | continuous(P1, P2)
   y ~ P1 + P2 | continuous(P1) + continuous(P2),
-  data      = dataCopIMAMultiEndo,
-  cdf       = "adj.ecdf",
+  data = dataCopIMAMultiEndo,
+  cdf = "adj.ecdf",
   num.boots = 1000
 )
 summary(res2)

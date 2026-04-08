@@ -25,7 +25,7 @@
 #' @template template_param_cdf
 #'
 #' @details
-#' \strong{Model}
+#' \subsection{Model}{
 #'
 #' Consider the structural regression model with \eqn{K} endogenous regressors:
 #'
@@ -58,7 +58,18 @@
 #'         \hat{\varepsilon}_{K}} as additional regressors and estimate by OLS.
 #' }
 #'
-#' \strong{Formula interface}
+#' Haschka (2025) reported that simulation results showed that copula-based IMA
+#' estimator may exhibit a slightly larger bias than alternative two-stage
+#' approaches when the sample size is very small (e.g., n = 100) and with intercept.
+#' However, the bias decreases rapidly as sample size increases and become
+#' negligible for moderate sample sizes (around n >= 600). The estimator appears
+#' asymptotically unbiased.
+#' }
+#'
+#' @template template_text_details_bootsdegenerates
+#'
+#' @details
+#' \subsection{Formula interface}{
 #'
 #' The \code{formula} argument follows a two-part notation separated by
 #' \code{|}. The first part specifies the structural model. The second part
@@ -72,15 +83,8 @@
 #' no-intercept specification (\code{-1}) is primarily used in simulation
 #' studies following the design of (Haschka (2025)  Section 4.1)
 #' and is unlikely to be appropriate for real datasets.
+#' }
 #'
-#' Haschka (2025) reported that simulation results showed that copula-based IMA
-#' estimator may exhibit a slightly larger bias than alternative two-stage
-#' approaches when the sample size is very small (e.g., n = 100) and with intercept.
-#' However, the bias decreases rapidly as sample size increases and become
-#' negligible for moderate sample sizes (around n >= 600). The estimator appears
-#' asymptotically unbiased.
-#'
-#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_haschka2025ima
 #' @template template_references_parkgupta2012
@@ -112,9 +116,10 @@
 #' #------------------------------------------------------------------------
 #' data("dataCopIMAMultiEndo")
 #' res2 <- copulaIMA(
+#'   # Alternative: y ~ P1 + P2 | continuous(P1, P2)
 #'   y ~ P1 + P2 | continuous(P1) + continuous(P2),
-#'   data      = dataCopIMAMultiEndo,
-#'   cdf       = "adj.ecdf",
+#'   data = dataCopIMAMultiEndo,
+#'   cdf = "adj.ecdf",
 #'   num.boots = 1000
 #' )
 #' summary(res2)
