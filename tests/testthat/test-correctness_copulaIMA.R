@@ -1,3 +1,5 @@
+skip_on_cran()
+
 # Required data ---------------------------------------------------------------------
 data("dataCopIMAContExo")
 data("dataCopIMAMultiEndo")
@@ -20,6 +22,31 @@ test_that("Differently sorted data produces same results", {
   )
 
   expect_equal(object = coef(res_sorted), expected = coef(res_rev))
+})
+
+# Equivalent formula specifications -----------------------------------------------
+test_that("Equivalent continuous() specifications produce same results", {
+  res_combined <- expect_warning(
+    copulaIMA(
+      formula = y ~ P1 + P2 | continuous(P1, P2),
+      data = dataCopIMAMultiEndo,
+      verbose = FALSE,
+      num.boots = 10
+    ),
+    regexp = "recommended to run 1000"
+  )
+
+  res_separate <- expect_warning(
+    copulaIMA(
+      formula = y ~ P1 + P2 | continuous(P1) + continuous(P2),
+      data = dataCopIMAMultiEndo,
+      verbose = FALSE,
+      num.boots = 10
+    ),
+    regexp = "recommended to run 1000"
+  )
+
+  expect_equal(coef(res_combined), coef(res_separate))
 })
 
 

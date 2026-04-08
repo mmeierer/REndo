@@ -1,3 +1,5 @@
+skip_on_cran()
+
 # Required data ---------------------------------------------------------------------
 data("dataCopIMAContExo")
 data("dataCopIMAMultiEndo")
