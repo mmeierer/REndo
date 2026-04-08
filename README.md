@@ -7,7 +7,7 @@ checks](https://github.com/mmeierer/REndo/workflows/R-CMD-check/badge.svg?branch
 [![Coverage
 Status](https://img.shields.io/codecov/c/github/mmeierer/REndo/development.svg)](https://app.codecov.io/github/mmeierer/REndo?branch=development)
 [![CRAN
-Status](http://www.r-pkg.org/badges/version/REndo)](https://cran.r-project.org/package=REndo)
+Status](https://www.r-pkg.org/badges/version/REndo)](https://cran.r-project.org/package=REndo)
 [![CRAN
 Downloads](https://cranlogs.r-pkg.org/badges/REndo)](https://cran.r-project.org/package=REndo)
 [![Repo
