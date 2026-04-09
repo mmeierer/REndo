@@ -47,10 +47,13 @@ copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
   f.main <- formula(mf)
 
   # Build copula terms (~ . + Pcop1 + Pcop2)
+  has_intercept <- attr(terms(f.main), "intercept") == 1 #to ensure that intercept is handled
+  #consistently across all stages
+
   f.pcop <- reformulate(
     termlabels = c(".", colnames(cop.terms)),
     response = NULL, # empty response (lhs)
-    intercept = TRUE # Keep intercept. FALSE would remove it when updating
+    intercept = has_intercept
   )
 
   # Add copula regressors to existing formula
