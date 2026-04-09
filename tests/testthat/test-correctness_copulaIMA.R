@@ -98,7 +98,7 @@ test_that("Parameter recovery: dataCopIMAMultiEndo", {
 
 test_that("Parameter recovery: dataCopIMABinExo", {
   copulaIMA_param_recovery(
-    formula = y ~ X + P | continuous(P),
+    formula = y ~ X + P - 1| continuous(P),
     data = dataCopIMABinExo,
     true_vals = c(X = 1, P = 1)
   )
