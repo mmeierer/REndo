@@ -69,6 +69,13 @@ correction yields severely biased estimates of all model coefficients.
 IMA corrects for this by exploiting the content of the exogenous
 variables through a first-stage auxiliary regression, in a similar way to
 instrumental variable identification.
+
+The IMA method requires a normally distributed structural error. At least one endogenous
+regressor \eqn{P_{i,k}} is continuously and nonnormally distributed. It does not
+require that the exogenous regressors \eqn{X_i} be independent of the endogenous
+regressors \eqn{P_{i,k}} or to satisfy any distributional requirement, i.e., \eqn{X_i}
+may be binary or non-continuously distributed. This method supports only continuous
+endogenous regressors.
 }
 \details{
 \subsection{Model}{
@@ -93,7 +100,7 @@ IMA is an augmented OLS estimator. The estimation proceeds in three steps:
         \eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
         the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
         standard normal quantile function.
-  \item For each endogenous regressor \eqn{P_k^*}, regress it on the normal
+  \item For each endogenous regressor \eqn{P_{i,k}^*}, regress it on the normal
         scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
         \emph{without intercept} and retain the residuals
         \eqn{\hat{\varepsilon}_k} as the copula correction terms. This
@@ -176,7 +183,7 @@ summary(res2)
 #------------------------------------------------------------------------
 data("dataCopIMABinExo")
 res3 <- copulaIMA(
-   y ~ X + P | continuous(P),
+   y ~ X + P - 1 | continuous(P),
    data = dataCopIMABinExo,
    cdf = "adj.ecdf",
    num.boots = 1000
