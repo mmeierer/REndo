@@ -21,28 +21,31 @@ doc_rendocopulaima_return <- function() {
 new_rendo_copula_ima <- function(
   call,
   F.formula,
-  names.endo.regs,
-  cdf,
-  res.lm,
+  fitted.values,
+  residuals,
   boots,
   n.boots.attempted,
-  n.boots.failed
+  n.boots.failed,
+  res.lm.augmented,
+  cdf,
+  names.endo.regs
 ) {
   return(.new_rendo_boots_degenerates_removed(
     # Stuff for rendo.boots.degenerates.removed class
     call = call,
     F.formula = F.formula,
-    mf = res.lm$model,
-    coefficients = coef(res.lm),
-    names.main.coefs = rownames(boots),
-    fitted.values = fitted(res.lm),
-    residuals = residuals(res.lm),
+    mf = model.frame(res.lm.augmented),
+    coefficients = coef(res.lm.augmented),
+    names.main.coefs = names(coef(res.lm.augmented)),
+    fitted.values = fitted.values,
+    residuals = residuals,
     boots.params = boots,
     n.boots.attempted = n.boots.attempted,
     n.boots.failed = n.boots.failed,
 
     # Stuff specific to copula ima
     subclass = "rendo.copula.ima",
+    res.lm.augmented = res.lm.augmented,
     cdf = cdf,
     names.endo.regs = names.endo.regs
   ))

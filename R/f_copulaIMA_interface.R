@@ -219,16 +219,31 @@ copulaIMA <- function(
     verbose = verbose
   )
 
+  # Structural residuals --------------------------------------------------------------
+  names.coefs.all <- names(coef(fit))
+  names.coefs.cop <- grep("_cop$", names.coefs.all, value = TRUE)
+  names.structural <- names.coefs.all[!names.coefs.all %in% names.coefs.cop]
+  coefs.structural <- coef(fit)[names.structural]
+  mm.structural <- model.matrix(fit)[, names.structural, drop = FALSE]
+
+  fitted.values <- drop(mm.structural %*% coefs.structural)
+  names(fitted.values) <- row.names(mm.structural)
+
+  residuals <- drop(model.response(model.frame(fit)) - fitted.values)
+  names(residuals) <- names(fitted.values)
+
   # Return value ----------------------------------------------------------------------
 
   return(new_rendo_copula_ima(
     call = cl,
     F.formula = F.formula,
-    names.endo.regs = names.endo.regs,
-    cdf = cdf,
-    res.lm = fit,
+    fitted.values = fitted.values,
+    residuals = residuals,
     boots = res.boots$boots.params,
     n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed
+    n.boots.failed = res.boots$n.failed,
+    res.lm.augmented = fit,
+    cdf = cdf,
+    names.endo.regs = names.endo.regs
   ))
 }
