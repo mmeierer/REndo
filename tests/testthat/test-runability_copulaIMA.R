@@ -70,7 +70,7 @@ expect_no_error_ignore_boot_warn <- function(expr) {
 test_that("copulaIMA runs across specs and cdf options", {
   for (spec_name in names(specs)) {
     for (cdf in cdfs) {
-      expect_no_error_ignore_boot_warn(
+      res <- expect_no_error_ignore_boot_warn(
         copulaIMA(
           formula = specs[[spec_name]]$formula,
           data = specs[[spec_name]]$data,
@@ -79,6 +79,11 @@ test_that("copulaIMA runs across specs and cdf options", {
           num.boots = 10
         )
       )
+      expect_false(anyNA(fitted(res)))
+      expect_false(anyNA(residuals(res)))
+      expect_false(anyNA(coef(res)))
+      expect_false(anyNA(vcov(res)))
+      expect_false(anyNA(res$boots.params))
     }
   }
 })
