@@ -5,6 +5,30 @@ data("dataCopIMAContExo")
 data("dataCopIMAMultiEndo")
 data("dataCopIMABinExo")
 
+# Setup ----------------------------------------------------------------------------
+fit_copulaIMA_lowboots <- function(
+  formula,
+  data,
+  cdf = "adj.ecdf",
+  num.boots = 10,
+  verbose = FALSE
+) {
+  return(withCallingHandlers(
+    copulaIMA(
+      formula = formula,
+      data = data,
+      cdf = cdf,
+      num.boots = num.boots,
+      verbose = verbose
+    ),
+    warning = function(w) {
+      if (grepl("recommended to run 1000", conditionMessage(w))) {
+        invokeRestart("muffleWarning")
+      }
+    }
+  ))
+}
+
 # Data sorting ----------------------------------------------------------------------
 test_that("Differently sorted data produces same results", {
   data_sorted <- dataCopIMAContExo[order(dataCopIMAContExo$y), ]
@@ -24,31 +48,71 @@ test_that("Differently sorted data produces same results", {
   expect_equal(object = coef(res_sorted), expected = coef(res_rev))
 })
 
-# Equivalent formula specifications -----------------------------------------------
+# Formula specifications ------------------------------------------------------
 test_that("Equivalent continuous() specifications produce same results", {
-  res_combined <- expect_warning(
-    copulaIMA(
-      formula = y ~ P1 + P2 | continuous(P1, P2),
-      data = dataCopIMAMultiEndo,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
+  res_combined <- fit_copulaIMA_lowboots(
+    formula = y ~ P1 + P2 | continuous(P1, P2),
+    data = dataCopIMAMultiEndo
   )
 
-  res_separate <- expect_warning(
-    copulaIMA(
-      formula = y ~ P1 + P2 | continuous(P1) + continuous(P2),
-      data = dataCopIMAMultiEndo,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
+  res_separate <- fit_copulaIMA_lowboots(
+    formula = y ~ P1 + P2 | continuous(P1) + continuous(P2),
+    data = dataCopIMAMultiEndo
   )
 
   expect_equal(coef(res_combined), coef(res_separate))
 })
 
+
+test_that("Intercept in formula is correctly respected", {
+  res_with <- fit_copulaIMA_lowboots(
+    formula = y ~ X + P | continuous(P),
+    data = dataCopIMAContExo
+  )
+
+  res_without <- fit_copulaIMA_lowboots(
+    formula = y ~ X + P - 1 | continuous(P),
+    data = dataCopIMAContExo
+  )
+
+  expect_true("(Intercept)" %in% names(coef(res_with)))
+  expect_false("(Intercept)" %in% names(coef(res_without)))
+  expect_equal(
+    object = length(coef(res_with)),
+    expected = length(coef(res_without)) + 1L
+  )
+})
+
+test_that("Regressor order in formula does not affect results", {
+  res_xy <- fit_copulaIMA_lowboots(
+    formula = y ~ X + P - 1 | continuous(P),
+    data = dataCopIMAContExo
+  )
+
+  res_yx <- fit_copulaIMA_lowboots(
+    formula = y ~ P + X - 1 | continuous(P),
+    data = dataCopIMAContExo
+  )
+
+  expect_equal(
+    object = sort(coef(res_xy)[names(coef(res_xy))]),
+    expected = sort(coef(res_yx)[names(coef(res_yx))])
+  )
+})
+
+test_that("Duplicate regressors are handled correctly", {
+  res_normal <- fit_copulaIMA_lowboots(
+    formula = y ~ X + P - 1 | continuous(P),
+    data = dataCopIMAContExo
+  )
+
+  res_dup <- fit_copulaIMA_lowboots(
+    formula = y ~ X + X + P - 1 | continuous(P),
+    data = dataCopIMAContExo
+  )
+
+  expect_equal(object = coef(res_dup), expected = coef(res_normal))
+})
 
 # Parameter recovery -------------------------------------------------------
 expect_param_recovery <- function(res, true_vals) {
@@ -98,7 +162,7 @@ test_that("Parameter recovery: dataCopIMAMultiEndo", {
 
 test_that("Parameter recovery: dataCopIMABinExo", {
   copulaIMA_param_recovery(
-    formula = y ~ X + P - 1| continuous(P),
+    formula = y ~ X + P - 1 | continuous(P),
     data = dataCopIMABinExo,
     true_vals = c(X = 1, P = 1)
   )
