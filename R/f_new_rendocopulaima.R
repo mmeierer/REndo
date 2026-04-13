@@ -1,8 +1,15 @@
 doc_rendocopulaima_return_list <- function() {
   doc_boots <- doc_rendobootsdegeneratesremoved_return_list()
+
+  doc_boots[['residuals']] <- "\\item{\\code{residuals}}{The structural residuals.}"
+  doc_boots[[
+    'fitted.values'
+  ]] <- "\\item{\\code{fitted.values}}{Fitted values of the structural model.}"
+
   doc_copulaima <- c(
-    "\\item{\\code{cdf}}{The used cdf function.}",
-    "\\item{\\code{names.endo.regs}}{The names of the continuous endogenous regressors.}"
+    cdf = "\\item{\\code{cdf}}{The used cdf function.}",
+    names.endo.regs = "\\item{\\code{names.endo.regs}}{The names of the continuous endogenous regressors.}",
+    res.lm.augmented = "\\item{\\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}"
   )
 
   return(c(doc_boots, doc_copulaima))
@@ -11,7 +18,7 @@ doc_rendocopulaima_return_list <- function() {
 
 doc_rendocopulaima_return <- function() {
   doc_intro <- c(
-    "@return An object of class \\code{rendo.copula.ima} which is a list that contains:"
+    return = "@return An object of class \\code{rendo.copula.ima} which is a list that contains:"
   )
 
   return(c(doc_intro, doc_rendocopulaima_return_list()))

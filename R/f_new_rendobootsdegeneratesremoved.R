@@ -1,8 +1,8 @@
 doc_rendobootsdegeneratesremoved_return_list <- function() {
   doc_boots <- doc_rendoboots_return_list()
   doc_boots_removed <- c(
-    "\\item{\\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}",
-    "\\item{\\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}"
+    n.boots.attempted = "\\item{\\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}",
+    n.boots.failed = "\\item{\\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}"
   )
 
   return(c(doc_boots, doc_boots_removed))
@@ -91,7 +91,7 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
       b <- b + 1
 
       if (verbose) {
-        setTxtProgressBar(pb=pb, value=b)
+        setTxtProgressBar(pb = pb, value = b)
       }
     } else {
       failed <- failed + 1
