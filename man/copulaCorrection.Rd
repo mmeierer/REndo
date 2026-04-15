@@ -80,7 +80,7 @@ where \eqn{t=1,..,T} indexes either time or cross-sectional units, \ifelse{html}
 The marginal distribution of the endogenous regressor \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is obtained using the Epanechnikov
 kernel density estimator (Epanechnikov, 1969), as below:
 
-\ifelse{html}{\out{<br><div style="text-align:center">h&#770;(p)=1/(T&#183;b) &sum;(K&#183;((p-P<sub>t</sub>)/b))</div>}}{\deqn{\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)}}
+\ifelse{html}{\out{<br><div style="text-align:center">&#293;(p)=1/(T&#183;b) &sum;(K&#183;((p-P<sub>t</sub>)/b))</div>}}{\deqn{\hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)}}
 
 where \ifelse{html}{\out{P<sub>t</sub>}}{\eqn{P_{t}}} is the endogenous regressor,
 \ifelse{html}{\out{K(x)=0.75&#183;(1-x<sup>2</sup>)&#183;I(|x|&lt;=1)}}{\eqn{K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|<=1)}}
