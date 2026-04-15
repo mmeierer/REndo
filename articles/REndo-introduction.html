@@ -87,7 +87,7 @@
 External Instrumental Variables</h1>
                         <h4 data-toc-skip class="author">Raluca Gui</h4>
             
-            <h4 data-toc-skip class="date">2026-04-08</h4>
+            <h4 data-toc-skip class="date">2026-04-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/vignettes/REndo-introduction.Rmd" class="external-link"><code>vignettes/REndo-introduction.Rmd</code></a></small>
       <div class="hidden name"><code>REndo-introduction.Rmd</code></div>
@@ -778,7 +778,7 @@ is the endogenous one. Let’s see:</p>
 <span><span class="co">#&gt; stratio      -2.272673e+00  1.367744e+01 -1.661622e-01 8.681095e-01</span></span>
 <span><span class="co">#&gt; pi1          -4.896363e+01           NaN           NaN          NaN</span></span>
 <span><span class="co">#&gt; pi2           1.963920e+01  9.225351e-02  2.128830e+02 0.000000e+00</span></span>
-<span><span class="co">#&gt; theta5       6.939432e-152 9.992531e-161  6.944619e+08 0.000000e+00</span></span>
+<span><span class="co">#&gt; theta5       6.939432e-152 9.997474e-161  6.941185e+08 0.000000e+00</span></span>
 <span><span class="co">#&gt; theta6        3.787512e+02  4.249430e+01  8.912989e+00 1.540862e-17</span></span>
 <span><span class="co">#&gt; theta7       -1.227543e+00  4.885226e+01 -2.512766e-02 9.799651e-01</span></span></code></pre></div>
 <p>Indeed, the value returned is equal to <strong>-2.273</strong>. The
@@ -801,13 +801,13 @@ reporting standard errors).</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m4.cc</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
 <span><span class="co">#&gt;             Point Estimate    Boots SE Lower Boots CI (95%)</span></span>
-<span><span class="co">#&gt; (Intercept)   681.94143888 2.438874458                   NA</span></span>
-<span><span class="co">#&gt; stratio        -0.33863513 0.022332810                   NA</span></span>
-<span><span class="co">#&gt; english        -0.20070147 0.026136685                   NA</span></span>
-<span><span class="co">#&gt; lunch          -0.37339560 0.032293205                   NA</span></span>
-<span><span class="co">#&gt; calworks       -0.06261583 0.009027372                   NA</span></span>
-<span><span class="co">#&gt; gradesKK-08    -1.64282345 0.138420392                   NA</span></span>
-<span><span class="co">#&gt; income          0.80127388 0.033266598                   NA</span></span>
+<span><span class="co">#&gt; (Intercept)   683.75682965 2.438874458                   NA</span></span>
+<span><span class="co">#&gt; stratio        -0.36542649 0.022332810                   NA</span></span>
+<span><span class="co">#&gt; english        -0.19053116 0.026136685                   NA</span></span>
+<span><span class="co">#&gt; lunch          -0.38546982 0.032293205                   NA</span></span>
+<span><span class="co">#&gt; calworks       -0.06052316 0.009027372                   NA</span></span>
+<span><span class="co">#&gt; gradesKK-08    -2.23350772 0.138420392                   NA</span></span>
+<span><span class="co">#&gt; income          0.78639240 0.033266598                   NA</span></span>
 <span><span class="co">#&gt;             Upper Boots CI (95%)</span></span>
 <span><span class="co">#&gt; (Intercept)                   NA</span></span>
 <span><span class="co">#&gt; stratio                       NA</span></span>
@@ -923,7 +923,7 @@ below:</p>
 <span><span class="va">m8.multilevel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/multilevelIV.html">multilevelIV</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">formula1</span>, data <span class="op">=</span> <span class="va">dataMultilevelIV</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m8.multilevel</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                    REF     FE_L2      FE_L3     GMM_L2     GMM_L3</span></span>
-<span><span class="co">#&gt; (Intercept) 64.3640774  0.000000  0.0000000 64.6642061 64.3644221</span></span>
+<span><span class="co">#&gt; (Intercept) 64.3640773  0.000000  0.0000000 64.6642061 64.3644220</span></span>
 <span><span class="co">#&gt; X11          3.0356390  3.047931  3.0353448  3.0356094  3.0356389</span></span>
 <span><span class="co">#&gt; X12          9.0005462  8.996679  8.9999438  8.9966073  9.0005417</span></span>
 <span><span class="co">#&gt; X13         -2.0082559 -2.000106 -2.0090020 -2.0215816 -2.0082712</span></span>
@@ -1032,8 +1032,8 @@ GMM_L3).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Omitted variable tests for model REF:</span></span>
 <span><span class="co">#&gt;               df    Chisq  p-value    </span></span>
-<span><span class="co">#&gt; GMM_L2_vs_REF  7   -33.11 1.000000    </span></span>
-<span><span class="co">#&gt; GMM_L3_vs_REF 13 -3259.64 1.000000    </span></span>
+<span><span class="co">#&gt; GMM_L2_vs_REF  7    37.48  3.8e-06 ***</span></span>
+<span><span class="co">#&gt; GMM_L3_vs_REF 13 -1891.73 1.000000    </span></span>
 <span><span class="co">#&gt; FE_L2_vs_REF  13    40.00 0.000138 ***</span></span>
 <span><span class="co">#&gt; FE_L3_vs_REF  13    39.99 0.000139 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
@@ -1061,19 +1061,19 @@ effects estimators, FE_L2 versus FE_L3:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients for model FE_L2:</span></span>
 <span><span class="co">#&gt;               Estimate Std. Error z-score Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; (Intercept)  0.000e+00  1.273e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; (Intercept)  0.000e+00  3.077e-19    0.00        1    </span></span>
 <span><span class="co">#&gt; X11          3.048e+00  3.193e-02   95.47   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X12          8.997e+00  3.377e-02  266.43   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X13         -2.000e+00  3.211e-02  -62.29   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X14          2.002e+00  3.437e-02   58.24   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X15         -1.037e+00  3.301e-02  -31.41   &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; X21          0.000e+00  1.245e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X22          0.000e+00  7.622e-19    0.00        1    </span></span>
-<span><span class="co">#&gt; X23          0.000e+00  4.024e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X24          0.000e+00  6.984e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X31          0.000e+00  2.546e-17    0.00        1    </span></span>
-<span><span class="co">#&gt; X32          0.000e+00  2.485e-17    0.00        1    </span></span>
-<span><span class="co">#&gt; X33          0.000e+00  1.202e-16    0.00        1    </span></span>
+<span><span class="co">#&gt; X21          0.000e+00  8.811e-19    0.00        1    </span></span>
+<span><span class="co">#&gt; X22          0.000e+00  3.665e-19    0.00        1    </span></span>
+<span><span class="co">#&gt; X23          0.000e+00  3.028e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X24          0.000e+00  4.320e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X31          0.000e+00  6.879e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X32          0.000e+00  5.258e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X33          0.000e+00  2.788e-17    0.00        1    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>

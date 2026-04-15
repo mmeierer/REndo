@@ -91,7 +91,8 @@ The corrections proposed by Qian, Koschmann, and Xie (2024, p.19-22) are impleme
 
 
 <dt id="arg-num-boots">num.boots<a class="anchor" aria-label="anchor" href="#arg-num-boots"></a></dt>
-<dd><p>Number of bootstrapping iterations. Defaults to 1000.</p></dd>
+<dd><p>Positive integer giving the number of bootstrap replications
+used for standard error estimation. A minimum of 1000 is recommended.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -243,7 +244,9 @@ but as symbols without quotation marks.</p>
     </div>
     <div id="references">
     <h2>References</h2>
-    <p>Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.</p>
+    <p>Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+  Joint Estimation Using Copulas",
+  Marketing Science, 31(4), 567-86. <a href="https://doi.org/10.1287/mksc.1120.0718" class="external-link">doi:10.1287/mksc.1120.0718</a></p>
 <p>Qian, Y., Koschmann, A., and Xie, H. (2024). "A Practical Guide to Endogeneity Correction Using Copulas". National Bureau of Economic Research, w32231.</p>
 <p>Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Density." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.</p>
 <p>Silverman B (1986). "Density Estimation for Statistics and Data Analysis". CRC Monographs on Statistics and Applied Probability. London: Chapman &amp; Hall.</p>
@@ -254,7 +257,9 @@ but as symbols without quotation marks.</p>
     <div class="dont-index"><p><code><a href="summary.rendo.copula.correction.html">summary</a></code> for how fitted models are summarized</p>
 <p><code><a href="vcov.rendo.boots.html">vcov</a></code> for how the variance-covariance matrix is derived</p>
 <p><code><a href="confint.rendo.boots.html">confint</a></code> for how confidence intervals are derived</p>
-<p><code><a href="https://rdrr.io/pkg/optimx/man/optimx.html" class="external-link">optimx</a></code> for possible elements of parameter <code>optimx.arg</code></p></div>
+<p><code><a href="https://rdrr.io/pkg/optimx/man/optimx.html" class="external-link">optimx</a></code> for possible elements of parameter <code>optimx.arg</code></p>
+<p>Other copula-based methods:
+<code><a href="copulaIMA.html">copulaIMA()</a></code></p></div>
     </div>
 
     <div id="ref-examples">

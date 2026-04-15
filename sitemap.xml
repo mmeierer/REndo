@@ -8,11 +8,15 @@
 <url><loc>/reference/REndo.html</loc></url>
 <url><loc>/reference/confint.rendo.boots.html</loc></url>
 <url><loc>/reference/copulaCorrection.html</loc></url>
+<url><loc>/reference/copulaIMA.html</loc></url>
 <url><loc>/reference/dataCopCont.html</loc></url>
 <url><loc>/reference/dataCopCont2.html</loc></url>
 <url><loc>/reference/dataCopDis.html</loc></url>
 <url><loc>/reference/dataCopDis2.html</loc></url>
 <url><loc>/reference/dataCopDisCont.html</loc></url>
+<url><loc>/reference/dataCopIMABinExo.html</loc></url>
+<url><loc>/reference/dataCopIMAContExo.html</loc></url>
+<url><loc>/reference/dataCopIMAMultiEndo.html</loc></url>
 <url><loc>/reference/dataHetIV.html</loc></url>
 <url><loc>/reference/dataHigherMoments.html</loc></url>
 <url><loc>/reference/dataLatentIV.html</loc></url>
