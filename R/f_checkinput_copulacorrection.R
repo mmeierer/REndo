@@ -104,15 +104,7 @@ checkinput_copulacorrection_dataVSformula <- function(data, formula, names.cols.
 }
 
 checkinput_copulacorrection_numboots <- function(num.boots){
-  err.msg <- checkinputhelper_singlepositivewholenumeric(num.param=num.boots,
-                                              parameter.name = "num.boots", min.num=2)
-  if(length(err.msg)>0)
-    return(err.msg)
-
-  if(num.boots < 1000)
-    warning("It is recommended to run 1000 or more bootstraps.", call. = F, immediate. = T)
-
-  return(c())
+  return(checkinputhelper_numboots(num.boots))
 }
 
 

@@ -10,3 +10,5 @@ cran-comments.md
 vignettes/REndo-introduction_cache
 ^\.github$
 ^_pkgdown\.yml$
+^data-raw$
+air.toml

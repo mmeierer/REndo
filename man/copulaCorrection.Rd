@@ -11,7 +11,8 @@ copulaCorrection(formula, data, num.boots = 1000, verbose = TRUE, ...)
 
 \item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
 
-\item{num.boots}{Number of bootstrapping iterations. Defaults to 1000.}
+\item{num.boots}{Positive integer giving the number of bootstrap replications
+used for standard error estimation. A minimum of 1000 is recommended.}
 
 \item{verbose}{Show details about the running of the function.}
 
@@ -209,7 +210,9 @@ c1.main.coefs <- coef(res.c1, complete = FALSE)
 
 }
 \references{
-Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+  Joint Estimation Using Copulas",
+  Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 
 Qian, Y., Koschmann, A., and Xie, H. (2024). "A Practical Guide to Endogeneity Correction Using Copulas". National Bureau of Economic Research, w32231.
 
@@ -227,4 +230,8 @@ Petrin A, Train K (2010). "A Control Function Approach to Endogeneity in Consume
 \code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 
 \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
+
+Other copula-based methods: 
+\code{\link{copulaIMA}()}
 }
+\concept{copula-based methods}
