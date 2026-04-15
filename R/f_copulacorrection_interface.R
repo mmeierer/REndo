@@ -6,7 +6,7 @@
 #' The corrections proposed by Qian, Koschmann, and Xie (2024, p.19-22) are implemented. These mitigate the bias of the original paper for small and moderate sample sizes.
 #'
 #' @template template_param_formuladataverbose
-#' @param num.boots Number of bootstrapping iterations. Defaults to 1000.
+#' @template template_param_numboots
 #' @param ... Arguments for the log-likelihood optimization function in the case of a single continuous endogenous
 #'  regressor. Ignored with a warning otherwise.
 #' \describe{
@@ -132,9 +132,10 @@
 #' @seealso \code{\link[REndo:confint.rendo.boots]{confint}} for how confidence intervals are derived
 #' @seealso \code{\link[optimx]{optimx}} for possible elements of parameter \code{optimx.arg}
 #'
-#' @references
-#' Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by Joint Estimation Using Copulas", Marketing Science, 31(4), 567-86.
+#' @family copula-based methods
 #'
+#' @template template_references_parkgupta2012
+#' @references
 #' Qian, Y., Koschmann, A., and Xie, H. (2024). "A Practical Guide to Endogeneity Correction Using Copulas". National Bureau of Economic Research, w32231.
 #'
 #' Epanechnikov V (1969). "Nonparametric Estimation of a Multidimensional Probability Density." Teoriya veroyatnostei i ee primeneniya, 14(1), 156–161.
