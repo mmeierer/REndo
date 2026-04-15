@@ -17,6 +17,20 @@ copula2sCOPE(
 
 \item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
 
+\item{cdf}{Character string specifying the method used to estimate the
+  marginal distribution functions of the endogenous regressors.
+  One of \code{"adj.ecdf"}, \code{"resc.ecdf"}, \code{"ecdf"}, or \code{"kde"}.
+\describe{
+    \item{\code{"adj.ecdf"}}{Adjusted empirical CDF with midrank correction
+      (Liengaard et al., 2024). Keeps values strictly inside (0,1).}
+    \item{\code{"resc.ecdf"}}{Rescaled empirical CDF via
+      \code{copula::pobs} (Qian et al., 2024).}
+    \item{\code{"ecdf"}}{Empirical CDF with boundary replacement
+      (Becker et al., 2022).}
+    \item{\code{"kde"}}{Integral of a density estimator via \code{ks::kcde}
+      used in (Park and Gupta, 2012).}
+  }}
+
 \item{num.boots}{Integer giving the number of bootstrap replications
 used for inference.}
 
@@ -36,28 +50,56 @@ that at least one exogenous regressor is nonnormally distributed. In that case, 
 would then come from the nonnormal exogenous regressor instead of the endogenous regressor itself.
 }
 \details{
+\strong{Model}
+
+Consider the structural regression model with \eqn{K} endogenous regressors:
+
+\deqn{Y_i = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k + X_i' \beta + \varepsilon_i}
+
+where \eqn{i = 1, \ldots, n} is the number of observations,
+\eqn{Y_i} is the dependent variable,
+\eqn{P_{i,k}} are continuous endogenous regressors that may be correlated with both the
+structural error \eqn{\varepsilon_i} and the exogenous regressors \eqn{X_i},
+\eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
+\eqn{\mu, \alpha_k, \beta} are the structural model parameters.
+
 \strong{Methodology}
 
 2sCope is an augmented OLS estimator which can be described in the following 3 steps
 Yang et al. (2025):
 
 \enumerate{
-  \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_K,
-        P_1, \ldots, P_L\}}, compute the normal score
+  \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
+        P_1, \ldots, P_K\}}, compute the normal score
         \eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
         the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
         standard normal quantile function.
-  \item For each endogenous regressor \eqn{P_l^*}, regress it on the normal
-        scores of the exogenous regressors \eqn{X_1^*, \ldots, X_K^*}
-        \emph{with intercept} and retain the residuals
-        \eqn{\hat{\varepsilon}_l} as the copula correction terms. This
+  \item For each endogenous regressor \eqn{P_k^*}, regress it on the normal
+        scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
+        with intercept and keep the residuals
+        \eqn{\hat{\varepsilon}_k} as the copula correction terms. This
         first-stage regression exploits the informational content of the
-        exogenous regressors in a way analogous to instrumental variable
+        exogenous regressors in similar way to instrumental variable
         identification.
   \item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
-        \hat{\varepsilon}_L} as additional regressors and estimate by OLS.
+        \hat{\varepsilon}_K} as additional regressors and estimate the following using OLS:
+        \deqn{Y_i = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k + X_i' \beta
+              + \sum_{k=1}^{K} \hat{\varepsilon}_{i,k} \gamma_k + \xi_i}
+        where \eqn{\gamma_k} is the coefficient of the copula correction
+        term \eqn{\hat{\varepsilon}_{i,k}} and \eqn{\xi_i} is the new
+        error term.
 }
 
+\strong{Formula interface}
+
+The \code{formula} argument follows a two-part notation separated by
+\code{|}. The first part specifies the structural model. The second part
+identifies the continuous endogenous regressors using \code{continuous()}:
+
+\preformatted{y ~ X + P | continuous(P)                          # one endo}
+\preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endo}
+
+At least one exogenous regressor should be present in the model.
 When no exogenous regressors are present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
@@ -123,4 +165,14 @@ Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
 Two-Stage Copula Generated Regressor Approach. \emph{EXPRESS: Journal of
 Marketing Research}, 62(4), 601-623.
 \doi{10.1177/00222437241296453}
+
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+  Joint Estimation Using Copulas",
+  Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 }
+\seealso{
+Other copula-based methods: 
+\code{\link{copulaCorrection}()},
+\code{\link{copulaIMA}()}
+}
+\concept{copula-based methods}

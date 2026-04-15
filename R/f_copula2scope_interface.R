@@ -28,7 +28,7 @@
 #'
 #' where \eqn{i = 1, \ldots, n} is the number of observations,
 #' \eqn{Y_i} is the dependent variable,
-#' \eqn {P_{i,k}} are continuous endogenous regressors that may be correlated with both the
+#' \eqn{P_{i,k}} are continuous endogenous regressors that may be correlated with both the
 #' structural error \eqn{\varepsilon_i} and the exogenous regressors \eqn{X_i},
 #' \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
 #' \eqn{\mu, \alpha_k, \beta} are the structural model parameters.

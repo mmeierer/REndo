@@ -219,6 +219,7 @@ endogeneity correction using copulas. NBER Working Paper No. w32231.
 }
 \seealso{
 Other copula-based methods: 
+\code{\link{copula2sCOPE}()},
 \code{\link{copulaCorrection}()}
 }
 \concept{copula-based methods}
