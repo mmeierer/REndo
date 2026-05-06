@@ -1,3 +1,13 @@
+# REndo 2.5.0
+
+### NEW FEATURES
+* We add the `copulaIMA` method which implements the copula-based Instrumental Variable Model (IMA) proposed by Haschka (2025)
+
+### MAINTENANCE
+* Fix CRAN notes regarding tests for `multilevelIV` and HTML issues in the documentation
+
+
+
 # REndo 2.4.11
 
 ### MAINTENANCE
@@ -8,7 +18,7 @@
 # REndo 2.4.10
 
 ### NEW FEATURES
-* The Pstar data generated in `copulaCorrection` is improved with the corrections proposed by Qian, Koschmann, and Xie (2024).
+* The Pstar data generated in `copulaCorrection` is improved with the corrections proposed by Qian, Koschmann, and Xie (2024)
 
 ### MAINTENANCE
 * Fix CRAN notes regarding documentation
