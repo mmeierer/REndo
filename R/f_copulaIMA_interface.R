@@ -115,6 +115,7 @@
 #' )
 #' summary(res)
 #'
+#' \donttest{
 #' #------------------------------------------------------------------------
 #' # Example 2: Two endogenous regressors with intercept and no exogenous regressor
 #' # True values: mu=10, alpha1 = 1 (P1), alpha2 = 1 (P2)
@@ -147,6 +148,7 @@
 #'    num.boots = 1000
 #' )
 #' summary(res3)
+#' }
 #'
 #'
 #' @export
