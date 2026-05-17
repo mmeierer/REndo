@@ -12,3 +12,5 @@ vignettes/REndo-introduction_cache
 ^_pkgdown\.yml$
 ^data-raw$
 air.toml
+^\.positai$
+^\.claude$
