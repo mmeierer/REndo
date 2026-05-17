@@ -23,7 +23,7 @@ copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
   # Create Pstar
   #Applying CDF to all regressors (both endo and exo), excluding the intercept. Haschka IMA 2024, section 3.2 step 1
   X.no.intercept <- X.main[, colnames(X.main) != "(Intercept)", drop = FALSE]
-  P.star <- copulaIMA_pstar(P = X.no.intercept, cdf = cdf)
+  P.star <- copula_pstar(P = X.no.intercept, cdf = cdf) # (constructing P star, from Haschka 2025, page 164)
 
   # Haschka 2025 section 3.2 step 2: regressing each P*_l on exo X* only, without intercept
   cop.terms <- copulaIMA_residuals(P.star, endo.cols = endogenous.columns)

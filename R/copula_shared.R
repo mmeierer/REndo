@@ -15,3 +15,32 @@ copula_adj_ecdf <- function(x) {
 
   return(U)
 }
+
+
+#' @importFrom copula pobs
+#' @importFrom ks kcde
+#' @importFrom stats ecdf predict
+copula_pstar <- function(P, cdf) {
+  if (cdf == "kde") {
+    P.star <- apply(P, 2, function(x) {
+      Fhat <- ks::kcde(x)
+      predict(Fhat, x = x)
+    })
+  } else if (cdf == "resc.ecdf") {
+    P.star <- apply(P, 2, copula::pobs)
+  } else if (cdf == "adj.ecdf") {
+    P.star <- apply(P, 2, copula_adj_ecdf)
+  } else {
+    ecdf0 <- apply(P, 2, ecdf)
+    P.star <- sapply(seq_along(ecdf0), function(i) {
+      u <- ecdf0[[i]](P[, i])
+      u[u == min(u)] <- 10e-7
+      u[u == max(u)] <- 1 - 10e-7
+      u
+    })
+    P.star <- as.matrix(P.star)
+  }
+
+  colnames(P.star) <- colnames(P)
+  return(P.star)
+}
