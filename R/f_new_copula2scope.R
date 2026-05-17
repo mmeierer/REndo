@@ -1,8 +1,10 @@
-#' @importFrom stats coef fitted residuals
+#' @importFrom stats coef model.frame
 new_rendo_copula2sCOPE <- function(
   call,
   F.formula,
-  res.lm,
+  fitted.values,
+  residuals,
+  res.lm.augmented,
   boots.params,
   n.boots.attempted,
   n.boots.failed,
@@ -10,20 +12,21 @@ new_rendo_copula2sCOPE <- function(
   names.endo.regs
 ) {
   return(.new_rendo_boots_degenerates_removed(
-    # Stuff for rendo.boots.degenerates.removed
+    # Stuff for rendo.boots.degenerates.removed class
     call = call,
     F.formula = F.formula,
-    mf = model.frame(res.lm),
-    coefficients = coef(res.lm),
-    names.main.coefs = row.names(boots.params),
-    fitted.values = fitted(res.lm),
-    residuals = resid(res.lm),
+    mf = model.frame(res.lm.augmented),
+    coefficients = coef(res.lm.augmented),
+    names.main.coefs = names(coef(res.lm.augmented)), # OR: row.names(boots.params)
+    fitted.values = fitted.values,
+    residuals = residuals,
     boots.params = boots.params,
     n.boots.attempted = n.boots.attempted,
     n.boots.failed = n.boots.failed,
 
-    # 2sCOPE-specific
+    # Stuff specific to 2sCOPE
     subclass = "rendo.copula.2sCOPE",
+    res.lm.augmented = res.lm.augmented,
     cdf = cdf,
     names.endo.regs = names.endo.regs
   ))

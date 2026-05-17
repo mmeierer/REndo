@@ -154,7 +154,10 @@ copula2sCOPE <- function(
   check_err_msg(checkinput_copulashared_formula(formula))
   check_err_msg(checkinput_copulashared_data(data))
   check_err_msg(checkinput_copulashared_dataVSformula(data = data, formula = formula))
-  check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf=c("adj.ecdf", "resc.ecdf", "ecdf", "kde")))
+  check_err_msg(checkinput_copulashared_cdf(
+    cdf,
+    allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  ))
   check_err_msg(checkinput_copulashared_numboots(num.boots))
   check_err_msg(checkinput_copulashared_verbose(verbose))
 
@@ -173,7 +176,7 @@ copula2sCOPE <- function(
   # endo and exo regressors. Without an exo regressor, the correction term
   #is just equivalent to the copulaCorrection() approach
 
-  rhs1.vars <- all.vars(formula(F.formula, rhs=1, lhs =0))
+  rhs1.vars <- all.vars(formula(F.formula, rhs = 1, lhs = 0))
   exo.vars <- rhs1.vars[!rhs1.vars %in% names.endo.regs]
 
   if (length(exo.vars) == 0) {
@@ -212,12 +215,22 @@ copula2sCOPE <- function(
     verbose = verbose
   )
 
+  # Structural residuals --------------------------------------------------------------
+
+  # TODO: Do not read names with grep
+  l.fitted.resid <- copula_compute_structural_fitted_residuals(
+    res.lm.aug = fit,
+    names.aux.regs = grep("_cop$", names(coef(fit)), value = TRUE)
+  )
+
   # Return object ----------------------------------------------------------------------
 
   return(new_rendo_copula2sCOPE(
     call = cl,
     F.formula = F.formula,
-    res.lm = fit,
+    res.lm.augmented = fit,
+    fitted.values = l.fitted.resid$fitted.values,
+    residuals = l.fitted.resid$residuals,
     boots.params = res.boots$boots.params,
     n.boots.attempted = res.boots$n.attempted,
     n.boots.failed = res.boots$n.failed,

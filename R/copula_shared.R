@@ -44,3 +44,31 @@ copula_pstar <- function(P, cdf) {
   colnames(P.star) <- colnames(P)
   return(P.star)
 }
+
+
+copula_compute_structural_fitted_residuals <- function(
+  res.lm.aug,
+  names.aux.regs
+) {
+  if (
+    is.null(names.aux.regs) || length(names.aux.regs) == 0 || nchar(names.aux.regs) == 0
+  ) {
+    stop(
+      "Internal error: 'names.aux.regs' is empty. This should not happen - please report as a bug!",
+      call. = TRUE
+    )
+  }
+
+  names.coefs.all <- names(coef(res.lm.aug))
+  names.structural <- names.coefs.all[!names.coefs.all %in% names.aux.regs]
+  coefs.structural <- coef(res.lm.aug)[names.structural]
+  mm.structural <- model.matrix(res.lm.aug)[, names.structural, drop = FALSE]
+
+  fitted.values <- drop(mm.structural %*% coefs.structural)
+  names(fitted.values) <- row.names(mm.structural)
+
+  residuals <- drop(model.response(model.frame(res.lm.aug)) - fitted.values)
+  names(residuals) <- names(fitted.values)
+
+  return(list(fitted.values = fitted.values, residuals = residuals))
+}
