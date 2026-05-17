@@ -165,12 +165,12 @@ copulaIMA <- function(
 
   # Input checks  -------------------------------------------------------------------
 
-  check_err_msg(checkinput_copulaIMA_formula(formula))
-  check_err_msg(checkinput_copulaIMA_data(data))
-  check_err_msg(checkinput_copulaIMA_dataVSformula(data = data, formula = formula))
-  check_err_msg(checkinput_copulaIMA_numboots(num.boots))
-  check_err_msg(checkinput_copulaIMA_verbose(verbose))
-  check_err_msg(checkinput_copulaIMA_cdf(cdf))
+  check_err_msg(checkinput_copulashared_formula(formula))
+  check_err_msg(checkinput_copulashared_data(data))
+  check_err_msg(checkinput_copulashared_dataVSformula(data = data, formula = formula))
+  check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf=c("adj.ecdf", "resc.ecdf", "ecdf", "kde")))
+  check_err_msg(checkinput_copulashared_numboots(num.boots))
+  check_err_msg(checkinput_copulashared_verbose(verbose))
 
   # Fit original data ---------------------------------------------------------------
 
