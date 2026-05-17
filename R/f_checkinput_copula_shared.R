@@ -23,13 +23,6 @@ checkinput_copulashared_verbose <- function(verbose) {
 checkinput_copulashared_dataVSformula <- function(data, formula) {
   F.formula <- Formula::as.Formula(formula)
 
-  names.vars.continuous <- formula_readout_special(
-    F.formula = F.formula,
-    name.special = "continuous",
-    from.rhs = 2,
-    params.as.chars.only = TRUE
-  )
-
   names.cols.endo <- all.vars(terms(F.formula, rhs = 2, lhs = 0))
 
   err.msg <- .checkinputhelper_dataVSformula_basicstructure(

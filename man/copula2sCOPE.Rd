@@ -2,7 +2,7 @@
 % Please edit documentation in R/f_copula2scope_interface.R
 \name{copula2sCOPE}
 \alias{copula2sCOPE}
-\title{Two-Stage Copula Generator Regressor Approach (2sCOPE)}
+\title{Two-Stage Copula Generated Regressor Approach (2sCOPE)}
 \usage{
 copula2sCOPE(
   formula,
@@ -31,19 +31,19 @@ copula2sCOPE(
       used in (Park and Gupta, 2012).}
   }}
 
-\item{num.boots}{Integer giving the number of bootstrap replications
-used for inference.}
+\item{num.boots}{Positive integer giving the number of bootstrap replications
+used for standard error estimation. A minimum of 1000 is recommended.}
 
 \item{verbose}{Show details about the running of the function.}
 }
 \description{
 Fitting the two-stage copula generator regressor approach (2sCOPE) estimator of
 Yang et al. (2025) to address endogeneity without any external instruments.This method
-generalises the Park and Gupta (2012) copula correction method to allow for the correlation
+generalises the Park and Gupta (2012) copula correction method to allow for correlation
 between endogenous and exogenous regressors, while also relaxing the required assumption that
-endogenous need to be nonnormally distributed.
+endogenous regressors need to be non-normally distributed.
 
-Compared to Park and Gupta (2012), the 2sCOPE method does notr require the endogenous and exogenous
+Compared to Park and Gupta (2012), the 2sCOPE method does not require the endogenous and exogenous
 regressors to be independent. Moreover, 2sCOPE remains consistent when
 endogenous regressors are both normally or near-normally distributed, given
 that at least one exogenous regressor is nonnormally distributed. In that case, the identification
@@ -65,8 +65,8 @@ structural error \eqn{\varepsilon_i} and the exogenous regressors \eqn{X_i},
 
 \strong{Methodology}
 
-2sCope is an augmented OLS estimator which can be described in the following 3 steps
-Yang et al. (2025):
+2sCOPE is an augmented OLS estimator which can be described in the following 3 steps
+(Yang et al., 2025):
 
 \enumerate{
   \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
@@ -79,7 +79,7 @@ Yang et al. (2025):
         with intercept and keep the residuals
         \eqn{\hat{\varepsilon}_k} as the copula correction terms. This
         first-stage regression exploits the informational content of the
-        exogenous regressors in similar way to instrumental variable
+        exogenous regressors in a similar way to instrumental variable
         identification.
   \item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
         \hat{\varepsilon}_K} as additional regressors and estimate the following using OLS:
@@ -106,7 +106,7 @@ the approach of Park and Gupta (2012).
 }
 \examples{
 # -------------------------------------------------------------------
-# Example 1: Nonnormal endogenous and exogenous regressors
+# Example 1: Non-normal endogenous and exogenous regressors
 # (Yang et al. 2025, Table 5, Case 1, rho_px = 0.5)
 #
 # Demonstrates 2sCOPE's core contribution: consistent estimation when
@@ -123,8 +123,9 @@ res1 <- copula2sCOPE(
 )
 summary(res1)
 
+\donttest{
 # -------------------------------------------------------------------
-# Example 2: Nonnormal endogenous P but normally distributed exogenous X
+# Example 2: Non-normal endogenous P but normally distributed exogenous X
 # (Yang et al. 2025, case 2)
 #
 # To demonstrate that 2sCOPE remains consistent when the exogenous
@@ -144,7 +145,7 @@ summary(res2)
 # Example 3: Normally distributed endogenous P, nonnormal exogenous X
 # (Yang et al. 2025, case 3)
 #
-# This example is used to demonstrates that one of 2sCOPE's advantage
+# This example is used to demonstrate that one of 2sCOPE's advantage
 # is that there is a consistent estimation even when
 # the endogenous regressor P is normally distributed, because
 # identification comes from the nonnormal exogenous regressor X.
@@ -158,6 +159,7 @@ res3 <- copula2sCOPE(
   num.boots = 1000
 )
 summary(res3)
+}
 
 }
 \references{
