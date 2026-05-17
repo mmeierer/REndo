@@ -1,23 +1,3 @@
-#' @importFrom Formula as.Formula
-#' @importFrom stats lm coef model.frame update
-#' @importFrom stats ecdf qnorm
-#' @importFrom Matrix rankMatrix
-pobs_adj_2sCOPE <- function(x) {
-  ##will maybe need a simpler form?
-  if (!is.matrix(x)) {
-    x <- matrix(x, ncol = 1)
-  }
-
-  n <- nrow(x)
-
-  U <- apply(x, 2, rank, na.last = "keep", ties.method = "average") *
-    ((n - 1) / n^2) +
-    1 / (2 * n)
-
-  return(U)
-}
-
-
 #' @importFrom copula pobs
 #' @importFrom ks kcde
 copula2sCOPE_pstar <- function(P, cdf) {
@@ -29,7 +9,7 @@ copula2sCOPE_pstar <- function(P, cdf) {
   } else if (cdf == "resc.ecdf") {
     P.star <- apply(P, 2, copula::pobs)
   } else if (cdf == "adj.ecdf") {
-    P.star <- apply(P, 2, pobs_adj_2sCOPE)
+    P.star <- apply(P, 2, copula_adj_ecdf)
   } else {
     ecdf0 <- apply(P, 2, ecdf)
     P.star <- sapply(seq_along(ecdf0), function(i) {
