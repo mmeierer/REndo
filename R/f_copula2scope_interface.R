@@ -58,6 +58,9 @@
 #'         error term.
 #' }
 #'
+#' @template template_text_details_bootsdegenerates
+#'
+#' @details
 #' \strong{Formula interface}
 #'
 #' The \code{formula} argument follows a two-part notation separated by
@@ -72,6 +75,7 @@
 #' the normal scores of each endogenous regressor directly, equivalent to
 #' the approach of Park and Gupta (2012).
 #'
+#'
 #' @references
 #' Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
 #' Two-Stage Copula Generated Regressor Approach. \emph{EXPRESS: Journal of
@@ -79,6 +83,10 @@
 #' \doi{10.1177/00222437241296453}
 #'
 #' @template template_references_parkgupta2012
+#' @template template_param_cdf_references
+#'
+#' @eval doc_rendocopula2scope_return()
+#'
 #' @family copula-based methods
 #'
 #' @examples

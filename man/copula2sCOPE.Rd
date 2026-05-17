@@ -36,6 +36,22 @@ used for standard error estimation. A minimum of 1000 is recommended.}
 
 \item{verbose}{Show details about the running of the function.}
 }
+\value{
+An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
+\item{\code{formula}}{The formula given to specify the fitted model.}
+\item{\code{model}}{The model.frame used for model fitting.}
+\item{\code{terms}}{The terms object used for model fitting.}
+\item{\code{coefficients}}{A named vector of all coefficients resulting from model fitting.}
+\item{\code{names.main.coefs}}{A vector specifying which coefficients are from the model. For internal usage.}
+\item{\code{fitted.values}}{Fitted values of the structural model.}
+\item{\code{residuals}}{The structural residuals.}
+\item{\code{boots.params}}{The bootstrapped coefficients.}
+\item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
+\item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
+\item{\code{cdf}}{The used cdf function.}
+\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
+\item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
+}
 \description{
 Fitting the two-stage copula generator regressor approach (2sCOPE) estimator of
 Yang et al. (2025) to address endogeneity without any external instruments.This method
@@ -89,6 +105,13 @@ structural error \eqn{\varepsilon_i} and the exogenous regressors \eqn{X_i},
         term \eqn{\hat{\varepsilon}_{i,k}} and \eqn{\xi_i} is the new
         error term.
 }
+
+Bootstrap inference is performed by resampling the data with replacement.
+Degenerate bootstrap samples (e.g. singular design matrices or failed
+model estimation) are discarded and resampled until the requested number
+of valid bootstrap replications is obtained. The percentage of discarded
+samples is reported as a warning. Confidence intervals are computed
+using only successful bootstrap replications.
 
 \strong{Formula interface}
 
@@ -171,6 +194,21 @@ Marketing Research}, 62(4), 601-623.
 Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
   Joint Estimation Using Copulas",
   Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
+
+Becker, JM., Proksch, D., & Ringle, C.M. Revisiting Gaussian
+copulas to handle endogenous regressors. \emph{Journal of the Academy of
+Marketing Science}, 50, 46--66 (2022).
+\doi{10.1007/s11747-021-00805-y}
+
+Liengaard, B. D., Becker, J.-M., Bennedsen, M., Heiler, P., Taylor, L. N.,
+& Ringle, C. M. (2025). Dealing with regression models' endogeneity by
+means of an adjusted estimator for the Gaussian copula approach.
+\emph{Journal of the Academy of Marketing Science}, 53(1), 279-299
+\doi{10.1007/s11747-024-01055-4}
+
+Qian, Y., Koschmann, A., and Xie, H. (2024). A practical guide to
+endogeneity correction using copulas. NBER Working Paper No. w32231.
+\doi{10.2139/ssrn.4754776}
 }
 \seealso{
 Other copula-based methods: 
