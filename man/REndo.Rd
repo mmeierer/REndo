@@ -55,6 +55,7 @@ Authors:
   \item Markus Meierer \email{markus.meierer@business.uzh.ch}
   \item Rene Algesheimer \email{market-research@business.uzh.ch}
   \item Patrik Schilter \email{patrik.schilter@gmail.com}
+  \item Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }
 
 }
