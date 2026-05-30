@@ -3,7 +3,7 @@
 \docType{data}
 \name{dataCopula2sCOPECase3}
 \alias{dataCopula2sCOPECase3}
-\title{Simulated Dataset for 2sCOPE - Normally Distributed Endogenous and Nonnormal Exogenous Regressor}
+\title{Simulated Dataset for 2sCOPE - Normally Distributed Endogenous and Non-normal Exogenous Regressor}
 \format{
 A data frame with 1000 observations on 3 variables:
 \describe{
@@ -19,12 +19,12 @@ data("dataCopula2sCOPECase3")
 }
 \description{
 A dataset simulated with one normally distributed endogenous
-  regressor \code{P} and one nonnormal exogenous regressor \code{X}
+  regressor \code{P} and one non-normal exogenous regressor \code{X}
   (Exp(1)), correlated with each other (rho_px = 0.5). The endogeneity
   strength is rho_pxi = 0.5. This dataset corresponds to another type of Case 2
   of Yang et al. (2025) and demonstrates a key advantage of
   2sCOPE. The method is still consistently estimating, even when the endogenous regressor \code{P}
-  is normally distributed, because the identification comes from the nonnormal
+  is normally distributed, because the identification comes from the non-normal
   exogenous regressor \code{X}.
   The true parameter values are \code{mu = 1} for the intercept,
   \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
@@ -32,7 +32,7 @@ A dataset simulated with one normally distributed endogenous
 \references{
 Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
 Two-Stage Copula Generated Regressor Approach. \emph{Journal of
-Marketing Research}, 62(4), 601--623.
+Marketing Research}, 62(4), 601-623.
 \doi{10.1177/00222437241296453}
 }
 \author{

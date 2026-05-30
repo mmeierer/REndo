@@ -54,7 +54,7 @@ An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
 }
 \description{
 Fitting the two-stage copula generator regressor approach (2sCOPE) estimator of
-Yang et al. (2025) to address endogeneity without any external instruments.This method
+Yang et al. (2025) to address endogeneity without any external instruments. This method
 generalises the Park and Gupta (2012) copula correction method to allow for correlation
 between endogenous and exogenous regressors, while also relaxing the required assumption that
 endogenous regressors need to be non-normally distributed.
@@ -62,8 +62,8 @@ endogenous regressors need to be non-normally distributed.
 Compared to Park and Gupta (2012), the 2sCOPE method does not require the endogenous and exogenous
 regressors to be independent. Moreover, 2sCOPE remains consistent when
 endogenous regressors are both normally or near-normally distributed, given
-that at least one exogenous regressor is nonnormally distributed. In that case, the identification
-would then come from the nonnormal exogenous regressor instead of the endogenous regressor itself.
+that at least one exogenous regressor is non-normally distributed. In that case, the identification
+would then come from the non-normal exogenous regressor instead of the endogenous regressor itself.
 }
 \details{
 \strong{Model}
@@ -123,7 +123,7 @@ identifies the continuous endogenous regressors using \code{continuous()}:
 \preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endo}
 
 At least one exogenous regressor should be present in the model.
-When no exogenous regressors are present, the correction terms reduce to
+When no exogenous regressor is present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
 }
@@ -187,7 +187,7 @@ summary(res3)
 }
 \references{
 Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
-Two-Stage Copula Generated Regressor Approach. \emph{EXPRESS: Journal of
+Two-Stage Copula Generated Regressor Approach. \emph{Journal of
 Marketing Research}, 62(4), 601-623.
 \doi{10.1177/00222437241296453}
 

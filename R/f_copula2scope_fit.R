@@ -1,5 +1,5 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame model.matrix terms qnorm
+#' @importFrom stats formula lm model.frame model.matrix terms reformulate update
 copula2sCOPE_fit <- function(F.formula, data, cdf) {
   F.formula <- Formula::as.Formula(F.formula)
 
@@ -55,6 +55,8 @@ copula2sCOPE_fit <- function(F.formula, data, cdf) {
 }
 
 
+
+#' @importFrom stats qnorm lm residuals
 copula2sCOPE_residuals <- function(P.star, endo.cols) {
   Z <- qnorm(P.star)
 

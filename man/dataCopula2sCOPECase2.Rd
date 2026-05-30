@@ -3,7 +3,7 @@
 \docType{data}
 \name{dataCopula2sCOPECase2}
 \alias{dataCopula2sCOPECase2}
-\title{Simulated Dataset for 2sCOPE - Nonnormal Endogenous and Normal Exogenous Regressor}
+\title{Simulated Dataset for 2sCOPE - Non-normal Endogenous and Normal Exogenous Regressor}
 \format{
 A data frame with 1000 observations on 3 variables:
 \describe{
@@ -19,7 +19,7 @@ data("dataCopula2sCOPECase2")
 }
 \description{
 A dataset simulated with one endogenous regressor \code{P}
-  (nonnormal, Gamma(1,1)) and one normally distributed exogenous regressor
+  (non-normal, Gamma(1,1)) and one normally distributed exogenous regressor
   \code{X}, correlated with each other (rho_px = 0.5). The endogeneity
   strength is rho_pxi = 0.5. This dataset corresponds to Case 2 of Yang et al. (2025)
   and demonstrates that 2sCOPE remains consistent when the exogenous regressor \code{X} is

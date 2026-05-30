@@ -197,14 +197,14 @@
 #' @author Raluca Gui \email{raluca.gui@@business.uzh.ch}
 "dataMultilevelIV"
 
-#' @title Simulated Dataset for 2sCOPE - Nonnormal Endogenous and Exogenous Regressors
+#' @title Simulated Dataset for 2sCOPE - Non-normal Endogenous and Exogenous Regressors
 #' @description A dataset simulated with one endogenous regressor \code{P}
-#'   and one exogenous regressor \code{X}, both nonnormal and correlated
+#'   and one exogenous regressor \code{X}, both non-normal and correlated
 #'   with each other (rho_px = 0.5). The endogenous regressor \code{P}
 #'   follows a Gamma(1,1) distribution and the exogenous regressor \code{X}
 #'   follows an Exp(1) distribution. The endogeneity strength is rho_pxi = 0.5.
 #'   This dataset corresponds to Case 1 of Yang et al. (2025) and
-#'   demonstrates 2sCOPE's main contribution: consistent estimation when the
+#'   demonstrates 2sCOPE's main contribution: Consistent estimation when the
 #'   endogenous and exogenous regressors are correlated.
 #'   The true parameter values are \code{mu = 1} for the intercept,
 #'   \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
@@ -219,17 +219,13 @@
 #'   Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).}
 #' }
 #' @docType data
-#' @references
-#' Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
-#' Two-Stage Copula Generated Regressor Approach. \emph{Journal of
-#' Marketing Research}, 62(4), 601-623.
-#' \doi{10.1177/00222437241296453}
+#' @template template_references_yang2025
 #' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
 "dataCopula2sCOPECase1"
 
-#' @title Simulated Dataset for 2sCOPE - Nonnormal Endogenous and Normal Exogenous Regressor
+#' @title Simulated Dataset for 2sCOPE - Non-normal Endogenous and Normal Exogenous Regressor
 #' @description A dataset simulated with one endogenous regressor \code{P}
-#'   (nonnormal, Gamma(1,1)) and one normally distributed exogenous regressor
+#'   (non-normal, Gamma(1,1)) and one normally distributed exogenous regressor
 #'   \code{X}, correlated with each other (rho_px = 0.5). The endogeneity
 #'   strength is rho_pxi = 0.5. This dataset corresponds to Case 2 of Yang et al. (2025)
 #'   and demonstrates that 2sCOPE remains consistent when the exogenous regressor \code{X} is
@@ -247,23 +243,19 @@
 #'   normally distributed and correlated with \code{P} (rho_px = 0.5).}
 #' }
 #' @docType data
-#' @references
-#' Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
-#' Two-Stage Copula Generated Regressor Approach. \emph{Journal of
-#' Marketing Research}, 62(4), 601-623.
-#' \doi{10.1177/00222437241296453}
+#' @template template_references_yang2025
 #' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
 "dataCopula2sCOPECase2"
 
 
-#' @title Simulated Dataset for 2sCOPE - Normally Distributed Endogenous and Nonnormal Exogenous Regressor
+#' @title Simulated Dataset for 2sCOPE - Normally Distributed Endogenous and Non-normal Exogenous Regressor
 #' @description A dataset simulated with one normally distributed endogenous
-#'   regressor \code{P} and one nonnormal exogenous regressor \code{X}
+#'   regressor \code{P} and one non-normal exogenous regressor \code{X}
 #'   (Exp(1)), correlated with each other (rho_px = 0.5). The endogeneity
 #'   strength is rho_pxi = 0.5. This dataset corresponds to another type of Case 2
 #'   of Yang et al. (2025) and demonstrates a key advantage of
 #'   2sCOPE. The method is still consistently estimating, even when the endogenous regressor \code{P}
-#'   is normally distributed, because the identification comes from the nonnormal
+#'   is normally distributed, because the identification comes from the non-normal
 #'   exogenous regressor \code{X}.
 #'   The true parameter values are \code{mu = 1} for the intercept,
 #'   \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
@@ -278,11 +270,7 @@
 #'   Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).}
 #' }
 #' @docType data
-#' @references
-#' Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a
-#' Two-Stage Copula Generated Regressor Approach. \emph{Journal of
-#' Marketing Research}, 62(4), 601--623.
-#' \doi{10.1177/00222437241296453}
+#' @template template_references_yang2025
 #' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
 "dataCopula2sCOPECase3"
 
