@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">REndo</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.4.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.5.0</span>
       </span>
     </div>
 
@@ -87,7 +87,7 @@
 External Instrumental Variables</h1>
                         <h4 data-toc-skip class="author">Raluca Gui</h4>
             
-            <h4 data-toc-skip class="date">2026-04-15</h4>
+            <h4 data-toc-skip class="date">2026-05-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/mmeierer/REndo/blob/master/vignettes/REndo-introduction.Rmd" class="external-link"><code>vignettes/REndo-introduction.Rmd</code></a></small>
       <div class="hidden name"><code>REndo-introduction.Rmd</code></div>
@@ -131,10 +131,10 @@ same underlying model presented in equations (1) and (2) below. The
 specific characteristics of each method are discussed in the subsequent
 sections.</p>
 <p>Consider the model:</p>
-<p><span class="math display">$$\begin{equation}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Y</mi><mi>t</mi></msub><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>+</mo><msub><mi>β</mi><mn>1</mn></msub><msub><mi>P</mi><mi>t</mi></msub><mo>+</mo><msub><mi>β</mi><mn>2</mn></msub><msub><mi>X</mi><mi>t</mi></msub><mo>+</mo><msub><mi>ϵ</mi><mi>t</mi></msub><mspace width="1.19em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\begin{equation}
 Y_{t}=\beta_{0}+ \beta_{1} P_{t} + \beta_{2} X_{t} + \epsilon_{t}
-\hspace{0.5cm} (1)
-\end{equation}$$</span></p>
+\hspace{0.5cm} (1) 
+\end{equation}</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>.</mi><mi>.</mi><mo>,</mo><mi>T</mi></mrow><annotation encoding="application/x-tex">t=1,..,T</annotation></semantics></math>
 indexes either time or cross-sectional units,
@@ -158,7 +158,7 @@ x
 continuous <em>endogenous</em> regressor,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϵ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\epsilon_{t}</annotation></semantics></math>
 is a structural error term with mean zero and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ϵ</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mi>σ</mi><mi>ϵ</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">E(\epsilon^{2})=\sigma^{2}_{\epsilon}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">(</mo><msup><mi>ϵ</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msubsup><mi>σ</mi><mi>ϵ</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">E(\epsilon^{2})=\sigma^{2}_{\epsilon}</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
@@ -168,10 +168,10 @@ correlation of
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ϵ</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\epsilon_{t}</annotation></semantics></math>.
 As such:</p>
-<p><span class="math display">$$\begin{equation}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>P</mi><mi>t</mi></msub><mo>=</mo><mi>γ</mi><msub><mi>Z</mi><mi>t</mi></msub><mo>+</mo><msub><mi>ν</mi><mi>t</mi></msub><mspace width="1.19em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>2</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\begin{equation}
 P_{t}=\gamma Z_{t}+\nu_{t}
-\hspace{0.5cm} (2)
-\end{equation}$$</span></p>
+\hspace{0.5cm} (2) 
+\end{equation}</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
 is a
@@ -181,16 +181,16 @@ x
 vector of internal instrumental variables, and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>
 is a random error with mean zero,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><msup><mi>ν</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msubsup><mi>σ</mi><mi>ν</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">E(\nu^{2})=\sigma^{2}_{\nu}</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">(</mo><msup><mi>ν</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msubsup><mi>σ</mi><mi>ν</mi><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">E(\nu^{2})=\sigma^{2}_{\nu}</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>ϵ</mi><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mi>σ</mi><mrow><mi>ϵ</mi><mi>ν</mi></mrow></msub></mrow><annotation encoding="application/x-tex">E(\epsilon\nu)=\sigma_{\epsilon\nu}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">(</mo><mi>ϵ</mi><mi>ν</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><msub><mi>σ</mi><mrow><mi>ϵ</mi><mi>ν</mi></mrow></msub></mrow><annotation encoding="application/x-tex">E(\epsilon\nu)=\sigma_{\epsilon\nu}</annotation></semantics></math>.
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
 is assumed to be stochastic with distribution
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>
 is assumed to have density
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(\cdot)</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">h(\cdot)</annotation></semantics></math>.</p>
 <p>The <strong>latent instrumental variables</strong> and <strong>the
 higher moments</strong> models assume
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Z</mi><mi>t</mi></msub><annotation encoding="application/x-tex">Z_{t}</annotation></semantics></math>
@@ -222,7 +222,7 @@ as it is shifted over
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ν</mi><mi>t</mi></msub><annotation encoding="application/x-tex">\nu_{t}</annotation></semantics></math>).
 When the density
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo>⋅</mo><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(\cdot)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo stretchy="false" form="prefix">(</mo><mi>⋅</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">h(\cdot)</annotation></semantics></math>
 is chosen to be normal, then
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
 cannot be normal because the parameters would not be identified (Ebbes
@@ -293,18 +293,18 @@ distribution of the endogenous regressor
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
 is obtained using the Epanechnikov kernel density estimator, as
 below:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>h</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>1</mn><mrow><mi>T</mi><mo>⋅</mo><mi>b</mi></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>T</mi></munderover><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>p</mi><mo>−</mo><msub><mi>P</mi><mi>t</mi></msub></mrow><mi>b</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\begin{equation}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>h</mi><mo accent="true">̂</mo></mover><mo stretchy="false" form="prefix">(</mo><mi>p</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mi>T</mi><mo>⋅</mo><mi>b</mi></mrow></mfrac><munderover><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>T</mi></munderover><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mfrac><mrow><mi>p</mi><mo>−</mo><msub><mi>P</mi><mi>t</mi></msub></mrow><mi>b</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\begin{equation}
 \label{eqn:6}
 \hat{h}(p)=\frac{1}{T\cdot b}\sum_{t=1}^{T}K\left(\frac{p-P_{t}}{b}\right)
 \end{equation}</annotation></semantics></math></p>
 <p>where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>P</mi><mi>t</mi></msub><annotation encoding="application/x-tex">P_{t}</annotation></semantics></math>
 is the endogenous regressor,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0.75</mn><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>x</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>⋅</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><mo stretchy="false" form="postfix">∥</mo><mi>x</mi><mo stretchy="false" form="postfix">∥</mo><mo>&lt;</mo><mo>=</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|&lt;=1)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>0.75</mn><mo>⋅</mo><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>−</mo><msup><mi>x</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">)</mo><mo>⋅</mo><mi>I</mi><mo stretchy="false" form="prefix">(</mo><mo stretchy="false" form="postfix">∥</mo><mi>x</mi><mo stretchy="false" form="postfix">∥</mo><mo>&lt;</mo><mo>=</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">K(x)=0.75\cdot(1-x^{2})\cdot I(\|x\|&lt;=1)</annotation></semantics></math>
 and the bandwidth
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math>
 is equal to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>=</mo><mn>0.9</mn><mo>⋅</mo><msup><mi>T</mi><mrow><mo>−</mo><mn>1</mn><mi>/</mi><mn>5</mn></mrow></msup><mo>⋅</mo><mi>m</mi><mi>i</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>I</mi><mi>Q</mi><mi>R</mi><mi>/</mi><mn>1.34</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>=</mo><mn>0.9</mn><mo>⋅</mo><msup><mi>T</mi><mrow><mi>−</mi><mn>1</mn><mi>/</mi><mn>5</mn></mrow></msup><mo>⋅</mo><mi>m</mi><mi>i</mi><mi>n</mi><mo stretchy="false" form="prefix">(</mo><mi>s</mi><mo>,</mo><mi>I</mi><mi>Q</mi><mi>R</mi><mi>/</mi><mn>1.34</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">b=0.9\cdot T^{-1/5}\cdot min(s,IQR/1.34)</annotation></semantics></math>,
 as proposed by Silvermann (1969).
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mi>Q</mi><mi>R</mi></mrow><annotation encoding="application/x-tex">IQR</annotation></semantics></math>
 is the interquartile range while
@@ -338,18 +338,18 @@ third moments of the data, with no restrictions imposed on the
 distribution of the error terms.</p>
 <p>The following instruments are constructed and can be used with
 two-stage least squares estimation to obtain consistent estimates:</p>
-<p><span class="math display">$$\begin{equation}
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>q</mi><mrow><mn>1</mn><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mspace width="4.714em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>3</mn><mi>a</mi><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>q</mi><mrow><mn>2</mn><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mspace width="1.429em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>3</mn><mi>b</mi><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>q</mi><mrow><mn>3</mn><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mspace width="1.548em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>3</mn><mi>c</mi><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>q</mi><mrow><mn>4</mn><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mspace width="1.667em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>3</mn><mi>d</mi><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>q</mi><mrow><mn>5</mn><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mspace width="4.524em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>3</mn><mi>e</mi><mo stretchy="false" form="postfix">)</mo></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>q</mi><mrow><mn>6</mn><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mspace width="4.524em"></mspace><mo stretchy="false" form="prefix">(</mo><mn>3</mn><mi>f</mi><mo stretchy="false" form="postfix">)</mo></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{equation}
 \begin{aligned}
-q_{1t} &amp;=(G_{t} - \bar{G})  \hspace{1.98cm} (3a)\\
+q_{1t} &amp;=(G_{t} - \bar{G})  \hspace{1.98cm} (3a)\\ 
 q_{2t}&amp;=(G_{t} - \bar{G})(P_{t}-\bar{P})  \hspace{0.6cm} (3b) \\
 q_{3t}&amp;=(G_{t} - \bar{G})(Y_{t}-\bar{Y})  \hspace{0.65cm} (3c)\\
 q_{4t}&amp;=(Y_{t} - \bar{Y})(P_{t}-\bar{P})  \hspace{0.7cm} (3d)\\
 q_{5t}&amp;=(P_{t}- \bar{P})^{2}  \hspace{1.9cm} (3e)\\
 q_{6t}&amp;=(Y_{t} - \bar{Y})^{2}  \hspace{1.90cm} (3f)
 \end{aligned}
-\end{equation}$$</span></p>
+\end{equation}</annotation></semantics></math></p>
 <p>Here,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>t</mi></msub><mo>=</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G_{t}=G(X_{t})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>t</mi></msub><mo>=</mo><mi>G</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>X</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">G_{t}=G(X_{t})</annotation></semantics></math>
 for any given function
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>G</mi><annotation encoding="application/x-tex">G</annotation></semantics></math>
 that has finite third own and cross moments and
@@ -366,9 +366,9 @@ and
 measurement and the structural errors are symmetrically distributed.
 Otherwise, the use of the instruments does not require any
 distributional assumptions for the errors. Given that the regressors
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">G(X)=X</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo stretchy="false" form="prefix">(</mo><mi>X</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mi>X</mi></mrow><annotation encoding="application/x-tex">G(X)=X</annotation></semantics></math>
 are included as instruments,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G(X)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo stretchy="false" form="prefix">(</mo><mi>X</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">G(X)</annotation></semantics></math>
 should not be linear in
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
 in equation (3a) above.</p>
@@ -393,10 +393,10 @@ estimator (Lewbel, 2012).</p>
 <p>Consider the model in equations (1) and (2). This approach assumes
 that:</p>
 <ul>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mi>ϵ</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E(X\epsilon)=0</annotation></semantics></math></li>
-<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>X</mi><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E(X\nu)=0</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">(</mo><mi>X</mi><mi>ϵ</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E(X\epsilon)=0</annotation></semantics></math></li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo stretchy="false" form="prefix">(</mo><mi>X</mi><mi>ν</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">E(X\nu)=0</annotation></semantics></math></li>
 <li>
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>,</mo><mi>ϵ</mi><mi>ν</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">cov(Z,\epsilon\nu)=0</annotation></semantics></math>.</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mo stretchy="false" form="prefix">(</mo><mi>Z</mi><mo>,</mo><mi>ϵ</mi><mi>ν</mi><mo stretchy="false" form="postfix">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">cov(Z,\epsilon\nu)=0</annotation></semantics></math>.</li>
 <li>the errors,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ϵ</mi><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math>
 and
@@ -413,12 +413,12 @@ and
 using
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>X</mi><annotation encoding="application/x-tex">X</annotation></semantics></math>
 and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">[</mo><mi>Z</mi><mo>−</mo><mi>E</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="true" form="postfix">]</mo></mrow><mi>ν</mi></mrow><annotation encoding="application/x-tex">[Z-E(Z)]\nu</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mi>Z</mi><mo>−</mo><mi>E</mi><mo stretchy="false" form="prefix">(</mo><mi>Z</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo><mi>ν</mi></mrow><annotation encoding="application/x-tex">[Z-E(Z)]\nu</annotation></semantics></math>
 as instruments. A vital assumption for identification is that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>,</mo><msup><mi>ν</mi><mn>2</mn></msup><mo stretchy="true" form="postfix">)</mo></mrow><mo>≠</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">cov(Z,\nu^2) \neq 0</annotation></semantics></math>.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mi>o</mi><mi>v</mi><mo stretchy="false" form="prefix">(</mo><mi>Z</mi><mo>,</mo><msup><mi>ν</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">)</mo><mo>≠</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">cov(Z,\nu^2) \neq 0</annotation></semantics></math>.</p>
 <p>The strength of the instrument is proportional to the covariance
 between
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><mi>Z</mi><mo>−</mo><mover><mi>Z</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mi>ν</mi></mrow><annotation encoding="application/x-tex">(Z-\bar{Z}) \nu</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>Z</mi><mo>−</mo><mover><mi>Z</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mi>ν</mi></mrow><annotation encoding="application/x-tex">(Z-\bar{Z}) \nu</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ν</mi><annotation encoding="application/x-tex">\nu</annotation></semantics></math>,
 which corresponds to the degree of heteroskedasticity of
@@ -461,7 +461,7 @@ regressors.</li>
 <p>If the last assumption is not met, additional, external instruments
 are necessary.</p>
 <p>Consider a hierarchical model with three levels like below:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>y</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>Z</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup><msubsup><mi>β</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>1</mn></msubsup><mo>+</mo><msubsup><mi>X</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>β</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>1</mn></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>Z</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup><msubsup><mi>β</mi><mi>c</mi><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>X</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup><msub><mi>β</mi><mn>2</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right"><msubsup><mi>β</mi><mi>c</mi><mn>2</mn></msubsup></mtd><mtd columnalign="left" style="text-align: left"><mo>=</mo><msubsup><mi>X</mi><mi>c</mi><mn>3</mn></msubsup><msub><mi>β</mi><mn>3</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mi>c</mi><mn>3</mn></msubsup><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msub><mi>y</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow></msub></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><msubsup><mi>Z</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup><msubsup><mi>β</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>1</mn></msubsup><mo>+</mo><msubsup><mi>X</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup><msub><mi>β</mi><mn>1</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mrow><mi>c</mi><mi>s</mi><mi>t</mi></mrow><mn>1</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msubsup><mi>β</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>1</mn></msubsup></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><msubsup><mi>Z</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup><msubsup><mi>β</mi><mi>c</mi><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>X</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup><msub><mi>β</mi><mn>2</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mrow><mi>c</mi><mi>s</mi></mrow><mn>2</mn></msubsup></mtd></mtr><mtr><mtd columnalign="right" style="text-align: right; padding-right: 0"><msubsup><mi>β</mi><mi>c</mi><mn>2</mn></msubsup></mtd><mtd columnalign="left" style="text-align: left; padding-left: 0"><mo>=</mo><msubsup><mi>X</mi><mi>c</mi><mn>3</mn></msubsup><msub><mi>β</mi><mn>3</mn></msub><mo>+</mo><msubsup><mi>ϵ</mi><mi>c</mi><mn>3</mn></msubsup><mi>.</mi></mtd></mtr></mtable><annotation encoding="application/x-tex">
 \begin{aligned}
  y_{cst} &amp;= Z^{1}_{cst} \beta^{1}_{cs} + X^{1}_{cst} \beta_{1} +\epsilon^{1}_{cst} \\ 
  \beta^{1}_{cs} &amp;= Z^{2}_{cs} \beta^{2}_{c} + X^{2}_{cs} \beta_{2} +\epsilon^{2}_{cs} \\
@@ -600,29 +600,29 @@ specified in the <strong>iiv</strong> argument of
 <ul>
 <li>
 <strong>g</strong> - for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})</annotation></semantics></math>,</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})</annotation></semantics></math>,</li>
 <li>
 <strong>gp</strong> - for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})(P_{t}-\bar{P})</annotation></semantics></math>,</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})(P_{t}-\bar{P})</annotation></semantics></math>,</li>
 <li>
 <strong>gy</strong> - for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})(Y_{t}-\bar{Y})</annotation></semantics></math>,</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>G</mi><mi>t</mi></msub><mo>−</mo><mover><mi>G</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(G_{t} - \bar{G})(Y_{t}-\bar{Y})</annotation></semantics></math>,</li>
 <li>
 <strong>yp</strong> - for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(Y_{t} - \bar{Y})(P_{t}-\bar{P})</annotation></semantics></math>,</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(Y_{t} - \bar{Y})(P_{t}-\bar{P})</annotation></semantics></math>,</li>
 <li>
 <strong>p2</strong> - for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(P_{t} - \bar{P})^2</annotation></semantics></math>,</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>P</mi><mi>t</mi></msub><mo>−</mo><mover><mi>P</mi><mo accent="true">‾</mo></mover><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">(P_{t} - \bar{P})^2</annotation></semantics></math>,</li>
 <li>
 <strong>y2</strong> - for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">(Y_{t} - \bar{Y})^2</annotation></semantics></math>,</li>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>Y</mi><mi>t</mi></msub><mo>−</mo><mover><mi>Y</mi><mo accent="true">‾</mo></mover><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">(Y_{t} - \bar{Y})^2</annotation></semantics></math>,</li>
 </ul>
 <p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mi>G</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>X</mi><mi>t</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">G=G(X_{t})</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo>=</mo><mi>G</mi><mo stretchy="false" form="prefix">(</mo><msub><mi>X</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">G=G(X_{t})</annotation></semantics></math>
 can be either
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>x</mi><mn>2</mn></msup><annotation encoding="application/x-tex">x^2</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>x</mi><mn>3</mn></msup><annotation encoding="application/x-tex">x^3</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>n</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">ln(x)</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>l</mi><mi>n</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">ln(x)</annotation></semantics></math>
 or
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">1/x</annotation></semantics></math>
 and should be specified in the <strong>g</strong> argument of the third
@@ -713,7 +713,7 @@ namely <strong>expenditure</strong> (the expenditure per student
 aggregated at district level), we can use it as external instrumental
 variable. This is possible since it is correlated with the
 student/teacher ratio (a correlation of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.61</mn></mrow><annotation encoding="application/x-tex">-0.61</annotation></semantics></math>),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>0.61</mn></mrow><annotation encoding="application/x-tex">-0.61</annotation></semantics></math>),
 but does not directly explain the reading score tests of the students.
 Therefore, we can apply both external(two-stage least squares) and
 internal instrumental variables techniques to estimate the model and
@@ -778,7 +778,7 @@ is the endogenous one. Let’s see:</p>
 <span><span class="co">#&gt; stratio      -2.272673e+00  1.367744e+01 -1.661622e-01 8.681095e-01</span></span>
 <span><span class="co">#&gt; pi1          -4.896363e+01           NaN           NaN          NaN</span></span>
 <span><span class="co">#&gt; pi2           1.963920e+01  9.225351e-02  2.128830e+02 0.000000e+00</span></span>
-<span><span class="co">#&gt; theta5       6.939432e-152 9.997474e-161  6.941185e+08 0.000000e+00</span></span>
+<span><span class="co">#&gt; theta5       6.939432e-152 9.992531e-161  6.944619e+08 0.000000e+00</span></span>
 <span><span class="co">#&gt; theta6        3.787512e+02  4.249430e+01  8.912989e+00 1.540862e-17</span></span>
 <span><span class="co">#&gt; theta7       -1.227543e+00  4.885226e+01 -2.512766e-02 9.799651e-01</span></span></code></pre></div>
 <p>Indeed, the value returned is equal to <strong>-2.273</strong>. The
@@ -801,13 +801,13 @@ reporting standard errors).</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">m4.cc</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">7</span>,<span class="op">]</span></span>
 <span><span class="co">#&gt;             Point Estimate    Boots SE Lower Boots CI (95%)</span></span>
-<span><span class="co">#&gt; (Intercept)   683.75682965 2.438874458                   NA</span></span>
-<span><span class="co">#&gt; stratio        -0.36542649 0.022332810                   NA</span></span>
-<span><span class="co">#&gt; english        -0.19053116 0.026136685                   NA</span></span>
-<span><span class="co">#&gt; lunch          -0.38546982 0.032293205                   NA</span></span>
-<span><span class="co">#&gt; calworks       -0.06052316 0.009027372                   NA</span></span>
-<span><span class="co">#&gt; gradesKK-08    -2.23350772 0.138420392                   NA</span></span>
-<span><span class="co">#&gt; income          0.78639240 0.033266598                   NA</span></span>
+<span><span class="co">#&gt; (Intercept)   681.94143888 2.438874458                   NA</span></span>
+<span><span class="co">#&gt; stratio        -0.33863513 0.022332810                   NA</span></span>
+<span><span class="co">#&gt; english        -0.20070147 0.026136685                   NA</span></span>
+<span><span class="co">#&gt; lunch          -0.37339560 0.032293205                   NA</span></span>
+<span><span class="co">#&gt; calworks       -0.06261583 0.009027372                   NA</span></span>
+<span><span class="co">#&gt; gradesKK-08    -1.64282345 0.138420392                   NA</span></span>
+<span><span class="co">#&gt; income          0.80127388 0.033266598                   NA</span></span>
 <span><span class="co">#&gt;             Upper Boots CI (95%)</span></span>
 <span><span class="co">#&gt; (Intercept)                   NA</span></span>
 <span><span class="co">#&gt; stratio                       NA</span></span>
@@ -923,7 +923,7 @@ below:</p>
 <span><span class="va">m8.multilevel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/multilevelIV.html">multilevelIV</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">formula1</span>, data <span class="op">=</span> <span class="va">dataMultilevelIV</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">m8.multilevel</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                    REF     FE_L2      FE_L3     GMM_L2     GMM_L3</span></span>
-<span><span class="co">#&gt; (Intercept) 64.3640773  0.000000  0.0000000 64.6642061 64.3644220</span></span>
+<span><span class="co">#&gt; (Intercept) 64.3640774  0.000000  0.0000000 64.6642061 64.3644221</span></span>
 <span><span class="co">#&gt; X11          3.0356390  3.047931  3.0353448  3.0356094  3.0356389</span></span>
 <span><span class="co">#&gt; X12          9.0005462  8.996679  8.9999438  8.9966073  9.0005417</span></span>
 <span><span class="co">#&gt; X13         -2.0082559 -2.000106 -2.0090020 -2.0215816 -2.0082712</span></span>
@@ -938,14 +938,14 @@ below:</p>
 <span><span class="co">#&gt; X33          0.0991915  0.000000  0.0000000  0.0980949  0.0991902</span></span></code></pre></div>
 <p>As we have simulated the data, we know that the true parameter value
 of the endogenous regressor (X15) is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>.
 Looking at the coefficients of X15 returned by the five models, we see
 that they form two clusters: one cluster is composed of the level-two
 fixed effects estimator and the level-two GMM estimator (both return
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.975</mn></mrow><annotation encoding="application/x-tex">-0.975</annotation></semantics></math>),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>0.975</mn></mrow><annotation encoding="application/x-tex">-0.975</annotation></semantics></math>),
 while the other cluster is composed of the other three estimators,
 FE_L3, GMM_L3, REF, all three having a value of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>0.564</mn></mrow><annotation encoding="application/x-tex">-0.564</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><mn>0.564</mn></mrow><annotation encoding="application/x-tex">-0.564</annotation></semantics></math>.
 The bias of the last three estimators is to be expected since we have
 simulated the data such that X15 is correlated with the level-two error,
 to which only FE_L2 and GMM_L2 are robust.</p>
@@ -1032,8 +1032,8 @@ GMM_L3).</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Omitted variable tests for model REF:</span></span>
 <span><span class="co">#&gt;               df    Chisq  p-value    </span></span>
-<span><span class="co">#&gt; GMM_L2_vs_REF  7    37.48  3.8e-06 ***</span></span>
-<span><span class="co">#&gt; GMM_L3_vs_REF 13 -1891.73 1.000000    </span></span>
+<span><span class="co">#&gt; GMM_L2_vs_REF  7   -33.11 1.000000    </span></span>
+<span><span class="co">#&gt; GMM_L3_vs_REF 13 -3259.64 1.000000    </span></span>
 <span><span class="co">#&gt; FE_L2_vs_REF  13    40.00 0.000138 ***</span></span>
 <span><span class="co">#&gt; FE_L3_vs_REF  13    39.99 0.000139 ***</span></span>
 <span><span class="co">#&gt; ---</span></span>
@@ -1061,19 +1061,19 @@ effects estimators, FE_L2 versus FE_L3:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients for model FE_L2:</span></span>
 <span><span class="co">#&gt;               Estimate Std. Error z-score Pr(&gt;|z|)    </span></span>
-<span><span class="co">#&gt; (Intercept)  0.000e+00  3.077e-19    0.00        1    </span></span>
+<span><span class="co">#&gt; (Intercept)  0.000e+00  1.273e-18    0.00        1    </span></span>
 <span><span class="co">#&gt; X11          3.048e+00  3.193e-02   95.47   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X12          8.997e+00  3.377e-02  266.43   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X13         -2.000e+00  3.211e-02  -62.29   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X14          2.002e+00  3.437e-02   58.24   &lt;2e-16 ***</span></span>
 <span><span class="co">#&gt; X15         -1.037e+00  3.301e-02  -31.41   &lt;2e-16 ***</span></span>
-<span><span class="co">#&gt; X21          0.000e+00  8.811e-19    0.00        1    </span></span>
-<span><span class="co">#&gt; X22          0.000e+00  3.665e-19    0.00        1    </span></span>
-<span><span class="co">#&gt; X23          0.000e+00  3.028e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X24          0.000e+00  4.320e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X31          0.000e+00  6.879e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X32          0.000e+00  5.258e-18    0.00        1    </span></span>
-<span><span class="co">#&gt; X33          0.000e+00  2.788e-17    0.00        1    </span></span>
+<span><span class="co">#&gt; X21          0.000e+00  1.245e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X22          0.000e+00  7.622e-19    0.00        1    </span></span>
+<span><span class="co">#&gt; X23          0.000e+00  4.024e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X24          0.000e+00  6.984e-18    0.00        1    </span></span>
+<span><span class="co">#&gt; X31          0.000e+00  2.546e-17    0.00        1    </span></span>
+<span><span class="co">#&gt; X32          0.000e+00  2.485e-17    0.00        1    </span></span>
+<span><span class="co">#&gt; X33          0.000e+00  1.202e-16    0.00        1    </span></span>
 <span><span class="co">#&gt; ---</span></span>
 <span><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -1135,7 +1135,7 @@ Estimation Using Cop- ulas.” Marketing Science, 31(4), 567–586.</p>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Raluca Gui, Markus Meierer, Rene Algesheimer, Patrik Schilter.</p>
+<p>Developed by Raluca Gui, Markus Meierer, Rene Algesheimer, Patrik Schilter, Kimberly-Anne Lew Chuk Wai.</p>
 </div>
 
 <div class="pkgdown">
