@@ -51,7 +51,10 @@ copula_compute_structural_fitted_residuals <- function(
   names.aux.regs
 ) {
   if (
-    is.null(names.aux.regs) || length(names.aux.regs) == 0 || nchar(names.aux.regs) == 0
+    is.null(names.aux.regs) ||
+      length(names.aux.regs) == 0 ||
+      anyNA(names.aux.regs) ||
+      any(nchar(names.aux.regs) == 0)
   ) {
     stop(
       "Internal error: 'names.aux.regs' is empty. This should not happen - please report as a bug!",
