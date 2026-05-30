@@ -156,14 +156,14 @@ test_that("Parameter recovery: dataCopula2sCOPECase3", {
 # Return values calculated correctly -------------------------------------------------
 
 test_that("structural residuals & fitted values are calculated correctly", {
-  res <- fit_copula2sCOPE_lowboots(
-    formula = y ~ P + X | continuous(P),
+  res <- expect_warning(fit_copula2sCOPE_lowboots(
+    formula = y ~ P + X | continuous(P, X),
     data = dataCopula2sCOPECase1
-  )
+  ), regexp = "No exogenous regressors")
   res.lm <- res$res.lm.augmented
 
   # Alternative route: Remove cop contribution from augmented fit
-  names.coefs.cop <- c("P_cop")
+  names.coefs.cop <- c("P_cop", "X_cop")
   pcop.coefs <- coef(res.lm)[names.coefs.cop]
   cop.matrix <- model.matrix(res.lm)[, names.coefs.cop, drop = FALSE]
 
