@@ -1,8 +1,10 @@
 # Comment from the authors
 
-This is version 2.4.11 which:
+This is version 2.5.0 which:
 
-- Fixes CRAN notes regarding tests for `multilevelIV`
+- Adds a new method `copulaIMA` which implements the copula-based Instrumental Variable Model (IMA) by Haschka (2025)
+- Fixes CRAN notes regarding tests for `multilevelIV` and HTML issues in the documentation
+
 
 
 
@@ -13,6 +15,3 @@ This is version 2.4.11 which:
 
 ## R CMD check results 
 There were 0 ERRORs, 0 WARNINGs, and 1-3 insignificant NOTEs (mis-spellings, invalid DOI).
-
-## Downstream dependencies
-We are not aware of any downstream dependencies.

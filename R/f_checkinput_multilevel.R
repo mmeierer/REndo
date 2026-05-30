@@ -84,17 +84,22 @@ checkinput_multilevel_dataVSformula <- function(formula,data){
   # lmer specific function part
   f.lmer <- formula(F.formula, lhs = 1, rhs = 1)
 
-  l4.form <- tryCatch(lme4::lFormula(formula = f.lmer, data = data),
-                  error = function(e)return(e))
-  if(is(object = l4.form, class2 = "simpleError"))
-    if(grepl(pattern = "No random effects terms", x = l4.form$message)){
-      # Known error
-      return("Please specify a random effects terms in the formula.")
-    }else{
-      # Some other error
-      return(paste0("Please provide a formula interpretable by lme4::lmer().\nError: ",
-                    sQuote(l4.form$message)))
+  l4.form <- tryCatch(
+    lme4::lFormula(formula = f.lmer, data = data),
+    error = function(e) {
+      msg <- conditionMessage(e)
+      if(grepl("No random effects terms", msg)){
+        return("Please specify a random effects terms in the formula.")
+      }
+      else{
+        return(paste0("Please provide a formula interpretable by lme4::lmer().\nError: ",
+                      sQuote(msg)))
+      }
     }
+  )
+  if(is.character(l4.form)){
+    return(l4.form)
+  }
 
   # check number of levels
   if(!(lme4formula_get_numberoflevels(l4.form = l4.form) %in% c(2,3)))
