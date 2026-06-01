@@ -41,7 +41,9 @@ REndo implements the following instrument-free methods:
 
 (4) joint estimation using copula (Park and Gupta 2012) 
 
-(5) multilevel GMM (Kim and Frees 2007)
+(6) two-stage copula endogeneity correction (Yang et al. 2025)
+
+(7) multilevel GMM (Kim and Frees 2007)
 
 
 ## The new version - REndo 2.0.0 ##
@@ -99,6 +101,14 @@ In case of internal instruments built only from the endogenous regressor, e.g. *
  hetErrorsIV(y ~ X1 + X2 + X3 + P | P | IIV(X1,X2) | Z1, data)
 ```
 Here, **y** is the response variable, **X1 + X2 + X3 + P** represents the model to be estimated; the second part, **P**, specifies the endogenous regressors, the third part, **IIV(X1, X2)**, specifies the exogenous heteroskedastic variables from which the instruments are derived, while the final part **Z1** is optional, allowing the user to include additional external instrumental variables. Like in the higher moments approach, allowing the inclusion of additional external variables is a convenient feature of the function, since it increases the efficiency of the estimates. Transformation of the explanatory variables, such as I(X), ln(X) are possible both in the model specification as well as in the IIV() specification.
+
+### **Two-Stage Copula Endogeneity Correction**
+
+```
+copula2sCOPE(y ~ X + P | continuous(P), data, num.boots, cdf)
+```
+
+Here **y** is the response variable, **X + P**  represents the model to be estimated; the second part identifies the endogenous regressors via **continuous()**. The second argument is the name of the dataset. **num.boots** sets the number of bootstrap replications used to compute standard errors (default 1000). The argument **cdf** specifies the estimator used to transform regressors to normal scores (options are **"ecdf"**, **"adj.ecdf"**, **"resc.ecdf"**, and **"kde"**) and is applied to all regressors. For each endogenous normal score, a regression on the exogenous normal scores is estimated with an intercept, and the residuals is the correction terms in an augmented OLS. When no exogenous regressors are present the method reduces to Park and Gupta (2012). This method can be used for multiple endogenous regressors. 
 
 ### **Multilevel GMM**
 

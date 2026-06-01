@@ -165,12 +165,15 @@ copulaIMA <- function(
 
   # Input checks  -------------------------------------------------------------------
 
-  check_err_msg(checkinput_copulaIMA_formula(formula))
-  check_err_msg(checkinput_copulaIMA_data(data))
-  check_err_msg(checkinput_copulaIMA_dataVSformula(data = data, formula = formula))
-  check_err_msg(checkinput_copulaIMA_numboots(num.boots))
-  check_err_msg(checkinput_copulaIMA_verbose(verbose))
-  check_err_msg(checkinput_copulaIMA_cdf(cdf))
+  check_err_msg(checkinput_copulashared_formula(formula))
+  check_err_msg(checkinput_copulashared_data(data))
+  check_err_msg(checkinput_copulashared_dataVSformula(data = data, formula = formula))
+  check_err_msg(checkinput_copulashared_cdf(
+    cdf,
+    allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  ))
+  check_err_msg(checkinput_copulashared_numboots(num.boots))
+  check_err_msg(checkinput_copulashared_verbose(verbose))
 
   # Fit original data ---------------------------------------------------------------
 
@@ -222,25 +225,19 @@ copulaIMA <- function(
   )
 
   # Structural residuals --------------------------------------------------------------
-  names.coefs.all <- names(coef(fit))
-  names.coefs.cop <- grep("_cop$", names.coefs.all, value = TRUE)
-  names.structural <- names.coefs.all[!names.coefs.all %in% names.coefs.cop]
-  coefs.structural <- coef(fit)[names.structural]
-  mm.structural <- model.matrix(fit)[, names.structural, drop = FALSE]
 
-  fitted.values <- drop(mm.structural %*% coefs.structural)
-  names(fitted.values) <- row.names(mm.structural)
-
-  residuals <- drop(model.response(model.frame(fit)) - fitted.values)
-  names(residuals) <- names(fitted.values)
+  # TODO: Do not read names with grep but pass names back from fitting method
+  l.fitted.resid <- copula_compute_structural_fitted_residuals(
+    res.lm.aug = fit,
+    names.aux.regs = grep("_cop$", names(coef(fit)), value = TRUE)
+  )
 
   # Return value ----------------------------------------------------------------------
-
   return(new_rendo_copula_ima(
     call = cl,
     F.formula = F.formula,
-    fitted.values = fitted.values,
-    residuals = residuals,
+    fitted.values = l.fitted.resid$fitted.values,
+    residuals = l.fitted.resid$residuals,
     boots = res.boots$boots.params,
     n.boots.attempted = res.boots$n.attempted,
     n.boots.failed = res.boots$n.failed,

@@ -16,7 +16,7 @@ invalid_formulas <- list(
   "endo variable not in data" = y ~ X + Q | continuous(Q),
   "illegal special" = y ~ X + P | discrete(P),
   "misspelled special" = y ~ X + P | continous(P),
-  "using dot" = y ~ . | continous(P),
+  "using dot" = y ~ . | continuous(P),
   "rhs1 and rhs2 swapped" = y ~ continuous(P) | X + P
 )
 

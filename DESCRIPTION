@@ -11,8 +11,9 @@ Authors@R: c(
     person(given="Kimberly-Anne", family="Lew Chuk Wai", email="kimberlylew12@gmail.com",   role = "aut"))
 Description: Fits linear models with endogenous regressor using latent instrumental variable approaches. 
     The methods included in the package are Lewbel's (1997) <doi:10.2307/2171884> higher moments approach as well as 
-    Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroscedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718> joint estimation method 
-    that uses Gaussian copula and Kim and Frees's (2007) <doi:10.1007/s11336-007-9008-1> multilevel generalized
+    Lewbel's (2012) <doi:10.1080/07350015.2012.643126> heteroscedasticity approach, Park and Gupta's (2012) <doi:10.1287/mksc.1120.0718>, 
+    Yang et al.'s (2025) <doi:10.1177/00222437241296453> a two-stage copula correction joint estimation method that uses Gaussian copula 
+    and Kim and Frees's (2007) <doi:10.1007/s11336-007-9008-1> multilevel generalized
     method of moment approach that deals with endogeneity in a multilevel setting.
     These are statistical techniques to address the endogeneity problem where no external instrumental variables are needed.
     See the publication related to this package in the Journal of Statistical Software for more details: <doi:10.18637/jss.v107.i03>.
