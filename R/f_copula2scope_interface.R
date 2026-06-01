@@ -222,7 +222,6 @@ copula2sCOPE <- function(
 
   # Structural residuals --------------------------------------------------------------
 
-  # TODO: Do not read names with grep
   l.fitted.resid <- copula_compute_structural_fitted_residuals(
     res.lm.aug = fit,
     names.aux.regs = grep("_cop$", names(coef(fit)), value = TRUE)
