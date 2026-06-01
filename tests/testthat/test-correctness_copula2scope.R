@@ -156,10 +156,13 @@ test_that("Parameter recovery: dataCopula2sCOPECase3", {
 # Return values calculated correctly -------------------------------------------------
 
 test_that("structural residuals & fitted values are calculated correctly", {
-  res <- expect_warning(fit_copula2sCOPE_lowboots(
-    formula = y ~ P + X | continuous(P, X),
-    data = dataCopula2sCOPECase1
-  ), regexp = "No exogenous regressors")
+  res <- expect_warning(
+    fit_copula2sCOPE_lowboots(
+      formula = y ~ P + X | continuous(P, X),
+      data = dataCopula2sCOPECase1
+    ),
+    regexp = "No exogenous regressors"
+  )
   res.lm <- res$res.lm.augmented
 
   # Alternative route: Remove cop contribution from augmented fit
@@ -175,7 +178,9 @@ test_that("structural residuals & fitted values are calculated correctly", {
 })
 
 # Single endo + 0 exo: Collapses to copulaCorrection case 1 (continuous only) ---------
-run_parkgupta_equivalent <- function(data){
+# data case 3: need non-normally distributed exogenous
+
+run_parkgupta_equivalent <- function(data) {
   # Need SE: With boots=1000
   expect_warning(
     res.2scope <- copula2sCOPE(
@@ -200,7 +205,6 @@ run_parkgupta_equivalent <- function(data){
   nms <- c("(Intercept)", "P")
   diff <- abs(coef(res.2scope)[nms] - coef(res.cc)[nms])
   expect_true(all(diff < sqrt(diag(vcov(res.2scope)))[nms]))
-
 }
 
 test_that("Single endo + NO exo: Same result as PG copulaCorrection (LL case 1) - data case 1", {
@@ -210,5 +214,3 @@ test_that("Single endo + NO exo: Same result as PG copulaCorrection (LL case 1) 
 test_that("Single endo + NO exo: Same result as PG copulaCorrection (LL case 1) - data case 2", {
   run_parkgupta_equivalent(dataCopula2sCOPECase2)
 })
-
-

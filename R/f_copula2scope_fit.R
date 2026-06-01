@@ -55,7 +55,6 @@ copula2sCOPE_fit <- function(F.formula, data, cdf) {
 }
 
 
-
 #' @importFrom stats qnorm lm residuals
 copula2sCOPE_residuals <- function(P.star, endo.cols) {
   Z <- qnorm(P.star)
@@ -79,7 +78,7 @@ copula2sCOPE_residuals <- function(P.star, endo.cols) {
     Z.j <- Z[, endo.cols[j], drop = TRUE]
 
     if (length(exo.cols) == 0) {
-      if (length(endo.cols) ==1){
+      if (length(endo.cols) == 1) {
         # when there is no exogenous regressors, correction term is just qnorm(F(P_j))
         # This matches the single regressor case in Park & Gupta (2012)
         res[, j] <- Z.j # I tried replicating the steps in Yang et al. 2025
@@ -89,15 +88,14 @@ copula2sCOPE_residuals <- function(P.star, endo.cols) {
         #it works well when the dataset has exo regressors as well but when there is a single
         #endo regressor and nothing else, because of the intercept, it may not be the same. So
         #better use the copulaCorrection() method directly
-      } else{
+      } else {
         #multiple endogenous regressors without exogenous ones
         #projecting every P_j* on all other P* with intercept
         other.endo.cols <- endo.cols[-j]
-        Z.others <- Z[, other.endo.cols, drop =FALSE]
+        Z.others <- Z[, other.endo.cols, drop = FALSE]
         lm.j <- lm(Z.j ~ Z.others) #with intercept
         res[, j] <- residuals(lm.j)
       }
-
     } else {
       #situation when there are exogenous regressors
       #projecting on exogenous W* with intercept
