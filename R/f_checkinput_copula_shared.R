@@ -108,8 +108,10 @@ checkinput_copulashared_formula <- function(formula) {
   }
 
   # Every RHS2 variable must be wrapped in continuous()
-  #RHS2 being in 'continuous()'
-  if (!all(rhs2.vars %in% names.vars.continuous)) {
+  rhs2.calls <- as.list(attr(terms(F.formula, rhs = 2, lhs = 0), "variables"))[-1]
+  if (!all(vapply(rhs2.calls, function(e){
+    is.call(e) && identical(e[[1]], as.name("continuous"))
+  }, logical(1)))) {
     err.msg <- c(
       err.msg,
       "Please wrap every endogenous regressor on the second RHS in continuous()."
