@@ -1,4 +1,5 @@
 skip_on_cran()
+set.seed(42)
 
 # Required data ---------------------------------------------------------------------
 data("dataCopula2sCOPECase1")
@@ -152,6 +153,33 @@ test_that("Parameter recovery: dataCopula2sCOPECase3", {
     true_vals = c("(Intercept)" = 1, P = 1, X = -1)
   )
 })
+
+
+# Parameter transformations ----------------------------------------------------------
+
+test_that("Parameter transformations (exo): Recovery", {
+  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
+  dataCopula2sCOPECase1_trans$X <- exp(dataCopula2sCOPECase1_trans$X)
+
+  copula2sCOPE_param_recovery(
+    formula = y ~ P + log(X) | continuous(P),
+    data = dataCopula2sCOPECase1_trans,
+    true_vals = c("(Intercept)" = 1, P = 1, "log(X)" = -1)
+  )
+})
+
+
+test_that("Parameter transformations (endo): Recovery", {
+  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
+  dataCopula2sCOPECase1_trans$P <- exp(dataCopula2sCOPECase1_trans$P)
+
+  copula2sCOPE_param_recovery(
+    formula = y ~ log(P) + X | continuous(log(P)),
+    data = dataCopula2sCOPECase1_trans,
+    true_vals = c("(Intercept)" = 1, "log(P)" = 1, X = -1)
+  )
+})
+
 
 # Return values calculated correctly -------------------------------------------------
 
