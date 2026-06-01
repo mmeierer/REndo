@@ -38,8 +38,10 @@ copula2sCOPE_fit <- function(F.formula, data, cdf) {
   #first-stage residuals: regressing each endogenous P* on exogenous W*, Eq (9) from Yang et. al 2024
   cop.terms <- copula2sCOPE_residuals(P.star = P.star, endo.cols = endogenous.columns)
 
-  f.main <- formula(mf)
 
+  f.main <- formula(mf)
+  # colnames(cop.terms) may contain chars illegal for formula labels
+  colnames(cop.terms) <- make.names(colnames(cop.terms))
   f.pcop <- reformulate(
     termlabels = c(".", colnames(cop.terms)),
     response = NULL,

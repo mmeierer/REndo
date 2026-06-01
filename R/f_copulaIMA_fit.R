@@ -50,6 +50,9 @@ copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
   has_intercept <- attr(terms(f.main), "intercept") == 1 #to ensure that intercept is handled
   #consistently across all stages
 
+  # colnames(cop.terms) may contain chars illegal for formula labels
+  colnames(cop.terms) <- make.names(colnames(cop.terms))
+
   f.pcop <- reformulate(
     termlabels = c(".", colnames(cop.terms)),
     response = NULL, # empty response (lhs)
