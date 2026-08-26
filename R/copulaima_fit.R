@@ -1,6 +1,6 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm model.frame model.matrix model.response
-copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
+copulaima_fit <- function(f.main, data, cdf, names.endo.regs) {
 
   # Prepare additional regressors -----------------------------------------------------
 
@@ -26,7 +26,7 @@ copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
   P.star <- copula_pstar(P = X.no.intercept, cdf = cdf) # (constructing P star, from Haschka 2025, page 164)
 
   # Haschka 2025 section 3.2 step 2: regressing each P*_l on exo X* only, without intercept
-  cop.terms <- copulaIMA_residuals(P.star, endo.cols = endogenous.columns)
+  cop.terms <- copulaima_residuals(P.star, endo.cols = endogenous.columns)
 
 
   # Fit final model -------------------------------------------------------------------
@@ -76,7 +76,7 @@ copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
 
 
 #' @importFrom stats qnorm lm residuals
-copulaIMA_residuals <- function(P.star, endo.cols) {
+copulaima_residuals <- function(P.star, endo.cols) {
   Z <- qnorm(P.star)
 
   if (!is.matrix(Z)) {

@@ -198,7 +198,7 @@ copulaIMA <- function(
       " continuous endogenous regressor(s)."
     )
   }
-  fit <- copulaIMA_fit(
+  fit <- copulaima_fit(
     f.main = f.main,
     data = data,
     cdf = cdf,
@@ -209,7 +209,7 @@ copulaIMA <- function(
 
   fn.fit.boots <- function(data.b) {
     return(
-      copulaIMA_fit(
+      copulaima_fit(
         f.main = f.main,
         data = data.b,
         cdf = cdf,
