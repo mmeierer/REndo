@@ -208,14 +208,13 @@ copulaIMA <- function(
   # Bootstrapping -------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    return(
-      copulaima_fit(
+    fit.b <- copulaima_fit(
         f.main = f.main,
         data = data.b,
         cdf = cdf,
         names.endo.regs = names.endo.regs
       )
-    )
+    return(fit.b$res.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
@@ -227,11 +226,9 @@ copulaIMA <- function(
   )
 
   # Structural residuals --------------------------------------------------------------
-
-  # TODO: Do not read names with grep but pass names back from fitting method
   l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit,
-    names.aux.regs = grep("_cop$", names(coef(fit)), value = TRUE)
+    res.lm.aug = fit$res.augmented,
+    names.aux.regs = fit$labels.pcop
   )
 
   # Return value ----------------------------------------------------------------------
@@ -243,7 +240,7 @@ copulaIMA <- function(
     boots = res.boots$boots.params,
     n.boots.attempted = res.boots$n.attempted,
     n.boots.failed = res.boots$n.failed,
-    res.lm.augmented = fit,
+    res.lm.augmented = fit$res.augmented,
     cdf = cdf,
     names.endo.regs = names.endo.regs
   ))

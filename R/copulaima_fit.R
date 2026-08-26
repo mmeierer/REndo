@@ -29,48 +29,16 @@ copulaima_fit <- function(f.main, data, cdf, names.endo.regs) {
   cop.terms <- copulaima_residuals(P.star, endo.cols = endogenous.columns)
 
 
-  # Fit final model -------------------------------------------------------------------
-
-  # Fit:
-  #   - formula: Main model as given by the user + additional Pcop regressors
-  #   - data: As given by the user (or bootstrapped) + Pcop regressor data
-  #
-  # Extending the formula with the additional regressors will ensure all coefficients
-  # names etc are preserved as the user gave them. This will just let `lm()` do the magic.
-  #
-  # Build final formula: Main model + Pcop regressors
-  # Build by updating the original formula (adding regressors):
-  #   update(y ~ X + P,  ~ . + Pcop1 + Pcop2)
-
-  # main formula has to be expanded to replace dot '.' with actual columns first.
-  # Take the already expanded formula from the model frame
-  f.main <- formula(mf)
-
-  # Build copula terms (~ . + Pcop1 + Pcop2)
-  has_intercept <- attr(terms(f.main), "intercept") == 1 #to ensure that intercept is handled
-  #consistently across all stages
-
-  # colnames(cop.terms) may contain chars illegal for formula labels
-  colnames(cop.terms) <- make.names(colnames(cop.terms))
-
-  f.pcop <- reformulate(
-    termlabels = c(".", colnames(cop.terms)),
-    response = NULL, # empty response (lhs)
-    intercept = has_intercept
+  # Stage 2 --------------------------------------------------------------------
+  res.2nd.stage <- copula_fit_2ndstage(
+    F.formula = F.formula,
+    data = data,
+    cop.terms = cop.terms
   )
 
-  # Add copula regressors to existing formula
-  f.final <- update(old = f.main, new = f.pcop)
-
-  # Alternative: Build final formula from scratch using the "names" of each regressor
-  # f.combined <- reformulate(
-  #   c(labels(terms(mf)), colnames(cop.terms)),
-  #   response = all.vars(f.main)[1]
-  # )
-
-  return(lm(
-    formula = f.final,
-    data = cbind(data, cop.terms)
+  return(list(
+    res.augmented = res.2nd.stage$res.augmented,
+    labels.pcop = res.2nd.stage$labels.pcop
   ))
 }
 
