@@ -68,3 +68,38 @@ test_that("copulaIMA rejects invalid parameters", {
     )
   }
 })
+
+
+# Wired in --------------------------------------------------------------------------
+# just check if parameter tests are wired in
+test_that("interface has methods wired in", {
+  df.na <- dataCopIMAContExo
+  df.na$P[1] <- NA
+
+  cases <- list(
+    "data_basics" = list(data = NULL),
+    "formula_data" = list(formula = y ~ P + X),
+    "modelframe" = list(data = df.na),
+    "cdf" = list(cdf = "cdf"),
+    "num.boots" = list(num.boots = -1),
+    "verbose" = list(verbose = NULL)
+  )
+
+  base.args <- list(
+    formula = y ~ X + P | P,
+    data = dataCopIMAContExo,
+    cdf = "adj.ecdf",
+    num.boots = 1000,
+    verbose = FALSE
+  )
+
+  for (nm in names(cases)) {
+    # all from base.args except the one being tested
+    args <- c(cases[[nm]], base.args[!names(base.args) %in% names(cases[[nm]])])
+    expect_error(
+      object = do.call(what = copulaIMA, args = args),
+      regexp = "The above errors",
+      info = nm
+    )
+  }
+})

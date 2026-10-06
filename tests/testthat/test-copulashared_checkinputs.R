@@ -35,15 +35,21 @@ test_that("_formula_basics rejects invalid formulas", {
     fn = checkinput_copulashared_formula_basics,
     cases = list(
       "not a formula" = list(formula = "y ~ x | z"),
+      "NULL" = list(formula = NULL),
+      "number" = list(formula = 1),
       "one part" = list(formula = y ~ x),
       "more than 2" = list(formula = y ~ x | z | w),
-      "multiple responses" = list(formula = y1 + y2 ~ x | z)
+      "multiple responses" = list(formula = y1 + y2 ~ x | z),
+      "no response" = list(formula = ~ x | z)
     ),
     regexp = c(
       "must be a formula",
+      "must be a formula",
+      "must be a formula",
       "two right",
       "two right",
-      "exactly one response"
+      "exactly one response",
+      "one left-hand side"
     )
   )
 })
@@ -240,6 +246,229 @@ test_that("_modelframe works for valid data", {
         x_ord = "ordered"
       ),
       labels.warn.low.card = NULL
+    )
+  )
+})
+
+
+# checkinput_copulashared_formula_data -----------------------------------------
+# check only its intrinsic parts + that building blocks are wired in
+
+formuladata_base_args <- function() {
+  df <- fixture_copula_df()
+  # to be able to do log()
+  df$x_pos <- abs(df$x_num) + 1
+
+  return(list(
+    data = df,
+    min.num.exo = 0,
+    allow.interactions = TRUE,
+    allowed.classes.endo = NULL,
+    allowed.classes.exo = NULL
+  ))
+}
+
+test_that("_formula_data has building blocks wired in", {
+  check_errmsg(
+    fn = checkinput_copulashared_formula_data,
+    base.args = formuladata_base_args(),
+    cases = list(
+      "formula_basics" = list(formula = "y ~ x_num | x_num"),
+      "vars_in_data" = list(formula = y ~ x_num + mis | x_num),
+      "response_not_in_rhs" = list(formula = y ~ y + x_num | x_num),
+      "modelframe" = list(formula = y ~ x_na + x_num | x_num)
+    ),
+    regexp = c(
+      "must be a formula",
+      "not found",
+      "also appear",
+      "missing values"
+    )
+  )
+})
+
+test_that("_formula_data rules hardcoded for all methods", {
+  base.args <- formuladata_base_args()
+
+  check_errmsg(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "continuous() special" = list(formula = y ~ x_num + x_fac | continuous(x_num)),
+      "discrete() special" = list(formula = y ~ x_num + x_fac | discrete(x_fac)),
+      "no endo" = list(formula = y ~ x_num | 1),
+      "endo not in rhs1" = list(formula = y ~ x_num | x_fac),
+      "transformed endo not in rhs1" = list(formula = y ~ x_num + log(x_pos) | x_pos),
+      "empty special" = list(formula = y ~ x_num | continuous()),
+      "response as endo" = list(formula = y ~ x_num | y),
+      "misspelled special" = list(formula = y ~ x_num + x_fac | continous(x_num)),
+      "rhs1 and rhs2 swapped" = list(formula = y ~ continuous(x_num) | x_num + x_fac)
+    ),
+    regexp = c(
+      "discrete\\(\\)/continuous\\(\\)",
+      "discrete\\(\\)/continuous\\(\\)",
+      "At least one endogenous",
+      "not in structural model",
+      "not in structural model",
+      "discrete\\(\\)/continuous\\(\\)",
+      "not in structural model",
+      # misspelled is not a special: plain term that is not in rhs1
+      "not in structural model",
+      # stops before building the model frame: endo not in rhs1
+      "not in structural model"
+    )
+  )
+
+  # low cardinality: always warn for endo
+  args.lowcard.endo <- c(list(formula = y ~ x_num + x_lowcard | x_lowcard), base.args)
+  expect_null(expect_warning(
+    do.call(checkinput_copulashared_formula_data, args.lowcard.endo),
+    regexp = "low cardinality"
+  ))
+
+  # but not for exo
+  args.lowcard.exo <- c(list(formula = y ~ x_num + x_lowcard | x_num), base.args)
+  expect_no_warning(do.call(checkinput_copulashared_formula_data, args.lowcard.exo))
+})
+
+test_that("_formula_data parameters work correctly", {
+  base.args <- formuladata_base_args()
+
+  # min.num.exo
+  check_errmsg(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "no exo, min 1" = list(formula = y ~ x_num | x_num, min.num.exo = 1),
+      "one exo, min 2" = list(formula = y ~ x_num + x_fac | x_num, min.num.exo = 2)
+    ),
+    regexp = "exogenous regressor"
+  )
+  check_errmsg_empty(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "no exo, min 0" = list(formula = y ~ x_num | x_num, min.num.exo = 0),
+      "one exo, min 1" = list(formula = y ~ x_num + x_fac | x_num, min.num.exo = 1)
+    )
+  )
+
+  # allow.interactions
+  check_errmsg(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "interaction in rhs1" = list(
+        formula = y ~ x_num * x_fac | x_num,
+        allow.interactions = FALSE
+      ),
+      "interaction only in rhs2" = list(
+        formula = y ~ x_num + x_fac | x_num:x_fac,
+        allow.interactions = FALSE
+      )
+    ),
+    regexp = "Interaction terms"
+  )
+  check_errmsg_empty(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "interaction allowed" = list(
+        formula = y ~ x_num * x_fac | x_num,
+        allow.interactions = TRUE
+      )
+    )
+  )
+
+  # allowed.classes.endo / allowed.classes.exo
+  check_errmsg(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "ordered endo, restricted" = list(
+        formula = y ~ x_num + x_ord | x_ord,
+        allowed.classes.endo = "numeric"
+      ),
+      "ordered exo, restricted" = list(
+        formula = y ~ x_num + x_ord | x_num,
+        allowed.classes.exo = c("numeric", "factor")
+      )
+    ),
+    regexp = "has class"
+  )
+  check_errmsg_empty(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "ordered endo, any class" = list(
+        formula = y ~ x_num + x_ord | x_ord,
+        allowed.classes.endo = NULL
+      ),
+      "ordered exo, any class" = list(
+        formula = y ~ x_num + x_ord | x_num,
+        allowed.classes.exo = NULL
+      ),
+      # exo restriction does not apply to endo and vice versa
+      "ordered endo, only exo restricted" = list(
+        formula = y ~ x_num + x_ord | x_ord,
+        allowed.classes.exo = "numeric"
+      ),
+      "ordered exo, only endo restricted" = list(
+        formula = y ~ x_num + x_ord | x_num,
+        allowed.classes.endo = "numeric"
+      )
+    )
+  )
+
+  # msg.* returned as-is
+  args.msg.exo <- modifyList(
+    base.args,
+    list(formula = y ~ x_num | x_num, min.num.exo = 1, msg.min.num.exo = "MSG EXO")
+  )
+  expect_identical(
+    do.call(checkinput_copulashared_formula_data, args.msg.exo),
+    "MSG EXO"
+  )
+
+  args.msg.inter <- modifyList(
+    base.args,
+    list(
+      formula = y ~ x_num * x_fac | x_num,
+      allow.interactions = FALSE,
+      msg.interactions = "MSG INTERACTIONS"
+    )
+  )
+  expect_identical(
+    do.call(checkinput_copulashared_formula_data, args.msg.inter),
+    "MSG INTERACTIONS"
+  )
+})
+
+test_that("_formula_data works with all kinds of formula edge cases", {
+  base.args <- formuladata_base_args()
+
+  check_errmsg_empty(
+    fn = checkinput_copulashared_formula_data,
+    base.args = base.args,
+    cases = list(
+      "plain" = list(formula = y ~ x_num + x_fac | x_num),
+      # limit data to cols that are valid to test dot
+      "dot in rhs1" = list(
+        formula = y ~ . | x_num,
+        data = base.args$data[, c("y", "x_num", "x_fac", "x_ord")]
+      ),
+      "backticks in exo" = list(formula = y ~ x_num + `x space` | x_num),
+      "backticks in endo" = list(formula = y ~ `x space` + x_num | `x space`),
+      "transformed response" = list(formula = exp(y) ~ x_num + x_fac | x_num),
+      "transformed exo" = list(formula = y ~ log(x_pos) + x_num | x_num),
+      "transformed endo" = list(formula = y ~ x_num + log(x_pos) | log(x_pos)),
+      "inline function" = list(formula = y ~ x_num + I(x_pos^2) | x_num),
+      "no intercept" = list(formula = y ~ x_num + x_fac - 1 | x_num),
+      "duplicate regressor" = list(formula = y ~ x_num + x_num + x_fac | x_num),
+      "multiple endo" = list(
+        formula = y ~ x_num + `x space` + x_fac | x_num + `x space`
+      ),
+      "character exo" = list(formula = y ~ x_num + x_string | x_num)
     )
   )
 })

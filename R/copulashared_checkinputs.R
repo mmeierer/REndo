@@ -339,3 +339,128 @@ checkinput_copulashared_modelframe <- function(
 
   return(err.msg)
 }
+
+
+# 2-part Formula of structure: (response) ~ (structural model) | (endo terms),
+# eg y ~ X + P | P
+#
+# Always:
+# - formula basics (formula, 1 lhs, 2 rhs parts, single response)
+# - all variables in data (dot allowed)
+# - response not in rhs1
+# - no continuous()/discrete() specials (if users are mistaking the interface)
+# - >= 1 endogenous regressor
+# - endogenous terms (rhs2) also in structural model (rhs1)
+# - endogenous: warniung if low cardinality
+#
+# Exo terms are usually derived using setdiff(rhs1, rhs2), therefore there
+# is no overlap between them. But at the *variable*-level (eg log(P) -> P)
+# endo vars may be in the exogenous *terms*, eg:
+#   y ~ X + P + log(P) | P -> log(P) is allowed and exogenous - unless ofc
+# the method says otherwise
+#
+#' @importFrom Formula as.Formula
+#' @importFrom stats terms setNames
+checkinput_copulashared_formula_data <- function(
+  formula,
+  data,
+  min.num.exo,
+  allow.interactions,
+  allowed.classes.endo,
+  allowed.classes.exo,
+  msg.min.num.exo = paste0(
+    "At least ",
+    min.num.exo,
+    " exogenous regressor(s) are required for this method."
+  ),
+  msg.interactions = "Interaction terms are not supported for this method."
+) {
+  # Formula only ----------------------------------------------------------------
+  err.msg <- checkinput_copulashared_formula_basics(formula = formula)
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  F.formula <- as.Formula(formula)
+
+  # Formula vs data ------------------------------------------------------------
+  err.msg <- checkinput_copulashared_vars_in_data(F.formula = F.formula, data = data)
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Expanded terms ------------------------------------------------------------
+  # Expand dot against data
+  # specials: check if user wrongly specified them
+  specials <- c("discrete", "continuous")
+  rhs1.terms <- terms(F.formula, lhs = 0, rhs = 1, data = data, specials = specials)
+  rhs2.terms <- terms(F.formula, lhs = 0, rhs = 2, data = data, specials = specials)
+
+  rhs1.labels <- labels(rhs1.terms)
+  endo.labels <- labels(rhs2.terms)
+  exo.labels <- rhs1.labels[!rhs1.labels %in% endo.labels]
+
+  err.msg <- checkinput_copulashared_response_not_in_rhs(
+    F.formula = F.formula,
+    rhs1.terms = rhs1.terms
+  )
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Catch if wrongly specified specials
+  if (length(unlist(attr(rhs2.terms, "specials"))) > 0) {
+    err.msg <- c(err.msg, "discrete()/continuous() are not supported for this method.")
+  }
+
+  # Interactions: check both parts for a clearer message if given in rhs2
+  if (!allow.interactions) {
+    if (any(attr(rhs1.terms, "order") > 1) || any(attr(rhs2.terms, "order") > 1)) {
+      err.msg <- c(err.msg, msg.interactions)
+    }
+  }
+
+  if (length(endo.labels) == 0) {
+    err.msg <- c(err.msg, "At least one endogenous regressor (rhs2) is required.")
+  }
+
+  if (length(exo.labels) < min.num.exo) {
+    err.msg <- c(err.msg, msg.min.num.exo)
+  }
+
+  # Endo terms (RHS2) must also be in structural model (RHS1)
+  not.in.rhs1 <- endo.labels[!endo.labels %in% rhs1.labels]
+  if (length(not.in.rhs1) > 0) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Endogenous regressor(s) not in structural model (rhs1): ",
+      toString(not.in.rhs1), "."))
+  }
+
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Model frame ---------------------------------------------------------------
+  # Only check classes where restricted (NULL = any class)
+  allowed.classes <- list()
+  if (!is.null(allowed.classes.endo)) {
+    allowed.classes <- c(
+      allowed.classes,
+      setNames(rep(list(allowed.classes.endo), length(endo.labels)), endo.labels)
+    )
+  }
+  if (!is.null(allowed.classes.exo)) {
+    allowed.classes <- c(
+      allowed.classes,
+      setNames(rep(list(allowed.classes.exo), length(exo.labels)), exo.labels)
+    )
+  }
+
+  return(checkinput_copulashared_modelframe(
+    F.formula = F.formula,
+    data = data,
+    allowed.classes = allowed.classes,
+    labels.warn.low.card = endo.labels
+  ))
+}

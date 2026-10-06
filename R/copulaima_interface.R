@@ -167,9 +167,8 @@ copulaIMA <- function(
 
   # Input checks  -------------------------------------------------------------------
 
-  check_err_msg(checkinput_copulashared_formula(formula))
-  check_err_msg(checkinput_copulashared_data(data))
-  check_err_msg(checkinput_copulashared_dataVSformula(data = data, formula = formula))
+  check_err_msg(checkinput_copulashared_data_basics(data))
+  check_err_msg(checkinput_copulaima_formula_data(data = data, formula = formula))
   check_err_msg(checkinput_copulashared_cdf(
     cdf,
     allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
