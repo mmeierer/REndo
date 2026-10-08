@@ -31,7 +31,7 @@
 #' @template template_param_cdf
 #'
 #' @details
-#' \subsection{Model}{
+#' ## Model
 #'
 #' Consider the structural regression model with \eqn{K} endogenous regressors:
 #'
@@ -70,29 +70,27 @@
 #' However, the bias decreases rapidly as sample size increases and become
 #' negligible for moderate sample sizes (around n >= 600). The estimator appears
 #' asymptotically unbiased.
-#' }
-#'
-#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_text_details_cdfmethods
 #'
 #' @details
-#' \subsection{Formula interface}{
+#' ## Parameter \code{formula}
+#' The \code{formula} argument follows a two part notation separated by \code{|}.
+#' The first part specifies the structural model (e.g. \code{y ~ X + P}).
+#' The second part identifies the continuous endogenous regressors:
 #'
-#' The \code{formula} argument follows a two-part notation separated by
-#' \code{|}. The first part specifies the structural model. The second part
-#' identifies the continuous endogenous regressors using \code{continuous()}:
-#'
-#' \preformatted{y ~ X + P | continuous(P)                          # typical use: with intercept}
-#' \preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endogenous regressors}
-#' \preformatted{y ~ X + P - 1 | continuous(P)                      # no intercept (in simulation settings)}
+#' \preformatted{y ~ X + P | P                       # endogenous P}
+#' \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endogenous regressors}
+#' \preformatted{y ~ P1 + P2 | P1 + P2               # no exogenous regressors}
+#' \preformatted{y ~ X + P - 1 | P                   # no intercept (in simulation settings)}
 #'
 #' In typical applied settings the model includes an intercept. The
 #' no-intercept specification (\code{-1}) is primarily used in simulation
-#' studies following the design of (Haschka (2025)  Section 4.1)
+#' studies following the design of (Haschka (2025) Section 4.1)
 #' and is unlikely to be appropriate for real datasets.
-#' }
 #'
+#'
+#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_haschka2025ima
 #' @template template_references_parkgupta2012
@@ -102,6 +100,11 @@
 #'
 #' @family copula-based methods
 #'
+#' @seealso \code{\link[REndo:dataCopIMABinExo]{dataCopIMABinExo},
+#' \link[REndo:dataCopIMAContExo]{dataCopIMAContExo},
+#' \link[REndo:dataCopIMAMultiEndo]{dataCopIMAMultiEndo}} for detailed
+#' information about the simulated datasets
+#'
 #' @examples
 #' #------------------------------------------------------------------------
 #' # Example 1: Single endogenous regressor with continuous
@@ -110,7 +113,7 @@
 #' #------------------------------------------------------------------------
 #' data(dataCopIMAContExo)
 #' res <- copulaIMA(
-#'   y ~ X + P - 1 | continuous(P),
+#'   y ~ X + P - 1 | P,
 #'   data = dataCopIMAContExo,
 #'   cdf = "adj.ecdf",
 #'   num.boots = 1000
@@ -125,8 +128,7 @@
 #' #------------------------------------------------------------------------
 #' data("dataCopIMAMultiEndo")
 #' res2 <- copulaIMA(
-#'   # Alternative: y ~ P1 + P2 | continuous(P1, P2)
-#'   y ~ P1 + P2 | continuous(P1) + continuous(P2),
+#'   y ~ P1 + P2 | P1 + P2,
 #'   data = dataCopIMAMultiEndo,
 #'   cdf = "adj.ecdf",
 #'   num.boots = 1000
@@ -136,15 +138,15 @@
 #' #------------------------------------------------------------------------
 #' # Example 3: Single endogenous regressor with binary exogenous regressor
 #' # (Haschka 2025, section 4.1 scenario 2)
-#'
-#' # This example shows one of the key example of IMA method, i.e., the exogenous
+#' #
+#' # This example shows one of the key examples of IMA method, i.e., the exogenous
 #' # regressor does not need to be continuous or normally distributed.
 #' # X the exogenous regressor is binary (0 or 1).
 #' # True values: alpha = 1 (P), beta = 1 (X), no intercept.
 #' #------------------------------------------------------------------------
 #' data("dataCopIMABinExo")
 #' res3 <- copulaIMA(
-#'    y ~ X + P - 1 | continuous(P),
+#'    y ~ X + P - 1 | P,
 #'    data = dataCopIMABinExo,
 #'    cdf = "adj.ecdf",
 #'    num.boots = 1000
@@ -152,10 +154,11 @@
 #' summary(res3)
 #' }
 #'
-#'
+#' @md
 #' @export
-#' @importFrom stats coef
-#' @importFrom utils txtProgressBar setTxtProgressBar
+#'
+#' @importFrom stats coef terms
+#' @importFrom Formula as.Formula
 copulaIMA <- function(
   formula,
   data,
@@ -166,19 +169,16 @@ copulaIMA <- function(
   cl <- match.call()
 
   # Input checks  -------------------------------------------------------------------
-
+  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
   check_err_msg(checkinput_copulashared_data_basics(data))
   check_err_msg(checkinput_copulaima_formula_data(data = data, formula = formula))
-  check_err_msg(checkinput_copulashared_cdf(
-    cdf,
-    allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
-  ))
+  check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf = allowed.cdfs))
   check_err_msg(checkinput_copulashared_numboots(num.boots))
   check_err_msg(checkinput_copulashared_verbose(verbose))
 
   # Fit original data ---------------------------------------------------------------
 
-  cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
+  cdf <- match.arg(cdf, choices = allowed.cdfs)
 
   F.formula <- as.Formula(formula)
   labels.main <- labels(terms(F.formula, data = data, rhs = 1))
