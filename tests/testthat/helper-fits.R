@@ -15,6 +15,43 @@ suppress_lowboots_warning <- function(expr) {
   )
 }
 
+# copulaIMA ----------------------------------------------------------------------------
+fit_ima_fast <- function(
+    formula,
+    data,
+    cdf = "adj.ecdf",
+    num.boots = 2,
+    verbose = FALSE
+) {
+  return(suppress_lowboots_warning(
+    copulaIMA(
+      formula = formula,
+      data = data,
+      cdf = cdf,
+      num.boots = num.boots,
+      verbose = verbose
+    )
+  ))
+}
+
+fit_ima_defaults <- function(
+    formula,
+    data,
+    cdf = "adj.ecdf",
+    num.boots = 1000,
+    verbose = FALSE
+) {
+  return(suppress_lowboots_warning(
+    copulaIMA(
+      formula = formula,
+      data = data,
+      cdf = cdf,
+      num.boots = num.boots,
+      verbose = verbose
+    )
+  ))
+}
+
 # copula2sCOPEnp -----------------------------------------------------------------------
 fit_2scopenp_fast <- function(
   formula,

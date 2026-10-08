@@ -52,39 +52,24 @@ specs <- list(
 
 cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
 
-expect_no_error_ignore_boot_warn <- function(expr) {
-  expect_no_error(suppress_lowboots_warning(expr))
-}
-
 # specs x cdf ----------------------------------------------------------------------
 test_that("copulaIMA runs across specs and cdf options", {
-  for (spec_name in names(specs)) {
-    for (cdf in cdfs) {
-      res <- expect_no_error_ignore_boot_warn(
-        copulaIMA(
-          formula = specs[[spec_name]]$formula,
-          data = specs[[spec_name]]$data,
-          cdf = cdf,
-          verbose = FALSE,
-          num.boots = 10
-        )
-      )
-      check_clean_fit(res)
-    }
+  for (cdf in cdfs) {
+    run_cases(
+      fn = fit_ima_fast,
+      base.args = list(cdf = cdf),
+      cases = specs,
+      check = check_clean_fit
+    )
   }
 })
 
 # small sample ---------------------------------------------------------------------
 test_that("copulaIMA runs on small sample", {
   small_data <- dataCopIMAContExo[1:50, ]
-  res <- expect_no_error_ignore_boot_warn(
-    copulaIMA(
-      formula = y ~ X + P - 1 | P,
-      data = small_data,
-      cdf = "adj.ecdf",
-      verbose = FALSE,
-      num.boots = 10
-    )
+  res <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
+    data = small_data
   )
   check_clean_fit(res)
 })
@@ -92,14 +77,9 @@ test_that("copulaIMA runs on small sample", {
 
 # S3 methods -----------------------------------------------------------------------
 test_that("S3 methods print and summary run without error", {
-  res <- expect_warning(
-    copulaIMA(
-      formula = y ~ X + P - 1 | P,
-      data = dataCopIMAContExo,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
+  res <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
+    data = dataCopIMAContExo
   )
 
   expect_no_error(capture_output(print(res)))

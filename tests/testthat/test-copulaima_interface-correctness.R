@@ -6,35 +6,17 @@ data("dataCopIMAContExo")
 data("dataCopIMAMultiEndo")
 data("dataCopIMABinExo")
 
-# Setup ----------------------------------------------------------------------------
-fit_copulaima_lowboots <- function(
-  formula,
-  data,
-  cdf = "adj.ecdf",
-  num.boots = 10,
-  verbose = FALSE
-) {
-  return(suppress_lowboots_warning(
-    copulaIMA(
-      formula = formula,
-      data = data,
-      cdf = cdf,
-      num.boots = num.boots,
-      verbose = verbose
-    )
-  ))
-}
 
 # Data sorting ----------------------------------------------------------------------
 test_that("Differently sorted data produces same results", {
   data_sorted <- dataCopIMAContExo[order(dataCopIMAContExo$y), ]
   data_rev <- dataCopIMAContExo[rev(order(dataCopIMAContExo$y)), ]
 
-  res_sorted <- fit_copulaima_lowboots(
+  res_sorted <- fit_ima_fast(
     formula = y ~ X + P - 1 | P,
     data = data_sorted
   )
-  res_rev <- fit_copulaima_lowboots(
+  res_rev <- fit_ima_fast(
     formula = y ~ X + P - 1 | P,
     data = data_rev
   )
@@ -45,12 +27,12 @@ test_that("Differently sorted data produces same results", {
 # Formula specifications ------------------------------------------------------
 
 test_that("Intercept in formula is correctly respected", {
-  res_with <- fit_copulaima_lowboots(
+  res_with <- fit_ima_fast(
     formula = y ~ X + P | P,
     data = dataCopIMAContExo
   )
 
-  res_without <- fit_copulaima_lowboots(
+  res_without <- fit_ima_fast(
     formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
@@ -64,12 +46,12 @@ test_that("Intercept in formula is correctly respected", {
 })
 
 test_that("Regressor order in formula does not affect results", {
-  res_xy <- fit_copulaima_lowboots(
+  res_xy <- fit_ima_fast(
     formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
-  res_yx <- fit_copulaima_lowboots(
+  res_yx <- fit_ima_fast(
     formula = y ~ P + X - 1 | P,
     data = dataCopIMAContExo
   )
@@ -78,12 +60,12 @@ test_that("Regressor order in formula does not affect results", {
 })
 
 test_that("Duplicate regressors are handled correctly", {
-  res_normal <- fit_copulaima_lowboots(
+  res_normal <- fit_ima_fast(
     formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
-  res_dup <- fit_copulaima_lowboots(
+  res_dup <- fit_ima_fast(
     formula = y ~ X + X + P - 1 | P,
     data = dataCopIMAContExo
   )
@@ -93,45 +75,36 @@ test_that("Duplicate regressors are handled correctly", {
 
 # Parameter recovery -------------------------------------------------------
 
-copulaima_param_recovery <- function(formula, data, true_vals) {
-  res <- copulaIMA(
-    formula = formula,
-    data = data,
-    cdf = "adj.ecdf",
-    num.boots = 1000,
-    verbose = FALSE
-  )
-  check_param_recovery(res = res, true_vals = true_vals)
-}
-
 test_that("Parameter recovery: dataCopIMAContExo", {
-  copulaima_param_recovery(
+  res <- fit_ima_defaults(
     formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo,
-    true_vals = c(X = 1, P = 1)
+    data = dataCopIMAContExo
   )
+
+  check_param_recovery(res = res, true_vals = c(X = 1, P = 1))
 })
 
 test_that("Parameter recovery: dataCopIMAMultiEndo", {
-  copulaima_param_recovery(
+  res <- fit_ima_defaults(
     formula = y ~ P1 + P2 | P1 + P2,
-    data = dataCopIMAMultiEndo,
-    true_vals = c("(Intercept)" = 10, P1 = 1, P2 = 1)
+    data = dataCopIMAMultiEndo
   )
+
+  check_param_recovery(res = res, true_vals = c("(Intercept)" = 10, P1 = 1, P2 = 1))
 })
 
 test_that("Parameter recovery: dataCopIMABinExo", {
-  copulaima_param_recovery(
+  res <- fit_ima_defaults(
     formula = y ~ X + P - 1 | P,
-    data = dataCopIMABinExo,
-    true_vals = c(X = 1, P = 1)
+    data = dataCopIMABinExo
   )
+  check_param_recovery(res = res, true_vals = c(X = 1, P = 1))
 })
 
 # Return values calculated correctly -------------------------------------------------
 
 test_that("structural residuals & fitted values are calculated correctly", {
-  res <- fit_copulaima_lowboots(
+  res <- fit_ima_fast(
     formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
