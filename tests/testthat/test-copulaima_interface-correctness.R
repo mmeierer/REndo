@@ -30,15 +30,13 @@ test_that("Differently sorted data produces same results", {
   data_sorted <- dataCopIMAContExo[order(dataCopIMAContExo$y), ]
   data_rev <- dataCopIMAContExo[rev(order(dataCopIMAContExo$y)), ]
 
-  res_sorted <- copulaIMA(
+  res_sorted <- fit_copulaima_lowboots(
     formula = y ~ X + P - 1 | P,
-    data = data_sorted,
-    verbose = FALSE
+    data = data_sorted
   )
-  res_rev <- copulaIMA(
+  res_rev <- fit_copulaima_lowboots(
     formula = y ~ X + P - 1 | P,
-    data = data_rev,
-    verbose = FALSE
+    data = data_rev
   )
 
   expect_equal(object = coef(res_sorted), expected = coef(res_rev))
@@ -76,10 +74,7 @@ test_that("Regressor order in formula does not affect results", {
     data = dataCopIMAContExo
   )
 
-  expect_equal(
-    object = sort(coef(res_xy)[names(coef(res_xy))]),
-    expected = sort(coef(res_yx)[names(coef(res_yx))])
-  )
+  expect_equal(object = sort(coef(res_xy)), expected = sort(coef(res_yx)))
 })
 
 test_that("Duplicate regressors are handled correctly", {
