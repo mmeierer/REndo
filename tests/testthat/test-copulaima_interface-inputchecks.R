@@ -9,15 +9,16 @@ data("dataCopIMAContExo")
 invalid_formulas <- list(
   "missing RHS 2" = y ~ 1,
   "no endogenous spec (no |)" = y ~ X + P,
-  "var in continuous() not in formula" = y ~ X + P | continuous(Z),
-  "dependent var in continuous()" = y ~ X + P | continuous(y),
-  "no response variable" = ~ X + P | continuous(P),
-  "exo variable not in data" = y ~ X + Q + P| continuous(P),
-  "endo variable not in data" = y ~ X + Q | continuous(Q),
+  "var in rhs2 not in formula" = y ~ X + P | Z,
+  "dependent var in rhs2" = y ~ X + P | y,
+  "no response variable" = ~ X + P | P,
+  "exo variable not in data" = y ~ X + Q + P | P,
+  "endo variable not in data" = y ~ X + Q | Q,
   "illegal special" = y ~ X + P | discrete(P),
   "misspelled special" = y ~ X + P | continous(P),
-  "using dot" = y ~ . | continuous(P),
-  "rhs1 and rhs2 swapped" = y ~ continuous(P) | X + P
+  "continuous() special" = y ~ X + P | continuous(P),
+  "interaction" = y ~ X * P | P,
+  "rhs1 and rhs2 swapped" = y ~ P | X + P
 )
 
 test_that("copulaIMA rejects invalid formula specifications", {
@@ -48,7 +49,7 @@ invalid_params <- list(
 
 test_that("copulaIMA rejects invalid parameters", {
   base_args <- list(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo,
     cdf = "adj.ecdf",
     num.boots = 1000,

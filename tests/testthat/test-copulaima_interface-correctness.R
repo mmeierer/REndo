@@ -31,12 +31,12 @@ test_that("Differently sorted data produces same results", {
   data_rev <- dataCopIMAContExo[rev(order(dataCopIMAContExo$y)), ]
 
   res_sorted <- copulaIMA(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = data_sorted,
     verbose = FALSE
   )
   res_rev <- copulaIMA(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = data_rev,
     verbose = FALSE
   )
@@ -45,29 +45,15 @@ test_that("Differently sorted data produces same results", {
 })
 
 # Formula specifications ------------------------------------------------------
-test_that("Equivalent continuous() specifications produce same results", {
-  res_combined <- fit_copulaima_lowboots(
-    formula = y ~ P1 + P2 | continuous(P1, P2),
-    data = dataCopIMAMultiEndo
-  )
-
-  res_separate <- fit_copulaima_lowboots(
-    formula = y ~ P1 + P2 | continuous(P1) + continuous(P2),
-    data = dataCopIMAMultiEndo
-  )
-
-  expect_equal(coef(res_combined), coef(res_separate))
-})
-
 
 test_that("Intercept in formula is correctly respected", {
   res_with <- fit_copulaima_lowboots(
-    formula = y ~ X + P | continuous(P),
+    formula = y ~ X + P | P,
     data = dataCopIMAContExo
   )
 
   res_without <- fit_copulaima_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
@@ -81,12 +67,12 @@ test_that("Intercept in formula is correctly respected", {
 
 test_that("Regressor order in formula does not affect results", {
   res_xy <- fit_copulaima_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
   res_yx <- fit_copulaima_lowboots(
-    formula = y ~ P + X - 1 | continuous(P),
+    formula = y ~ P + X - 1 | P,
     data = dataCopIMAContExo
   )
 
@@ -98,12 +84,12 @@ test_that("Regressor order in formula does not affect results", {
 
 test_that("Duplicate regressors are handled correctly", {
   res_normal <- fit_copulaima_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
   res_dup <- fit_copulaima_lowboots(
-    formula = y ~ X + X + P - 1 | continuous(P),
+    formula = y ~ X + X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
@@ -125,7 +111,7 @@ copulaima_param_recovery <- function(formula, data, true_vals) {
 
 test_that("Parameter recovery: dataCopIMAContExo", {
   copulaima_param_recovery(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo,
     true_vals = c(X = 1, P = 1)
   )
@@ -133,7 +119,7 @@ test_that("Parameter recovery: dataCopIMAContExo", {
 
 test_that("Parameter recovery: dataCopIMAMultiEndo", {
   copulaima_param_recovery(
-    formula = y ~ P1 + P2 | continuous(P1, P2),
+    formula = y ~ P1 + P2 | P1 + P2,
     data = dataCopIMAMultiEndo,
     true_vals = c("(Intercept)" = 10, P1 = 1, P2 = 1)
   )
@@ -141,7 +127,7 @@ test_that("Parameter recovery: dataCopIMAMultiEndo", {
 
 test_that("Parameter recovery: dataCopIMABinExo", {
   copulaima_param_recovery(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMABinExo,
     true_vals = c(X = 1, P = 1)
   )
@@ -151,7 +137,7 @@ test_that("Parameter recovery: dataCopIMABinExo", {
 
 test_that("structural residuals & fitted values are calculated correctly", {
   res <- fit_copulaima_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
   check_struct_residuals(res = res, aux.names = "P_cop")

@@ -10,7 +10,7 @@ data("dataCopIMABinExo")
 test_that("Works out of the box", {
   expect_no_error(capture_output(
     copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
+      formula = y ~ X + P - 1 | P,
       data = dataCopIMAContExo
     )
   ))
@@ -26,27 +26,27 @@ test_that("Works out of the box", {
 
 specs <- list(
   "no intercept, continuous exo, single endo" = list(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   ),
   "with intercept, continuous exo, single endo" = list(
-    formula = y ~ X + P | continuous(P),
+    formula = y ~ X + P | P,
     data = dataCopIMAContExo
   ),
   "no intercept, binary exo, single endo" = list(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMABinExo
   ),
   "with intercept, no exo, multiple endo" = list(
-    formula = y ~ P1 + P2 | continuous(P1, P2),
+    formula = y ~ P1 + P2 | P1 + P2,
     data = dataCopIMAMultiEndo
   ),
   "with intercept, no exo, single endo" = list(
-    formula = y ~ P1 | continuous(P1),
+    formula = y ~ P1 | P1,
     data = dataCopIMAMultiEndo
   ),
   "no intercept, no exo, single endo (minimal)" = list(
-    formula = y ~ P1 - 1 | continuous(P1),
+    formula = y ~ P1 - 1 | P1,
     data = dataCopIMAMultiEndo
   )
 )
@@ -84,7 +84,7 @@ test_that("copulaIMA runs on small sample", {
   small_data <- dataCopIMAContExo[1:50, ]
   expect_no_error_ignore_boot_warn(
     copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
+      formula = y ~ X + P - 1 | P,
       data = small_data,
       cdf = "adj.ecdf",
       verbose = FALSE,
@@ -98,7 +98,7 @@ test_that("copulaIMA runs on small sample", {
 test_that("S3 methods print and summary run without error", {
   res <- expect_warning(
     copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
+      formula = y ~ X + P - 1 | P,
       data = dataCopIMAContExo,
       verbose = FALSE,
       num.boots = 10
