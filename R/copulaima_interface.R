@@ -180,39 +180,37 @@ copulaIMA <- function(
 
   cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
 
-  F.formula <- Formula::as.Formula(formula)
-  f.main <- formula(F.formula, lhs = 1, rhs = 1)
-  names.endo.regs <- formula_readout_special(
-    F.formula = F.formula,
-    name.special = "continuous",
-    from.rhs = 2,
-    params.as.chars.only = TRUE
-  )
+  F.formula <- as.Formula(formula)
+  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
+  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
+  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   # Fitting with copula IMA model
   if (verbose) {
     message(
-      "Fitting Haschka's copula-based IMA model for ",
-      length(names.endo.regs),
+      "Fitting Haschka's copula-based IMA model with ",
+      length(labels.endo),
       " continuous endogenous regressor(s)."
     )
   }
   fit <- copulaima_fit(
-    f.main = f.main,
+    F.formula = F.formula,
     data = data,
     cdf = cdf,
-    names.endo.regs = names.endo.regs
+    labels.endo = labels.endo,
+    labels.exo = labels.exo
   )
 
   # Bootstrapping -------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
     fit.b <- copulaima_fit(
-        f.main = f.main,
-        data = data.b,
-        cdf = cdf,
-        names.endo.regs = names.endo.regs
-      )
+      F.formula = F.formula,
+      data = data.b,
+      cdf = cdf,
+      labels.endo = labels.endo,
+      labels.exo = labels.exo
+    )
     return(fit.b$res.augmented)
   }
 
@@ -220,7 +218,7 @@ copulaIMA <- function(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit)),
+    coef.names = names(coef(fit$res.augmented)),
     verbose = verbose
   )
 
@@ -241,6 +239,6 @@ copulaIMA <- function(
     n.boots.failed = res.boots$n.failed,
     res.lm.augmented = fit$res.augmented,
     cdf = cdf,
-    names.endo.regs = names.endo.regs
+    names.endo.regs = labels.endo
   ))
 }
