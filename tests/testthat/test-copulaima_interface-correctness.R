@@ -101,45 +101,13 @@ test_that("Parameter recovery: dataCopIMABinExo", {
   check_param_recovery(res = res, true_vals = c(X = 1, P = 1))
 })
 
-# Return values calculated correctly -------------------------------------------------
-
-test_that("structural residuals & fitted values are calculated correctly", {
-  res <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-  check_struct_residuals(res = res, aux.names = "P_cop")
-})
-
-
 # Internal consistency --------------------------------------------------------------
 
 test_that("Formula edge cases", {
-  # labels etc are correctly preserved
-  df.bt <- dataCopIMAContExo
-  df.bt$`P 1` <- df.bt$P
-  df.bt$`X 1` <- df.bt$X
-  df.bt$P.pos <- abs(df.bt$P) + 1
-
-  df.multi.bt <- dataCopIMAMultiEndo
-  df.multi.bt$`P 1` <- df.multi.bt$P1
-
-  cases <- list(
-    "plain" = list(formula = y ~ X + P | P, data = dataCopIMAContExo),
-    "dot in rhs1" = list(formula = y ~ . | P, data = dataCopIMAContExo),
-    "backticks in endo" = list(formula = y ~ `P 1` + X | `P 1`, data = df.bt),
-    "backticks in exo" = list(formula = y ~ P + `X 1` | P, data = df.bt),
-    "transformed endo" = list(formula = y ~ log(P.pos) + X | log(P.pos), data = df.bt),
-    "no exo, single endo" = list(formula = y ~ P1 | P1, data = dataCopIMAMultiEndo),
-    "no exo, multiple endo with backtick" = list(
-      formula = y ~ `P 1` + P2 | `P 1` + P2,
-      data = df.multi.bt
-    )
-  )
-
+  # Are labels etc are correctly preserved
   run_cases(
     fn = fit_ima_fast,
-    cases = cases,
+    cases = fixture_ima_formula_edge_cases(),
     check = function(res) {
       check_labelled_consistently(res)
       check_struct_residuals(res = res, aux.names = res$labels.pcop)

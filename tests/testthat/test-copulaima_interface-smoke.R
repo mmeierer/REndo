@@ -64,6 +64,24 @@ test_that("copulaIMA runs across specs and cdf options", {
   }
 })
 
+# Formula -------------------------------------------------------------------------
+
+test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
+  #   Do s3 methods work correctly
+  results <- run_cases(
+    fn = fit_ima_fast,
+    cases = fixture_ima_formula_edge_cases(),
+    check = check_clean_fit
+  )
+
+  # S3 methods on each edge case
+  for (nm in names(results)) {
+    expect_no_error(capture_output(print(results[[nm]])))
+    expect_no_error(capture_output(print(summary(results[[nm]]))))
+  }
+})
+
+
 # Tolerate irrelevant data ----------------------------------------------------------
 test_that("Works with NA in irrelevant col", {
   df <- dataCopIMAContExo
@@ -82,16 +100,4 @@ test_that("copulaIMA runs on small sample", {
     data = small_data
   )
   check_clean_fit(res)
-})
-
-
-# S3 methods -----------------------------------------------------------------------
-test_that("S3 methods print and summary run without error", {
-  res <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  expect_no_error(capture_output(print(res)))
-  expect_no_error(capture_output(print(summary(res))))
 })
