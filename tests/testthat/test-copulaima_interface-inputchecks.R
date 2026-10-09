@@ -4,42 +4,6 @@ skip_on_cran()
 data("dataCopIMAContExo")
 
 
-# Other params ----------------------------------------------------------------------
-invalid_params <- list(
-  "data is NULL" = list(data = NULL),
-  "data is not a df" = list(data = list(1, 2)),
-  "cdf invalid string" = list(cdf = "invalid"),
-  "cdf is NULL" = list(cdf = NULL),
-  "num.boots is 0" = list(num.boots = 0),
-  "num.boots negative" = list(num.boots = -1),
-  "num.boots non-numeric" = list(num.boots = "abc"),
-  "verbose is non-logical" = list(verbose = 1)
-)
-
-test_that("copulaIMA rejects invalid parameters", {
-  base_args <- list(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo,
-    cdf = "adj.ecdf",
-    num.boots = 1000,
-    verbose = FALSE
-  )
-
-  for (nm in names(invalid_params)) {
-    # Put together: invalid args + missing ones (modifyList does not work)
-    args <- c(
-      invalid_params[[nm]],
-      base_args[!names(base_args) %in% names(invalid_params[[nm]])]
-    )
-    expect_error(
-      do.call(what = copulaIMA, args = args),
-      info = nm,
-      regexp = "The above errors were encountered"
-    )
-  }
-})
-
-
 # Wired in --------------------------------------------------------------------------
 # just check if parameter tests are wired in
 test_that("interface has methods wired in", {

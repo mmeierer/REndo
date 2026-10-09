@@ -472,3 +472,106 @@ test_that("_formula_data works with all kinds of formula edge cases", {
     )
   )
 })
+
+
+# checkinput_copulashared_cdf -------------------------------------------------------
+test_that("_cdf rejects invalid cdf", {
+  check_errmsg(
+    fn = checkinput_copulashared_cdf,
+    base.args = list(allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")),
+    cases = list(
+      "invalid string" = list(cdf = "invalid"),
+      "case mismatch" = list(cdf = "ADJ.ECDF"),
+      "NULL" = list(cdf = NULL),
+      "not character" = list(cdf = 1),
+      "non-default vector" = list(cdf = c("ecdf", "kde"))
+    ),
+    regexp = c(
+      "is invalid",
+      "is invalid",
+      "single character string",
+      "single character string",
+      "single character string"
+    )
+  )
+})
+
+test_that("_cdf accepts valid cdf incl full default vector", {
+  allowed <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  check_errmsg_empty(
+    fn = checkinput_copulashared_cdf,
+    base.args = list(allowed.cdf = allowed),
+    cases = list(
+      "single allowed" = list(cdf = "ecdf"),
+      # default value of the param is the full vector (match.arg() picks first)
+      "full default vector" = list(cdf = allowed)
+    )
+  )
+})
+
+
+# checkinput_copulashared_numboots --------------------------------------------------
+test_that("_numboots rejects invalid num.boots", {
+  check_errmsg(
+    fn = checkinput_copulashared_numboots,
+    cases = list(
+      "NULL" = list(num.boots = NULL),
+      "NA" = list(num.boots = NA_real_),
+      "non-numeric" = list(num.boots = "abc"),
+      "logical" = list(num.boots = TRUE),
+      "multiple" = list(num.boots = c(1000, 2000)),
+      "zero" = list(num.boots = 0),
+      "negative" = list(num.boots = -1),
+      "one (below min of 2)" = list(num.boots = 1),
+      "fractional" = list(num.boots = 1000.5)
+    ),
+    regexp = c(
+      "provide a parameter",
+      "no NA",
+      "numeric parameter",
+      "numeric parameter",
+      "exactly one single number",
+      "greater than",
+      "greater than",
+      "greater than",
+      "whole number"
+    )
+  )
+})
+
+test_that("_numboots accepts valid num.boots, warns if < 1000", {
+  expect_null(expect_no_warning(checkinput_copulashared_numboots(num.boots = 1000)))
+  expect_null(expect_warning(
+    checkinput_copulashared_numboots(num.boots = 2),
+    regexp = "recommended to run 1000"
+  ))
+})
+
+
+# checkinput_copulashared_verbose ---------------------------------------------------
+test_that("_verbose rejects invalid verbose", {
+  check_errmsg(
+    fn = checkinput_copulashared_verbose,
+    cases = list(
+      "NULL" = list(verbose = NULL),
+      "numeric" = list(verbose = 1),
+      "character" = list(verbose = "TRUE"),
+      "multiple" = list(verbose = c(TRUE, FALSE)),
+      "NA" = list(verbose = NA)
+    ),
+    regexp = c(
+      "single logical",
+      "single logical",
+      "single logical",
+      "single logical",
+      "no NA"
+    )
+  )
+})
+
+test_that("_verbose accepts TRUE and FALSE", {
+  check_errmsg_empty(
+    fn = checkinput_copulashared_verbose,
+    cases = list("TRUE" = list(verbose = TRUE), "FALSE" = list(verbose = FALSE))
+  )
+})
