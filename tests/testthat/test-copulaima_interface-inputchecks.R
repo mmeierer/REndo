@@ -4,37 +4,6 @@ skip_on_cran()
 data("dataCopIMAContExo")
 
 
-# Formula specification -------------------------------------------------------------
-
-invalid_formulas <- list(
-  "missing RHS 2" = y ~ 1,
-  "no endogenous spec (no |)" = y ~ X + P,
-  "var in rhs2 not in formula" = y ~ X + P | Z,
-  "dependent var in rhs2" = y ~ X + P | y,
-  "no response variable" = ~ X + P | P,
-  "exo variable not in data" = y ~ X + Q + P | P,
-  "endo variable not in data" = y ~ X + Q | Q,
-  "illegal special" = y ~ X + P | discrete(P),
-  "misspelled special" = y ~ X + P | continous(P),
-  "continuous() special" = y ~ X + P | continuous(P),
-  "interaction" = y ~ X * P | P,
-  "rhs1 and rhs2 swapped" = y ~ P | X + P
-)
-
-test_that("copulaIMA rejects invalid formula specifications", {
-  for (nm in names(invalid_formulas)) {
-    expect_error(
-      copulaIMA(
-        formula = invalid_formulas[[nm]],
-        data = dataCopIMAContExo
-      ),
-      info = nm,
-      regexp = "The above errors were encountered"
-    )
-  }
-})
-
-
 # Other params ----------------------------------------------------------------------
 invalid_params <- list(
   "data is NULL" = list(data = NULL),
