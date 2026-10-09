@@ -64,6 +64,16 @@ test_that("copulaIMA runs across specs and cdf options", {
   }
 })
 
+# Tolerate irrelevant data ----------------------------------------------------------
+test_that("Works with NA in irrelevant col", {
+  df <- dataCopIMAContExo
+  df$abc <- rnorm(nrow(df))
+  df$abc[1] <- NA
+  res <- fit_ima_fast(formula = y ~ X + P | P, data = df)
+  check_clean_fit(res)
+})
+
+
 # small sample ---------------------------------------------------------------------
 test_that("copulaIMA runs on small sample", {
   small_data <- dataCopIMAContExo[1:50, ]
