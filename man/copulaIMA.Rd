@@ -15,7 +15,8 @@ copulaIMA(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
+\item{data}{A data.frame containing the data of all variables specified in the \code{formula}
+parameter. Endogenous and exogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.
@@ -168,6 +169,9 @@ In typical applied settings the model includes an intercept. The
 no-intercept specification (\code{-1}) is primarily used in simulation
 studies following the design of (Haschka (2025) Section 4.1)
 and is unlikely to be appropriate for real datasets.
+
+The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+in either part.
 }
 
 \subsection{Bootstrap inference}{

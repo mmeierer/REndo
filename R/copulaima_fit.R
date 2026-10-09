@@ -20,6 +20,10 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # Exo may be missing: Cannot process
   has.exo <- length(labels.exo) > 0
   if (has.exo) {
+    # NOTE: Having no intercept makes model.matrix() code first factor with k dummies
+    # instead of the regular k-1 dummies! This is different from Haschkas
+    # implementation which uses the whole formula.
+    # But: All this doesnt matter as long as exo vars are only numeric.
     f.exo <- reformulate(termlabels = labels.exo, response = NULL, intercept = FALSE)
     X.exo <- model.matrix(f.exo, data = mf.all)
     P.star.exo <- copula_pstar(P = X.exo, cdf = cdf)
@@ -27,7 +31,6 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
 
   # . Create copula terms ------------------------------------------------------
   # Haschka 2025 section 3.2 step 2: regressing each P*_l on exo X* only, without intercept
-  # cop.terms <- copulaima_residuals(P.star, endo.cols = endogenous.columns)
 
   Z.endo <- qnorm(P.star.endo)
   if (has.exo) {

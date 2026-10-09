@@ -27,6 +27,8 @@
 #' endogenous regressors.
 #'
 #' @template template_param_formuladataverbose
+#' @param data A data.frame containing the data of all variables specified in the \code{formula}
+#' parameter. Endogenous and exogenous regressors must be \code{numeric}.
 #' @template template_param_numboots
 #' @template template_param_cdf
 #'
@@ -88,6 +90,9 @@
 #' no-intercept specification (\code{-1}) is primarily used in simulation
 #' studies following the design of (Haschka (2025) Section 4.1)
 #' and is unlikely to be appropriate for real datasets.
+#'
+#' The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+#' in either part.
 #'
 #'
 #' @template template_text_details_bootsdegenerates
