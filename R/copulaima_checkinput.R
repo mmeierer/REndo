@@ -1,7 +1,7 @@
 # - no interactions
 # - >= 1 endogenous regressor
 # - >= 0 exogenous regressor
-# - exogenous: any class except ordered
+# - exogenous: numeric
 # - endogenous: numeric
 #
 checkinput_copulaima_formula_data <- function(formula, data) {
@@ -11,7 +11,7 @@ checkinput_copulaima_formula_data <- function(formula, data) {
     min.num.exo = 0, # may have no exo
     allow.interactions  = FALSE,
     allowed.classes.endo= "numeric",
-    allowed.classes.exo = c("numeric", "logical", "character", "factor")
+    allowed.classes.exo = "numeric"
   ))
 }
 
