@@ -6,7 +6,7 @@ summary.rendo.copula.ima <- function(object, ...) {
   res <- NextMethod()
 
   # Add the copulaIMA specific parts ---------------------------------------------------
-  res$names.endo.regs <- c(character(0), object$names.endo.regs)
+  res$labels.endo <- c(character(0), object$labels.endo)
   res$cdf <- object$cdf
 
   # Keep all the inherited summary classes from to use their print functions
@@ -31,7 +31,7 @@ print.summary.rendo.copula.ima <- function(
   # Print copulaIMA specific parts -----------------------------------------------------
   cat("\n")
   endo.vars <- paste0(
-    strwrap(paste0(x$names.endo.regs, collapse = ", "), width = max.width),
+    strwrap(paste0(x$labels.endo, collapse = ", "), width = max.width),
     collapse = "\n"
   )
   cat("Continuous endogenous variables: ", endo.vars, "\n", sep = "")

@@ -16,3 +16,37 @@ fixture_copula_df <- function(n = 100) {
   ))
 }
 
+
+# copulaIMA formula edge cases ---------------------------------------------------------
+# Shared by smoke & correctness tests so the edge cases dont diverge.
+# Named list of list(formula, data), as used by run_cases()
+fixture_ima_formula_edge_cases <- function() {
+  data("dataCopIMAContExo", "dataCopIMAMultiEndo", envir = environment())
+
+  df <- dataCopIMAContExo
+  df$X_pos <- abs(df$X) + 1
+  df$P_pos <- abs(df$P) + 1
+  df$`P 1` <- df$P
+  df$`X 1` <- df$X
+
+  df.multi <- dataCopIMAMultiEndo
+  df.multi$`P 1` <- df.multi$P1
+
+  return(list(
+    "plain" = list(formula = y ~ X + P | P, data = df),
+    # dot: only on data without additional cols
+    "dot in rhs1" = list(formula = y ~ . | P, data = dataCopIMAContExo),
+    "backticks in endo" = list(formula = y ~ `P 1` + X | `P 1`, data = df),
+    "backticks in exo" = list(formula = y ~ P + `X 1` | P, data = df),
+    "backticks in endo & exo" = list(formula = y ~ `P 1` + `X 1` | `P 1`, data = df),
+    "transformed exo" = list(formula = y ~ log(X_pos) + P | P, data = df),
+    "transformed endo" = list(formula = y ~ log(P_pos) + X | log(P_pos), data = df),
+    "inline function exo" = list(formula = y ~ I(X^2) + P | P, data = df),
+    "duplicate regressor" = list(formula = y ~ X + X + P | P, data = df),
+    "no exo, single endo" = list(formula = y ~ P | P, data = df),
+    "no exo, multiple endo with backtick" = list(
+      formula = y ~ `P 1` + P2 | `P 1` + P2,
+      data = df.multi
+    )
+  ))
+}

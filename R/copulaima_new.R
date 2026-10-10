@@ -8,8 +8,10 @@ doc_rendocopulaima_return_list <- function() {
 
   doc_copulaima <- c(
     cdf = "\\item{\\code{cdf}}{The used cdf function.}",
-    names.endo.regs = "\\item{\\code{names.endo.regs}}{The names of the continuous endogenous regressors.}",
-    res.lm.augmented = "\\item{\\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}"
+    res.lm.augmented = "\\item{\\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}",
+    labels.endo = "\\item{\\code{labels.endo}}{The term labels of the endogenous regressors.}",
+    labels.exo = "\\item{\\code{labels.exo}}{The term labels of the exogenous regressors.}",
+    labels.pcop = "\\item{\\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}"
   )
 
   return(c(doc_boots, doc_copulaima))
@@ -24,18 +26,20 @@ doc_rendocopulaima_return <- function() {
   return(c(doc_intro, doc_rendocopulaima_return_list()))
 }
 
-#' @importFrom stats coef fitted residuals
-new_rendo_copula_ima <- function(
+#' @importFrom stats coef model.frame
+new_rendo_copulaima <- function(
   call,
   F.formula,
   fitted.values,
   residuals,
-  boots,
+  boots.params,
   n.boots.attempted,
   n.boots.failed,
   res.lm.augmented,
   cdf,
-  names.endo.regs
+  labels.endo,
+  labels.exo,
+  labels.pcop
 ) {
   return(.new_rendo_boots_degenerates_removed(
     # Stuff for rendo.boots.degenerates.removed class
@@ -46,7 +50,7 @@ new_rendo_copula_ima <- function(
     names.main.coefs = names(coef(res.lm.augmented)),
     fitted.values = fitted.values,
     residuals = residuals,
-    boots.params = boots,
+    boots.params = boots.params,
     n.boots.attempted = n.boots.attempted,
     n.boots.failed = n.boots.failed,
 
@@ -54,6 +58,8 @@ new_rendo_copula_ima <- function(
     subclass = "rendo.copula.ima",
     res.lm.augmented = res.lm.augmented,
     cdf = cdf,
-    names.endo.regs = names.endo.regs
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    labels.pcop = labels.pcop
   ))
 }

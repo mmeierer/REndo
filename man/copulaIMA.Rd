@@ -15,7 +15,8 @@ copulaIMA(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
+\item{data}{A data.frame containing the data of all variables specified in the \code{formula}
+parameter. Endogenous and exogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.
@@ -45,8 +46,10 @@ An object of class \code{rendo.copula.ima} which is a list that contains:
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
 \item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
 \item{\code{cdf}}{The used cdf function.}
-\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
+\item{\code{labels.endo}}{The term labels of the endogenous regressors.}
+\item{\code{labels.exo}}{The term labels of the exogenous regressors.}
+\item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}
 }
 \description{
 Fitting Haschka's copula-based Instrumental Variable Model (IMA) using
@@ -92,19 +95,19 @@ and the exogenous regressors \eqn{X_i},
 IMA is an augmented OLS estimator. The estimation proceeds in three steps:
 
 \enumerate{
-  \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
+\item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
         P_1, \ldots, P_K\}}, compute the normal score
-        \eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
-        the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
-        standard normal quantile function.
-  \item For each endogenous regressor \eqn{P_{i,k}^*}, regress it on the normal
-        scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
-        \emph{without intercept} and retain the residuals
-        \eqn{\hat{\varepsilon}_k} as the copula correction terms. This
-        first-stage regression exploits the dependence between endogenous
-        and exogenous regressors in a way analogous to instrumental variable
-        identification.
-  \item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
+\eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
+the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
+standard normal quantile function.
+\item For each endogenous regressor \eqn{P_{i,k}^*}, regress it on the normal
+scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
+\emph{without intercept} and retain the residuals
+\eqn{\hat{\varepsilon}_k} as the copula correction terms. This
+first-stage regression exploits the dependence between endogenous
+and exogenous regressors in a way analogous to instrumental variable
+identification.
+\item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
         \hat{\varepsilon}_{K}} as additional regressors and estimate by OLS.
 }
 
@@ -114,15 +117,6 @@ approaches when the sample size is very small (e.g., n = 100) and with intercept
 However, the bias decreases rapidly as sample size increases and become
 negligible for moderate sample sizes (around n >= 600). The estimator appears
 asymptotically unbiased.
-}
-
-\subsection{Bootstrap inference}{
-Bootstrap inference is performed by resampling the data with replacement.
-Degenerate bootstrap samples (e.g. singular design matrices or failed
-model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
 }
 
 \subsection{CDF Methods}{
@@ -160,20 +154,33 @@ It is recommended to use \code{cdf = "adj.ecdf"} for the best finite-sample
 performance (Liengaard et al. 2025).
 }
 
-\subsection{Formula interface}{
+\subsection{Parameter \code{formula}}{
 
-The \code{formula} argument follows a two-part notation separated by
-\code{|}. The first part specifies the structural model. The second part
-identifies the continuous endogenous regressors using \code{continuous()}:
+The \code{formula} argument follows a two part notation separated by \code{|}.
+The first part specifies the structural model (e.g. \code{y ~ X + P}).
+The second part identifies the continuous endogenous regressors:
 
-\preformatted{y ~ X + P | continuous(P)                          # typical use: with intercept}
-\preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endogenous regressors}
-\preformatted{y ~ X + P - 1 | continuous(P)                      # no intercept (in simulation settings)}
+\preformatted{y ~ X + P | P                       # endogenous P}
+\preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endogenous regressors}
+\preformatted{y ~ P1 + P2 | P1 + P2               # no exogenous regressors}
+\preformatted{y ~ X + P - 1 | P                   # no intercept (in simulation settings)}
 
 In typical applied settings the model includes an intercept. The
 no-intercept specification (\code{-1}) is primarily used in simulation
-studies following the design of (Haschka (2025)  Section 4.1)
+studies following the design of (Haschka (2025) Section 4.1)
 and is unlikely to be appropriate for real datasets.
+
+The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+in either part.
+}
+
+\subsection{Bootstrap inference}{
+Bootstrap inference is performed by resampling the data with replacement.
+Degenerate bootstrap samples (e.g. singular design matrices or failed
+model estimation) are discarded and resampled until the requested number
+of valid bootstrap replications is obtained. The percentage of discarded
+samples is reported as a warning. Confidence intervals are computed
+using only successful bootstrap replications.
 }
 }
 \examples{
@@ -184,7 +191,7 @@ and is unlikely to be appropriate for real datasets.
 #------------------------------------------------------------------------
 data(dataCopIMAContExo)
 res <- copulaIMA(
-  y ~ X + P - 1 | continuous(P),
+  y ~ X + P - 1 | P,
   data = dataCopIMAContExo,
   cdf = "adj.ecdf",
   num.boots = 1000
@@ -199,8 +206,7 @@ summary(res)
 #------------------------------------------------------------------------
 data("dataCopIMAMultiEndo")
 res2 <- copulaIMA(
-  # Alternative: y ~ P1 + P2 | continuous(P1, P2)
-  y ~ P1 + P2 | continuous(P1) + continuous(P2),
+  y ~ P1 + P2 | P1 + P2,
   data = dataCopIMAMultiEndo,
   cdf = "adj.ecdf",
   num.boots = 1000
@@ -210,22 +216,21 @@ summary(res2)
 #------------------------------------------------------------------------
 # Example 3: Single endogenous regressor with binary exogenous regressor
 # (Haschka 2025, section 4.1 scenario 2)
-
-# This example shows one of the key example of IMA method, i.e., the exogenous
+#
+# This example shows one of the key examples of IMA method, i.e., the exogenous
 # regressor does not need to be continuous or normally distributed.
 # X the exogenous regressor is binary (0 or 1).
 # True values: alpha = 1 (P), beta = 1 (X), no intercept.
 #------------------------------------------------------------------------
 data("dataCopIMABinExo")
 res3 <- copulaIMA(
-   y ~ X + P - 1 | continuous(P),
+   y ~ X + P - 1 | P,
    data = dataCopIMABinExo,
    cdf = "adj.ecdf",
    num.boots = 1000
 )
 summary(res3)
 }
-
 
 }
 \references{
@@ -253,6 +258,11 @@ endogeneity correction using copulas. NBER Working Paper No. w32231.
 \doi{10.2139/ssrn.4754776}
 }
 \seealso{
+\code{\link[REndo:dataCopIMABinExo]{dataCopIMABinExo},
+\link[REndo:dataCopIMAContExo]{dataCopIMAContExo},
+\link[REndo:dataCopIMAMultiEndo]{dataCopIMAMultiEndo}} for detailed
+information about the simulated datasets
+
 Other copula-based methods:
 \code{\link[=copula2sCOPE]{copula2sCOPE()}},
 \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}},

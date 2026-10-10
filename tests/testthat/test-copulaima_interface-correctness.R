@@ -6,68 +6,34 @@ data("dataCopIMAContExo")
 data("dataCopIMAMultiEndo")
 data("dataCopIMABinExo")
 
-# Setup ----------------------------------------------------------------------------
-fit_copulaIMA_lowboots <- function(
-  formula,
-  data,
-  cdf = "adj.ecdf",
-  num.boots = 10,
-  verbose = FALSE
-) {
-  return(suppress_lowboots_warning(
-    copulaIMA(
-      formula = formula,
-      data = data,
-      cdf = cdf,
-      num.boots = num.boots,
-      verbose = verbose
-    )
-  ))
-}
 
 # Data sorting ----------------------------------------------------------------------
 test_that("Differently sorted data produces same results", {
   data_sorted <- dataCopIMAContExo[order(dataCopIMAContExo$y), ]
   data_rev <- dataCopIMAContExo[rev(order(dataCopIMAContExo$y)), ]
 
-  res_sorted <- copulaIMA(
-    formula = y ~ X + P - 1 | continuous(P),
-    data = data_sorted,
-    verbose = FALSE
+  res_sorted <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
+    data = data_sorted
   )
-  res_rev <- copulaIMA(
-    formula = y ~ X + P - 1 | continuous(P),
-    data = data_rev,
-    verbose = FALSE
+  res_rev <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
+    data = data_rev
   )
 
   expect_equal(object = coef(res_sorted), expected = coef(res_rev))
 })
 
 # Formula specifications ------------------------------------------------------
-test_that("Equivalent continuous() specifications produce same results", {
-  res_combined <- fit_copulaIMA_lowboots(
-    formula = y ~ P1 + P2 | continuous(P1, P2),
-    data = dataCopIMAMultiEndo
-  )
-
-  res_separate <- fit_copulaIMA_lowboots(
-    formula = y ~ P1 + P2 | continuous(P1) + continuous(P2),
-    data = dataCopIMAMultiEndo
-  )
-
-  expect_equal(coef(res_combined), coef(res_separate))
-})
-
 
 test_that("Intercept in formula is correctly respected", {
-  res_with <- fit_copulaIMA_lowboots(
-    formula = y ~ X + P | continuous(P),
+  res_with <- fit_ima_fast(
+    formula = y ~ X + P | P,
     data = dataCopIMAContExo
   )
 
-  res_without <- fit_copulaIMA_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
+  res_without <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
@@ -80,30 +46,27 @@ test_that("Intercept in formula is correctly respected", {
 })
 
 test_that("Regressor order in formula does not affect results", {
-  res_xy <- fit_copulaIMA_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
+  res_xy <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
-  res_yx <- fit_copulaIMA_lowboots(
-    formula = y ~ P + X - 1 | continuous(P),
+  res_yx <- fit_ima_fast(
+    formula = y ~ P + X - 1 | P,
     data = dataCopIMAContExo
   )
 
-  expect_equal(
-    object = sort(coef(res_xy)[names(coef(res_xy))]),
-    expected = sort(coef(res_yx)[names(coef(res_yx))])
-  )
+  expect_equal(object = sort(coef(res_xy)), expected = sort(coef(res_yx)))
 })
 
 test_that("Duplicate regressors are handled correctly", {
-  res_normal <- fit_copulaIMA_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
+  res_normal <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
-  res_dup <- fit_copulaIMA_lowboots(
-    formula = y ~ X + X + P - 1 | continuous(P),
+  res_dup <- fit_ima_fast(
+    formula = y ~ X + X + P - 1 | P,
     data = dataCopIMAContExo
   )
 
@@ -112,47 +75,42 @@ test_that("Duplicate regressors are handled correctly", {
 
 # Parameter recovery -------------------------------------------------------
 
-copulaIMA_param_recovery <- function(formula, data, true_vals) {
-  res <- copulaIMA(
-    formula = formula,
-    data = data,
-    cdf = "adj.ecdf",
-    num.boots = 1000,
-    verbose = FALSE
-  )
-  check_param_recovery(res = res, true_vals = true_vals)
-}
-
 test_that("Parameter recovery: dataCopIMAContExo", {
-  copulaIMA_param_recovery(
-    formula = y ~ X + P - 1 | continuous(P),
-    data = dataCopIMAContExo,
-    true_vals = c(X = 1, P = 1)
+  res <- fit_ima_defaults(
+    formula = y ~ X + P - 1 | P,
+    data = dataCopIMAContExo
   )
+
+  check_param_recovery(res = res, true_vals = c(X = 1, P = 1))
 })
 
 test_that("Parameter recovery: dataCopIMAMultiEndo", {
-  copulaIMA_param_recovery(
-    formula = y ~ P1 + P2 | continuous(P1, P2),
-    data = dataCopIMAMultiEndo,
-    true_vals = c("(Intercept)" = 10, P1 = 1, P2 = 1)
+  res <- fit_ima_defaults(
+    formula = y ~ P1 + P2 | P1 + P2,
+    data = dataCopIMAMultiEndo
   )
+
+  check_param_recovery(res = res, true_vals = c("(Intercept)" = 10, P1 = 1, P2 = 1))
 })
 
 test_that("Parameter recovery: dataCopIMABinExo", {
-  copulaIMA_param_recovery(
-    formula = y ~ X + P - 1 | continuous(P),
-    data = dataCopIMABinExo,
-    true_vals = c(X = 1, P = 1)
+  res <- fit_ima_defaults(
+    formula = y ~ X + P - 1 | P,
+    data = dataCopIMABinExo
   )
+  check_param_recovery(res = res, true_vals = c(X = 1, P = 1))
 })
 
-# Return values calculated correctly -------------------------------------------------
+# Internal consistency --------------------------------------------------------------
 
-test_that("structural residuals & fitted values are calculated correctly", {
-  res <- fit_copulaIMA_lowboots(
-    formula = y ~ X + P - 1 | continuous(P),
-    data = dataCopIMAContExo
+test_that("Formula edge cases", {
+  # Are labels etc are correctly preserved
+  run_cases(
+    fn = fit_ima_fast,
+    cases = fixture_ima_formula_edge_cases(),
+    check = function(res) {
+      check_labelled_consistently(res)
+      check_struct_residuals(res = res, aux.names = res$labels.pcop)
+    }
   )
-  check_struct_residuals(res = res, aux.names = "P_cop")
 })

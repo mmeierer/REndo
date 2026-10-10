@@ -8,12 +8,11 @@ data("dataCopIMABinExo")
 # Works out of the box --------------------------------------------------------------
 # this also checks running with verbose=T
 test_that("Works out of the box", {
-  expect_no_error(capture_output(
-    copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
-      data = dataCopIMAContExo
-    )
+  res <- expect_message(copulaIMA(
+    formula = y ~ X + P - 1 | P,
+    data = dataCopIMAContExo
   ))
+  check_clean_fit(res)
 })
 
 
@@ -26,86 +25,79 @@ test_that("Works out of the box", {
 
 specs <- list(
   "no intercept, continuous exo, single endo" = list(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   ),
   "with intercept, continuous exo, single endo" = list(
-    formula = y ~ X + P | continuous(P),
+    formula = y ~ X + P | P,
     data = dataCopIMAContExo
   ),
   "no intercept, binary exo, single endo" = list(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMABinExo
   ),
   "with intercept, no exo, multiple endo" = list(
-    formula = y ~ P1 + P2 | continuous(P1, P2),
+    formula = y ~ P1 + P2 | P1 + P2,
     data = dataCopIMAMultiEndo
   ),
   "with intercept, no exo, single endo" = list(
-    formula = y ~ P1 | continuous(P1),
+    formula = y ~ P1 | P1,
     data = dataCopIMAMultiEndo
   ),
   "no intercept, no exo, single endo (minimal)" = list(
-    formula = y ~ P1 - 1 | continuous(P1),
+    formula = y ~ P1 - 1 | P1,
     data = dataCopIMAMultiEndo
   )
 )
 
 cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
 
-expect_no_error_ignore_boot_warn <- function(expr) {
-  expect_no_error(suppress_lowboots_warning(expr))
-}
-
 # specs x cdf ----------------------------------------------------------------------
 test_that("copulaIMA runs across specs and cdf options", {
-  for (spec_name in names(specs)) {
-    for (cdf in cdfs) {
-      res <- expect_no_error_ignore_boot_warn(
-        copulaIMA(
-          formula = specs[[spec_name]]$formula,
-          data = specs[[spec_name]]$data,
-          cdf = cdf,
-          verbose = FALSE,
-          num.boots = 10
-        )
-      )
-      expect_false(anyNA(fitted(res)))
-      expect_false(anyNA(residuals(res)))
-      expect_false(anyNA(coef(res)))
-      expect_false(anyNA(vcov(res)))
-      expect_false(anyNA(res$boots.params))
-    }
+  for (cdf in cdfs) {
+    run_cases(
+      fn = fit_ima_fast,
+      base.args = list(cdf = cdf),
+      cases = specs,
+      check = check_clean_fit
+    )
   }
 })
+
+# Formula -------------------------------------------------------------------------
+
+test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
+  #   Do s3 methods work correctly
+  results <- run_cases(
+    fn = fit_ima_fast,
+    cases = fixture_ima_formula_edge_cases(),
+    check = check_clean_fit
+  )
+
+  # S3 methods on each edge case
+  for (nm in names(results)) {
+    expect_no_error(capture_output(print(results[[nm]])))
+    expect_no_error(capture_output(print(summary(results[[nm]]))))
+  }
+})
+
+
+# Tolerate irrelevant data ----------------------------------------------------------
+test_that("Works with NA in irrelevant col", {
+  df <- dataCopIMAContExo
+  df$abc <- rnorm(nrow(df))
+  df$abc[1] <- NA
+  res <- fit_ima_fast(formula = y ~ X + P | P, data = df)
+  check_clean_fit(res)
+})
+
 
 # small sample ---------------------------------------------------------------------
 test_that("copulaIMA runs on small sample", {
   small_data <- dataCopIMAContExo[1:50, ]
-  expect_no_error_ignore_boot_warn(
-    copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
-      data = small_data,
-      cdf = "adj.ecdf",
-      verbose = FALSE,
-      num.boots = 10
-    )
+  res <- fit_ima_fast(
+    formula = y ~ X + P - 1 | P,
+    data = small_data
   )
-})
-
-
-# S3 methods -----------------------------------------------------------------------
-test_that("S3 methods print and summary run without error", {
-  res <- expect_warning(
-    copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
-      data = dataCopIMAContExo,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
-  )
-
-  expect_no_error(capture_output(print(res)))
-  expect_no_error(capture_output(print(summary(res))))
+  check_clean_fit(res)
 })
