@@ -155,18 +155,33 @@ copula2sCOPE <- function(
 ) {
   cl <- match.call()
 
-  # input checks
-  check_err_msg(checkinput_copulashared_formula(formula))
-  check_err_msg(checkinput_copulashared_data(data))
-  check_err_msg(checkinput_copulashared_dataVSformula(data = data, formula = formula))
-  check_err_msg(checkinput_copulashared_cdf(
-    cdf,
-    allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+
+  # Input checks  -------------------------------------------------------------------
+
+  check_err_msg(checkinput_copulashared_data_basics(data))
+
+  # - >= 1 endogenous regressor
+  # - >= 0 exogenous regressor
+  # - no interactions
+  # - endogenous: numeric
+  # - exogenous: any
+  check_err_msg(checkinput_copulashared_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 0, # may have no exo regressor, resulting in warning
+    allow.interactions  = FALSE,
+    allowed.classes.endo= "numeric",
+    allowed.classes.exo = NULL # checking no column
   ))
+
+
+  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf = allowed.cdfs))
   check_err_msg(checkinput_copulashared_numboots(num.boots))
   check_err_msg(checkinput_copulashared_verbose(verbose))
 
-  cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
+  # Fit original data ---------------------------------------------------------------
+  cdf <- match.arg(cdf, choices = allowed.cdfs)
 
   F.formula <- Formula::as.Formula(formula)
   names.endo.regs <- formula_readout_special(
