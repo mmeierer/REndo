@@ -161,7 +161,8 @@ test_that("_modelframe fails on NAs, illegal classes", {
       F.formula = as.Formula(y ~ log(x_num - 1000)),
       data = fixture_copula_df(),
       allowed.classes = list("log(x_num - 1000)" = "numeric"),
-      labels.warn.low.card = NULL
+      labels.warn.low.card = NULL,
+      forbid.constant = FALSE
     )),
     regexp = "missing values"
   )
@@ -173,12 +174,14 @@ test_that("_modelframe fails on NAs, illegal classes", {
       "NA already in data" = list(
         F.formula = as.Formula(y ~ x_na),
         allowed.classes = list(x_na = "numeric"),
-        labels.warn.low.card = NULL
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
       ),
       "given wrong class" = list(
         F.formula = as.Formula(y ~ x_fac),
         allowed.classes = list(x_fac = "numeric"),
-        labels.warn.low.card = NULL
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
       )
     ),
     regexp = c(
@@ -197,7 +200,8 @@ test_that("_modelframe warns for low-cardinality numerics", {
       F.formula = as.Formula(y ~ x_lowcard + x_num),
       data = df,
       allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
-      labels.warn.low.card = "x_lowcard"
+      labels.warn.low.card = "x_lowcard",
+      forbid.constant = FALSE
     ),
     regexp = "low cardinality"
   )
@@ -208,7 +212,8 @@ test_that("_modelframe warns for low-cardinality numerics", {
       F.formula = as.Formula(y ~ x_fac),
       data = df,
       allowed.classes = list(x_fac = "factor"),
-      labels.warn.low.card = "x_fac"
+      labels.warn.low.card = "x_fac",
+      forbid.constant = FALSE
     )
   )
 
@@ -218,7 +223,8 @@ test_that("_modelframe warns for low-cardinality numerics", {
       F.formula = as.Formula(y ~ x_lowcard + x_num),
       data = df,
       allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
-      labels.warn.low.card = "x_num"
+      labels.warn.low.card = "x_num",
+      forbid.constant = FALSE
     )
   )
 
@@ -228,7 +234,8 @@ test_that("_modelframe warns for low-cardinality numerics", {
       F.formula = as.Formula(y ~ x_lowcard),
       data = df,
       allowed.classes = list(x_lowcard = "numeric"),
-      labels.warn.low.card = NULL
+      labels.warn.low.card = NULL,
+      forbid.constant = FALSE
     )
   )
 })
@@ -245,7 +252,8 @@ test_that("_modelframe works for valid data", {
         x_fac = "factor",
         x_ord = "ordered"
       ),
-      labels.warn.low.card = NULL
+      labels.warn.low.card = NULL,
+      forbid.constant = FALSE
     )
   )
 })
@@ -263,6 +271,7 @@ formuladata_base_args <- function() {
     data = df,
     min.num.exo = 0,
     allow.interactions = TRUE,
+    allow.constant.regressors = TRUE,
     allowed.classes.endo = NULL,
     allowed.classes.exo = NULL
   ))
