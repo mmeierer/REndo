@@ -240,6 +240,29 @@ test_that("_modelframe warns for low-cardinality numerics", {
   )
 })
 
+test_that("_modelframe fails on constant cols", {
+  df <- fixture_copula_df()
+  df$x_const <- 1
+  base.args <- list(
+    F.formula = as.Formula(y ~ x_num + x_const),
+    data = df,
+    allowed.classes = list(),
+    labels.warn.low.card = NULL
+  )
+
+  check_errmsg(
+    fn = checkinput_copulashared_modelframe,
+    base.args = base.args,
+    cases = list("forbidden" = list(forbid.constant = TRUE)),
+    regexp = "must not be constant: x_const"
+  )
+  check_errmsg_empty(
+    fn = checkinput_copulashared_modelframe,
+    base.args = base.args,
+    cases = list("allowed" = list(forbid.constant = FALSE))
+  )
+})
+
 test_that("_modelframe works for valid data", {
   expect_null(
     checkinput_copulashared_modelframe(
