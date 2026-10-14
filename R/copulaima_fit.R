@@ -12,6 +12,7 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
 
   f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
   X.endo <- model.matrix(f.endo, data = mf.all)
+  copula_stop_if_constant(X.endo)
 
   # (constructing P star, from Haschka 2025, page 164)
   # copula_pstar is applied column-wise
@@ -23,6 +24,7 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # But: All this doesnt matter as long as exo vars are only numeric.
   f.exo <- reformulate(termlabels = labels.exo, response = NULL, intercept = FALSE)
   X.exo <- model.matrix(f.exo, data = mf.all)
+  copula_stop_if_constant(X.exo)
   P.star.exo <- copula_pstar(P = X.exo, cdf = cdf)
 
   # . Create copula terms ------------------------------------------------------
