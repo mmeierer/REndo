@@ -162,7 +162,6 @@ The second part identifies the continuous endogenous regressors:
 
 \preformatted{y ~ X + P | P                       # endogenous P}
 \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endogenous regressors}
-\preformatted{y ~ P1 + P2 | P1 + P2               # no exogenous regressors}
 \preformatted{y ~ X + P - 1 | P                   # no intercept (in simulation settings)}
 
 In typical applied settings the model includes an intercept. The
