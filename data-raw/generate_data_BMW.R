@@ -10,7 +10,7 @@
 ## mu = 1 (intercept)
 ## beta = -1 (X)
 ## alpha = 1 (P)
-## delta = 1 (correlation between X and P), rho = 0.5 (moderate endogeneity)
+## delta = 1 (correlation between X and P), rho = 0.9 (strong endogeneity)
 
 library(MASS)
 
