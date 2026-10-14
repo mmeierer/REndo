@@ -200,8 +200,9 @@ summary(res)
 
 \donttest{
 #------------------------------------------------------------------------
-# Example 2: Two endogenous regressors with intercept and no exogenous regressor
-# True values: mu=10, alpha1 = 1 (P1), alpha2 = 1 (P2)
+# Example 2: Two endogenous regressors with intercept and one exogenous regressor
+# True values: mu=10, alpha1 = 1 (P1), alpha2 = 1 (P2), ebta = 1 (X)
+N = 5000
 # Extension of the first example
 #------------------------------------------------------------------------
 data("dataCopIMAMultiEndo")

@@ -20,8 +20,8 @@ alpha <- 1
 #From Equation 4.2, section 4.1 page 168 of IMA Journal of Mangement Mathematics (2025) 36, 151-180
 #Title of paper: Robustness of copula-correction models in Causal Analysis
 # Also based on Tran & Tsionas (2022): Eq 25
-# r = 0.5 and rho = 0.5, where r = Corr(P star, Xstar) and rho = Corr(Pstar, Xi star)
-# P is endo, X is exo, and xi is error term
+# r = 0.5 and rho = 0.5, where r = Corr(P star, Xstar) and rho = Corr(Pstar, eps star)
+# P is endo, X is exo, and eps (epsilon) is error term
 
 #Finding sigma
 Sigma <- matrix(c(1,  0.5, 0.5,
@@ -35,7 +35,7 @@ latent <- MASS::mvrnorm(n = n, mu = c(0, 0, 0), Sigma = Sigma)
 #Obtaining Pstar, Xstar and Xi star
 Pstar  <- latent[, 1]
 Xstar <- latent[, 2]
-xistar <- latent[, 3]
+epsstar <- latent[, 3]
 
 # Marginal transformations
 P  <- pnorm(Pstar) + 0.5 # page 168 of Haschka's IMA 2024, P_t = psi(Pstar_t) + .5
@@ -43,11 +43,11 @@ P  <- pnorm(Pstar) + 0.5 # page 168 of Haschka's IMA 2024, P_t = psi(Pstar_t) + 
 # X here shifts distribution back to mean 0 instead of doing X ~N(1,1)
 
 X <- Xstar + 1 # scenario 1, eq. 4.3: X_t = Phi^{-1} [phi (X*_t), mu =1] giving X~N(1,1)
-xi <- xistar #xi_t = phi^{-1} [phi(xi*_t)] = xi*_t (identity transofrmation)
+eps <- epsstar #eps_t = phi^{-1} [phi(eps*_t)] = eps*_t (identity transofrmation)
 
 # outcome equation from Equation 4.1 page 168 IMA Journal of Management Mathematics (2025) 36, 151-180
 #From the equation of the outcome, eq. 4.1, there is no intercept
-y <- beta * X + alpha * P + xi
+y <- beta * X + alpha * P + eps
 
 # Final dataset
 dataCopIMAContExo <- data.frame(y  = y, X = X, P = P)
