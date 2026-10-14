@@ -127,13 +127,12 @@
 #' \donttest{
 #' #------------------------------------------------------------------------
 #' # Example 2: Two endogenous regressors with intercept and one exogenous regressor
-#' # True values: mu=10, alpha1 = 1 (P1), alpha2 = 1 (P2), ebta = 1 (X)
-#' N = 5000
 #' # Extension of the first example
+#' # True values: mu=10, alpha1 = 1 (P1), alpha2 = -1 (P2), beta = 1 (X)
 #' #------------------------------------------------------------------------
 #' data("dataCopIMAMultiEndo")
 #' res2 <- copulaIMA(
-#'   y ~ P1 + P2 | P1 + P2,
+#'   y ~ X + P1 + P2 | P1 + P2,
 #'   data = dataCopIMAMultiEndo,
 #'   cdf = "adj.ecdf",
 #'   num.boots = 1000
