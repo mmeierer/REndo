@@ -86,11 +86,11 @@ test_that("Parameter recovery: dataCopIMAContExo", {
 
 test_that("Parameter recovery: dataCopIMAMultiEndo", {
   res <- fit_ima_defaults(
-    formula = y ~ P1 + P2 | P1 + P2,
+    formula = y ~ X + P1 + P2 | P1 + P2,
     data = dataCopIMAMultiEndo
   )
 
-  check_param_recovery(res = res, true_vals = c("(Intercept)" = 10, P1 = 1, P2 = 1))
+  check_param_recovery(res = res, true_vals = c("(Intercept)" = 10, X = 1, P1 = 1, P2 = -1))
 })
 
 test_that("Parameter recovery: dataCopIMABinExo", {
