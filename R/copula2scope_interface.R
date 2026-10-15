@@ -18,7 +18,7 @@
 #' @template template_param_numboots
 #'
 #' @details
-#' \strong{Model}
+#' ## Model
 #'
 #' Consider the structural regression model with \eqn{K} endogenous regressors:
 #'
@@ -31,7 +31,7 @@
 #' \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
 #' \eqn{\mu, \alpha_k, \beta} are the structural model parameters.
 #'
-#' \strong{Methodology}
+#' ## Methodology
 #'
 #' 2sCOPE is an augmented OLS estimator which can be described in the following 3 steps
 #' (Yang et al., 2025):
@@ -63,14 +63,13 @@
 #' @template template_text_details_cdfmethods
 #'
 #' @details
-#' \strong{Formula interface}
+#' ## Parameter \code{formula}
+#' The \code{formula} argument follows a two part notation separated by \code{|}.
+#' The first part specifies the structural model (e.g. \code{y ~ X + P}).
+#' The second part identifies the continuous endogenous regressors:
 #'
-#' The \code{formula} argument follows a two-part notation separated by
-#' \code{|}. The first part specifies the structural model. The second part
-#' identifies the continuous endogenous regressors using \code{continuous()}:
-#'
-#' \preformatted{y ~ X + P | continuous(P)                          # one endo}
-#' \preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endo}
+#' \preformatted{y ~ X + P | P                       # one}
+#' \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endo}
 #'
 #' At least one exogenous regressor should be present in the model.
 #' When no exogenous regressor is present, the correction terms reduce to
@@ -86,6 +85,11 @@
 #'
 #' @family copula-based methods
 #'
+#' @seealso \code{\link[REndo:dataCopula2sCOPECase1]{dataCopula2sCOPECase1},
+#' \link[REndo:dataCopula2sCOPECase2]{dataCopula2sCOPECase2},
+#' \link[REndo:dataCopula2sCOPECase3]{dataCopula2sCOPECase3}} for detailed
+#' information about the simulated datasets
+#'
 #' @examples
 #' # -------------------------------------------------------------------
 #' # Example 1: Non-normal endogenous and exogenous regressors
@@ -98,7 +102,7 @@
 #' # -------------------------------------------------------------------
 #' data("dataCopula2sCOPECase1")
 #' res1 <- copula2sCOPE(
-#'   y ~ P + X | continuous(P),
+#'   y ~ P + X | P,
 #'   data      = dataCopula2sCOPECase1,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
@@ -116,7 +120,7 @@
 #' # -------------------------------------------------------------------
 #' data("dataCopula2sCOPECase2")
 #' res2 <- copula2sCOPE(
-#'   y ~ P + X | continuous(P),
+#'   y ~ P + X | P,
 #'   data      = dataCopula2sCOPECase2,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
@@ -135,7 +139,7 @@
 #' # -------------------------------------------------------------------
 #' data("dataCopula2sCOPECase3")
 #' res3 <- copula2sCOPE(
-#'   y ~ P + X | continuous(P),
+#'   y ~ P + X | P,
 #'   data      = dataCopula2sCOPECase3,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
@@ -143,6 +147,7 @@
 #' summary(res3)
 #' }
 #'
+#' @md
 #' @export
 #' @importFrom stats coef terms
 #' @importFrom Formula as.Formula
