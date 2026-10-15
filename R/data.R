@@ -493,28 +493,32 @@
 "dataCopIMABinExo"
 
 #' @title Simulated Dataset for Copula IMA - Two Continuous Endogenous Regressors,
-#' Intercept and No Exogenous Regressor
+#' Intercept and One Exogenous Regressor
 #' @description A dataset simulated with two endogenous continuous regressors
-#'  \code{P1} and \code{P2}, an intercept, and a dependent variable \code{y}.
-#'   No exgenous regressor. Both endogenous regressors follow a bounded continuous
-#'   distribution (Phi(P*) + 0.5) and are correlated with each other (r = 0.3),
-#'   and with the structural error (endogeneity strength rho = 0.5).
-#'   The true parameter values are \code{alpha1 = 1} for \code{P1}, \code{alpha2 = 1}
+#'  \code{P1} and \code{P2}, an intercept, a single continuous exogenous regressor \code{X}
+#'   and a dependent variable \code{y}. Both endogenous regressors follow a bounded
+#'   continuous distribution (Phi(P*) + 0.5) and are independent of each other.
+#'   The structural error and both endogenous regressors are correlated
+#'   (endogeneity strength rho = 0.5). They are also correlated with the exogenous regressor (rho = 0.5).
+#'   The true parameter values are \code{beta = 1} for \code{X},
+#'    \code{alpha1 = 1} for \code{P1}, \code{alpha2 = -1}
 #'   for \code{P2}, and \code{mu = 10} for the intercept.This was simulated as
 #'   an extension to the dataset 'dataCopIMAContExo'. This dataset was created to test
-#'   how well \code{copulaIMA()} works with an intercept and no exogenous regressor.
+#'   how well \code{copulaIMA()} works with an intercept and multiple endogenous regressors.
+#'   N = 5000 to avoid the problem of finite sample bias.
 #' @template template_references_haschka2025ima
 #' @name dataCopIMAMultiEndo
 #' @usage data("dataCopIMAMultiEndo")
-#' @format A data frame with 1000 observations on 4 variables:
+#' @format A data frame with 5000 observations on 4 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{P1}}{a numeric vector, continuous and endogenous, following a
-#'   bounded distribution Phi(P1*) + 0.5 with values in (0.5, 1.5), correlated
-#'   with \code{P2} (r = 0.3).}
+#'   bounded distribution Phi(P1*) + 0.5 with values in (0.5, 1.5)}
 #' \item{\code{P2}}{a numeric vector, continuous and endogenous, following a
-#'   bounded distribution Phi(P2*) + 0.5 with values in (0.5, 1.5), correlated
-#'   with \code{P1} (r = 0.3).}
+#'   bounded distribution Phi(P2*) + 0.5 with values in (0.5, 1.5)}
+#'   \item{\code{X}}{a numeric vector, continuous and exogenous and following
+#'    a distribution \eqn{N(1,1)}. Correlated with both \code{P1} and \code{P2}
+#'    at \eqn{\rho = 0.5} but uncorrelated with structural error.}
 #' }
 #' @docType data
 #' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
