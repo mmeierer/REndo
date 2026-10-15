@@ -54,10 +54,7 @@ test_that("Regressor order in formula does not affect results", {
     data = dataCopula2sCOPECase1
   )
 
-  expect_equal(
-    object = sort(coef(res_px)[names(coef(res_px))]),
-    expected = sort(coef(res_xp)[names(coef(res_xp))])
-  )
+  expect_equal(object = sort(coef(res_px)), expected = sort(coef(res_xp)))
 })
 
 test_that("Duplicate regressors are handled correctly", {
