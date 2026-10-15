@@ -8,11 +8,13 @@ test_that("_data_basics rejects invalid data", {
   check_errmsg(
     checkinput_copulashared_data_basics,
     cases = list(
+      "NULL" = list(data = NULL),
       "not a df" = list(data = list(1, 2)),
       "zero rows" = list(data = df[0, ]),
       "zero cols" = list(data = df[, 0])
     ),
     regexp = c(
+      "must be a data.frame",
       "must be a data.frame",
       "at least one row",
       "at least one column"
@@ -166,6 +168,9 @@ test_that("_modelframe fails on NAs, illegal classes", {
     regexp = "missing values"
   )
 
+  df.na.response <- fixture_copula_df()
+  df.na.response$y[1] <- NA
+
   check_errmsg(
     fn = checkinput_copulashared_modelframe,
     base.args = list(data = fixture_copula_df()),
@@ -175,6 +180,12 @@ test_that("_modelframe fails on NAs, illegal classes", {
         allowed.classes = list(x_na = "numeric"),
         labels.warn.low.card = NULL
       ),
+      "NA in response" = list(
+        F.formula = as.Formula(y ~ x_num),
+        data = df.na.response,
+        allowed.classes = list(x_num = "numeric"),
+        labels.warn.low.card = NULL
+      ),
       "given wrong class" = list(
         F.formula = as.Formula(y ~ x_fac),
         allowed.classes = list(x_fac = "numeric"),
@@ -182,6 +193,7 @@ test_that("_modelframe fails on NAs, illegal classes", {
       )
     ),
     regexp = c(
+      "missing values",
       "missing values",
       "has class"
     )
