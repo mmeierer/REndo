@@ -174,34 +174,26 @@ copula2sCOPE <- function(
     allowed.classes.exo = NULL # checking no column
   ))
 
-
   allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
   check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf = allowed.cdfs))
   check_err_msg(checkinput_copulashared_numboots(num.boots))
   check_err_msg(checkinput_copulashared_verbose(verbose))
 
   # Fit original data ---------------------------------------------------------------
+
   cdf <- match.arg(cdf, choices = allowed.cdfs)
 
-  F.formula <- Formula::as.Formula(formula)
-  names.endo.regs <- formula_readout_special(
-    F.formula = F.formula,
-    name.special = "continuous",
-    from.rhs = 2,
-    params.as.chars.only = TRUE
-  )
+  F.formula <- as.Formula(formula)
+  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
+  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
+  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   # Warning the user to use copulaCorrection() (Park and Gupta 2012)
   # if there is no exo regressors. 2sCOPE method is designed for correlated
   # endo and exo regressors. Without an exo regressor, the correction term
   # is just equivalent to the copulaCorrection() approach
 
-  # Use labels(terms()) to also trigger when exogenous regs are transformed (like ~a+log(b) | log(b))
-  # because names.endo.regs="log(b)" but all.vars(formula)="b"
-  rhs1.vars <- labels(terms(F.formula, rhs = 1, lhs = 0))
-  exo.vars <- rhs1.vars[!rhs1.vars %in% names.endo.regs]
-
-  if (length(exo.vars) == 0) {
+  if (length(labels.exo) == 0) {
     warning(
       "No exogenous regressors found. The 2sCOPE method is designed for ",
       "settings with correlated endogenous and exogenous regressors. ",
@@ -217,7 +209,7 @@ copula2sCOPE <- function(
   if (verbose) {
     message(
       "Fitting 2sCOPE model with ",
-      length(names.endo.regs),
+      length(labels.endo),
       " endogenous regressors."
     )
   }
@@ -256,6 +248,8 @@ copula2sCOPE <- function(
     n.boots.attempted = res.boots$n.attempted,
     n.boots.failed = res.boots$n.failed,
     cdf = cdf,
-    names.endo.regs = names.endo.regs
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    labels.pcop = fit$labels.pcop
   ))
 }
