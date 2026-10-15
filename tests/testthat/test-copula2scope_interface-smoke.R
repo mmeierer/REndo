@@ -9,7 +9,7 @@ data("dataCopula2sCOPECase1")
 test_that("Works out of the box", {
   expect_no_error(capture_output(
     copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
+      formula = y ~ P + X | P,
       data = dataCopula2sCOPECase1
     )
   ))
@@ -29,42 +29,42 @@ test_that("Works out of the box", {
 
 specs <- list(
   "with intercept, with exo, single endo" = list(
-    formula = y ~ P + X | continuous(P),
+    formula = y ~ P + X | P,
     data = dataCopula2sCOPECase1,
     warn = NULL
   ),
   "no intercept, with exo, single endo" = list(
-    formula = y ~ P + X - 1 | continuous(P),
+    formula = y ~ P + X - 1 | P,
     data = dataCopula2sCOPECase1,
     warn = NULL
   ),
   "with intercept, no exo, single endo" = list(
-    formula = y ~ P | continuous(P),
+    formula = y ~ P | P,
     data = dataCopula2sCOPECase1,
     warn = "No exogenous regressors"
   ),
   "no intercept, no exo, single endo" = list(
-    formula = y ~ P - 1 | continuous(P),
+    formula = y ~ P - 1 | P,
     data = dataCopula2sCOPECase1,
     warn = "No exogenous regressors"
   ),
   "with intercept, no exo, multiple endo" = list(
-    formula = y ~ P + X | continuous(P, X),
+    formula = y ~ P + X | P + X,
     data = dataCopula2sCOPECase1,
     warn = "No exogenous regressors"
   ),
   "no intercept, no exo, multiple endo" = list(
-    formula = y ~ P + X - 1 | continuous(P, X),
+    formula = y ~ P + X - 1 | P + X,
     data = dataCopula2sCOPECase1,
     warn = "No exogenous regressors"
   ),
   "with intercept, with exo, multiple endo" = list(
-    formula = y ~ P + X + X2 | continuous(P, X),
+    formula = y ~ P + X + X2 | P + X,
     data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1))),
     warn = NULL
   ),
   "no intercept, with exo, multiple endo" = list(
-    formula = y ~ P + X + X2 - 1 | continuous(P, X),
+    formula = y ~ P + X + X2 - 1 | P + X,
     data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1))),
     warn = NULL
   )
@@ -109,7 +109,7 @@ test_that("copula2sCOPE runs on small sample", {
 
   expect_no_error(suppress_lowboots_warning(
     copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
+      formula = y ~ P + X | P,
       data = small_data,
       cdf = "adj.ecdf",
       verbose = FALSE,
@@ -125,7 +125,7 @@ test_that("copula2sCOPE allows NA in non-relevant column", {
   bad_data$Q[1] <- NA
   expect_warning(
     copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
+      formula = y ~ P + X | P,
       data = bad_data,
       verbose = FALSE,
       num.boots = 10
@@ -138,7 +138,7 @@ test_that("copula2sCOPE allows NA in non-relevant column", {
 test_that("S3 run without error", {
   res <- expect_warning(
     copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
+      formula = y ~ P + X | P,
       data = dataCopula2sCOPECase1,
       verbose = FALSE,
       num.boots = 10

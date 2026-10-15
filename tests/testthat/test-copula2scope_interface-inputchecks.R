@@ -9,25 +9,25 @@ data("dataCopula2sCOPECase1")
 invalid_formulas <- list(
   "missing RHS 2" = y ~ X + P,
   "no endogenous spec" = y ~ X + P | P,
-  "var in continuous() not in data" = y ~ X + P | continuous(Z),
-  "dependent var in continuous()" = y ~ X + P | continuous(y),
-  "no response variable" = ~ X + P | continuous(P),
-  "exo variable not in data" = y ~ X + Z + P | continuous(P),
-  "endo variable not in data" = y ~ X + Z | continuous(Z),
+  "var in continuous() not in data" = y ~ X + P | Z,
+  "dependent var in continuous()" = y ~ X + P | y,
+  "no response variable" = ~ X + P | P,
+  "exo variable not in data" = y ~ X + Z + P | P,
+  "endo variable not in data" = y ~ X + Z | Z,
   "illegal special" = y ~ X + P | discrete(P),
   "misspelled special" = y ~ X + P | continous(P),
   "using dot" = y ~ . | continuous(P),
-  "rhs1 and rhs2 swapped" = y ~ continuous(P) | X + P,
+  "rhs1 and rhs2 swapped" = y ~ P | X + P,
   "unwrapped rhs2" = y ~ X + P | P,
   "unwrapped rhs2 v2" = y ~ X + P | continuous(P) + P,
   "unwrapped rhs2 v3" = y ~ X + P | continuous(P) + X,
   "empty continuous()" = y ~ X + P | continuous(),
-  "endo in spec but not in model" = y ~ X | continuous(P),
-  "response also a regressor" = X ~ P + X | continuous(P),
-  "more than 2 parts" = y ~ X + P | continuous(P) | X,
-  "transformed endo not wrapped" = y ~ log(P) + X | continuous(P),
+  "endo in spec but not in model" = y ~ X | P,
+  "response also a regressor" = X ~ P + X | P,
+  "more than 2 parts" = y ~ X + P | P | X,
+  "transformed endo not wrapped" = y ~ log(P) + X | P,
   # non-formula types
-  "formula as char" = "y ~ P + X | continuous(P)",
+  "formula as char" = "y ~ P + X | P",
   "formula = NULL" = NULL,
   "formula is number" = 1
 )
@@ -68,7 +68,7 @@ invalid_params <- list(
 
 test_that("copula2sCOPE rejects invalid parameters", {
   base_args <- list(
-    formula = y ~ P + X | continuous(P),
+    formula = y ~ P + X | P,
     data = dataCopula2sCOPECase1,
     cdf = "adj.ecdf",
     num.boots = 1000,
@@ -99,7 +99,7 @@ test_that("copula2sCOPE rejects NA in any relevant column", {
     bad_data[[col]][1] <- NA
     expect_error(
       copula2sCOPE(
-        formula = y ~ P + X | continuous(P),
+        formula = y ~ P + X | P,
         data = bad_data
       ),
       info = col,
