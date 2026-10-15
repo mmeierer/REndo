@@ -50,3 +50,37 @@ fixture_ima_formula_edge_cases <- function() {
     )
   ))
 }
+
+# copula2sCOPE formula edge cases ------------------------------------------------------
+# Used by smoke & correctness tests. To be used as inputs to run_cases()
+fixture_2scope_formula_edge_cases <- function() {
+  data("dataCopula2sCOPECase1", envir = environment())
+
+  df <- dataCopula2sCOPECase1
+  df$X_pos <- abs(df$X) + 1
+  df$P_pos <- abs(df$P) + 1
+  df$`P 1` <- df$P
+  df$`X 1` <- df$X
+  df$P2 <- df$P^2 # second endo: nonlinear
+  df$x_fac <- factor(rep(c("a", "b", "c"), length.out = nrow(df)))
+
+  return(list(
+    "plain" = list(formula = y ~ X + P | P, data = df),
+    # dot: only on data without additional cols
+    "dot in rhs1" = list(formula = y ~ . | P, data = dataCopula2sCOPECase1),
+    "backticks in endo" = list(formula = y ~ `P 1` + X | `P 1`, data = df),
+    "backticks in exo" = list(formula = y ~ P + `X 1` | P, data = df),
+    "backticks in endo & exo" = list(formula = y ~ `P 1` + `X 1` | `P 1`, data = df),
+    "transformed exo" = list(formula = y ~ log(X_pos) + P | P, data = df),
+    "transformed endo" = list(formula = y ~ log(P_pos) + X | log(P_pos), data = df),
+    "inline function exo" = list(formula = y ~ I(X^2) + P | P, data = df),
+    "duplicate regressor" = list(formula = y ~ X + X + P | P, data = df),
+    "factor exo" = list(formula = y ~ X + x_fac + P | P, data = df),
+    "multiple endo with backtick" = list(
+      formula = y ~ X + `P 1` + P2 | `P 1` + P2,
+      data = df
+    ),
+    "no exo, single endo" = list(formula = y ~ P | P, data = df),
+    "no exo, multiple endo" = list(formula = y ~ P + X | P + X, data = df)
+  ))
+}

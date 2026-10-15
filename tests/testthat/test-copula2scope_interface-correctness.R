@@ -159,17 +159,29 @@ test_that("Parameter transformations (endo): Recovery", {
 })
 
 
-# Return values calculated correctly -------------------------------------------------
+# Internal consistency --------------------------------------------------------------
 
-test_that("structural residuals & fitted values are calculated correctly", {
-  res <- expect_warning(
-    fit_copula2sCOPE_lowboots(
-      formula = y ~ P + X | P + X,
-      data = dataCopula2sCOPECase1
-    ),
-    regexp = "No exogenous regressors"
+test_that("Formula edge cases", {
+  # the no-exo cases warn
+  fn <- function(...) {
+    withCallingHandlers(
+      fit_2scope_fast(...),
+      warning = function(w) {
+        if (grepl("No exogenous regressors found", conditionMessage(w))) {
+          invokeRestart("muffleWarning")
+        }
+      }
+    )
+  }
+
+  run_cases(
+    fn = fn,
+    cases = fixture_2scope_formula_edge_cases(),
+    check = function(res) {
+      check_labelled_consistently(res)
+      check_struct_residuals(res = res, aux.names = res$labels.pcop)
+    }
   )
-  check_struct_residuals(res = res, aux.names = c("P_cop", "X_cop"))
 })
 
 # Single endo + 0 exo: Collapses to copulaCorrection case 1 (continuous only) ---------
