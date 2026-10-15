@@ -122,13 +122,19 @@ test_that("copula2sCOPE allows NA in non-relevant column", {
   check_clean_fit(res)
 })
 
-# S3 methods ----------------------------------------------------------
-test_that("S3 run without error", {
-  res <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1
+# Formula -------------------------------------------------------------------------
+test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
+  results <- run_cases(
+    fn = fit_2scope_fast,
+    cases = fixture_2scope_formula_edge_cases(),
+    check = check_clean_fit
   )
 
-  expect_no_error(capture_output(print(res)))
-  expect_no_error(capture_output(print(summary(res))))
+  # S3 methods on each edge case
+  for (nm in names(results)) {
+    expect_no_error(capture_output(print(results[[nm]])))
+    expect_no_error(capture_output(print(summary(results[[nm]]))))
+  }
+})
+
 })
