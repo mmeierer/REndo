@@ -20,14 +20,14 @@ doc_rendocopula2scope_return_list <- function() {
 
 doc_rendocopula2scope_return <- function() {
   doc_intro <- c(
-    return = "@return An object of class \\code{rendo.copula.2sCOPE} which is a list that contains:"
+    return = "@return An object of class \\code{rendo.copula.2scope} which is a list that contains:"
   )
 
   return(c(doc_intro, doc_rendocopula2scope_return_list()))
 }
 
 #' @importFrom stats coef model.frame
-new_rendo_copula2sCOPE <- function(
+new_rendo_copula2scope <- function(
   call,
   F.formula,
   fitted.values,
@@ -55,7 +55,7 @@ new_rendo_copula2sCOPE <- function(
     n.boots.failed = n.boots.failed,
 
     # Stuff specific to 2sCOPE
-    subclass = "rendo.copula.2sCOPE",
+    subclass = "rendo.copula.2scope",
     res.lm.augmented = res.lm.augmented,
     cdf = cdf,
     labels.endo = labels.endo,

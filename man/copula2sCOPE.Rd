@@ -33,7 +33,7 @@ used for standard error estimation. A minimum of 1000 is recommended.}
 \item{verbose}{Show details about the running of the function.}
 }
 \value{
-An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
+An object of class \code{rendo.copula.2scope} which is a list that contains:
 \item{\code{formula}}{The formula given to specify the fitted model.}
 \item{\code{model}}{The model.frame used for model fitting.}
 \item{\code{terms}}{The terms object used for model fitting.}
@@ -45,7 +45,7 @@ An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
 \item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
 \item{\code{cdf}}{The used cdf function.}
-\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
+\item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{labels.endo}}{The term labels of the endogenous regressors.}
 \item{\code{labels.exo}}{The term labels of the exogenous regressors.}
 \item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}

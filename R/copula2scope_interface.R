@@ -238,7 +238,7 @@ copula2sCOPE <- function(
 
   # Return object ----------------------------------------------------------------------
 
-  return(new_rendo_copula2sCOPE(
+  return(new_rendo_copula2scope(
     call = cl,
     F.formula = F.formula,
     res.lm.augmented = fit$res.augmented,
