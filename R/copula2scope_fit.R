@@ -1,6 +1,9 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats formula lm model.frame model.matrix terms reformulate update
 copula2sCOPE_fit <- function(F.formula, data, cdf) {
+
+  # 1st Stage --------------------------------------------------------------------
+
   F.formula <- Formula::as.Formula(F.formula)
 
   names.vars.continuous <- formula_readout_special(
@@ -39,20 +42,18 @@ copula2sCOPE_fit <- function(F.formula, data, cdf) {
   cop.terms <- copula2sCOPE_residuals(P.star = P.star, endo.cols = endogenous.columns)
 
 
-  f.main <- formula(mf)
-  # colnames(cop.terms) may contain chars illegal for formula labels
-  colnames(cop.terms) <- make.names(colnames(cop.terms))
-  f.pcop <- reformulate(
-    termlabels = c(".", colnames(cop.terms)),
-    response = NULL,
-    intercept = TRUE
+
+
+  # 2nd Stage --------------------------------------------------------------------
+  res.2nd.stage <- copula_fit_2ndstage(
+    F.formula = F.formula,
+    data = data,
+    cop.terms = cop.terms
   )
 
-  f.final <- update(old = f.main, new = f.pcop)
-
-  return(lm(
-    formula = f.final,
-    data = cbind(data, cop.terms)
+  return(list(
+    res.augmented = res.2nd.stage$res.augmented,
+    labels.pcop = res.2nd.stage$labels.pcop
   ))
 }
 

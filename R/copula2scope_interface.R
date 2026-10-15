@@ -226,22 +226,22 @@ copula2sCOPE <- function(
   # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    return(copula2sCOPE_fit(F.formula = F.formula, data = data.b, cdf = cdf))
+    res.b <- copula2sCOPE_fit(F.formula = F.formula, data = data.b, cdf = cdf)
+    return(res.b$res.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit)),
+    coef.names = names(coef(fit$res.augmented)),
     verbose = verbose
   )
 
   # Structural residuals --------------------------------------------------------------
-
   l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit,
-    names.aux.regs = grep("_cop$", names(coef(fit)), value = TRUE)
+    res.lm.aug = fit$res.augmented,
+    names.aux.regs = fit$labels.pcop
   )
 
   # Return object ----------------------------------------------------------------------
@@ -249,7 +249,7 @@ copula2sCOPE <- function(
   return(new_rendo_copula2sCOPE(
     call = cl,
     F.formula = F.formula,
-    res.lm.augmented = fit,
+    res.lm.augmented = fit$res.augmented,
     fitted.values = l.fitted.resid$fitted.values,
     residuals = l.fitted.resid$residuals,
     boots.params = res.boots$boots.params,
