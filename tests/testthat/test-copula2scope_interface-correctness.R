@@ -111,7 +111,10 @@ test_that("Parameter transformations (exo): Recovery", {
     formula = y ~ P + log(X) | P,
     data = dataCopula2sCOPECase1_trans
   )
-  check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, "log(X)" = -1))
+  check_param_recovery(
+    res = res,
+    true_vals = c("(Intercept)" = 1, P = 1, "log(X)" = -1)
+  )
 })
 
 
@@ -123,27 +126,18 @@ test_that("Parameter transformations (endo): Recovery", {
     formula = y ~ log(P) + X | log(P),
     data = dataCopula2sCOPECase1_trans
   )
-  check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, "log(P)" = 1, X = -1))
+  check_param_recovery(
+    res = res,
+    true_vals = c("(Intercept)" = 1, "log(P)" = 1, X = -1)
+  )
 })
 
 
 # Internal consistency --------------------------------------------------------------
 
 test_that("Formula edge cases", {
-  # the no-exo cases warn
-  fn <- function(...) {
-    withCallingHandlers(
-      fit_2scope_fast(...),
-      warning = function(w) {
-        if (grepl("No exogenous regressors found", conditionMessage(w))) {
-          invokeRestart("muffleWarning")
-        }
-      }
-    )
-  }
-
   run_cases(
-    fn = fn,
+    fn = fit_2scope_fast,
     cases = fixture_2scope_formula_edge_cases(),
     check = function(res) {
       check_labelled_consistently(res)
@@ -158,16 +152,13 @@ test_that("Formula edge cases", {
 
 run_2scope_parkgupta_equivalent <- function(data) {
   # Need SE: With boots=1000
-  expect_warning(
-    res.2scope <- fit_2scope_defaults(
-      formula = y ~ P | P,
-      data = data
-    ),
-    regexp = "No exogenous regressors found"
+  res.2scope <- fit_2scope_defaults(
+    formula = y ~ P | P,
+    data = data
   )
 
   res.cc <- fit_copulacorrection_fast(
-    formula = y ~ P | P,
+    formula = y ~ P | continuous(P),
     data = data
   )
 

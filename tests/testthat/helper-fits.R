@@ -5,14 +5,14 @@
 # Suppress boots warning -----------------------------------------------------------
 # Suppress 1000 num.boots warning but lets all other warnings propagate
 suppress_lowboots_warning <- function(expr) {
-  withCallingHandlers(
+  return(withCallingHandlers(
     expr,
     warning = function(w) {
       if (grepl(pattern = "recommended to run 1000", x = conditionMessage(w))) {
         invokeRestart("muffleWarning")
       }
     }
-  )
+  ))
 }
 
 # copulaIMA ----------------------------------------------------------------------------
@@ -53,6 +53,18 @@ fit_ima_defaults <- function(
 }
 
 # copula2sCOPE -------------------------------------------------------------------------
+
+suppress_2scope_noexo_warning <- function(expr) {
+  return(withCallingHandlers(
+    expr,
+    warning = function(w) {
+      if (grepl(pattern = "No exogenous regressors found", x = conditionMessage(w))) {
+        invokeRestart("muffleWarning")
+      }
+    }
+  ))
+}
+
 fit_2scope_fast <- function(
   formula,
   data,
@@ -60,7 +72,7 @@ fit_2scope_fast <- function(
   num.boots = 2,
   verbose = FALSE
 ) {
-  return(suppress_lowboots_warning(
+  return(suppress_2scope_noexo_warning(suppress_lowboots_warning(
     copula2sCOPE(
       formula = formula,
       data = data,
@@ -68,7 +80,7 @@ fit_2scope_fast <- function(
       num.boots = num.boots,
       verbose = verbose
     )
-  ))
+  )))
 }
 
 fit_2scope_defaults <- function(
@@ -78,7 +90,7 @@ fit_2scope_defaults <- function(
   num.boots = 1000,
   verbose = FALSE
 ) {
-  return(suppress_lowboots_warning(
+  return(suppress_2scope_noexo_warning(suppress_lowboots_warning(
     copula2sCOPE(
       formula = formula,
       data = data,
@@ -86,7 +98,7 @@ fit_2scope_defaults <- function(
       num.boots = num.boots,
       verbose = verbose
     )
-  ))
+  )))
 }
 
 # copula2sCOPEnp -----------------------------------------------------------------------
