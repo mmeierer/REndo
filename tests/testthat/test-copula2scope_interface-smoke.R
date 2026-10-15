@@ -78,20 +78,16 @@ test_that("copula2sCOPE runs across specs and cdf options", {
   for (spec_name in names(specs)) {
     for (cdf in cdfs) {
       spec <- specs[[spec_name]]
-      call_expr <- quote(
-        copula2sCOPE(
-          formula = spec$formula,
-          data = spec$data,
-          cdf = cdf,
-          verbose = FALSE,
-          num.boots = 10
-        )
-      )
 
       if (is.null(spec$warn)) {
-        res <- expect_no_warning(suppress_lowboots_warning(eval(call_expr)))
+        res <- expect_no_warning(
+          fit_2scope_fast(formula = spec$formula, data = spec$data, cdf = cdf)
+        )
       } else {
-        res <- expect_warning(suppress_lowboots_warning(eval(call_expr)), regexp = spec$warn)
+        res <- expect_warning(
+          fit_2scope_fast(formula = spec$formula, data = spec$data, cdf = cdf),
+          regexp = spec$warn
+        )
       }
 
       expect_false(anyNA(fitted(res)))
@@ -107,15 +103,11 @@ test_that("copula2sCOPE runs across specs and cdf options", {
 test_that("copula2sCOPE runs on small sample", {
   small_data <- dataCopula2sCOPECase1[1:50, ]
 
-  expect_no_error(suppress_lowboots_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | P,
-      data = small_data,
-      cdf = "adj.ecdf",
-      verbose = FALSE,
-      num.boots = 10
-    )
-  ))
+  res <- fit_2scope_fast(
+    formula = y ~ P + X | P,
+    data = small_data
+  )
+  check_clean_fit(res)
 })
 
 
@@ -123,27 +115,18 @@ test_that("copula2sCOPE allows NA in non-relevant column", {
   bad_data <- dataCopula2sCOPECase1
   bad_data$Q <- rnorm(nrow(dataCopula2sCOPECase1))
   bad_data$Q[1] <- NA
-  expect_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | P,
-      data = bad_data,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "to run 1000"
+  res <- fit_2scope_fast(
+    formula = y ~ P + X | P,
+    data = bad_data
   )
+  check_clean_fit(res)
 })
 
 # S3 methods ----------------------------------------------------------
 test_that("S3 run without error", {
-  res <- expect_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | P,
-      data = dataCopula2sCOPECase1,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
+  res <- fit_2scope_fast(
+    formula = y ~ P + X | P,
+    data = dataCopula2sCOPECase1
   )
 
   expect_no_error(capture_output(print(res)))
