@@ -75,7 +75,9 @@ regressor \eqn{P_{i,k}} is continuously and nonnormally distributed. It does not
 require that the exogenous regressors \eqn{X_i} be independent of the endogenous
 regressors \eqn{P_{i,k}} or to satisfy any distributional requirement, i.e., \eqn{X_i}
 may be binary or non-continuously distributed. This method supports only continuous
-endogenous regressors.
+endogenous regressors. At least one exogenous regressor is required. Without
+exogenous regressors, IMA is equivalent to Park and Gupta (2012)
+(\code{\link{copulaCorrection}}).
 }
 \details{
 \subsection{Model}{
