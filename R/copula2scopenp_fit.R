@@ -32,6 +32,8 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
 
     # specify endo as DV to know where to read from
     mf.p <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
+    mf.p <- copula2scopenp_mf_drop_asis(mf.p)
+    copula_stop_if_constant(mf.p)
     mfs[[p.label]] <- mf.p
 
     # TODO: Check if bw were fit with formula or 2 data inputs as user might specify differently?
@@ -158,6 +160,7 @@ copula2scopenp_bandwidth <- function(
     )
 
     mf.p <- model.frame(f.endo.exo, data = data, na.action = na.fail)
+    mf.p <- copula2scopenp_mf_drop_asis(mf.p)
 
     bw.call.args <- list(
       ydat = mf.p[, 1, drop = FALSE], # endo: response (first col)
@@ -177,4 +180,16 @@ copula2scopenp_bandwidth <- function(
 
   names(l.bws) <- labels.endo
   return(l.bws)
+}
+
+
+# np::npcdistbw() has a but where it fails for cols with class "AsIs" (ie I()
+# in formula). Therefore drop all such classes from columns that have it
+copula2scopenp_mf_drop_asis <- function(mf) {
+  is.asis <- vapply(mf, inherits, what = "AsIs", FUN.VALUE = logical(1))
+  for (j in which(is.asis)) {
+    cls <- class(mf[[j]])
+    class(mf[[j]]) <- cls[cls != "AsIs"]
+  }
+  return(mf)
 }
