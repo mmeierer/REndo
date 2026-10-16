@@ -370,7 +370,9 @@ checkinput_copulashared_modelframe <- function(
 # - no continuous()/discrete() specials (if users are mistaking the interface)
 # - >= 1 endogenous regressor
 # - endogenous terms (rhs2) also in structural model (rhs1)
-# - endogenous: warniung if low cardinality
+#
+# Flag:
+# - warning if endo is low cardinality
 #
 # Exo terms are usually derived using setdiff(rhs1, rhs2), therefore there
 # is no overlap between them. But at the *variable*-level (eg log(P) -> P)
@@ -386,6 +388,7 @@ checkinput_copulashared_formula_data <- function(
   min.num.exo,
   allow.interactions,
   allow.constant.regressors,
+  warn.low.card.endo,
   allowed.classes.endo,
   allowed.classes.exo,
   msg.min.num.exo = paste0(
@@ -481,7 +484,11 @@ checkinput_copulashared_formula_data <- function(
     F.formula = F.formula,
     data = data,
     allowed.classes = allowed.classes,
-    labels.warn.low.card = endo.labels,
+    labels.warn.low.card = if (warn.low.card.endo) {
+      endo.labels
+    } else {
+      NULL
+    },
     forbid.constant = !allow.constant.regressors
   ))
 }

@@ -14,6 +14,7 @@ checkinput_copula2scopenp_formula_data <- function(formula, data) {
     msg.min.num.exo = "copula2sCOPEnp requires at least one exogenous regressor for the nonparametric conditional CDF estimation.",
     allow.interactions = FALSE,
     allow.constant.regressors = FALSE,
+    warn.low.card.endo = FALSE,
     allowed.classes.endo = c("numeric", "ordered"),
     allowed.classes.exo = c("numeric", "factor", "ordered")
   ))
