@@ -30,7 +30,7 @@ A dataset simulated with two endogenous continuous regressors
   (endogeneity strength rho = 0.5). They are also correlated with the exogenous regressor (rho = 0.5).
   The true parameter values are \code{beta = 1} for \code{X},
    \code{alpha1 = 1} for \code{P1}, \code{alpha2 = -1}
-  for \code{P2}, and \code{mu = 10} for the intercept.This was simulated as
+  for \code{P2}, and \code{mu = 10} for the intercept. This was simulated as
   an extension to the dataset 'dataCopIMAContExo'. This dataset was created to test
   how well \code{copulaIMA()} works with an intercept and multiple endogenous regressors.
   N = 5000 to avoid the problem of finite sample bias.

@@ -12,30 +12,26 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
 
   f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
   X.endo <- model.matrix(f.endo, data = mf.all)
+  copula_stop_if_constant(X.endo)
 
   # (constructing P star, from Haschka 2025, page 164)
   # copula_pstar is applied column-wise
   P.star.endo <- copula_pstar(P = X.endo, cdf = cdf)
 
-  # Exo may be missing: Cannot process
-  has.exo <- length(labels.exo) > 0
-  if (has.exo) {
-    # NOTE: Having no intercept makes model.matrix() code first factor with k dummies
-    # instead of the regular k-1 dummies! This is different from Haschkas
-    # implementation which uses the whole formula.
-    # But: All this doesnt matter as long as exo vars are only numeric.
-    f.exo <- reformulate(termlabels = labels.exo, response = NULL, intercept = FALSE)
-    X.exo <- model.matrix(f.exo, data = mf.all)
-    P.star.exo <- copula_pstar(P = X.exo, cdf = cdf)
-  }
+  # NOTE: Having no intercept makes model.matrix() code first factor with k dummies
+  # instead of the regular k-1 dummies! This is different from Haschkas
+  # implementation which uses the whole formula.
+  # But: All this doesnt matter as long as exo vars are only numeric.
+  f.exo <- reformulate(termlabels = labels.exo, response = NULL, intercept = FALSE)
+  X.exo <- model.matrix(f.exo, data = mf.all)
+  copula_stop_if_constant(X.exo)
+  P.star.exo <- copula_pstar(P = X.exo, cdf = cdf)
 
   # . Create copula terms ------------------------------------------------------
   # Haschka 2025 section 3.2 step 2: regressing each P*_l on exo X* only, without intercept
 
   Z.endo <- qnorm(P.star.endo)
-  if (has.exo) {
-    Z.exo <- qnorm(P.star.exo)
-  }
+  Z.exo <- qnorm(P.star.exo)
 
   # Exogenous normal scores: all the columns that are not endo
   # chapter 3.2 step 2: regressing P*l on X1*, ..., XK* (exogenous only)
@@ -46,13 +42,18 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   )
 
   for (j in seq_len(ncol(Z.endo))) {
+
+    # There are always exo regressors
     Z.j <- Z.endo[, j, drop = TRUE]
-    if (has.exo) {
-      lm.j <- lm(Z.j ~ Z.exo - 1)
-      cop.terms[, j] <- residuals(lm.j)
-    } else {
-      cop.terms[, j] <- Z.j # no exo regressors
-    }
+    lm.j <- lm(Z.j ~ Z.exo - 1)
+    cop.terms[, j] <- residuals(lm.j)
+
+    # if (has.exo) {
+    #   lm.j <- lm(Z.j ~ Z.exo - 1)
+    #   cop.terms[, j] <- residuals(lm.j)
+    # } else {
+    #   cop.terms[, j] <- Z.j # no exo regressors
+    # }
   }
 
   # Stage 2 --------------------------------------------------------------------

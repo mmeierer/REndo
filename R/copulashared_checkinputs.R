@@ -130,13 +130,15 @@ label_to_colname <- function(lab) {
 # - check for each (formula) label / term, if the resulting regressor (colum) is
 #    of an allowed class
 # - warn about low cardinality (<=10) numeric variables
+# - forbid.constant: error on constant data in any mf column
 #
-#' @importFrom stats model.frame na.fail .MFclass
+#' @importFrom stats model.frame na.fail .MFclass terms
 checkinput_copulashared_modelframe <- function(
   F.formula,
   data,
   allowed.classes,
-  labels.warn.low.card
+  labels.warn.low.card,
+  forbid.constant
 ) {
   # Expose build failures to user (bad transformations, generated NAs,...)
   mf <- tryCatch(
@@ -195,6 +197,23 @@ checkinput_copulashared_modelframe <- function(
     }
   }
 
+  # no constant columns (also not response)
+  if (forbid.constant) {
+    is.const <- vapply(
+      mf,
+      function(x) {
+        return(length(unique(x)) == 1)
+      },
+      logical(1)
+    )
+    if (any(is.const)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Variable(s) must not be constant: ",
+        toString(names(mf)[is.const]), "."))
+    }
+  }
+
   return(err.msg)
 }
 
@@ -224,6 +243,7 @@ checkinput_copulashared_formula_data <- function(
   data,
   min.num.exo,
   allow.interactions,
+  allow.constant.regressors,
   allowed.classes.endo,
   allowed.classes.exo,
   msg.min.num.exo = paste0(
@@ -319,6 +339,7 @@ checkinput_copulashared_formula_data <- function(
     F.formula = F.formula,
     data = data,
     allowed.classes = allowed.classes,
-    labels.warn.low.card = endo.labels
+    labels.warn.low.card = endo.labels,
+    forbid.constant = !allow.constant.regressors
   ))
 }

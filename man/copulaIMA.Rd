@@ -75,7 +75,9 @@ regressor \eqn{P_{i,k}} is continuously and nonnormally distributed. It does not
 require that the exogenous regressors \eqn{X_i} be independent of the endogenous
 regressors \eqn{P_{i,k}} or to satisfy any distributional requirement, i.e., \eqn{X_i}
 may be binary or non-continuously distributed. This method supports only continuous
-endogenous regressors.
+endogenous regressors. At least one exogenous regressor is required. Without
+exogenous regressors, IMA is equivalent to Park and Gupta (2012)
+(\code{\link{copulaCorrection}}).
 }
 \details{
 \subsection{Model}{
@@ -162,7 +164,6 @@ The second part identifies the continuous endogenous regressors:
 
 \preformatted{y ~ X + P | P                       # endogenous P}
 \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endogenous regressors}
-\preformatted{y ~ P1 + P2 | P1 + P2               # no exogenous regressors}
 \preformatted{y ~ X + P - 1 | P                   # no intercept (in simulation settings)}
 
 In typical applied settings the model includes an intercept. The
@@ -201,13 +202,12 @@ summary(res)
 \donttest{
 #------------------------------------------------------------------------
 # Example 2: Two endogenous regressors with intercept and one exogenous regressor
-# True values: mu=10, alpha1 = 1 (P1), alpha2 = 1 (P2), ebta = 1 (X)
-N = 5000
 # Extension of the first example
+# True values: mu=10, alpha1 = 1 (P1), alpha2 = -1 (P2), beta = 1 (X)
 #------------------------------------------------------------------------
 data("dataCopIMAMultiEndo")
 res2 <- copulaIMA(
-  y ~ P1 + P2 | P1 + P2,
+  y ~ X + P1 + P2 | P1 + P2,
   data = dataCopIMAMultiEndo,
   cdf = "adj.ecdf",
   num.boots = 1000

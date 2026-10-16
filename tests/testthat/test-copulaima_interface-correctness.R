@@ -86,11 +86,14 @@ test_that("Parameter recovery: dataCopIMAContExo", {
 
 test_that("Parameter recovery: dataCopIMAMultiEndo", {
   res <- fit_ima_defaults(
-    formula = y ~ P1 + P2 | P1 + P2,
+    formula = y ~ X + P1 + P2 | P1 + P2,
     data = dataCopIMAMultiEndo
   )
 
-  check_param_recovery(res = res, true_vals = c("(Intercept)" = 10, P1 = 1, P2 = 1))
+  check_param_recovery(
+    res = res,
+    true_vals = c("(Intercept)" = 10, X = 1, P1 = 1, P2 = -1)
+  )
 })
 
 test_that("Parameter recovery: dataCopIMABinExo", {
@@ -113,4 +116,25 @@ test_that("Formula edge cases", {
       check_struct_residuals(res = res, aux.names = res$labels.pcop)
     }
   )
+})
+
+# Bootstrap: Degenerate cases ---------------------------------------------------
+
+test_that("fit() stops on constant data (required for bootstrapping)", {
+  for (col in c("X", "P")) {
+    df.const <- dataCopIMAContExo
+    df.const[[col]] <- 1
+
+    expect_error(
+      copulaima_fit(
+        F.formula = as.Formula(y ~ X + P | P),
+        data = df.const,
+        cdf = "ecdf",
+        labels.endo = "P",
+        labels.exo = "X"
+      ),
+      regexp = "Constant regressor",
+      info = col
+    )
+  }
 })
