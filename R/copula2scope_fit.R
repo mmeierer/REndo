@@ -1,6 +1,6 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats formula lm model.frame model.matrix terms reformulate update
-copula2sCOPE_fit <- function(F.formula, data, cdf) {
+copula2scope_fit <- function(F.formula, data, cdf) {
 
   # 1st Stage --------------------------------------------------------------------
 

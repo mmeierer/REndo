@@ -220,12 +220,12 @@ copula2sCOPE <- function(
       " endogenous regressors."
     )
   }
-  fit <- copula2sCOPE_fit(F.formula = F.formula, data = data, cdf = cdf)
+  fit <- copula2scope_fit(F.formula = F.formula, data = data, cdf = cdf)
 
   # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    res.b <- copula2sCOPE_fit(F.formula = F.formula, data = data.b, cdf = cdf)
+    res.b <- copula2scope_fit(F.formula = F.formula, data = data.b, cdf = cdf)
     return(res.b$res.augmented)
   }
 
