@@ -177,7 +177,8 @@ copula2sCOPE <- function(
     allow.interactions  = FALSE,
     allow.constant.regressors = FALSE,
     allowed.classes.endo= "numeric",
-    allowed.classes.exo = NULL # checking no column
+    # forbid ordered factors
+    allowed.classes.exo = c("numeric", "factor", "character", "logical")
   ))
 
   allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
