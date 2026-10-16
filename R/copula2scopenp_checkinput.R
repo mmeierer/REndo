@@ -94,7 +94,8 @@ checkinput_copula2scopenp_formula_data <- function(formula, data) {
     F.formula = F.formula,
     data = data,
     allowed.classes = allowed.classes,
-    labels.warn.low.card = NULL
+    labels.warn.low.card = NULL,
+    forbid.constant = FALSE
   ))
 }
 

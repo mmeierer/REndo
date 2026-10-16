@@ -28,7 +28,7 @@ copula_pstar <- function(P, cdf) {
     })
   } else if (cdf == "resc.ecdf") {
     # same as copula::pobs()
-    P.star <- apply(P, 2, rank, ties.method = "average")/(nrow(P) + 1)
+    P.star <- apply(P, 2, rank, ties.method = "average") / (nrow(P) + 1)
   } else if (cdf == "adj.ecdf") {
     P.star <- apply(P, 2, copula_adj_ecdf)
   } else if (cdf == "ecdf") {
@@ -46,6 +46,17 @@ copula_pstar <- function(P, cdf) {
 
   colnames(P.star) <- colnames(P)
   return(P.star)
+}
+
+# Stops if any column of is constant
+copula_stop_if_constant <- function(X) {
+  stopifnot(is.matrix(X))
+  is.const <- apply(X, 2, function(x) {
+    return(length(unique(x)) == 1)
+  })
+  if (any(is.const)) {
+    stop("Constant regressor(s): ", toString(colnames(X)[is.const]), call. = FALSE)
+  }
 }
 
 

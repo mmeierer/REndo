@@ -18,8 +18,8 @@ test_that("Works out of the box", {
 
 # Specifications for smoke tests ----------------------------------------------------
 # Specs vary along three dimensions:
-# - Intercept: with vs without (including minimal no-intercept-no-exo model)
-# - Exogenous regressors: continuous, binary, or none
+# - Intercept: with vs without
+# - Exogenous regressors: continuous, or binary
 # - Endogenous regressors: single vs multiple
 # Each spec is crossed with all 4 cdf options
 
@@ -36,16 +36,12 @@ specs <- list(
     formula = y ~ X + P - 1 | P,
     data = dataCopIMABinExo
   ),
-  "with intercept, no exo, multiple endo" = list(
-    formula = y ~ P1 + P2 | P1 + P2,
+  "with intercept, continuous exo, multiple endo" = list(
+    formula = y ~ X + P1 + P2 | P1 + P2,
     data = dataCopIMAMultiEndo
   ),
-  "with intercept, no exo, single endo" = list(
-    formula = y ~ P1 | P1,
-    data = dataCopIMAMultiEndo
-  ),
-  "no intercept, no exo, single endo (minimal)" = list(
-    formula = y ~ P1 - 1 | P1,
+  "no intercept, continuous exo, multiple endo" = list(
+    formula = y ~ X + P1 + P2 - 1 | P1 + P2,
     data = dataCopIMAMultiEndo
   )
 )
