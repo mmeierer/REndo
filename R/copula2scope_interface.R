@@ -160,7 +160,6 @@ copula2sCOPE <- function(
 ) {
   cl <- match.call()
 
-
   # Input checks  -------------------------------------------------------------------
 
   check_err_msg(checkinput_copulashared_data_basics(data))
@@ -174,9 +173,9 @@ copula2sCOPE <- function(
     formula = formula,
     data = data,
     min.num.exo = 0, # may have no exo regressor, resulting in warning
-    allow.interactions  = FALSE,
+    allow.interactions = FALSE,
     allow.constant.regressors = FALSE,
-    allowed.classes.endo= "numeric",
+    allowed.classes.endo = "numeric",
     # forbid ordered factors
     allowed.classes.exo = c("numeric", "factor", "character", "logical")
   ))
@@ -220,12 +219,24 @@ copula2sCOPE <- function(
       " endogenous regressors."
     )
   }
-  fit <- copula2scope_fit(F.formula = F.formula, data = data, cdf = cdf)
+  fit <- copula2scope_fit(
+    F.formula = F.formula,
+    data = data,
+    cdf = cdf,
+    labels.endo = labels.endo,
+    labels.exo = labels.exo
+  )
 
   # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    res.b <- copula2scope_fit(F.formula = F.formula, data = data.b, cdf = cdf)
+    res.b <- copula2scope_fit(
+      F.formula = F.formula,
+      data = data.b,
+      cdf = cdf,
+      labels.endo = labels.endo,
+      labels.exo = labels.exo
+    )
     return(res.b$res.augmented)
   }
 

@@ -58,7 +58,7 @@ fixture_2scope_formula_edge_cases <- function() {
   df$P_pos <- abs(df$P) + 1
   df$`P 1` <- df$P
   df$`X 1` <- df$X
-  df$P2 <- df$P^2 # second endo: nonlinear
+  df$P2 <- df$P * df$X # not collinear or P
   df$x_fac <- factor(rep(c("a", "b", "c"), length.out = nrow(df)))
 
   return(list(
