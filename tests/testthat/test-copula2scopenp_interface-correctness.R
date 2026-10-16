@@ -75,40 +75,14 @@ test_that("Correctly respect intercept", {
 # Internal consistency --------------------------------------------------------------
 
 test_that("Formula edge cases: Label & residuals correct", {
-  df.bt <- data.cont.pos
-  df.bt$`P 1` <- df.bt$P
-
-  df.multi.bt <- dataCopula2sCOPEnpMulti
-  df.multi.bt$`P 1` <- df.multi.bt$P1
-
-  cases <- list(
-    "plain" = list(formula = y ~ P + X | P, data = data.cont.pos),
-    "dot in rhs1" = list(
-      formula = y ~ . |
-        P,
-      data = dataCopula2sCOPEnpCont
-    ),
-    "backticks in endo" = list(formula = y ~ `P 1` + X | `P 1`, data = df.bt),
-    "backticks in exo" = list(
-      formula = y ~ P + `X 1` | P,
-      data = transform(data.cont.pos, `X 1` = X, check.names = FALSE)
-    ),
-    "transformed endo" = list(
-      formula = y ~ log(P.pos) + X | log(P.pos),
-      data = data.cont.pos
-    ),
-    "multiple endo with backtick" = list(
-      # continuous variable only: X1,X2,P1 to run faster
-      formula = y ~ X1 + X2 + `P 1` | X2 + `P 1`,
-      data = df.multi.bt
-    )
+  run_cases(
+    fn = fit_2scopenp_fast,
+    cases = fixture_2scopenp_formula_edge_cases(),
+    check = function(res) {
+      check_labelled_consistently_2scopenp(res)
+      check_struct_residuals(res = res, aux.names = res$labels.pcop)
+    }
   )
-
-  for (nm in names(cases)) {
-    res <- fit_2scopenp_fast(formula = cases[[nm]]$formula, data = cases[[nm]]$data)
-    check_labelled_consistently_2scopenp(res)
-    check_struct_residuals(res = res, aux.names = res$labels.pcop)
-  }
 })
 
 
