@@ -50,10 +50,14 @@ copula_pstar <- function(P, cdf) {
 
 # Stops if any column of is constant
 copula_stop_if_constant <- function(X) {
-  stopifnot(is.matrix(X))
-  is.const <- apply(X, 2, function(x) {
-    return(length(unique(x)) == 1)
-  })
+  stopifnot(is.matrix(X) || is.data.frame(X))
+  is.const <- vapply(
+    seq_len(ncol(X)),
+    function(j) {
+      return(length(unique(X[, j])) == 1)
+    },
+    FUN.VALUE = logical(1)
+  )
   if (any(is.const)) {
     stop("Constant regressor(s): ", toString(colnames(X)[is.const]), call. = FALSE)
   }

@@ -32,6 +32,7 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
 
     # specify endo as DV to know where to read from
     mf.p <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
+    copula_stop_if_constant(mf.p)
     mfs[[p.label]] <- mf.p
 
     # TODO: Check if bw were fit with formula or 2 data inputs as user might specify differently?
