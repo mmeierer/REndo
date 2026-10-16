@@ -175,6 +175,7 @@ copula2sCOPE <- function(
     data = data,
     min.num.exo = 0, # may have no exo regressor, resulting in warning
     allow.interactions  = FALSE,
+    allow.constant.regressors = FALSE,
     allowed.classes.endo= "numeric",
     allowed.classes.exo = NULL # checking no column
   ))
