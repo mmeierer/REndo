@@ -33,7 +33,7 @@ used for standard error estimation. A minimum of 1000 is recommended.}
 \item{verbose}{Show details about the running of the function.}
 }
 \value{
-An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
+An object of class \code{rendo.copula.2scope} which is a list that contains:
 \item{\code{formula}}{The formula given to specify the fitted model.}
 \item{\code{model}}{The model.frame used for model fitting.}
 \item{\code{terms}}{The terms object used for model fitting.}
@@ -45,8 +45,10 @@ An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
 \item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
 \item{\code{cdf}}{The used cdf function.}
-\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
+\item{\code{labels.endo}}{The term labels of the endogenous regressors.}
+\item{\code{labels.exo}}{The term labels of the exogenous regressors.}
+\item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}
 }
 \description{
 Fitting the two-stage copula generator regressor approach (2sCOPE) estimator of
@@ -62,7 +64,7 @@ that at least one exogenous regressor is non-normally distributed. In that case,
 would then come from the non-normal exogenous regressor instead of the endogenous regressor itself.
 }
 \details{
-\strong{Model}
+\subsection{Model}{
 
 Consider the structural regression model with \eqn{K} endogenous regressors:
 
@@ -74,32 +76,34 @@ where \eqn{i = 1, \ldots, n} is the number of observations,
 structural error \eqn{\varepsilon_i} and the exogenous regressors \eqn{X_i},
 \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
 \eqn{\mu, \alpha_k, \beta} are the structural model parameters.
+}
 
-\strong{Methodology}
+\subsection{Methodology}{
 
 2sCOPE is an augmented OLS estimator which can be described in the following 3 steps
 (Yang et al., 2025):
 
 \enumerate{
-  \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
+\item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
         P_1, \ldots, P_K\}}, compute the normal score
-        \eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
-        the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
-        standard normal quantile function.
-  \item For each endogenous regressor \eqn{P_k^*}, regress it on the normal
-        scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
-        with intercept and keep the residuals
-        \eqn{\hat{\varepsilon}_k} as the copula correction terms. This
-        first-stage regression exploits the informational content of the
-        exogenous regressors in a similar way to instrumental variable
-        identification.
-  \item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
+\eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
+the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
+standard normal quantile function.
+\item For each endogenous regressor \eqn{P_k^*}, regress it on the normal
+scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
+with intercept and keep the residuals
+\eqn{\hat{\varepsilon}_k} as the copula correction terms. This
+first-stage regression exploits the informational content of the
+exogenous regressors in a similar way to instrumental variable
+identification.
+\item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
         \hat{\varepsilon}_K} as additional regressors and estimate the following using OLS:
-        \deqn{Y_i = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k + X_i' \beta
+\deqn{Y_i = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k + X_i' \beta
               + \sum_{k=1}^{K} \hat{\varepsilon}_{i,k} \gamma_k + \xi_i}
-        where \eqn{\gamma_k} is the coefficient of the copula correction
-        term \eqn{\hat{\varepsilon}_{i,k}} and \eqn{\xi_i} is the new
-        error term.
+where \eqn{\gamma_k} is the coefficient of the copula correction
+term \eqn{\hat{\varepsilon}_{i,k}} and \eqn{\xi_i} is the new
+error term.
+}
 }
 
 \subsection{Bootstrap inference}{
@@ -146,19 +150,20 @@ It is recommended to use \code{cdf = "adj.ecdf"} for the best finite-sample
 performance (Liengaard et al. 2025).
 }
 
-\strong{Formula interface}
+\subsection{Parameter \code{formula}}{
 
-The \code{formula} argument follows a two-part notation separated by
-\code{|}. The first part specifies the structural model. The second part
-identifies the continuous endogenous regressors using \code{continuous()}:
+The \code{formula} argument follows a two part notation separated by \code{|}.
+The first part specifies the structural model (e.g. \code{y ~ X + P}).
+The second part identifies the continuous endogenous regressors:
 
-\preformatted{y ~ X + P | continuous(P)                          # one endo}
-\preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endo}
+\preformatted{y ~ X + P | P                       # one}
+\preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endo}
 
 At least one exogenous regressor should be present in the model.
 When no exogenous regressor is present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
+}
 }
 \examples{
 # -------------------------------------------------------------------
@@ -172,7 +177,7 @@ the approach of Park and Gupta (2012).
 # -------------------------------------------------------------------
 data("dataCopula2sCOPECase1")
 res1 <- copula2sCOPE(
-  y ~ P + X | continuous(P),
+  y ~ P + X | P,
   data      = dataCopula2sCOPECase1,
   cdf       = "adj.ecdf",
   num.boots = 1000
@@ -190,7 +195,7 @@ summary(res1)
 # -------------------------------------------------------------------
 data("dataCopula2sCOPECase2")
 res2 <- copula2sCOPE(
-  y ~ P + X | continuous(P),
+  y ~ P + X | P,
   data      = dataCopula2sCOPECase2,
   cdf       = "adj.ecdf",
   num.boots = 1000
@@ -209,7 +214,7 @@ summary(res2)
 # -------------------------------------------------------------------
 data("dataCopula2sCOPECase3")
 res3 <- copula2sCOPE(
-  y ~ P + X | continuous(P),
+  y ~ P + X | P,
   data      = dataCopula2sCOPECase3,
   cdf       = "adj.ecdf",
   num.boots = 1000
@@ -244,6 +249,11 @@ endogeneity correction using copulas. NBER Working Paper No. w32231.
 \doi{10.2139/ssrn.4754776}
 }
 \seealso{
+\code{\link[REndo:dataCopula2sCOPECase1]{dataCopula2sCOPECase1},
+\link[REndo:dataCopula2sCOPECase2]{dataCopula2sCOPECase2},
+\link[REndo:dataCopula2sCOPECase3]{dataCopula2sCOPECase3}} for detailed
+information about the simulated datasets
+
 Other copula-based methods:
 \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}},
 \code{\link[=copulaBMW]{copulaBMW()}},

@@ -8,8 +8,10 @@ doc_rendocopula2scope_return_list <- function() {
 
   doc_copula2scope <- c(
     cdf = "\\item{\\code{cdf}}{The used cdf function.}",
-    names.endo.regs = "\\item{\\code{names.endo.regs}}{The names of the continuous endogenous regressors.}",
-    res.lm.augmented = "\\item{\\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}"
+    res.lm.augmented = "\\item{\\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}",
+    labels.endo = "\\item{\\code{labels.endo}}{The term labels of the endogenous regressors.}",
+    labels.exo = "\\item{\\code{labels.exo}}{The term labels of the exogenous regressors.}",
+    labels.pcop = "\\item{\\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}"
   )
 
   return(c(doc_boots, doc_copula2scope))
@@ -18,14 +20,14 @@ doc_rendocopula2scope_return_list <- function() {
 
 doc_rendocopula2scope_return <- function() {
   doc_intro <- c(
-    return = "@return An object of class \\code{rendo.copula.2sCOPE} which is a list that contains:"
+    return = "@return An object of class \\code{rendo.copula.2scope} which is a list that contains:"
   )
 
   return(c(doc_intro, doc_rendocopula2scope_return_list()))
 }
 
 #' @importFrom stats coef model.frame
-new_rendo_copula2sCOPE <- function(
+new_rendo_copula2scope <- function(
   call,
   F.formula,
   fitted.values,
@@ -35,7 +37,9 @@ new_rendo_copula2sCOPE <- function(
   n.boots.attempted,
   n.boots.failed,
   cdf,
-  names.endo.regs
+  labels.endo,
+  labels.exo,
+  labels.pcop
 ) {
   return(.new_rendo_boots_degenerates_removed(
     # Stuff for rendo.boots.degenerates.removed class
@@ -51,9 +55,11 @@ new_rendo_copula2sCOPE <- function(
     n.boots.failed = n.boots.failed,
 
     # Stuff specific to 2sCOPE
-    subclass = "rendo.copula.2sCOPE",
+    subclass = "rendo.copula.2scope",
     res.lm.augmented = res.lm.augmented,
     cdf = cdf,
-    names.endo.regs = names.endo.regs
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    labels.pcop = labels.pcop
   ))
 }

@@ -101,8 +101,8 @@ copula_compute_structural_fitted_residuals <- function(
   return(list(fitted.values = fitted.values, residuals = residuals))
 }
 
-copula_create_1ststage_copdata_matrix <- function(n, labels.endo) {
-  m <- matrix(NA_real_, nrow = n, ncol = length(labels.endo))
+copula_create_1ststage_copdata_matrix <- function(nrow, labels.endo) {
+  m <- matrix(NA_real_, nrow = nrow, ncol = length(labels.endo))
   # Make labels plain strings before using as colnames (ie strips backticks) because
   # they need to feed into reformulate() later
   raw.labels <- vapply(

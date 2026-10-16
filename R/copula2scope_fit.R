@@ -1,89 +1,56 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats formula lm model.frame model.matrix terms reformulate update
-copula2sCOPE_fit <- function(F.formula, data, cdf) {
-  F.formula <- Formula::as.Formula(F.formula)
+#' @importFrom stats formula lm model.frame model.matrix reformulate qnorm residuals
+copula2scope_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
+  # 1st Stage ------------------------------------------------------------------
 
-  names.vars.continuous <- formula_readout_special(
-    F.formula = F.formula,
-    name.special = "continuous",
-    from.rhs = 2,
-    params.as.chars.only = TRUE
+  # . prepare data -------------------------------------------------------------
+
+  mf <- model.frame(
+    formula(F.formula, rhs = 1, lhs = 1),
+    data = data,
+    na.action = na.fail
   )
 
-  F.formula.main <- formula(F.formula, rhs = 1, lhs = 1)
-  mf <- model.frame(F.formula.main, data = data)
-  X.main <- model.matrix(F.formula.main, data = mf)
+  # endo: only numeric, no intercept
+  X.endo <- model.matrix(reformulate(labels.endo, intercept = FALSE), data = mf)
+  copula_stop_if_constant(X.endo)
 
-  endogenous.columns <- colnames(X.main)[
-    colnames(X.main) %in% names.vars.continuous
-  ]
-
-  if (length(endogenous.columns) == 0) {
-    stop(
-      "No continuous endogenous regressors found in the design matrix.",
-      call. = FALSE
-    )
+  # exo: in order to get k-1 dummies for each factor, there needs to be an
+  # intercept. Otherwise model.matrix creates the first factor with k dummies.
+  has.exo <- length(labels.exo) > 0
+  if (has.exo) {
+    # create with intercept for k-1 dummies, then immediately drop again
+    X.exo <- model.matrix(reformulate(labels.exo, intercept = TRUE), data = mf)
+    X.exo <- X.exo[, colnames(X.exo) != "(Intercept)", drop = FALSE]
+    copula_stop_if_constant(X.exo)
   }
 
-  if (length(endogenous.columns) < length(names.vars.continuous)) {
-    stop(
-      "Bootstrap sample dropped at least one endogenous regressor. This happened when a regressor becomes constant in the resampling."
-    )
+  # . Pstar --------------------------------------------------------------------
+
+  # apply CDF to endo and exo regressors, neither of which has an intercept
+  P.star.endo <- copula_pstar(P = X.endo, cdf = cdf)
+  Z.endo <- qnorm(P.star.endo)
+  if (has.exo) {
+    P.star.exo <- copula_pstar(P = X.exo, cdf = cdf)
+    Z.exo <- qnorm(P.star.exo)
   }
 
-  #applying CDF to all regressors both endo and exo with no intercept column
-  X.no.intercept <- X.main[, colnames(X.main) != "(Intercept)", drop = FALSE]
-  P.star <- copula_pstar(P = X.no.intercept, cdf = cdf)
-
+  # . 1st stage residuals ------------------------------------------------------
   #first-stage residuals: regressing each endogenous P* on exogenous W*, Eq (9) from Yang et. al 2024
-  cop.terms <- copula2sCOPE_residuals(P.star = P.star, endo.cols = endogenous.columns)
 
-
-  f.main <- formula(mf)
-  # colnames(cop.terms) may contain chars illegal for formula labels
-  colnames(cop.terms) <- make.names(colnames(cop.terms))
-  f.pcop <- reformulate(
-    termlabels = c(".", colnames(cop.terms)),
-    response = NULL,
-    intercept = TRUE
+  cop.terms <- copula_create_1ststage_copdata_matrix(
+    nrow = nrow(X.endo),
+    labels.endo = labels.endo
   )
 
-  f.final <- update(old = f.main, new = f.pcop)
+  for (j in seq_len(ncol(X.endo))) {
+    Z.endo.j <- Z.endo[, j, drop = TRUE]
 
-  return(lm(
-    formula = f.final,
-    data = cbind(data, cop.terms)
-  ))
-}
-
-
-#' @importFrom stats qnorm lm residuals
-copula2sCOPE_residuals <- function(P.star, endo.cols) {
-  Z <- qnorm(P.star)
-
-  if (!is.matrix(Z)) {
-    Z <- as.matrix(Z)
-  }
-
-  P.names <- colnames(Z)
-  if (is.null(P.names)) {
-    stop("P.star must have column names")
-  }
-
-  #Exogenous columns are columns which are not endo
-  exo.cols <- P.names[!P.names %in% endo.cols]
-
-  res <- matrix(NA, nrow(Z), length(endo.cols))
-  colnames(res) <- paste0(endo.cols, "_cop")
-
-  for (j in seq_along(endo.cols)) {
-    Z.j <- Z[, endo.cols[j], drop = TRUE]
-
-    if (length(exo.cols) == 0) {
-      if (length(endo.cols) == 1) {
+    if (!has.exo) {
+      if (ncol(Z.endo) == 1) {
         # when there is no exogenous regressors, correction term is just qnorm(F(P_j))
         # This matches the single regressor case in Park & Gupta (2012)
-        res[, j] <- Z.j # I tried replicating the steps in Yang et al. 2025
+        cop.terms[, j] <- Z.endo.j # I tried replicating the steps in Yang et al. 2025
         #but when it comes to the intercept, since when there is no exo regressors,it should just be
         #correction term qnorm(F(P_j)), this code will still remove the intercept first, before
         # doing the CDF and then applying the P*, then implicitly add the intercept at the end
@@ -93,19 +60,29 @@ copula2sCOPE_residuals <- function(P.star, endo.cols) {
       } else {
         #multiple endogenous regressors without exogenous ones
         #projecting every P_j* on all other P* with intercept
-        other.endo.cols <- endo.cols[-j]
-        Z.others <- Z[, other.endo.cols, drop = FALSE]
-        lm.j <- lm(Z.j ~ Z.others) #with intercept
-        res[, j] <- residuals(lm.j)
+        Z.endo.others <- Z.endo[, -j, drop = FALSE]
+        lm.j <- lm(Z.endo.j ~ Z.endo.others) #with intercept
+        cop.terms[, j] <- residuals(lm.j)
       }
     } else {
       #situation when there are exogenous regressors
       #projecting on exogenous W* with intercept
-      Z.exog <- Z[, exo.cols, drop = FALSE] # W_t* exogenous only
-      lm.j <- lm(Z.j ~ Z.exog) # With intercept included from 2sCOPE table 1,
+      # W_t* exogenous only
+      lm.j <- lm(Z.endo.j ~ Z.exo) # With intercept included from 2sCOPE table 1,
       #from ADDRESSING ENDOGENEITY USING A TWO-STAGE COPULA GENERATED REGRESSOR APPROACH (From Yang et al. 2025, page 7 )
-      res[, j] <- residuals(lm.j)
+      cop.terms[, j] <- residuals(lm.j)
     }
   }
-  return(res)
+
+  # 2nd Stage --------------------------------------------------------------------
+  res.2nd.stage <- copula_fit_2ndstage(
+    F.formula = F.formula,
+    data = data,
+    cop.terms = cop.terms
+  )
+
+  return(list(
+    res.augmented = res.2nd.stage$res.augmented,
+    labels.pcop = res.2nd.stage$labels.pcop
+  ))
 }

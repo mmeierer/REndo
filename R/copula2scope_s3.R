@@ -1,22 +1,22 @@
 #' @export
-summary.rendo.copula.2sCOPE <- function(object, ...) {
+summary.rendo.copula.2scope <- function(object, ...) {
   # The default rendo.boots.degenerates.removed summary but add some copula2sCOPE things
 
   # Get the summary from the `rendo.boots.degenerates.removed` parent class ------------
   res <- NextMethod()
 
   # Add the copula2sCOPE specific parts ------------------------------------------------
-  res$names.endo.regs <- object$names.endo.regs
+  res$labels.endo <- object$labels.endo
   res$cdf <- object$cdf
 
   # Keep all the inherited summary classes from to use their print functions
-  class(res) <- c("summary.rendo.copula.2sCOPE", class(res))
+  class(res) <- c("summary.rendo.copula.2scope", class(res))
 
   return(res)
 }
 
 #' @export
-print.summary.rendo.copula.2sCOPE <- function(
+print.summary.rendo.copula.2scope <- function(
     x,
     digits = max(3L, getOption("digits") - 3L),
     signif.stars = getOption("show.signif.stars"),
@@ -31,7 +31,7 @@ print.summary.rendo.copula.2sCOPE <- function(
   # Print copula2sCOPE specific parts --------------------------------------------------
   cat("\n")
   endo.vars <- paste0(
-    strwrap(paste0(x$names.endo.regs, collapse = ", "), width = max.width),
+    strwrap(paste0(x$labels.endo, collapse = ", "), width = max.width),
     collapse = "\n"
   )
   cat("Continuous endogenous variables: ", endo.vars, "\n", sep = "")

@@ -7,7 +7,7 @@ copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # step 3: apply qnorm
 
   cop.terms <- copula_create_1ststage_copdata_matrix(
-    n = nrow(data),
+    nrow = nrow(data),
     labels.endo = labels.endo
   )
 

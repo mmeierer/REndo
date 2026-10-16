@@ -5,23 +5,23 @@
 # Suppress boots warning -----------------------------------------------------------
 # Suppress 1000 num.boots warning but lets all other warnings propagate
 suppress_lowboots_warning <- function(expr) {
-  withCallingHandlers(
+  return(withCallingHandlers(
     expr,
     warning = function(w) {
       if (grepl(pattern = "recommended to run 1000", x = conditionMessage(w))) {
         invokeRestart("muffleWarning")
       }
     }
-  )
+  ))
 }
 
 # copulaIMA ----------------------------------------------------------------------------
 fit_ima_fast <- function(
-    formula,
-    data,
-    cdf = "adj.ecdf",
-    num.boots = 2,
-    verbose = FALSE
+  formula,
+  data,
+  cdf = "adj.ecdf",
+  num.boots = 2,
+  verbose = FALSE
 ) {
   return(suppress_lowboots_warning(
     copulaIMA(
@@ -35,11 +35,11 @@ fit_ima_fast <- function(
 }
 
 fit_ima_defaults <- function(
-    formula,
-    data,
-    cdf = "adj.ecdf",
-    num.boots = 1000,
-    verbose = FALSE
+  formula,
+  data,
+  cdf = "adj.ecdf",
+  num.boots = 1000,
+  verbose = FALSE
 ) {
   return(suppress_lowboots_warning(
     copulaIMA(
@@ -50,6 +50,55 @@ fit_ima_defaults <- function(
       verbose = verbose
     )
   ))
+}
+
+# copula2sCOPE -------------------------------------------------------------------------
+
+suppress_2scope_noexo_warning <- function(expr) {
+  return(withCallingHandlers(
+    expr,
+    warning = function(w) {
+      if (grepl(pattern = "No exogenous regressors found", x = conditionMessage(w))) {
+        invokeRestart("muffleWarning")
+      }
+    }
+  ))
+}
+
+fit_2scope_fast <- function(
+  formula,
+  data,
+  cdf = "adj.ecdf",
+  num.boots = 2,
+  verbose = FALSE
+) {
+  return(suppress_2scope_noexo_warning(suppress_lowboots_warning(
+    copula2sCOPE(
+      formula = formula,
+      data = data,
+      cdf = cdf,
+      num.boots = num.boots,
+      verbose = verbose
+    )
+  )))
+}
+
+fit_2scope_defaults <- function(
+  formula,
+  data,
+  cdf = "adj.ecdf",
+  num.boots = 1000,
+  verbose = FALSE
+) {
+  return(suppress_2scope_noexo_warning(suppress_lowboots_warning(
+    copula2sCOPE(
+      formula = formula,
+      data = data,
+      cdf = cdf,
+      num.boots = num.boots,
+      verbose = verbose
+    )
+  )))
 }
 
 # copula2sCOPEnp -----------------------------------------------------------------------
