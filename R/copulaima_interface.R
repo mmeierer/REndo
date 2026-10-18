@@ -28,9 +28,8 @@
 #' exogenous regressors, IMA is equivalent to Park and Gupta (2012)
 #' (\code{\link{copulaCorrection}}).
 #'
+#' @templateVar data.addition Endogenous and exogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
-#' @param data A data.frame containing the data of all variables specified in the \code{formula}
-#' parameter. Endogenous and exogenous regressors must be \code{numeric}.
 #' @template template_param_numboots
 #' @template template_param_cdf
 #'

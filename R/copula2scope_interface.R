@@ -13,6 +13,7 @@
 #' that at least one exogenous regressor is non-normally distributed. In that case, the identification
 #' would then come from the non-normal exogenous regressor instead of the endogenous regressor itself.
 #'
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}. Exogenous regressors may be \code{numeric}, \code{factor}, \code{character}, or \code{logical}, but not \code{ordered}.
 #' @template template_param_formuladataverbose
 #' @template template_param_cdf
 #' @template template_param_numboots
