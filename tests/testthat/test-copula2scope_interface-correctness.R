@@ -74,6 +74,7 @@ test_that("Duplicate regressors are handled correctly", {
 # Parameter recovery -------------------------------------------------------
 
 test_that("Parameter recovery: dataCopula2sCOPECase1", {
+  set.seed(42)
   res <- fit_2scope_defaults(
     formula = y ~ P + X | P,
     data = dataCopula2sCOPECase1
@@ -82,6 +83,7 @@ test_that("Parameter recovery: dataCopula2sCOPECase1", {
 })
 
 test_that("Parameter recovery: dataCopula2sCOPECase2", {
+  set.seed(42)
   res <- fit_2scope_defaults(
     formula = y ~ P + X | P,
     data = dataCopula2sCOPECase2
@@ -90,6 +92,7 @@ test_that("Parameter recovery: dataCopula2sCOPECase2", {
 })
 
 test_that("Parameter recovery: dataCopula2sCOPECase3", {
+  set.seed(42)
   res <- fit_2scope_defaults(
     formula = y ~ P + X | P,
     data = dataCopula2sCOPECase3
