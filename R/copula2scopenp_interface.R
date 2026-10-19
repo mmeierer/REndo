@@ -18,11 +18,8 @@
 #' the conditional CDF collapses to the marginal CDF, \eqn{\hat{F})(P|X) = \hat{F}(P)} and the
 #' method then reduces to the Park and Gupta (2012) copula correction.
 #'
+#' @templateVar data.addition Variables classes must be set correctly before calling the function. Endogenous regressors must be \code{numeric} or \code{ordered}. Exogenous regressors must be \code{numeric}, \code{factor}, or \code{ordered}.
 #' @template template_param_formuladataverbose
-#' @param data A data.frame containing the data of all variables specified in the \code{formula}
-#' parameter. Variables classes must be set correctly before calling the function.
-#' Endogenous regressors must be \code{numeric} or \code{ordered}. Exogenous regressors
-#' must be (\code{numeric}, \code{factor}, or \code{ordered}).
 #' @template template_param_numboots
 #' @param npcdistbw.args A named list of arguments which are passed to
 #' \code{\link[np]{npcdistbw}}. To tweak the bandwidth selection for the kernel
