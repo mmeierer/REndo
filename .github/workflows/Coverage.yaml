@@ -15,6 +15,10 @@ jobs:
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      # parallel tests
+      TESTTHAT_PARALLEL: true
+      TESTTHAT_CPUS: 4
+      OPENBLAS_NUM_THREADS: 1 # avoid BLAS threads oversubscription
 
     steps:
       - uses: actions/checkout@v7
