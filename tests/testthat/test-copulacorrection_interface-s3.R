@@ -16,8 +16,8 @@ fct.helper.check.copula.correction.summary <- function(res.c){
     expect_true(is.list(res.sum))
     expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
                       names(res.sum)))
-    expect_is(res.sum$names.vars.continuous, "character")
-    expect_is(res.sum$names.vars.discrete, "character")
+    expect_type(res.sum$names.vars.continuous, "character")
+    expect_type(res.sum$names.vars.discrete, "character")
   })
   # mainly for covr coverage
   test_that("copula correction summary prints", {
@@ -55,7 +55,7 @@ test_that("object structure is c1 specific",{
   expect_true(c("res.optimx") %in% names(res.c1))
   expect_true(c("start.params") %in% names(res.c1))
   expect_s3_class(res.c1$res.optimx, "optimx")
-  expect_is(res.c1$start.params, "numeric")
+  expect_type(res.c1$start.params, "double")
   expect_named(res.c1$start.params, expected = names(coef(res.c1)),
                ignore.order = FALSE, ignore.case = FALSE)
 
@@ -76,15 +76,15 @@ test_that("Case 1 summary has additional specific structure", {
   expect_silent(res.sum <- summary(res.c1))
   expect_true(all(c("start.params","KKT1", "KKT2", "AIC", "BIC", "log.likelihood", "conv.code") %in%
                     names(res.sum)))
-  expect_is(res.sum$start.params, "numeric")
+  expect_type(res.sum$start.params, "double")
   expect_named(object = res.sum$start.params, expected = names(coef(res.c1, complete = TRUE)),
                ignore.order = TRUE)
-  expect_is(res.sum$KKT1, "logical")
-  expect_is(res.sum$KKT2, "logical")
-  expect_is(res.sum$AIC, "numeric")
-  expect_is(res.sum$BIC, "numeric")
-  expect_is(res.sum$log.likelihood, "numeric")
-  expect_is(res.sum$conv.code, "numeric")
+  expect_type(res.sum$KKT1, "logical")
+  expect_type(res.sum$KKT2, "logical")
+  expect_type(res.sum$AIC, "double")
+  expect_type(res.sum$BIC, "double")
+  expect_type(res.sum$log.likelihood, "double")
+  expect_type(res.sum$conv.code, "double")
 })
 
 

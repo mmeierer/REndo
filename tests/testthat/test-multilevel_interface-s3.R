@@ -99,7 +99,7 @@ names.coef <- c("(Intercept)","X11","X12","X13","X14","X15","X21","X22","X23","X
 
 test_that("nobs", {
   expect_silent(res.nobs <- nobs(res.ml.L3))
-  expect_is(res.nobs, "integer")
+  expect_type(res.nobs, "integer")
   expect_equal(res.nobs, nrow(dataMultilevelIV))
 })
 
