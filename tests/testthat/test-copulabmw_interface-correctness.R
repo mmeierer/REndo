@@ -94,6 +94,7 @@ test_that("Different cdf produce different result", {
 # Parameter recovery -------------------------------------------------------------------
 test_that("Recovery: single endo (dataCopBMW)", {
   skip_on_cran()
+  set.seed(42)
   res <- fit_bmw_defaults(formula = y ~ X + P | P, data = dataCopBMW)
   check_param_recovery(
     res = res,
@@ -103,6 +104,7 @@ test_that("Recovery: single endo (dataCopBMW)", {
 
 test_that("Recovery: multiple endo (dataCopBMWMultiEndo)", {
   skip_on_cran()
+  set.seed(42)
   res <- fit_bmw_defaults(
     formula = y ~ X + P1 + P2 | P1 + P2,
     data = dataCopBMWMultiEndo
@@ -117,6 +119,7 @@ test_that("Recovery: multiple endo (dataCopBMWMultiEndo)", {
 # Parameter transformations ------------------------------------------------------------
 test_that("Recovery: Parameter transformations in endo", {
   skip_on_cran()
+  set.seed(42)
   df.trans <- dataCopBMW
   df.trans$P <- exp(df.trans$P)
 
@@ -129,6 +132,7 @@ test_that("Recovery: Parameter transformations in endo", {
 
 test_that("Recovery: Parameter transformations in exo", {
   skip_on_cran()
+  set.seed(42)
   df.trans <- dataCopBMW
   df.trans$X <- exp(df.trans$X)
 
@@ -143,6 +147,7 @@ test_that("Recovery: Parameter transformations in exo", {
 # Consistent with Park and Gupta -------------------------------------------------------
 test_that("Collapses to P&G (when P independent of X)", {
   skip_on_cran()
+  set.seed(42)
 
   res <- fit_bmw_defaults(formula = y ~ X1 + X2 + P | P, data = dataCopCont)
 
