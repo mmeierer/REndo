@@ -56,4 +56,5 @@ VignetteBuilder: R.rsp
 LazyData: true
 Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
+Config/testthat/start-first: copula2scopenp_interface-correctness
 RoxygenNote: 7.3.3
