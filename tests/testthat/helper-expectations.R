@@ -50,6 +50,8 @@ check_clean_fit <- function(res) {
 check_labelled_consistently <- function(res) {
   # aux terms in coefs
   expect_true(all(res$labels.pcop %in% names(coef(res))))
+  # aux terms in main coefs (= shown in the coef table)
+  expect_true(all(res$labels.pcop %in% names(coef(res, complete = FALSE))))
   # one aux term per endo
   expect_equal(length(res$labels.pcop), length(res$labels.endo))
 
