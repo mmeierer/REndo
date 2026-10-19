@@ -4,7 +4,6 @@
 data("dataHigherMoments")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - higherMomentsIV - Parameter formula")
 
 test_that("Fail if bad 2nd RHS", {
   # Fail for missing 2nd RHS
@@ -200,16 +199,17 @@ test_that("Fail if missing g but IIV does require it", {
 
 test_that("Warning if g but IIV does not need it", {
   # warning for the others: "yp","p2","y2"
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=yp, X1, X2), data=dataHigherMoments), regexp = "ignored", all = TRUE)
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=p2, X1, X2), data=dataHigherMoments), regexp = "ignored", all = TRUE)
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=y2, X1, X2), data=dataHigherMoments), regexp = "ignored", all = TRUE)
+  # 2 warnings each: one expect_warning() per warning
+  expect_warning(expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=yp, X1, X2), data=dataHigherMoments), regexp = "ignored"), regexp = "ignored")
+  expect_warning(expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=p2, X1, X2), data=dataHigherMoments), regexp = "ignored"), regexp = "ignored")
+  expect_warning(expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=y2, X1, X2), data=dataHigherMoments), regexp = "ignored"), regexp = "ignored")
 })
 
 test_that("Warning if exo regr but IIV does not need it", {
   # warning for the others: "yp","p2","y2"
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=yp, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built", all = TRUE)
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=p2, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built", all = TRUE)
-  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built", all = TRUE)
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=yp, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built")
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=p2, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built")
+  expect_warning(higherMomentsIV(y~X1+X2+P|P|IIV(iiv=y2, X1, X2), data=dataHigherMoments), regexp = "ignored because they are not needed to built")
 })
 
 test_that("Silent if no g and IIV does not need it", {
@@ -234,7 +234,6 @@ test_that("Silent if no g and IIV does not need it", {
 
 
 # data -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - higherMomentsIV - Parameter data")
 
 test_that("Fail if is NA, NULL or missing", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1), data=    ), regexp = "The above errors were encountered!")
@@ -296,7 +295,6 @@ test_that("Allow wrong data type in irrelevant columns", {
 
 
 # verbose ----------------------------------------------------------------------
-context("Inputchecks - higherMomentsIV - Parameter verbose")
 test.single.logical(function.to.test = higherMomentsIV, parameter.name="verbose",
                     formula=y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), function.std.data=dataHigherMoments)
 

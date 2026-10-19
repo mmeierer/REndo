@@ -8,7 +8,6 @@ data("dataCopDis2")
 data("dataCopDisCont")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - copulaCorrection - Parameter formula")
 
 test_that("Fail if no formula object is passed",{
   expect_error(copulaCorrection(formula= ,                data=dataCopCont2), regexp = "The above errors were encountered!")
@@ -183,7 +182,6 @@ test_that("Fails if transformations are done for different endo", {
 
 
 # data --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - copulaCorrection - Parameter data")
 
 test_that("Fail if is NA, NULL or missing", {
   expect_error(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1),data=), regexp = "The above errors were encountered!")
@@ -377,18 +375,18 @@ test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and
 
 
 test_that("Warn if binomial/dummy data passed in endo regressor", {
-  expect_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D), num.boots = 2, verbose = FALSE,
-                                  data = cbind(dataCopDis2, D = c(0,1))), regexp = "may not be binomial")
+  # warns once for the main fit and once per bootstrap: all must match
+  w <- capture_warnings(suppress_lowboots_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D), num.boots = 2, verbose = FALSE,
+                                                                   data = cbind(dataCopDis2, D = c(0,1)))))
+  expect_match(w, regexp = "may not be binomial")
 })
 
 # verbose --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - copulaCorrection - Parameter verbose")
 test.single.logical(function.to.test = copulaCorrection, parameter.name="verbose",
                     formula=y~X1+X2+P1+P2|continuous(P1)+discrete(P2), function.std.data=dataCopCont2)
 
 
 # num.boots --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - copulaCorrection - Parameter num.boots")
 # Single continuous
 # Failure tests
 test.positive.numeric.whole.number(function.to.test = copulaCorrection, parameter.name="num.boots",
@@ -396,7 +394,7 @@ test.positive.numeric.whole.number(function.to.test = copulaCorrection, paramete
 
 test_that("Warning if num.boots < 1000", {
   # only for continuous 1
-  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont),all=FALSE, regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont), regexp = "It is recommended to run 1000 or more bootstraps.")
 })
 
 # Warning if num.boots given for any other case
@@ -411,7 +409,6 @@ test_that("Warning if num.boots < 1000", {
 # })
 
 # start.params ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - copulaCorrection - Parameter start.params")
 
 test_that("start.params is vector and all numeric", {
   # Any parameter is character, logical, factor, matrix
@@ -510,7 +507,6 @@ test_that("start.params fails if transformation missing", {
 
 
 # optimx.args --------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - copulaCorrection - Parameter optimx.args")
 test.optimx.args(function.to.test = copulaCorrection, parameter.name = "optimx.args",
                  formula=y ~ X1+X2+P|continuous(P), function.std.data = dataCopCont)
 
@@ -522,14 +518,13 @@ test_that("Has default value empty list()",{
 
 
 # ...  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - copulaCorrection - Parameter 3-dots")
 test_that("Warning if further unneded params are given", {
   # 1 continuous
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont, num.boots=2),all=FALSE, regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont, num.boots=2)), regexp = "are ignored")
   # >1 continuous
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopCont2, num.boots = 2),all=FALSE, regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopCont2, num.boots = 2)), regexp = "are ignored")
   # Mixed
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont, num.boots = 2), all=FALSE, regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont, num.boots = 2)), regexp = "are ignored")
   # Discrete
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis2, num.boots = 2),all=FALSE,regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis2, num.boots = 2)), regexp = "are ignored")
 })

@@ -2,7 +2,6 @@
 data("dataLatentIV")
 
 # Runability ----------------------------------------------------------------------------------------------------------------------
-context("Runability - latentIV - Runability")
 test_that("Works with intercept", {
   expect_silent(latentIV(formula = y~P, data = dataLatentIV, verbose=FALSE))
 })

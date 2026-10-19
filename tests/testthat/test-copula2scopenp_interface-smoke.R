@@ -8,7 +8,7 @@ data("dataCopula2sCOPEnpMulti")
 
 # Out of the box --------------------------------------------------------------------
 test_that("works out of the box with default params", {
-  res <- expect_message(copula2sCOPEnp(
+  expect_message(res <- copula2sCOPEnp(
     formula = y ~ P + X | P,
     data = dataCopula2sCOPEnpCont
   ))

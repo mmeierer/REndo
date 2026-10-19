@@ -8,7 +8,7 @@ data("dataCopIMABinExo")
 # Works out of the box --------------------------------------------------------------
 # this also checks running with verbose=T
 test_that("Works out of the box", {
-  res <- expect_message(copulaIMA(
+  expect_message(res <- copulaIMA(
     formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   ))

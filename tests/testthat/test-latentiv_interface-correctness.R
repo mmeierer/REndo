@@ -2,7 +2,6 @@
 data("dataLatentIV")
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Correctness - latentIV - Formula transformations")
 
 test_that("Transformations are correct", {
   # temporarily skip this test because it weirdly keeps on failing on cran's original test.
@@ -17,16 +16,16 @@ test_that("Transformations are correct", {
 
   expect_silent(res.trans.lhs <- latentIV(formula = I(y/2 + 12.3) ~ P, data = dataLatentIV, verbose = FALSE))
   expect_silent(res.data.trans.lhs <- latentIV(formula = y ~ P, data = data.altered.y, verbose = FALSE))
-  expect_equal(coef(res.trans.lhs), coef(res.data.trans.lhs), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.lhs)), coef(summary(res.data.trans.lhs)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.lhs), coef(res.data.trans.lhs), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.lhs)), coef(summary(res.data.trans.lhs)), ignore_attr=TRUE)
 
 
   data.altered.P   <- dataLatentIV
   data.altered.P$P <- data.altered.P$P/2 + 12.3
   expect_silent(res.trans.rhs <- latentIV(formula = y ~ I(P/2 + 12.3), data = dataLatentIV, verbose = FALSE))
   expect_silent(res.data.trans.rhs <- latentIV(formula = y ~ P, data = data.altered.P, verbose = FALSE))
-  expect_equal(coef(res.trans.rhs), coef(res.data.trans.rhs), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.rhs)), coef(summary(res.data.trans.rhs)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.rhs), coef(res.data.trans.rhs), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.rhs)), coef(summary(res.data.trans.rhs)), ignore_attr=TRUE)
 
   # ensure that theta5 (group membership probability) is in [0,1]
   expect_true(coef(res.trans.rhs, complete = TRUE)["theta5"] >= 0 &&
@@ -34,7 +33,6 @@ test_that("Transformations are correct", {
 })
 
 # Data sorting ------------------------------------------------------------------------------------------------
-context("Correctness - dataLatentIV - Data sorting")
 
 test_that("Differently sorted data produces same results", {
   data.altered    <- dataLatentIV
@@ -52,7 +50,6 @@ test_that("Differently sorted data produces same results", {
 
 
 # Predict ----------------------------------------------------------------------------------------------------
-context("Correctness - latentIV - Predict")
 
 test_that("No newdata results in fitted values", {
   expect_silent(lat.1 <- latentIV(y~P, data=dataLatentIV, verbose=FALSE))
@@ -85,7 +82,6 @@ test_that("Correct when using transformations in the formula", {
 })
 
 # Example data ---------------------------------------------------------------------------------
-context("Correctness - latentIV - Example data")
 
 test_that("Retrieve correct parameters", {
   expect_silent(res.liv <- latentIV(formula = y ~ P, data = dataLatentIV, verbose = FALSE))

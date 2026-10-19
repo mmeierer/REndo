@@ -203,6 +203,7 @@ run_2scopenp_parkgupta_equivalent <- function(
 
 test_that("Collapses to P&G - single continuous", {
   skip_on_cran()
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
 
   run_2scopenp_parkgupta_equivalent(
     formula.np = y ~ X1 + P | P,
@@ -214,6 +215,7 @@ test_that("Collapses to P&G - single continuous", {
 
 test_that("Collapses to P&G - single continuous, single discrete", {
   skip_on_cran()
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
 
   run_2scopenp_parkgupta_equivalent(
     formula.np = y ~ X1 + X2 + P1 + P2 | P1 + P2,
@@ -228,6 +230,7 @@ test_that("Collapses to P&G - single continuous, single discrete", {
 
 test_that("Recovery: Continuous endo (dataCopula2sCOPEnpCont)", {
   skip_on_cran()
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ P + X | P,
     data = dataCopula2sCOPEnpCont,
@@ -240,6 +243,7 @@ test_that("Recovery: Continuous endo (dataCopula2sCOPEnpCont)", {
 
 test_that("Recovery: Binary enod (dataCopula2sCOPEnpCont)", {
   skip_on_cran()
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ P + X | P,
     data = dataCopula2sCOPEnpBi,
@@ -252,6 +256,7 @@ test_that("Recovery: Binary enod (dataCopula2sCOPEnpCont)", {
 
 test_that("Recovery: multiple endo (dataCopula2sCOPEnpMulti)", {
   skip_on_cran()
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ . | P1 + P2,
     data = dataCopula2sCOPEnpMulti,

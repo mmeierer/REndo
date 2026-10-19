@@ -4,7 +4,7 @@
 
   test_that("nobs", {
     expect_silent(res.nobs <- nobs(res.model))
-    expect_is(res.nobs, "integer")
+    expect_type(res.nobs, "integer")
     expect_equal(res.nobs, nrow(function.std.data))
   })
 

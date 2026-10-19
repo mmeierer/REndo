@@ -3,7 +3,7 @@ test.single.logical <- function(function.to.test, parameter.name, formula, funct
   std.args <- modifyList(alist(data=function.std.data, formula=formula), additional.args)
 
   test_that(paste0(parameter.name, "has default value"), {
-    expect_is(eval(formals(function.to.test)[[parameter.name]]), "logical")
+    expect_type(eval(formals(function.to.test)[[parameter.name]]), "logical")
   })
 
   test_that(paste0(parameter.name, "has to be logical"), {
