@@ -9,7 +9,7 @@ all.cdfs <- c("ecdf", "adj.ecdf", "resc.ecdf", "kde")
 
 # Out of the box --------------------------------------------------------------------
 test_that("Works out of the box", {
-  res <- expect_message(copulaBMW(
+  expect_message(res <- copulaBMW(
     formula = y ~ X + P | P,
     data = dataCopBMW
   ))

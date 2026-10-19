@@ -7,7 +7,7 @@ data("dataCopula2sCOPECase1")
 # Works out of the box --------------------------------------------------------------
 # also checks verbose=T
 test_that("Works out of the box", {
-  res <- expect_message(copula2sCOPE(
+  expect_message(res <- copula2sCOPE(
     formula = y ~ P + X | P,
     data = dataCopula2sCOPECase1
   ))
