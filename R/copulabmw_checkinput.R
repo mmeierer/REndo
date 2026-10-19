@@ -12,6 +12,7 @@ checkinput_copulabmw_formula_data <- function(formula, data) {
     msg.min.num.exo = "At least one exogenous regressor is required for the first-stage regression of each endogenous regressor P on X.",
     allow.interactions = TRUE,
     allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
     allowed.classes.endo = "numeric",
     allowed.classes.exo = NULL # allows any
   ))

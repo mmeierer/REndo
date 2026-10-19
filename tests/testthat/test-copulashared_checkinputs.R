@@ -307,6 +307,7 @@ formuladata_base_args <- function() {
     min.num.exo = 0,
     allow.interactions = TRUE,
     allow.constant.regressors = TRUE,
+    warn.low.card.endo = TRUE,
     allowed.classes.endo = NULL,
     allowed.classes.exo = NULL
   ))
@@ -362,21 +363,32 @@ test_that("_formula_data rules hardcoded for all methods", {
       "not in structural model"
     )
   )
-
-  # low cardinality: always warn for endo
-  args.lowcard.endo <- c(list(formula = y ~ x_num + x_lowcard | x_lowcard), base.args)
-  expect_null(expect_warning(
-    do.call(checkinput_copulashared_formula_data, args.lowcard.endo),
-    regexp = "low cardinality"
-  ))
-
-  # but not for exo
-  args.lowcard.exo <- c(list(formula = y ~ x_num + x_lowcard | x_num), base.args)
-  expect_no_warning(do.call(checkinput_copulashared_formula_data, args.lowcard.exo))
 })
 
 test_that("_formula_data parameters work correctly", {
   base.args <- formuladata_base_args()
+
+  # warn.low.card.endo
+  args.lowcard.endo <- modifyList(
+    base.args,
+    list(formula = y ~ x_num + x_lowcard | x_lowcard, warn.low.card.endo = TRUE)
+  )
+  expect_null(expect_warning(
+    do.call(checkinput_copulashared_formula_data, args.lowcard.endo),
+    regexp = "low cardinality"
+  ))
+  # only for endo, not for exo
+  args.lowcard.exo <- modifyList(
+    base.args,
+    list(formula = y ~ x_num + x_lowcard | x_num, warn.low.card.endo = TRUE)
+  )
+  expect_no_warning(do.call(checkinput_copulashared_formula_data, args.lowcard.exo))
+  # turned off
+  args.lowcard.off <- modifyList(
+    base.args,
+    list(formula = y ~ x_num + x_lowcard | x_lowcard, warn.low.card.endo = FALSE)
+  )
+  expect_no_warning(do.call(checkinput_copulashared_formula_data, args.lowcard.off))
 
   # min.num.exo
   check_errmsg(

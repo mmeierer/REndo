@@ -176,6 +176,7 @@ copula2sCOPE <- function(
     min.num.exo = 0, # may have no exo regressor, resulting in warning
     allow.interactions = FALSE,
     allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
     allowed.classes.endo = "numeric",
     # forbid ordered factors
     allowed.classes.exo = c("numeric", "factor", "character", "logical")

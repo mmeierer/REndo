@@ -17,6 +17,7 @@ checkinput_copulaima_formula_data <- function(formula, data) {
     ),
     allow.interactions  = FALSE,
     allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
     allowed.classes.endo= "numeric",
     allowed.classes.exo = "numeric"
   ))

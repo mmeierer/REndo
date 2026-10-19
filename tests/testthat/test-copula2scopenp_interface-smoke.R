@@ -18,42 +18,17 @@ test_that("works out of the box with default params", {
 
 # Formula -------------------------------------------------------------------------
 test_that("works for edge-cases, incl print & print(summary())", {
-  cases <- list(
-    "dot in rhs1" = y ~ . | P,
-    "transformed exo" = y ~ P + log(X_pos) | P,
-    "transformed endo" = y ~ log(P_pos) + X | log(P_pos),
-    "single endo" = y ~ P + X | P
+  results <- run_cases(
+    fn = fit_2scopenp_fast,
+    cases = fixture_2scopenp_formula_edge_cases(),
+    check = check_clean_fit
   )
 
-  df <- dataCopula2sCOPEnpCont
-  df$X_pos <- abs(df$X) + 1
-  df$P_pos <- abs(df$P) + 1
-
-  for (nm in names(cases)) {
-    res <- fit_2scopenp_fast(formula = cases[[nm]], data = df)
-    check_clean_fit(res)
-    # S3 methods
-    expect_no_error(capture_output(print(res)))
-    expect_no_error(capture_output(print(summary(res))))
+  # S3 methods on each edge case
+  for (nm in names(results)) {
+    expect_no_error(capture_output(print(results[[nm]])))
+    expect_no_error(capture_output(print(summary(results[[nm]]))))
   }
-})
-
-test_that("works with backticked variable names", {
-  df <- dataCopula2sCOPEnpCont
-  df$`P 1` <- df$P
-  res <- fit_2scopenp_fast(formula = y ~ `P 1` + X | `P 1`, data = df)
-  check_clean_fit(res)
-})
-
-test_that("works with multiple endo terms", {
-  # only dataCopula2sCOPEnpMulti has >2 regressors
-  # done use ordered factor columns because too slow
-  res <- fit_2scopenp_fast(
-    formula = y ~ X1 + X2 + P1 | P1 + X2,
-    data = dataCopula2sCOPEnpMulti
-  )
-  check_clean_fit(res)
-  expect_named(res$bws, c("P1", "X2"))
 })
 
 
@@ -69,7 +44,7 @@ test_that("works with ordered factors in in endo and exo", {
     formula = y ~ P1 + P2 + X1 + X2 + X3 | P1 + P2,
     data = dataCopula2sCOPEnpMulti[1:250, ],
     # cannot run with heuristic
-    npcdistbw.args = list(nmulti=1, tol=1, ftol=1)
+    npcdistbw.args = list(nmulti = 1, tol = 1, ftol = 1)
   )
   check_clean_fit(res)
   expect_no_error(capture_output(print(res)))
