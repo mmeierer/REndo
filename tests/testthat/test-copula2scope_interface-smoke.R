@@ -7,12 +7,11 @@ data("dataCopula2sCOPECase1")
 # Works out of the box --------------------------------------------------------------
 # also checks verbose=T
 test_that("Works out of the box", {
-  expect_no_error(capture_output(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = dataCopula2sCOPECase1
-    )
+  res <- expect_message(copula2sCOPE(
+    formula = y ~ P + X | P,
+    data = dataCopula2sCOPECase1
   ))
+  check_clean_fit(res)
 })
 
 
@@ -22,51 +21,39 @@ test_that("Works out of the box", {
 # - Exo: present vs absent
 # - Endo: single vs multiple (X is not actually endo)
 # Each spec is crossed with all 4 cdf options
-#
-# warn:
-# - warn = NULL: no warning allowed
-# - warn = "regexp": warning must appear
 
 specs <- list(
   "with intercept, with exo, single endo" = list(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = NULL
+    formula = y ~ P + X | P,
+    data = dataCopula2sCOPECase1
   ),
   "no intercept, with exo, single endo" = list(
-    formula = y ~ P + X - 1 | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = NULL
+    formula = y ~ P + X - 1 | P,
+    data = dataCopula2sCOPECase1
   ),
   "with intercept, no exo, single endo" = list(
-    formula = y ~ P | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P | P,
+    data = dataCopula2sCOPECase1
   ),
   "no intercept, no exo, single endo" = list(
-    formula = y ~ P - 1 | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P - 1 | P,
+    data = dataCopula2sCOPECase1
   ),
   "with intercept, no exo, multiple endo" = list(
-    formula = y ~ P + X | continuous(P, X),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P + X | P + X,
+    data = dataCopula2sCOPECase1
   ),
   "no intercept, no exo, multiple endo" = list(
-    formula = y ~ P + X - 1 | continuous(P, X),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P + X - 1 | P + X,
+    data = dataCopula2sCOPECase1
   ),
   "with intercept, with exo, multiple endo" = list(
-    formula = y ~ P + X + X2 | continuous(P, X),
-    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1))),
-    warn = NULL
+    formula = y ~ P + X + X2 | P + X,
+    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1)))
   ),
   "no intercept, with exo, multiple endo" = list(
-    formula = y ~ P + X + X2 - 1 | continuous(P, X),
-    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1))),
-    warn = NULL
+    formula = y ~ P + X + X2 - 1 | P + X,
+    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1)))
   )
 )
 
@@ -75,31 +62,13 @@ cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
 
 # specs x cdf ----------------------------------------------------------------------
 test_that("copula2sCOPE runs across specs and cdf options", {
-  for (spec_name in names(specs)) {
-    for (cdf in cdfs) {
-      spec <- specs[[spec_name]]
-      call_expr <- quote(
-        copula2sCOPE(
-          formula = spec$formula,
-          data = spec$data,
-          cdf = cdf,
-          verbose = FALSE,
-          num.boots = 10
-        )
-      )
-
-      if (is.null(spec$warn)) {
-        res <- expect_no_warning(suppress_lowboots_warning(eval(call_expr)))
-      } else {
-        res <- expect_warning(suppress_lowboots_warning(eval(call_expr)), regexp = spec$warn)
-      }
-
-      expect_false(anyNA(fitted(res)))
-      expect_false(anyNA(residuals(res)))
-      expect_false(anyNA(coef(res)))
-      expect_false(anyNA(vcov(res)))
-      expect_false(anyNA(res$boots.params))
-    }
+  for (cdf in cdfs) {
+    run_cases(
+      fn = fit_2scope_fast,
+      base.args = list(cdf = cdf),
+      cases = specs,
+      check = check_clean_fit
+    )
   }
 })
 
@@ -107,15 +76,11 @@ test_that("copula2sCOPE runs across specs and cdf options", {
 test_that("copula2sCOPE runs on small sample", {
   small_data <- dataCopula2sCOPECase1[1:50, ]
 
-  expect_no_error(suppress_lowboots_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = small_data,
-      cdf = "adj.ecdf",
-      verbose = FALSE,
-      num.boots = 10
-    )
-  ))
+  res <- fit_2scope_fast(
+    formula = y ~ P + X | P,
+    data = small_data
+  )
+  check_clean_fit(res)
 })
 
 
@@ -123,29 +88,38 @@ test_that("copula2sCOPE allows NA in non-relevant column", {
   bad_data <- dataCopula2sCOPECase1
   bad_data$Q <- rnorm(nrow(dataCopula2sCOPECase1))
   bad_data$Q[1] <- NA
-  expect_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = bad_data,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "to run 1000"
+  res <- fit_2scope_fast(
+    formula = y ~ P + X | P,
+    data = bad_data
   )
+  check_clean_fit(res)
 })
 
-# S3 methods ----------------------------------------------------------
-test_that("S3 run without error", {
-  res <- expect_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = dataCopula2sCOPECase1,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
+# Formula -------------------------------------------------------------------------
+test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
+  results <- run_cases(
+    fn = fit_2scope_fast,
+    cases = fixture_2scope_formula_edge_cases(),
+    check = check_clean_fit
   )
 
-  expect_no_error(capture_output(print(res)))
-  expect_no_error(capture_output(print(summary(res))))
+  # S3 methods on each edge case
+  for (nm in names(results)) {
+    expect_no_error(capture_output(print(results[[nm]])))
+    expect_no_error(capture_output(print(summary(results[[nm]]))))
+  }
+})
+
+
+# Warnings ------------------------------------------------------------------------
+test_that("Warns if no exogenous regressors", {
+  expect_warning(
+    suppress_lowboots_warning(copula2sCOPE(
+      formula = y ~ P | P,
+      data = dataCopula2sCOPECase1,
+      num.boots = 2,
+      verbose = FALSE
+    )),
+    regexp = "No exogenous regressors found"
+  )
 })

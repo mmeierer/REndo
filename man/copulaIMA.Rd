@@ -15,8 +15,7 @@ copulaIMA(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all variables specified in the \code{formula}
-parameter. Endogenous and exogenous regressors must be \code{numeric}.}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous and exogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.

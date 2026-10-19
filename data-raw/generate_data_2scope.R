@@ -87,13 +87,13 @@ usethis::use_data(dataCopula2sCOPECase2, overwrite = TRUE)
 
 set.seed(123)
 
-n <-1000
+n <-2500
 
 #2sCOPE is supposed to stay consistent because X is nonnormal which allow identification through the first stage regression P* and X*
 
 # rho_px = 0.5
 # rho_pxi = 0.5
-# T = 1000
+# T = 2500
 
 mu <- 1
 alpha <- 1
