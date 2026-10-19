@@ -45,11 +45,27 @@ check_clean_fit <- function(res) {
   expect_false(anyNA(res$boots.params))
 }
 
+# check_print_summary ---------------------------------------------------------------
+# print() and print(summary()) work and print rendo.copula.2stage specific parts
+check_print_summary <- function(res) {
+  expect_no_error(capture_output(print(res)))
+  out <- capture_output(print(summary(res)))
+  expect_match(out, "Endogenous regressors:", fixed = TRUE)
+  # Used cdf only printed for methods with cdf
+  if (is.null(res$cdf)) {
+    expect_false(grepl("Used cdf:", out, fixed = TRUE))
+  } else {
+    expect_match(out, paste0("Used cdf: ", res$cdf), fixed = TRUE)
+  }
+}
+
 # check_labelled_consistently --------------------------------------------------------
 
 check_labelled_consistently <- function(res) {
   # aux terms in coefs
   expect_true(all(res$labels.pcop %in% names(coef(res))))
+  # aux terms in main coefs (= shown in the coef table)
+  expect_true(all(res$labels.pcop %in% names(coef(res, complete = FALSE))))
   # one aux term per endo
   expect_equal(length(res$labels.pcop), length(res$labels.endo))
 

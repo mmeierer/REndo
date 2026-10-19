@@ -26,8 +26,7 @@ test_that("works for edge-cases, incl print & print(summary())", {
 
   # S3 methods on each edge case
   for (nm in names(results)) {
-    expect_no_error(capture_output(print(results[[nm]])))
-    expect_no_error(capture_output(print(summary(results[[nm]]))))
+    check_print_summary(results[[nm]])
   }
 })
 
@@ -47,8 +46,7 @@ test_that("works with ordered factors in in endo and exo", {
     npcdistbw.args = list(nmulti = 1, tol = 1, ftol = 1)
   )
   check_clean_fit(res)
-  expect_no_error(capture_output(print(res)))
-  expect_no_error(capture_output(print(summary(res))))
+  check_print_summary(res)
 })
 
 

@@ -154,7 +154,7 @@
 #' \emph{Journal of Statistical Software}, 27(5).
 #' \doi{10.18637/jss.v027.i05}
 #'
-#' @eval doc_rendocopula2scopenp_return()
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope.np", extra.items = doc_rendocopula2scopenp_return_extra_items())
 #'
 #' @family copula-based methods
 #' @seealso \code{\link[REndo:summary.rendo.copula.2scope.np]{summary}}
@@ -391,29 +391,35 @@ copula2sCOPEnp <- function(
     verbose = verbose
   )
 
-  # Structural residuals --------------------------------------------------------------
-
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit$res.augmented,
-    names.aux.regs = fit$labels.pcop
-  )
-
   # Return object ----------------------------------------------------------------------
 
-  return(new_rendo_copula2scopenp(
+  return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
     res.lm.augmented = fit$res.augmented,
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
-    boots.params = res.boots$boots.params,
-    n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed,
+    res.boots = res.boots,
+    cdf = NULL, # will be skipped when printing
     labels.endo = labels.endo,
     labels.exo = labels.exo,
     labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.2scope.np",
+    # 2sCOPEnp-specific
     first.stage.frames = fit$mfs,
     bws = bws,
     condists = fit$condists
+  ))
+}
+
+
+doc_rendocopula2scopenp_return_extra_items <- function() {
+  return(c(
+    cdf = "\\item{\\code{cdf}}{Always \\code{NULL}: The conditional CDFs are estimated nonparametrically (see \\code{condists}).}",
+    bws = "\\item{\\code{bws}}{A named list with one \\code{np::condbandwidth} object per endogenous
+    regressor (named accordingly), each used to estimate the conditional CDF
+    \\eqn{\\hat{F}(P_k \\mid X)}.}",
+    first.stage.frames = "\\item{\\code{first.stage.frames}}{List of first-stage model frames, one per endogenous regressor (named after the respective endo regressor).}",
+    condists = "\\item{\\code{condists}}{A named list with one \\code{np::condistribution}
+    object per endogenous regressor (named accordingly).
+    Each item is the output of \\code{np::npcdist()}: An estimate of the conditional CDF \\eqn{\\hat{F}(P_k \\mid X)}.}"
   ))
 }

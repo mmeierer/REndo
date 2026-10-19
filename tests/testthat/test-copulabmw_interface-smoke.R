@@ -64,8 +64,7 @@ test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
 
   # S3 methods on each edge case
   for (nm in names(results)) {
-    expect_no_error(capture_output(print(results[[nm]])))
-    expect_no_error(capture_output(print(summary(results[[nm]]))))
+    check_print_summary(results[[nm]])
   }
 })
 
