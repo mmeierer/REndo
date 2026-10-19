@@ -15,7 +15,7 @@ copulaBMW(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.
@@ -181,7 +181,7 @@ using only successful bootstrap replications.
 # Inspired by DGP1 with delta = 1 (correlation between x and P), rho = 0.5 (endogeneity),
 # x ~ Gamma(1,1), e ~ lognormal(0,1) first stage error)
 # n = 1000
-# True Paramaters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
+# True Parameters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
 #------------------------------------------------------------------------
 data("dataCopBMW")
 res_bmw <- copulaBMW(
@@ -215,7 +215,7 @@ summary(res_bmw_multi)
 \references{
 Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
 corrections using nonlinear transformations. \emph{The Econometrics Journal},
-27, 362--383/ \doi{10.1093/ectj/utae002}
+27, 362--383. \doi{10.1093/ectj/utae002}
 
 Becker, JM., Proksch, D., & Ringle, C.M. Revisiting Gaussian
 copulas to handle endogenous regressors. \emph{Journal of the Academy of

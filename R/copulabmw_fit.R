@@ -1,4 +1,4 @@
-#' @importFrom stats lm reformulate
+#' @importFrom stats lm reformulate model.matrix model.frame model.response
 copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # Stage 1 --------------------------------------------------------------------
   # BMW correction
@@ -27,6 +27,20 @@ copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
     )
 
     res.lm.first <- lm(formula = f.endo.k.on.all.exo, data = data)
+
+    # Check for constant regressors (eg in bootstrap sample): lm() does not fail but
+    # contain NA coefs. Use the 1st stage design rather than deriving the model
+    # data itself again
+
+    # exo: drop intercept which is always there (intercept = TRUE, in first col)
+    # vanishing factor levels (eg not sampled levels) are caught as well as they
+    # are all 0
+    copula_stop_if_constant(model.matrix(res.lm.first)[, -1, drop = FALSE])
+
+    # endo: Its in the response. Make matrix for check, named for error message
+    k.endo <- model.response(model.frame(res.lm.first))
+    copula_stop_if_constant(matrix(k.endo, ncol = 1, dimnames = list(NULL, p.label)))
+
     e.hat <- residuals(res.lm.first)
 
     # Step 2: CDF on residuals ------------------------------------------------------

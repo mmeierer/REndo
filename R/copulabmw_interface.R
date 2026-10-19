@@ -9,6 +9,7 @@
 #' and the endogenous regressor error. The method also allows conditional
 #' heteroskedasticity of the structural error.
 #'
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @templateVar resc.ecdf.addition The theoretical recommendation of Breitung et al. (2024), Eq 2.3.
 #' @template template_param_cdf
@@ -85,7 +86,7 @@
 #' @references
 #' Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
 #' corrections using nonlinear transformations. \emph{The Econometrics Journal},
-#' 27, 362--383/ \doi{10.1093/ectj/utae002}
+#' 27, 362--383. \doi{10.1093/ectj/utae002}
 #'
 #' @template template_param_cdf_references
 #'
@@ -105,7 +106,7 @@
 #' # Inspired by DGP1 with delta = 1 (correlation between x and P), rho = 0.5 (endogeneity),
 #' # x ~ Gamma(1,1), e ~ lognormal(0,1) first stage error)
 #' # n = 1000
-#' # True Paramaters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
+#' # True Parameters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
 #' #------------------------------------------------------------------------
 #' data("dataCopBMW")
 #' res_bmw <- copulaBMW(
