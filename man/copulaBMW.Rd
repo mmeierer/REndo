@@ -181,7 +181,7 @@ using only successful bootstrap replications.
 # Inspired by DGP1 with delta = 1 (correlation between x and P), rho = 0.5 (endogeneity),
 # x ~ Gamma(1,1), e ~ lognormal(0,1) first stage error)
 # n = 1000
-# True Paramaters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
+# True Parameters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
 #------------------------------------------------------------------------
 data("dataCopBMW")
 res_bmw <- copulaBMW(
