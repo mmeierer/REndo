@@ -48,18 +48,3 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-
-        # - name: Check
-        #   env:
-        #     _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        #   run: |
-        #     options(crayon.enabled = TRUE)
-        #     rcmdcheck::rcmdcheck(args = c("--no-tests", "--as-cran", "--no-manual"), error_on = "warning", check_dir = "check")
-        #   shell: Rscript {0}
-
-        # - name: Upload check results
-        #   if: failure()
-        #   uses: actions/upload-artifact@main
-        #   with:
-        #     name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-        #     path: check
