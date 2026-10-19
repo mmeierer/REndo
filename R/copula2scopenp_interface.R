@@ -391,27 +391,19 @@ copula2sCOPEnp <- function(
     verbose = verbose
   )
 
-  # Structural residuals --------------------------------------------------------------
-
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit$res.augmented,
-    names.aux.regs = fit$labels.pcop
-  )
-
   # Return object ----------------------------------------------------------------------
 
-  return(new_rendo_copula2scopenp(
+  return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
     res.lm.augmented = fit$res.augmented,
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
-    boots.params = res.boots$boots.params,
-    n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed,
+    res.boots = res.boots,
+    cdf = NULL, # will be skipped when printing
     labels.endo = labels.endo,
     labels.exo = labels.exo,
     labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.2scope.np",
+    # 2sCOPEnp-specific
     first.stage.frames = fit$mfs,
     bws = bws,
     condists = fit$condists

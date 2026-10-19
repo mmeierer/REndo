@@ -227,25 +227,16 @@ copulaIMA <- function(
     verbose = verbose
   )
 
-  # Structural residuals --------------------------------------------------------------
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit$res.augmented,
-    names.aux.regs = fit$labels.pcop
-  )
-
   # Return value ----------------------------------------------------------------------
-  return(new_rendo_copulaima(
+  return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
-    boots.params = res.boots$boots.params,
-    n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed,
     res.lm.augmented = fit$res.augmented,
+    res.boots = res.boots,
     cdf = cdf,
     labels.endo = labels.endo,
     labels.exo = labels.exo,
-    labels.pcop = fit$labels.pcop
+    labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.ima"
   ))
 }

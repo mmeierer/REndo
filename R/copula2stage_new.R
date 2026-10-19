@@ -1,0 +1,48 @@
+# Shared constructor for the two-stage copula methods.
+# Method-specific fields are passed in `...`.
+#' @importFrom stats coef model.frame
+new_rendo_copula2stage <- function(
+  call,
+  F.formula,
+  res.lm.augmented,
+  res.boots,
+  cdf,
+  labels.endo,
+  labels.exo,
+  labels.pcop,
+  subclass,
+  # Anything else to add to the object
+  ...
+) {
+  # Fitted values and residuals of the structural model (without the correction terms)
+  l.fitted.resid <- copula_compute_structural_fitted_residuals(
+    res.lm.aug = res.lm.augmented,
+    names.aux.regs = labels.pcop
+  )
+
+  return(.new_rendo_boots_degenerates_removed(
+    # Stuff for rendo.boots.degenerates.removed class
+    call = call,
+    F.formula = F.formula,
+    mf = model.frame(res.lm.augmented),
+    coefficients = coef(res.lm.augmented),
+    # WHat to show in the coef table: All coefs incl the correction terms
+    names.main.coefs = names(coef(res.lm.augmented)),
+    fitted.values = l.fitted.resid$fitted.values,
+    residuals = l.fitted.resid$residuals,
+    boots.params = res.boots$boots.params,
+    n.boots.attempted = res.boots$n.attempted,
+    n.boots.failed = res.boots$n.failed,
+
+    # Stuff specific to rendo.copula.2stage
+    subclass = c(subclass, "rendo.copula.2stage"),
+    res.lm.augmented = res.lm.augmented,
+    cdf = cdf,
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    labels.pcop = labels.pcop,
+
+    # Method specific stuff
+    ...
+  ))
+}
