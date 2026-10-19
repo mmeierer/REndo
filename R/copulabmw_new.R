@@ -1,31 +1,3 @@
-doc_rendocopulabmw_return_list <- function() {
-  doc_boots <- doc_rendobootsdegeneratesremoved_return_list()
-
-  doc_boots[['residuals']] <- "\\item{\\code{residuals}}{The structural residuals.}"
-  doc_boots[[
-    'fitted.values'
-  ]] <- "\\item{\\code{fitted.values}}{Fitted values of the structural model.}"
-
-  doc_copulabmw <- c(
-    cdf = "\\item{\\code{cdf}}{The used cdf function.}",
-    res.lm.augmented = "\\item{\\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}",
-    labels.endo = "\\item{\\code{labels.endo}}{The term labels of the endogenous regressors.}",
-    labels.exo = "\\item{\\code{labels.exo}}{The term labels of the exogenous regressors.}",
-    labels.pcop = "\\item{\\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}"
-  )
-
-  return(c(doc_boots, doc_copulabmw))
-}
-
-
-doc_rendocopulabmw_return <- function() {
-  doc_intro <- c(
-    return = "@return An object of class \\code{rendo.copula.bmw} which is a list that contains:"
-  )
-
-  return(c(doc_intro, doc_rendocopulabmw_return_list()))
-}
-
 #' @importFrom stats coef model.frame
 new_rendo_copulabmw <- function(
     call,

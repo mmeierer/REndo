@@ -90,7 +90,7 @@
 #'
 #' @template template_param_cdf_references
 #'
-#' @eval doc_rendocopulabmw_return()
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.bmw")
 #'
 #' @family copula-based methods
 #'

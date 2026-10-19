@@ -154,7 +154,7 @@
 #' \emph{Journal of Statistical Software}, 27(5).
 #' \doi{10.18637/jss.v027.i05}
 #'
-#' @eval doc_rendocopula2scopenp_return()
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope.np", extra.items = doc_rendocopula2scopenp_return_extra_items())
 #'
 #' @family copula-based methods
 #' @seealso \code{\link[REndo:summary.rendo.copula.2scope.np]{summary}}
@@ -407,5 +407,19 @@ copula2sCOPEnp <- function(
     first.stage.frames = fit$mfs,
     bws = bws,
     condists = fit$condists
+  ))
+}
+
+
+doc_rendocopula2scopenp_return_extra_items <- function() {
+  return(c(
+    cdf = "\\item{\\code{cdf}}{Always \\code{NULL}: The conditional CDFs are estimated nonparametrically (see \\code{condists}).}",
+    bws = "\\item{\\code{bws}}{A named list with one \\code{np::condbandwidth} object per endogenous
+    regressor (named accordingly), each used to estimate the conditional CDF
+    \\eqn{\\hat{F}(P_k \\mid X)}.}",
+    first.stage.frames = "\\item{\\code{first.stage.frames}}{List of first-stage model frames, one per endogenous regressor (named after the respective endo regressor).}",
+    condists = "\\item{\\code{condists}}{A named list with one \\code{np::condistribution}
+    object per endogenous regressor (named accordingly).
+    Each item is the output of \\code{np::npcdist()}: An estimate of the conditional CDF \\eqn{\\hat{F}(P_k \\mid X)}.}"
   ))
 }
