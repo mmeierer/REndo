@@ -377,8 +377,8 @@ test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and
 
 
 test_that("Warn if binomial/dummy data passed in endo regressor", {
-  expect_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D), num.boots = 2, verbose = FALSE,
-                                  data = cbind(dataCopDis2, D = c(0,1))), regexp = "may not be binomial")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D), num.boots = 2, verbose = FALSE,
+                                                            data = cbind(dataCopDis2, D = c(0,1)))), regexp = "may not be binomial")
 })
 
 # verbose --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -396,7 +396,7 @@ test.positive.numeric.whole.number(function.to.test = copulaCorrection, paramete
 
 test_that("Warning if num.boots < 1000", {
   # only for continuous 1
-  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont),all=FALSE, regexp = "It is recommended to run 1000 or more bootstraps.")
+  expect_warning(copulaCorrection(num.boots = 2, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont), regexp = "It is recommended to run 1000 or more bootstraps.")
 })
 
 # Warning if num.boots given for any other case
@@ -525,11 +525,11 @@ test_that("Has default value empty list()",{
 context("Inputchecks - copulaCorrection - Parameter 3-dots")
 test_that("Warning if further unneded params are given", {
   # 1 continuous
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont, num.boots=2),all=FALSE, regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P|continuous(P),data=dataCopCont, num.boots=2)), regexp = "are ignored")
   # >1 continuous
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopCont2, num.boots = 2),all=FALSE, regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1, P2),data=dataCopCont2, num.boots = 2)), regexp = "are ignored")
   # Mixed
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont, num.boots = 2), all=FALSE, regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2),data=dataCopDisCont, num.boots = 2)), regexp = "are ignored")
   # Discrete
-  expect_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis2, num.boots = 2),all=FALSE,regexp = "are ignored")
+  expect_warning(suppress_lowboots_warning(copulaCorrection(abc=123, verbose=FALSE,formula= y ~ X1+X2+P1+P2|discrete(P1, P2),data=dataCopDis2, num.boots = 2)), regexp = "are ignored")
 })
