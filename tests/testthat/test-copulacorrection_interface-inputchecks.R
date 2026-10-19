@@ -375,8 +375,10 @@ test_that(paste0("No column is named PStar.ENDO for discrete, >1 continuous, and
 
 
 test_that("Warn if binomial/dummy data passed in endo regressor", {
-  expect_warning(suppress_lowboots_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D), num.boots = 2, verbose = FALSE,
-                                                            data = cbind(dataCopDis2, D = c(0,1)))), regexp = "may not be binomial")
+  # warns once for the main fit and once per bootstrap: all must match
+  w <- capture_warnings(suppress_lowboots_warning(copulaCorrection(formula=y ~ X1+X2+D|discrete(D), num.boots = 2, verbose = FALSE,
+                                                                   data = cbind(dataCopDis2, D = c(0,1)))))
+  expect_match(w, regexp = "may not be binomial")
 })
 
 # verbose --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
