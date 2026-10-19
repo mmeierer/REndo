@@ -14,7 +14,7 @@ test_that("Formula transformations are correct", {
 
   # C2, Dis, DisCont
   set.seed(0xcaffee)
-  correct.res.c1      <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont))
+  expect_no_warning(correct.res.c1      <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont)))
   expect_silent(correct.res.c2      <- copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2))
   expect_silent(correct.res.dis     <- copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2))
   expect_silent(correct.res.disCont <- copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont))
@@ -24,7 +24,7 @@ test_that("Formula transformations are correct", {
   # C1
   data.altered   <- dataCopCont
   data.altered$y <- exp(data.altered$y)
-  res.trans.lhs  <- suppress_lowboots_warning(copulaCorrection(formula= log(y) ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=data.altered))
+  expect_no_warning(res.trans.lhs  <- suppress_lowboots_warning(copulaCorrection(formula= log(y) ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=data.altered)))
   expect_equal(coef(res.trans.lhs), coef(correct.res.c1))
   expect_equal(coef(summary(res.trans.lhs)), coef(summary(correct.res.c1)))
   # C2
@@ -51,7 +51,7 @@ test_that("Formula transformations are correct", {
   # C1
   data.altered    <- dataCopCont
   data.altered$P <- exp(data.altered$P)
-  res.trans.rhs  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+log(P)|continuous(log(P)), verbose = FALSE, num.boots=2, data=data.altered))
+  expect_no_warning(res.trans.rhs  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+log(P)|continuous(log(P)), verbose = FALSE, num.boots=2, data=data.altered)))
   expect_equal(coef(res.trans.rhs), coef(correct.res.c1), ignore_attr=TRUE)
   expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.c1)), ignore_attr=TRUE)
   # C2
@@ -88,11 +88,11 @@ test_that("Differently sorted data produces same results C1", {
   data.altered <- data.altered[sample(nrow(data.altered), nrow(data.altered), replace = FALSE), ]
 
   set.seed(0xcaffee)
-  res.orig  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2,
-                                                          data=dataCopCont))
+  expect_no_warning(res.orig  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2,
+                                                                            data=dataCopCont)))
   set.seed(0xcaffee)
-  res.diff.sorted  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2,
-                                                                 data=data.altered))
+  expect_no_warning(res.diff.sorted  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2,
+                                                                                   data=data.altered)))
 
   expect_equal(coef(res.orig), coef(res.diff.sorted))
 
@@ -106,10 +106,10 @@ test_that("Differently sorted data produces same results C2", {
   data.altered <- dataCopCont2
   data.altered <- data.altered[sample(nrow(data.altered), nrow(data.altered), replace = FALSE), ]
   set.seed(0xcaffee) # pstar
-  res.orig  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots = 2))
+  expect_no_warning(res.orig  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots = 2)))
 
   set.seed(0xcaffee) # pstar
-  res.diff.sorted  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=data.altered, num.boots = 2))
+  expect_no_warning(res.diff.sorted  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=data.altered, num.boots = 2)))
 
   expect_equal(coef(res.orig), coef(res.diff.sorted))
   # Does not work: Same bootstrapping happens but sorting has changed, so different obs are selected

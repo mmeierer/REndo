@@ -33,7 +33,7 @@ fct.helper.check.copula.correction.summary <- function(res.c){
 # C1 optim LL case ----------------------------------------------------------------------------------------------------
 
 c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
-res.c1 <- suppress_lowboots_warning(copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2))
+expect_no_warning(res.c1 <- suppress_lowboots_warning(copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2)))
 
 # Basic copulaCorrection specific correctness of object
 fct.helper.check.copula.correction.summary(res.c1)
@@ -43,7 +43,7 @@ test_that("Test S3 methods only off cran because needs 100bootstraps for confint
   # need to fit 100 boots for confint
   skip_on_cran()
 
-  res.c1.many <- suppress_lowboots_warning(copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 100))
+  expect_no_warning(res.c1.many <- suppress_lowboots_warning(copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 100)))
 
   # Basic rendo.boots part
   test.s3methods.rendoboots(res.model=res.c1.many, input.form=c1.input.form, function.std.data=dataCopCont,
@@ -119,7 +119,7 @@ fct.helper.check.copula.correction.lm.case <- function(res.c2){
 
 
 c2.input.form <- y ~ X1 + X2 + P1+P2|continuous(P1, P2)
-res.c2 <- suppress_lowboots_warning(copulaCorrection(formula = c2.input.form, data = dataCopCont2, verbose=FALSE, num.boots=100))
+expect_no_warning(res.c2 <- suppress_lowboots_warning(copulaCorrection(formula = c2.input.form, data = dataCopCont2, verbose=FALSE, num.boots=100)))
 
 test.s3methods.rendoboots(res.model=res.c2, input.form=c2.input.form, function.std.data=dataCopCont2,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
@@ -132,7 +132,7 @@ fct.helper.check.copula.correction.summary(res.c2)
 # C2 Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 d.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1, P2)
-res.d <- suppress_lowboots_warning(copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE, num.boots=100))
+expect_no_warning(res.d <- suppress_lowboots_warning(copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE, num.boots=100)))
 
 test.s3methods.rendoboots(res.model =res.d, input.form=d.input.form, function.std.data=dataCopDis2,
                             full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
@@ -146,7 +146,7 @@ fct.helper.check.copula.correction.summary(res.d)
 # C2 Mixed case -------------------------------------------------------------------------------------------------------------
 
 cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
-res.cd <- suppress_lowboots_warning(copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE, num.boots = 100))
+expect_no_warning(res.cd <- suppress_lowboots_warning(copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE, num.boots = 100)))
 test.s3methods.rendoboots(res.model =res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 

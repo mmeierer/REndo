@@ -10,15 +10,15 @@ data("dataCopDisCont")
 test_that("Works with intercept", {
   skip_on_cran()
   # C1
-  res.c1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont))
+  expect_no_warning(res.c1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont)))
 
   expect_true(coef(res.c1)["rho"] > 0 & coef(res.c1)["rho"] < 1)
   expect_true(coef(res.c1)["sigma"] > 0)
 
   # C2, Dis, DisCont
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots = 2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots = 2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots = 2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots = 2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots = 2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots = 2)))
 })
 
 test_that("Works without intercept", {
@@ -191,18 +191,18 @@ test_that("Works with transformed and untransformed endo", {
   # expect_false(isTRUE(all.equal(coef(res.c1.1), coef(res.c1.2))))
 
   # C2
-  res.c2.1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+exp(P2/2)|continuous(P1, exp(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2))
-  res.c2.2 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+exp(P2/2)|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots=2))
+  expect_no_warning(res.c2.1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+exp(P2/2)|continuous(P1, exp(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2)))
+  expect_no_warning(res.c2.2 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+exp(P2/2)|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots=2)))
   expect_false(isTRUE(all.equal(coef(res.c2.1), coef(res.c2.2))))
 
   #  Dis
-  res.d1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|discrete(P1, I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2))
-  res.d2 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots=2))
+  expect_no_warning(res.d1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|discrete(P1, I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
+  expect_no_warning(res.d2 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
   expect_false(isTRUE(all.equal(coef(res.d1), coef(res.d2))))
 
   # DisCont
-  res.cd1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|continuous(P1)+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2))
-  res.cd2 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots=2))
+  expect_no_warning(res.cd1 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|continuous(P1)+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2)))
+  expect_no_warning(res.cd2 <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+I(P2/2)|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots=2)))
   expect_false(isTRUE(all.equal(coef(res.cd1), coef(res.cd2))))
 })
 
@@ -227,11 +227,11 @@ test_that("start.params works with transformation", {
 
 test_that("Correct for start.params swapped", {
   set.seed(0xcaffee)
-  res.c1.1 <- suppress_lowboots_warning(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
-                                            formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2))
+  expect_no_warning(res.c1.1 <- suppress_lowboots_warning(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
+                                                              formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2)))
   set.seed(0xcaffee)
-  res.c1.2 <- suppress_lowboots_warning(copulaCorrection(start.params = c(X2 = -3,"I(P + 1)" = -1, "(Intercept)"=2, X1 = 1.5),
-                                            formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2))
+  expect_no_warning(res.c1.2 <- suppress_lowboots_warning(copulaCorrection(start.params = c(X2 = -3,"I(P + 1)" = -1, "(Intercept)"=2, X1 = 1.5),
+                                                              formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2)))
 
   # Equal, including param orderin
   expect_equal(coef(res.c1.1), coef(res.c1.2))
@@ -246,8 +246,8 @@ test_that("Fails if lm cannot be used to derive start.params", {
 test_that("Works for L-BFGS-B", {
   skip_on_cran()
 
-  res.bfgs <- suppress_lowboots_warning(copulaCorrection(y~X1+X2+P|continuous(P), data = dataCopCont, num.boots = 20, verbose=FALSE,
-                                                         optimx.args = list(control = list(trace = 0), method="L-BFGS-B")))
+  expect_no_warning(res.bfgs <- suppress_lowboots_warning(copulaCorrection(y~X1+X2+P|continuous(P), data = dataCopCont, num.boots = 20, verbose=FALSE,
+                                                                           optimx.args = list(control = list(trace = 0), method="L-BFGS-B"))))
 
   expect_false(anyNA(res.bfgs$boots.params))
   expect_silent(confint(res.bfgs))
@@ -258,8 +258,8 @@ test_that("Works for L-BFGS-B", {
 test_that("Works for Nelder-Mead", {
   skip_on_cran()
 
-  res.nm <- suppress_lowboots_warning(copulaCorrection(y~X1+X2+P|continuous(P), data = dataCopCont, num.boots = 20, verbose=FALSE,
-                                                         optimx.args = list(control = list(trace = 0), method="Nelder-Mead")))
+  expect_no_warning(res.nm <- suppress_lowboots_warning(copulaCorrection(y~X1+X2+P|continuous(P), data = dataCopCont, num.boots = 20, verbose=FALSE,
+                                                                           optimx.args = list(control = list(trace = 0), method="Nelder-Mead"))))
 
   expect_false(anyNA(res.nm$boots.params))
   expect_silent(confint(res.nm))
