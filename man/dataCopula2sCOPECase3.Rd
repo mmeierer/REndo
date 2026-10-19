@@ -5,7 +5,7 @@
 \alias{dataCopula2sCOPECase3}
 \title{Simulated Dataset for 2sCOPE - Normally Distributed Endogenous and Non-normal Exogenous Regressor}
 \format{
-A data frame with 1000 observations on 3 variables:
+A data frame with 2500 observations on 3 variables:
 \describe{
 \item{\code{y}}{a numeric vector representing the dependent variable.}
 \item{\code{P}}{a numeric vector, continuous and endogenous,

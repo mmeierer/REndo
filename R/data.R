@@ -427,7 +427,7 @@
 #'   \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
 #' @name dataCopula2sCOPECase3
 #' @usage data("dataCopula2sCOPECase3")
-#' @format A data frame with 1000 observations on 3 variables:
+#' @format A data frame with 2500 observations on 3 variables:
 #' \describe{
 #' \item{\code{y}}{a numeric vector representing the dependent variable.}
 #' \item{\code{P}}{a numeric vector, continuous and endogenous,

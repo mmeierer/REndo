@@ -9,7 +9,7 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
   # from equation 21 of Hu et al. 2025
 
   cop.term <- copula_create_1ststage_copdata_matrix(
-    n = nrow(data),
+    nrow = nrow(data),
     labels.endo = labels.endo
   )
 
