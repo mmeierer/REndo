@@ -25,21 +25,21 @@ test_that("Works with intercept", {
 test_that("Works without intercept", {
   skip_on_cran()
   # C1
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P-1|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P-1|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont)))
   # C2, Dis, DisCont
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots = 2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots = 2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots = 2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots = 2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots = 2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots = 2)))
 })
 
 
 test_that("Produces output", {
   # C1
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P-1|continuous(P), verbose = TRUE, num.boots=2, data=dataCopCont))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P-1|continuous(P), verbose = TRUE, num.boots=2, data=dataCopCont)))
   # C2, Dis, DisCont
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1, P2), verbose = TRUE, data=dataCopCont2, num.boots = 2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|discrete(P1, P2),   verbose = TRUE, data=dataCopDis2, num.boots = 2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1)+discrete(P2), verbose = TRUE, data=dataCopDisCont, num.boots = 2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1, P2), verbose = TRUE, data=dataCopCont2, num.boots = 2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|discrete(P1, P2),   verbose = TRUE, data=dataCopDis2, num.boots = 2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2-1|continuous(P1)+discrete(P2), verbose = TRUE, data=dataCopDisCont, num.boots = 2)))
 
 })
 
@@ -79,49 +79,49 @@ test_that("Non-numerics can be used in exogenous data", {
 
   # factors + characters + logicals
   # C1
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
-                                            data=cbind(dataCopCont,color=factor(x = c("red", "green", "blue", "white", "yellow")))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
-                                            data=cbind(dataCopCont,color=c("red", "green", "blue", "white", "yellow"))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
-                                            data=cbind(dataCopCont,color=c(TRUE,FALSE))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                                              data=cbind(dataCopCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                                              data=cbind(dataCopCont,color=c("red", "green", "blue", "white", "yellow")))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                                              data=cbind(dataCopCont,color=c(TRUE,FALSE)))))
   # C2
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow")))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=c("red", "green", "blue", "white", "yellow"))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=c(TRUE,FALSE))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=c("red", "green", "blue", "white", "yellow")))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|continuous(P1, P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=c(TRUE,FALSE)))))
   # Disc
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1, P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow")))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1, P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=c("red", "green", "blue", "white", "yellow"))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1, P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=c(TRUE,FALSE))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1, P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1, P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=c("red", "green", "blue", "white", "yellow")))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1, P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=c(TRUE,FALSE)))))
   # DiscCont
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1)+continuous(P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow")))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1)+continuous(P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=c("red", "green", "blue", "white", "yellow"))))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1)+continuous(P2), verbose = FALSE, num.boots = 2,
-                                            data=cbind(dataCopDisCont,color=c(TRUE,FALSE))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1)+continuous(P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1)+continuous(P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=c("red", "green", "blue", "white", "yellow")))))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+P2+color|discrete(P1)+continuous(P2), verbose = FALSE, num.boots = 2,
+                                                              data=cbind(dataCopDisCont,color=c(TRUE,FALSE)))))
 })
 
 
 test_that("Start params work with non-numeric", {
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
-                                            data=cbind(dataCopCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))),
-                                            start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
-                                                             colorgreen=-0.1, colorred=0, colorwhite=0, coloryellow=0)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P+color|continuous(P), verbose = FALSE, num.boots=2,
+                                                              data=cbind(dataCopCont,color=factor(x = c("red", "green", "blue", "white", "yellow"))),
+                                                              start.params = c("(Intercept)"=2, X1=1.5,X2=-3, P=-1,
+                                                                               colorgreen=-0.1, colorred=0, colorwhite=0, coloryellow=0))))
 })
 
 
 test_that("Works with proper optimx.args", {
-  suppress_lowboots_warning(copulaCorrection(optimx.args = list(itnmax = 100), formula = y~X1+X2+P|continuous(P),
-                                            data = dataCopCont, verbose = FALSE, num.boots = 2))
-  suppress_lowboots_warning(copulaCorrection(optimx.args = list(itnmax = 100, control=list(kkttol=0.01)), formula = y~X1+X2+P|continuous(P),
-                                             data = dataCopCont, verbose = FALSE, num.boots = 2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(optimx.args = list(itnmax = 100), formula = y~X1+X2+P|continuous(P),
+                                                              data = dataCopCont, verbose = FALSE, num.boots = 2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(optimx.args = list(itnmax = 100, control=list(kkttol=0.01)), formula = y~X1+X2+P|continuous(P),
+                                                               data = dataCopCont, verbose = FALSE, num.boots = 2)))
 })
 
 
@@ -129,23 +129,23 @@ test_that("Works with NA in not needed columns", {
   # LL
   dataCopCont.na <- dataCopCont
   dataCopCont.na[5, "X2"] <- NA_real_
-  suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|continuous(P), optimx.args = list(itnmax = 10),
-                                             data = dataCopCont.na, verbose = FALSE, num.boots = 2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|continuous(P), optimx.args = list(itnmax = 10),
+                                                               data = dataCopCont.na, verbose = FALSE, num.boots = 2)))
 
   dataCopCont.inf <- dataCopCont
   dataCopCont.inf[5, "X2"] <- Inf
-  suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|continuous(P), optimx.args = list(itnmax = 10),
-                                             data = dataCopCont.inf, verbose = FALSE, num.boots = 2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|continuous(P), optimx.args = list(itnmax = 10),
+                                                               data = dataCopCont.inf, verbose = FALSE, num.boots = 2)))
 
   # Augmented OLS
   dataCopDis.na <- dataCopDis
   dataCopDis.na[5, "X2"] <- NA_real_
-  suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|discrete(P),data = dataCopDis.na, verbose = FALSE,
-                            num.boots=2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|discrete(P),data = dataCopDis.na, verbose = FALSE,
+                                              num.boots=2)))
   dataCopDis.inf          <- dataCopDis
   dataCopDis.inf[5, "X2"] <- Inf
-  suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|discrete(P),data = dataCopDis.inf, verbose = FALSE,
-                                             num.boots=2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula = y~X1+P|discrete(P),data = dataCopDis.inf, verbose = FALSE,
+                                                               num.boots=2)))
 })
 
 # Transformations in formula ---------------------------------------------------------------------------------------------------
@@ -159,22 +159,22 @@ test_that("Works with function in exogenous", {
   # expect_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont),
 
   #                regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ I(X1/3)+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ I(X1/3)+X2+P|continuous(P), verbose = FALSE, num.boots=2, data=dataCopCont)))
   # C2, Dis, DisCont
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots=2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|continuous(P1, P2), verbose = FALSE, data=dataCopCont2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|discrete(P1, P2),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ exp(X1)+X2+P1+P2|continuous(P1)+discrete(P2), verbose = FALSE, data=dataCopDisCont, num.boots=2)))
 })
 
 
 test_that("Works with single endo transformation", {
   skip_on_cran()
   # C1
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/2)), verbose = FALSE, num.boots=2, data=dataCopCont))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+I(P/2)|continuous(I(P/2)), verbose = FALSE, num.boots=2, data=dataCopCont)))
   # C2, Dis, DisCont
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1, I(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P1, I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1)+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1, I(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|discrete(P1, I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+I(P2/2)|continuous(P1)+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2)))
 })
 
 
@@ -211,20 +211,20 @@ test_that("Works with transformed and untransformed endo", {
 test_that("Works with all endo transformed", {
   # C1 done already in single because only has 1 endo
   # different endos
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|continuous(exp(P1), I(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|continuous(exp(P1), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|discrete(exp(P1), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|continuous(exp(P1))+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|continuous(exp(P1), I(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|continuous(exp(P1), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|discrete(exp(P1), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+exp(P1)+I(P2/2)|continuous(exp(P1))+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2)))
   # Same endos transformed twice
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|continuous(exp(P2), I(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|continuous(exp(P2), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|discrete(exp(P2), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2))
-  suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|continuous(exp(P2))+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|continuous(exp(P2), I(P2/2)), verbose = FALSE, data=dataCopCont2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|continuous(exp(P2), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|discrete(exp(P2), I(P2/2)),   verbose = FALSE, data=dataCopDis2, num.boots=2)))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+P1+exp(P2)+I(P2/2)|continuous(exp(P2))+discrete(I(P2/2)), verbose = FALSE, data=dataCopDisCont, num.boots=2)))
 })
 
 test_that("start.params works with transformation", {
-  suppress_lowboots_warning(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
-                                            formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2))
+  expect_no_warning(suppress_lowboots_warning(copulaCorrection(start.params = c("(Intercept)"=2, X1 = 1.5, X2 = -3, "I(P + 1)" = -1),
+                                                              formula = y ~ X1 + X2 + I(P+1) |continuous(I(P+1)), data = dataCopCont, verbose=FALSE, num.boots=2)))
 })
 
 test_that("Correct for start.params swapped", {
