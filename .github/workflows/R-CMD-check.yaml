@@ -2,7 +2,13 @@
 
 name: R-CMD-check
 
-on: push
+on:
+  # dont run on push, otherwise the build cache cannot be used on the feature branch
+  push:
+    branches:
+      - development
+      - master
+  pull_request:
 
 permissions: read-all
 
