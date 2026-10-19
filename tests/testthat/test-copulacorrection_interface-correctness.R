@@ -52,26 +52,26 @@ test_that("Formula transformations are correct", {
   data.altered    <- dataCopCont
   data.altered$P <- exp(data.altered$P)
   res.trans.rhs  <- suppress_lowboots_warning(copulaCorrection(formula= y ~ X1+X2+log(P)|continuous(log(P)), verbose = FALSE, num.boots=2, data=data.altered))
-  expect_equal(coef(res.trans.rhs), coef(correct.res.c1), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.c1)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.rhs), coef(correct.res.c1), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.c1)), ignore_attr=TRUE)
   # C2
   data.altered    <- dataCopCont2
   data.altered$P2 <- exp(data.altered$P2)
   expect_silent(res.trans.rhs      <- copulaCorrection(formula= y ~ X1+X2+P1+log(P2)|continuous(P1, log(P2)), verbose = FALSE, data=data.altered))
-  expect_equal(coef(res.trans.rhs), coef(correct.res.c2), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.c2)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.rhs), coef(correct.res.c2), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.c2)), ignore_attr=TRUE)
   # Dis
   data.altered    <- dataCopDis2
   data.altered$P2 <- exp(data.altered$P2)
   expect_silent(res.trans.rhs   <- copulaCorrection(formula= y ~ X1+X2+P1+log(P2)|discrete(P1, log(P2)),   verbose = FALSE, data=data.altered))
-  expect_equal(coef(res.trans.rhs), coef(correct.res.dis), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.dis)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.rhs), coef(correct.res.dis), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.dis)), ignore_attr=TRUE)
   # Discont
   data.altered    <- dataCopDisCont
   data.altered$P2 <- exp(data.altered$P2)
   expect_silent(res.trans.rhs <- copulaCorrection(formula= y ~ X1+X2+P1+log(P2)|continuous(P1)+discrete(log(P2)), verbose = FALSE, data=data.altered))
-  expect_equal(coef(res.trans.rhs), coef(correct.res.disCont), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.disCont)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.rhs), coef(correct.res.disCont), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.rhs)), coef(summary(correct.res.disCont)), ignore_attr=TRUE)
 })
 
 

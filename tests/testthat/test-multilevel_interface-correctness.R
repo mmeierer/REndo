@@ -29,9 +29,9 @@ test_that("Transformations are correct for L2", {
   expect_silent(res.trans.exo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + log(X23) + X24 +
                                                 X31 + X32 + X33 + (1+X11 | SID) | endo(X15),
                                               data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.exo), coef(correct.res), check.attributes = FALSE)
+  expect_equal(coef(res.trans.exo), coef(correct.res), ignore_attr = TRUE)
   for(m in all.L2.models)
-    expect_equal(coef(summary(res.trans.exo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
+    expect_equal(coef(summary(res.trans.exo, model = m)), coef(summary(correct.res, model = m)), ignore_attr = TRUE)
 
 
   # Can handle transformations in endo
@@ -40,9 +40,9 @@ test_that("Transformations are correct for L2", {
   expect_silent(res.trans.endo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + log(X15) + X21 + X22 + X23 + X24 +
                                                  X31 + X32 + X33 + (1+X11 | SID) | endo(log(X15)),
                                                data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.endo), coef(correct.res), check.attributes = FALSE)
+  expect_equal(coef(res.trans.endo), coef(correct.res), ignore_attr = TRUE)
   for(m in all.L2.models)
-    expect_equal(coef(summary(res.trans.endo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
+    expect_equal(coef(summary(res.trans.endo, model = m)), coef(summary(correct.res, model = m)), ignore_attr = TRUE)
 
   # Can handle transformations in slope
   data.altered   <- dataMultilevelIV
@@ -50,9 +50,9 @@ test_that("Transformations are correct for L2", {
   expect_silent(res.trans.slope <- multilevelIV(formula = y ~ log(X11) + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                                   X31 + X32 + X33 + (1+log(X11) | SID) | endo(X15),
                                                 data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.slope), coef(correct.res), check.attributes = FALSE)
+  expect_equal(coef(res.trans.slope), coef(correct.res), ignore_attr = TRUE)
   for(m in all.L2.models)
-    expect_equal(coef(summary(res.trans.slope, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
+    expect_equal(coef(summary(res.trans.slope, model = m)), coef(summary(correct.res, model = m)), ignore_attr = TRUE)
 })
 
 
@@ -68,9 +68,9 @@ test_that("Transformations are correct for L3", {
   expect_silent(res.trans.lhs <- multilevelIV(formula = I((y*2)-99) ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +
                                                  X31 + X32 + X33 + (1+X13 | CID) + (1+X11 | SID) | endo(X15),
                                                data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.lhs), coef(correct.res), check.attributes = FALSE)
+  expect_equal(coef(res.trans.lhs), coef(correct.res), ignore_attr = TRUE)
   for(m in all.L3.models)
-    expect_equal(coef(summary(res.trans.lhs, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
+    expect_equal(coef(summary(res.trans.lhs, model = m)), coef(summary(correct.res, model = m)), ignore_attr = TRUE)
 
   # Can handle transformations in exo
   data.altered   <- dataMultilevelIV
@@ -78,9 +78,9 @@ test_that("Transformations are correct for L3", {
   expect_silent(res.trans.exo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + I((X23*2)-99) + X24 +
                                                  X31 + X32 + X33 + (1+X13 | CID) + (1+X11 | SID) | endo(X15),
                                                data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.exo), coef(correct.res), check.attributes = FALSE)
+  expect_equal(coef(res.trans.exo), coef(correct.res), ignore_attr = TRUE)
   for(m in all.L3.models){
-    expect_equal(coef(summary(res.trans.exo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
+    expect_equal(coef(summary(res.trans.exo, model = m)), coef(summary(correct.res, model = m)), ignore_attr = TRUE)
   }
 
 
@@ -90,9 +90,9 @@ test_that("Transformations are correct for L3", {
   expect_silent(res.trans.endo <- multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + I((X15*2)-99) + X21 + X22 + X23 + X24 +
                                                   X31 + X32 + X33 + (1+X13 | CID) + (1+X11 | SID) | endo(I((X15*2)-99)),
                                                 data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.endo), coef(correct.res),  check.attributes = FALSE)
+  expect_equal(coef(res.trans.endo), coef(correct.res),  ignore_attr = TRUE)
   for(m in all.L3.models){
-    expect_equal(coef(summary(res.trans.endo, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
+    expect_equal(coef(summary(res.trans.endo, model = m)), coef(summary(correct.res, model = m)), ignore_attr = TRUE)
   }
 
   # Can handle transformations in slope
@@ -102,9 +102,9 @@ test_that("Transformations are correct for L3", {
   expect_silent(res.trans.slope <- multilevelIV(formula = y ~ I((X11*2)-99) + X12 + I((X13*2)-99) + X14 + X15 + X21 + X22 + X23 + X24 +
                                                    X31 + X32 + X33 + (1+I((X13*2)-99) | CID) + (1+I((X11*2)-99) | SID) | endo(X15),
                                                  data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.slope), coef(correct.res), check.attributes = FALSE)
+  expect_equal(coef(res.trans.slope), coef(correct.res), ignore_attr = TRUE)
   for(m in all.L3.models)
-    expect_equal(coef(summary(res.trans.slope, model = m)), coef(summary(correct.res, model = m)), check.attributes = FALSE)
+    expect_equal(coef(summary(res.trans.slope, model = m)), coef(summary(correct.res, model = m)), ignore_attr = TRUE)
 
 })
 

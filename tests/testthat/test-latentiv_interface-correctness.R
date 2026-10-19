@@ -16,16 +16,16 @@ test_that("Transformations are correct", {
 
   expect_silent(res.trans.lhs <- latentIV(formula = I(y/2 + 12.3) ~ P, data = dataLatentIV, verbose = FALSE))
   expect_silent(res.data.trans.lhs <- latentIV(formula = y ~ P, data = data.altered.y, verbose = FALSE))
-  expect_equal(coef(res.trans.lhs), coef(res.data.trans.lhs), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.lhs)), coef(summary(res.data.trans.lhs)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.lhs), coef(res.data.trans.lhs), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.lhs)), coef(summary(res.data.trans.lhs)), ignore_attr=TRUE)
 
 
   data.altered.P   <- dataLatentIV
   data.altered.P$P <- data.altered.P$P/2 + 12.3
   expect_silent(res.trans.rhs <- latentIV(formula = y ~ I(P/2 + 12.3), data = dataLatentIV, verbose = FALSE))
   expect_silent(res.data.trans.rhs <- latentIV(formula = y ~ P, data = data.altered.P, verbose = FALSE))
-  expect_equal(coef(res.trans.rhs), coef(res.data.trans.rhs), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.rhs)), coef(summary(res.data.trans.rhs)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.rhs), coef(res.data.trans.rhs), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.rhs)), coef(summary(res.data.trans.rhs)), ignore_attr=TRUE)
 
   # ensure that theta5 (group membership probability) is in [0,1]
   expect_true(coef(res.trans.rhs, complete = TRUE)["theta5"] >= 0 &&
