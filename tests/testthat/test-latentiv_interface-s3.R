@@ -1,7 +1,6 @@
 # Required data -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataLatentIV")
 
-context("S3methods - latentIV - S3methods")
 
 # Run once to get result
 latentiv.input.form <- y ~ P # needed as var to compare against

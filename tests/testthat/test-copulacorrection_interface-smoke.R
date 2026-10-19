@@ -6,7 +6,6 @@ data("dataCopCont")
 data("dataCopCont2")
 data("dataCopDisCont")
 
-context("Runability - copulaCorrection - Runability")
 
 test_that("Works with intercept", {
   skip_on_cran()
@@ -149,7 +148,6 @@ test_that("Works with NA in not needed columns", {
 })
 
 # Transformations in formula ---------------------------------------------------------------------------------------------------
-context("Runability - copulaCorrection - Formula transformations")
 
 test_that("Works with function in exogenous", {
   skip_on_cran()

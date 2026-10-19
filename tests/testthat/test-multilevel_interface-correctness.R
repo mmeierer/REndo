@@ -6,7 +6,6 @@ all.L2.models <- c("REF", "FE_L2", "GMM_L2")
 
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Correctness - multilevelIV - Formula transformations")
 
 test_that("Transformations are correct for L2", {
   skip_on_cran()
@@ -111,7 +110,6 @@ test_that("Transformations are correct for L3", {
 
 
 # Data sorting ------------------------------------------------------------------------------------------------
-context("Correctness - multilevelIV - Data sorting")
 
 # **correct if levels are given separately: (A|SID) + (B|SID) == (A+B|SID)
 # ** Also check for W and V?
@@ -179,7 +177,6 @@ test_that("Unsorted data is correct L3", {
 
 
 # Reproduce results ------------------------------------------------------------------------------
-context("Correctness - multilevelIV - Reproduce results")
 
 test_that("REF is same as lmer()", {
   # Have to use the same optimizer controls for lmer as used in multilevelIV
@@ -248,7 +245,6 @@ test_that("Reproduce results by Kim and Frees 2007", {
 
 
 # Predict ----------------------------------------------------------------------------------------
-context("Correctness - multilevelIV - Predict")
 expect_silent(res.m2 <- multilevelIV(y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 +
                                        X32 + X33 + (1|SID) | endo(X15),
                                      data = dataMultilevelIV, verbose = FALSE))

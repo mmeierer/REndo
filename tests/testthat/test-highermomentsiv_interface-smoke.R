@@ -2,7 +2,6 @@
 data("dataHigherMoments")
 
 # Runability ----------------------------------------------------------------------------------------------------------------------
-context("Runability - higherMomentsIV - Runability")
 test_that("Works with a single IIV",{
   expect_silent(higherMomentsIV(y~X1+X2+P|P|IIV(g=lnx,iiv=gp, X1,X2),data = dataHigherMoments, verbose = FALSE))
 })

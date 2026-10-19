@@ -4,7 +4,6 @@
 data("dataHigherMoments")
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - higherMomentsIV - Parameter formula")
 
 test_that("Fail if bad 2nd RHS", {
   # Fail for missing 2nd RHS
@@ -235,7 +234,6 @@ test_that("Silent if no g and IIV does not need it", {
 
 
 # data -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - higherMomentsIV - Parameter data")
 
 test_that("Fail if is NA, NULL or missing", {
   expect_error(higherMomentsIV(y~X1+X2+P|P|IIV(g=x2,iiv=g, X1), data=    ), regexp = "The above errors were encountered!")
@@ -297,7 +295,6 @@ test_that("Allow wrong data type in irrelevant columns", {
 
 
 # verbose ----------------------------------------------------------------------
-context("Inputchecks - higherMomentsIV - Parameter verbose")
 test.single.logical(function.to.test = higherMomentsIV, parameter.name="verbose",
                     formula=y~X1+X2+P|P|IIV(g=x2,iiv=g, X1, X2), function.std.data=dataHigherMoments)
 

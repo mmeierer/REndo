@@ -31,7 +31,6 @@ fct.helper.check.copula.correction.summary <- function(res.c){
 }
 
 # C1 optim LL case ----------------------------------------------------------------------------------------------------
-context("S3methods - copulaCorrection - 1 continuous")
 
 c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
 res.c1 <- suppress_lowboots_warning(copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2))
@@ -118,7 +117,6 @@ fct.helper.check.copula.correction.lm.case <- function(res.c2){
 }
 
 
-context("S3methods - copulaCorrection - 2 continuous")
 
 c2.input.form <- y ~ X1 + X2 + P1+P2|continuous(P1, P2)
 res.c2 <- suppress_lowboots_warning(copulaCorrection(formula = c2.input.form, data = dataCopCont2, verbose=FALSE, num.boots=100))
@@ -132,7 +130,6 @@ fct.helper.check.copula.correction.summary(res.c2)
 
 
 # C2 Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("S3methods - copulaCorrection - 2 discrete")
 
 d.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1, P2)
 res.d <- suppress_lowboots_warning(copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE, num.boots=100))
@@ -147,7 +144,6 @@ fct.helper.check.copula.correction.summary(res.d)
 
 
 # C2 Mixed case -------------------------------------------------------------------------------------------------------------
-context("S3methods - copulaCorrection - 1 continuous, 1 discrete")
 
 cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
 res.cd <- suppress_lowboots_warning(copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE, num.boots = 100))

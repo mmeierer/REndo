@@ -2,7 +2,6 @@
 data("dataLatentIV")
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Correctness - latentIV - Formula transformations")
 
 test_that("Transformations are correct", {
   # temporarily skip this test because it weirdly keeps on failing on cran's original test.
@@ -34,7 +33,6 @@ test_that("Transformations are correct", {
 })
 
 # Data sorting ------------------------------------------------------------------------------------------------
-context("Correctness - dataLatentIV - Data sorting")
 
 test_that("Differently sorted data produces same results", {
   data.altered    <- dataLatentIV
@@ -52,7 +50,6 @@ test_that("Differently sorted data produces same results", {
 
 
 # Predict ----------------------------------------------------------------------------------------------------
-context("Correctness - latentIV - Predict")
 
 test_that("No newdata results in fitted values", {
   expect_silent(lat.1 <- latentIV(y~P, data=dataLatentIV, verbose=FALSE))
@@ -85,7 +82,6 @@ test_that("Correct when using transformations in the formula", {
 })
 
 # Example data ---------------------------------------------------------------------------------
-context("Correctness - latentIV - Example data")
 
 test_that("Retrieve correct parameters", {
   expect_silent(res.liv <- latentIV(formula = y ~ P, data = dataLatentIV, verbose = FALSE))

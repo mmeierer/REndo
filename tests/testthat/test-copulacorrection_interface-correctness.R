@@ -7,7 +7,6 @@ data("dataCopDisCont")
 
 # ** Now rho / sigma range check is done in runability but should be here
 # Transformations in formula ---------------------------------------------------------------------------------------------------
-context("Correctness - copulaCorrection - Formula transformations")
 
 test_that("Formula transformations are correct", {
 
@@ -78,7 +77,6 @@ test_that("Formula transformations are correct", {
 
 
 # Data sorting ------------------------------------------------------------------------------------------------
-context("Correctness - copulaCorrection - Data sorting")
 
 test_that("Differently sorted data produces same results C1", {
 # ** Does not work anymore because bootstrapping is used every run now.
@@ -120,7 +118,6 @@ test_that("Differently sorted data produces same results C2", {
 
 
 # Predict ----------------------------------------------------------------------------------------------------
-context("Correctness - copulaCorrection - Predict")
 
 # * C1 --------------------------------------------------------------------------------------------------------
 test_that("No newdata results in fitted values C1", {

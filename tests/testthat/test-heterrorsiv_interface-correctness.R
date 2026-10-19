@@ -2,7 +2,6 @@
 data("dataHetIV")
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Correctness - hetErrorsIV - Formula transformations")
 
 test_that("Transformations are correct", {
   expect_silent(correct.res <- hetErrorsIV(y~X1+X2+P  |P|IIV(X2), data=dataHetIV, verbose=FALSE))
@@ -36,7 +35,6 @@ test_that("Transformations are correct", {
 })
 
 # Data sorting ------------------------------------------------------------------------------------------------
-context("Correctness - hetErrorsIV - Data sorting")
 
 test_that("Differently sorted data produces same results", {
   data.altered    <- dataHetIV
@@ -51,7 +49,6 @@ test_that("Differently sorted data produces same results", {
 
 
 # Predict ------------------------------------------------------------------------------------------------
-context("Correctness - hetErrorsIV - Predict")
 
 test_that("No newdata results in fitted values", {
   expect_silent(het.1 <- hetErrorsIV(y~X1+X2+P|P|IIV(X2), data=dataHetIV, verbose=FALSE))
