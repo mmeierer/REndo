@@ -75,7 +75,10 @@ fixture_2scopenp_formula_edge_cases <- function() {
     "backticks in endo & exo" = list(formula = y ~ `P 1` + `X 1` | `P 1`, data = df),
     "transformed exo" = list(formula = y ~ log(X_pos) + P | P, data = df),
     "transformed endo" = list(formula = y ~ log(P_pos) + X | log(P_pos), data = df),
+    # I() gives class "AsIs" in the model frame which np does not accept
     "inline function exo" = list(formula = y ~ I(X^2) + P | P, data = df),
+    "inline function endo" = list(formula = y ~ X + I(P^2) | I(P^2), data = df),
+    "inline function factor exo" = list(formula = y ~ X + I(x_fac) + P | P, data = df),
     "duplicate regressor" = list(formula = y ~ X + X + P | P, data = df),
     "factor exo" = list(formula = y ~ X + x_fac + P | P, data = df),
     "multiple endo with backtick" = list(
