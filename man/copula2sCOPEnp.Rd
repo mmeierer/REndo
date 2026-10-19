@@ -16,10 +16,7 @@ copula2sCOPEnp(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all variables specified in the \code{formula}
-parameter. Variables classes must be set correctly before calling the function.
-Endogenous regressors must be \code{numeric} or \code{factor}. Exogenous regressors
-must be (\code{numeric}, \code{factor}, or \code{ordered}). Otherwise it will silently yield wrong results!}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Variables classes must be set correctly before calling the function. Endogenous regressors must be \code{numeric} or \code{ordered}. Exogenous regressors must be \code{numeric}, \code{factor}, or \code{ordered}.}
 
 \item{npcdistbw.args}{A named list of arguments which are passed to
 \code{\link[np]{npcdistbw}}. To tweak the bandwidth selection for the kernel
