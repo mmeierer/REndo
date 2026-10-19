@@ -158,16 +158,14 @@ test_that("label_to_colname normalizes labels to col names", {
 # checkinput_copulashared_modelframe ---------------------------------------------------
 test_that("_modelframe fails on NAs, illegal classes", {
   # NAs from transformation (also produces warning)
-  expect_match(
-    expect_warning(checkinput_copulashared_modelframe(
-      F.formula = as.Formula(y ~ log(x_num - 1000)),
-      data = fixture_copula_df(),
-      allowed.classes = list("log(x_num - 1000)" = "numeric"),
-      labels.warn.low.card = NULL,
-      forbid.constant = FALSE
-    )),
-    regexp = "missing values"
-  )
+  expect_warning(res <- checkinput_copulashared_modelframe(
+    F.formula = as.Formula(y ~ log(x_num - 1000)),
+    data = fixture_copula_df(),
+    allowed.classes = list("log(x_num - 1000)" = "numeric"),
+    labels.warn.low.card = NULL,
+    forbid.constant = FALSE
+  ))
+  expect_match(res, regexp = "missing values")
 
   df.na.response <- fixture_copula_df()
   df.na.response$y[1] <- NA
@@ -373,10 +371,11 @@ test_that("_formula_data parameters work correctly", {
     base.args,
     list(formula = y ~ x_num + x_lowcard | x_lowcard, warn.low.card.endo = TRUE)
   )
-  expect_null(expect_warning(
-    do.call(checkinput_copulashared_formula_data, args.lowcard.endo),
+  expect_warning(
+    res <- do.call(checkinput_copulashared_formula_data, args.lowcard.endo),
     regexp = "low cardinality"
-  ))
+  )
+  expect_null(res)
   # only for endo, not for exo
   args.lowcard.exo <- modifyList(
     base.args,
@@ -597,10 +596,11 @@ test_that("_numboots rejects invalid num.boots", {
 
 test_that("_numboots accepts valid num.boots, warns if < 1000", {
   expect_null(expect_no_warning(checkinput_copulashared_numboots(num.boots = 1000)))
-  expect_null(expect_warning(
-    checkinput_copulashared_numboots(num.boots = 2),
+  expect_warning(
+    res <- checkinput_copulashared_numboots(num.boots = 2),
     regexp = "recommended to run 1000"
-  ))
+  )
+  expect_null(res)
 })
 
 
