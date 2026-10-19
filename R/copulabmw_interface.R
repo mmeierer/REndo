@@ -9,6 +9,7 @@
 #' and the endogenous regressor error. The method also allows conditional
 #' heteroskedasticity of the structural error.
 #'
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @templateVar resc.ecdf.addition The theoretical recommendation of Breitung et al. (2024), Eq 2.3.
 #' @template template_param_cdf
@@ -85,7 +86,7 @@
 #' @references
 #' Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
 #' corrections using nonlinear transformations. \emph{The Econometrics Journal},
-#' 27, 362--383/ \doi{10.1093/ectj/utae002}
+#' 27, 362--383. \doi{10.1093/ectj/utae002}
 #'
 #' @template template_param_cdf_references
 #'
