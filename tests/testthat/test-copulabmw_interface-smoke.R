@@ -56,29 +56,9 @@ test_that("Works for all specs and cdf combinations", {
 
 # Formula -------------------------------------------------------------------------
 test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
-  df <- dataCopBMW
-  df$X_pos <- abs(df$X) + 1
-  df$P_pos <- abs(df$P) + 1
-  df$x_fac <- factor(rep(c("a", "b", "c"), length.out = nrow(df)))
-  df$x_bin <- rep(0:1, length.out = nrow(df))
-  df$`P 1` <- df$P
-  df$`X 1` <- df$X
-
-  cases <- list(
-    "dot in rhs1" = list(formula = y ~ . | P, data = dataCopBMW),
-    "backticks in formula" = list(formula = y ~ `P 1` + `X 1` | `P 1`),
-    "transformed exo" = list(formula = y ~ log(X_pos) + P | P),
-    "transformed endo" = list(formula = y ~ log(P_pos) + X | log(P_pos)),
-    "factor exo as only" = list(formula = y ~ x_fac + P | P),
-    "factor exo with cont" = list(formula = y ~ X + x_fac + P | P),
-    # other form of discrete - but leads to low cardinality warning
-    "binary exo" = list(formula = y ~ x_bin + P | P)
-  )
-
   results <- run_cases(
     fn = fit_bmw_fast,
-    base.args = list(data = df),
-    cases = cases,
+    cases = fixture_bmw_formula_edge_cases(),
     check = check_clean_fit
   )
 

@@ -50,33 +50,15 @@ test_that("Intercept is respected", {
 
 # Internal consistency --------------------------------------------------------------
 test_that("Formula edge cases", {
-  df.bt <- dataCopBMW
-  df.bt$`P 1` <- df.bt$P
-  df.bt$`X 1` <- df.bt$X
-
-  df.multi.bt <- dataCopBMWMultiEndo
-  df.multi.bt$`P 1` <- df.multi.bt$P1
-
-  cases <- list(
-    "plain" = list(formula = y ~ X + P | P, data = dataCopBMW),
-    "dot in rhs1" = list(formula = y ~ . | P, data = dataCopBMW),
-    "backticks in endo" = list(formula = y ~ `P 1` + X | `P 1`, data = df.bt),
-    "backticks in exo" = list(formula = y ~ P + `X 1` | P, data = df.bt),
-    "transformed endo" = list(
-      formula = y ~ log(P) + X | log(P),
-      data = dataCopBMW
-    ),
-    "multiple endo with backtick" = list(
-      formula = y ~ X + `P 1` + P2 | `P 1` + P2,
-      data = df.multi.bt
-    )
+  # Are labels etc correctly preserved
+  run_cases(
+    fn = fit_bmw_fast,
+    cases = fixture_bmw_formula_edge_cases(),
+    check = function(res) {
+      check_labelled_consistently(res)
+      check_struct_residuals(res = res, aux.names = res$labels.pcop)
+    }
   )
-
-  for (nm in names(cases)) {
-    res <- fit_bmw_fast(formula = cases[[nm]]$formula, data = cases[[nm]]$data)
-    check_labelled_consistently(res)
-    check_struct_residuals(res = res, aux.names = res$labels.pcop)
-  }
 })
 
 test_that("Internals have correct shape", {
