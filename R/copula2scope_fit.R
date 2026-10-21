@@ -46,23 +46,15 @@ copula2scope_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
     Z.endo.j <- Z.endo[, j, drop = TRUE]
 
     if (!has.exo) {
-      if (ncol(Z.endo) == 1) {
-        # when there is no exogenous regressors, correction term is just qnorm(F(P_j))
-        # This matches the single regressor case in Park & Gupta (2012)
-        cop.terms[, j] <- Z.endo.j # I tried replicating the steps in Yang et al. 2025
-        #but when it comes to the intercept, since when there is no exo regressors,it should just be
-        #correction term qnorm(F(P_j)), this code will still remove the intercept first, before
-        # doing the CDF and then applying the P*, then implicitly add the intercept at the end
-        #it works well when the dataset has exo regressors as well but when there is a single
-        #endo regressor and nothing else, because of the intercept, it may not be the same. So
-        #better use the copulaCorrection() method directly
-      } else {
-        #multiple endogenous regressors without exogenous ones
-        #projecting every P_j* on all other P* with intercept
-        Z.endo.others <- Z.endo[, -j, drop = FALSE]
-        lm.j <- lm(Z.endo.j ~ Z.endo.others) #with intercept
-        cop.terms[, j] <- residuals(lm.j)
-      }
+      # when there is no exogenous regressors, correction term is just qnorm(F(P_j))
+      # This matches the single regressor case in Park & Gupta (2012)
+      cop.terms[, j] <- Z.endo.j # I tried replicating the steps in Yang et al. 2025
+      #but when it comes to the intercept, since when there is no exo regressors,it should just be
+      #correction term qnorm(F(P_j)), this code will still remove the intercept first, before
+      # doing the CDF and then applying the P*, then implicitly add the intercept at the end
+      #it works well when the dataset has exo regressors as well but when there is a single
+      #endo regressor and nothing else, because of the intercept, it may not be the same. So
+      #better use the copulaCorrection() method directly
     } else {
       #situation when there are exogenous regressors
       #projecting on exogenous W* with intercept
