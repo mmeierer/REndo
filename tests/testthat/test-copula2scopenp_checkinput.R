@@ -10,7 +10,7 @@ test_that("npcdistbwargs fails for invalid input", {
     "reserved xdat" = list(npcdistbw.args = list(xdat = 1)),
     "reserved ydat" = list(npcdistbw.args = list(ydat = 1))
   )
-  check_errmsg(
+  run_cases_errmsg(
     fn = checkinput_copula2scopenp_npcdistbwargs,
     cases = cases,
     regexp = c("plain list", "must be named", "must be named", "reserved", "reserved")
@@ -47,7 +47,7 @@ test_that("bws fails for illegal inputs", {
     ),
     "wrong class" = list(bws = list(P = 1), labels.endo = "P")
   )
-  check_errmsg(
+  run_cases_errmsg(
     fn = checkinput_copula2scopenp_bws,
     cases = cases,
     regexp = c(

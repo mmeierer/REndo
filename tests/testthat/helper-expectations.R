@@ -1,10 +1,10 @@
-# check_errmsg() + check_errmsg_empty -------------------------------------------------
+# run_cases_errmsg() + run_cases_errmsg_empty ------------------------------------------
 # Mostly for testing the internal methods that return error messages (char vecs) and
 # do not stop()
 
 # Methods to apply expect_<X> to multiple test cases
 # Expect error messages returned
-check_errmsg <- function(fn, base.args = list(), cases, regexp) {
+run_cases_errmsg <- function(fn, base.args = list(), cases, regexp) {
   if (length(regexp) == 1) {
     regexp <- rep(regexp, length(cases))
   }
@@ -26,7 +26,7 @@ check_errmsg <- function(fn, base.args = list(), cases, regexp) {
 }
 
 # Expect no error message returned
-check_errmsg_empty <- function(fn, base.args = list(), cases) {
+run_cases_errmsg_empty <- function(fn, base.args = list(), cases) {
   run_cases(
     fn = fn,
     base.args = base.args,
