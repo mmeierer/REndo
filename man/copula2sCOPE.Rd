@@ -150,7 +150,6 @@ The second part identifies the continuous endogenous regressors:
 \preformatted{y ~ X + P | P                       # one}
 \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endo}
 
-At least one exogenous regressor should be present in the model.
 When no exogenous regressor is present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
