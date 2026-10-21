@@ -1,6 +1,6 @@
 #' @importFrom stats lm reformulate model.matrix model.frame model.response na.fail
 copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
-  # Stage 1 --------------------------------------------------------------------
+  # 1st stage ------------------------------------------------------------------
   # BMW correction
   # step 1: first-stage in the original space
   # step 2: CDF on residuals
@@ -66,7 +66,7 @@ copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
     cop.terms[, k] <- as.vector(P.cop)
   }
 
-  # Stage 2 --------------------------------------------------------------------
+  # 2nd stage ------------------------------------------------------------------
   res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,

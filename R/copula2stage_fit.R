@@ -89,7 +89,7 @@ copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
 copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
   stopifnot(!is.null(colnames(cop.terms)))
 
-  # Second stage: augmented OLS ----------------------------------------------------
+  # 2nd stage ----------------------------------------------------------------------
   # Adding the correction term to the structural model and estimate by OLS
 
   # Get labels separately because needed to read-out coefs(lm)

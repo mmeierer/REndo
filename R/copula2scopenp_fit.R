@@ -4,7 +4,7 @@
 copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo, bws) {
   #conditional CDF smooths the discrete distribution through X
 
-  # First stage: conditional CDF ----------------------------------------------------
+  # 1st stage: conditional CDF ------------------------------------------------------
   # Computing conditional CDF correction term nonparametrically (via helper) C_p
   # from equation 21 of Hu et al. 2025
 
@@ -84,7 +84,7 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     cop.terms[, k] <- qnorm(conditional.cdf)
   }
 
-  # Second stage: augmented OLS ----------------------------------------------------
+  # 2nd stage ----------------------------------------------------------------------
   # using equation 20: Y = mu + sum_{k=1} ^ {K} ( P_{i,k} * alpha_k + beta' X_i + sum_{k=1}^{K} C_{i,pk} * gamma_k + epsilon_i
 
   res.2nd.stage <- copula2stage_fit_2ndstage(

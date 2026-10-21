@@ -1,7 +1,7 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm model.frame model.matrix model.response na.fail qnorm residuals
 copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
-  # Stage 1 --------------------------------------------------------------------
+  # 1st stage ------------------------------------------------------------------
 
   # . Create Pstar -------------------------------------------------------------
   # Applying CDF to all regressors (both endo and exo), excluding the intercept.
@@ -56,7 +56,7 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
     # }
   }
 
-  # Stage 2 --------------------------------------------------------------------
+  # 2nd stage ------------------------------------------------------------------
   res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
