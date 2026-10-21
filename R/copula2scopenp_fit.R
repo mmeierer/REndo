@@ -8,7 +8,7 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
   # Computing conditional CDF correction term nonparametrically (via helper) C_p
   # from equation 21 of Hu et al. 2025
 
-  cop.term <- copula2stage_get_1ststage_copterms(
+  cop.terms <- copula2stage_get_1ststage_copterms(
     nrow = nrow(data),
     labels.endo = labels.endo
   )
@@ -79,9 +79,9 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     # applying normal quantile transformation:  C_{i,pk} = phi^{-1} (F hat_ (P_k | X))
     # table 3 stage 1 and equation 21 from Hu et al. 2025
     conditional.cdf <- cdf.fit$condist
-    # write to results using index and not p.var (label) as colnames have been stripped
+    # write to results using index and not p.label (label) as colnames have been stripped
     # from backticks
-    cop.term[, k] <- qnorm(conditional.cdf)
+    cop.terms[, k] <- qnorm(conditional.cdf)
   }
 
   # Second stage: augmented OLS ----------------------------------------------------
@@ -90,7 +90,7 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
   res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
-    cop.terms = cop.term
+    cop.terms = cop.terms
   )
 
   return(list(
@@ -121,11 +121,11 @@ copula2scopenp_bandwidth <- function(
 ) {
   k <- 1
 
-  l.bws <- lapply(labels.endo, function(p.var) {
+  l.bws <- lapply(labels.endo, function(p.label) {
     if (verbose) {
       message(
         "Computing bandwidth for endogenous regressor '",
-        p.var,
+        p.label,
         "' (",
         k,
         " of ",
@@ -156,7 +156,7 @@ copula2scopenp_bandwidth <- function(
     # exogenous data passed here is without intercept
     f.endo.exo <- reformulate(
       termlabels = labels.exo,
-      response = p.var,
+      response = p.label,
       intercept = FALSE
     )
 
@@ -172,7 +172,7 @@ copula2scopenp_bandwidth <- function(
     # Dont set to NULL because docu doesnt explicitly specify this as not-specified.
     # Rather leave entirely unset.
     if (!is.null(bws)) {
-      bw.call.args[["bws"]] <- bws[[p.var]]
+      bw.call.args[["bws"]] <- bws[[p.label]]
     }
     bw.call.args <- modifyList(bw.call.args, npcdistbw.args)
 

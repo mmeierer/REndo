@@ -5,14 +5,14 @@ copula2scope_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
 
   # . prepare data -------------------------------------------------------------
 
-  mf <- model.frame(
+  mf.all <- model.frame(
     formula(F.formula, rhs = 1, lhs = 1),
     data = data,
     na.action = na.fail
   )
 
   # endo: only numeric, no intercept
-  X.endo <- model.matrix(reformulate(labels.endo, intercept = FALSE), data = mf)
+  X.endo <- model.matrix(reformulate(labels.endo, intercept = FALSE), data = mf.all)
   copula2stage_stop_if_constant(X.endo)
 
   # exo: in order to get k-1 dummies for each factor, there needs to be an
@@ -20,7 +20,7 @@ copula2scope_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   has.exo <- length(labels.exo) > 0
   if (has.exo) {
     # create with intercept for k-1 dummies, then immediately drop again
-    X.exo <- model.matrix(reformulate(labels.exo, intercept = TRUE), data = mf)
+    X.exo <- model.matrix(reformulate(labels.exo, intercept = TRUE), data = mf.all)
     X.exo <- X.exo[, colnames(X.exo) != "(Intercept)", drop = FALSE]
     copula2stage_stop_if_constant(X.exo)
   }
