@@ -37,7 +37,7 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # chapter 3.2 step 2: regressing P*l on X1*, ..., XK* (exogenous only)
 
   cop.terms <- copula2stage_get_1ststage_copterms(
-    nrow = nrow(data),
+    nrow = nrow(X.endo),
     labels.endo = labels.endo
   )
 
