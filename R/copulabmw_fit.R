@@ -6,7 +6,7 @@ copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # step 2: CDF on residuals
   # step 3: apply qnorm
 
-  cop.terms <- copula_create_1ststage_copdata_matrix(
+  cop.terms <- copula2stage_create_1ststage_copdata_matrix(
     nrow = nrow(data),
     labels.endo = labels.endo
   )
@@ -35,11 +35,11 @@ copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
     # exo: drop intercept which is always there (intercept = TRUE, in first col)
     # vanishing factor levels (eg not sampled levels) are caught as well as they
     # are all 0
-    copula_stop_if_constant(model.matrix(res.lm.first)[, -1, drop = FALSE])
+    copula2stage_stop_if_constant(model.matrix(res.lm.first)[, -1, drop = FALSE])
 
     # endo: Its in the response. Make matrix for check, named for error message
     k.endo <- model.response(model.frame(res.lm.first))
-    copula_stop_if_constant(matrix(k.endo, ncol = 1, dimnames = list(NULL, p.label)))
+    copula2stage_stop_if_constant(matrix(k.endo, ncol = 1, dimnames = list(NULL, p.label)))
 
     e.hat <- residuals(res.lm.first)
 
@@ -55,7 +55,7 @@ copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
     # so that no arbitary boundary constant is needed.
     # will still keep all the values strictly in (0,1)
     # This is implemented in cdf=`resc.ecdf`=rank(x)/(n+1)
-    P.star <- copula_pstar(P = m.ehat, cdf = cdf)
+    P.star <- copula2stage_pstar(P = m.ehat, cdf = cdf)
 
     # Step 3: Apply qnorm ----------------------------------------------------------
     #Apply qnorm from eq. 2.3, eta hat =  phi^{-1} (F hat_{e hat} (e hat))
@@ -66,7 +66,7 @@ copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   }
 
   # Stage 2 --------------------------------------------------------------------
-  res.2nd.stage <- copula_fit_2ndstage(
+  res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
     cop.terms = cop.terms

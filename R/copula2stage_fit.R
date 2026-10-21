@@ -1,4 +1,4 @@
-copula_adj_ecdf <- function(x) {
+copula2stage_adj_ecdf <- function(x) {
   if (!is.matrix(x)) {
     x <- matrix(x, ncol = 1)
   }
@@ -19,7 +19,7 @@ copula_adj_ecdf <- function(x) {
 
 #' @importFrom ks kcde
 #' @importFrom stats ecdf predict
-copula_pstar <- function(P, cdf) {
+copula2stage_pstar <- function(P, cdf) {
   stopifnot(is.matrix(P))
   if (cdf == "kde") {
     P.star <- apply(P, 2, function(x) {
@@ -30,7 +30,7 @@ copula_pstar <- function(P, cdf) {
     # same as copula::pobs()
     P.star <- apply(P, 2, rank, ties.method = "average") / (nrow(P) + 1)
   } else if (cdf == "adj.ecdf") {
-    P.star <- apply(P, 2, copula_adj_ecdf)
+    P.star <- apply(P, 2, copula2stage_adj_ecdf)
   } else if (cdf == "ecdf") {
     ecdf0 <- apply(P, 2, ecdf)
     P.star <- sapply(seq_along(ecdf0), function(i) {
@@ -41,7 +41,7 @@ copula_pstar <- function(P, cdf) {
     })
     P.star <- as.matrix(P.star)
   } else {
-    stop("Invalid `cdf` to copula_pstar!")
+    stop("Invalid `cdf` to copula2stage_pstar!")
   }
 
   colnames(P.star) <- colnames(P)
@@ -49,7 +49,7 @@ copula_pstar <- function(P, cdf) {
 }
 
 # Stops if any column of is constant
-copula_stop_if_constant <- function(X) {
+copula2stage_stop_if_constant <- function(X) {
   stopifnot(is.matrix(X) || is.data.frame(X))
   is.const <- vapply(
     seq_len(ncol(X)),
@@ -64,7 +64,7 @@ copula_stop_if_constant <- function(X) {
 }
 
 
-copula_compute_structural_fitted_residuals <- function(
+copula2stage_compute_structural_fitted_residuals <- function(
   res.lm.aug,
   names.aux.regs
 ) {
@@ -105,7 +105,7 @@ copula_compute_structural_fitted_residuals <- function(
   return(list(fitted.values = fitted.values, residuals = residuals))
 }
 
-copula_create_1ststage_copdata_matrix <- function(nrow, labels.endo) {
+copula2stage_create_1ststage_copdata_matrix <- function(nrow, labels.endo) {
   m <- matrix(NA_real_, nrow = nrow, ncol = length(labels.endo))
   # Make labels plain strings before using as colnames (ie strips backticks) because
   # they need to feed into reformulate() later
@@ -120,7 +120,7 @@ copula_create_1ststage_copdata_matrix <- function(nrow, labels.endo) {
   return(m)
 }
 
-copula_fit_2ndstage <- function(F.formula, data, cop.terms) {
+copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
   stopifnot(!is.null(colnames(cop.terms)))
 
   # Second stage: augmented OLS ----------------------------------------------------

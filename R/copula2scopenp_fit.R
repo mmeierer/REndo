@@ -8,7 +8,7 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
   # Computing conditional CDF correction term nonparametrically (via helper) C_p
   # from equation 21 of Hu et al. 2025
 
-  cop.term <- copula_create_1ststage_copdata_matrix(
+  cop.term <- copula2stage_create_1ststage_copdata_matrix(
     nrow = nrow(data),
     labels.endo = labels.endo
   )
@@ -33,7 +33,7 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
     # specify endo as DV to know where to read from
     mf.p <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
     mf.p <- copula2scopenp_mf_drop_asis(mf.p)
-    copula_stop_if_constant(mf.p)
+    copula2stage_stop_if_constant(mf.p)
     mfs[[p.label]] <- mf.p
 
     # TODO: Check if bw were fit with formula or 2 data inputs as user might specify differently?
@@ -86,7 +86,7 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
   # Second stage: augmented OLS ----------------------------------------------------
   # using equation 20: Y = mu + sum_{k=1} ^ {K} ( P_{i,k} * alpha_k + beta' X_i + sum_{k=1}^{K} C_{i,pk} * gamma_k + epsilon_i
 
-  res.2nd.stage <- copula_fit_2ndstage(
+  res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
     cop.terms = cop.term

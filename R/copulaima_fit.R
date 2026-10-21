@@ -12,11 +12,11 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
 
   f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
   X.endo <- model.matrix(f.endo, data = mf.all)
-  copula_stop_if_constant(X.endo)
+  copula2stage_stop_if_constant(X.endo)
 
   # (constructing P star, from Haschka 2025, page 164)
-  # copula_pstar is applied column-wise
-  P.star.endo <- copula_pstar(P = X.endo, cdf = cdf)
+  # copula2stage_pstar is applied column-wise
+  P.star.endo <- copula2stage_pstar(P = X.endo, cdf = cdf)
 
   # NOTE: Having no intercept makes model.matrix() code first factor with k dummies
   # instead of the regular k-1 dummies! This is different from Haschkas
@@ -24,8 +24,8 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # But: All this doesnt matter as long as exo vars are only numeric.
   f.exo <- reformulate(termlabels = labels.exo, response = NULL, intercept = FALSE)
   X.exo <- model.matrix(f.exo, data = mf.all)
-  copula_stop_if_constant(X.exo)
-  P.star.exo <- copula_pstar(P = X.exo, cdf = cdf)
+  copula2stage_stop_if_constant(X.exo)
+  P.star.exo <- copula2stage_pstar(P = X.exo, cdf = cdf)
 
   # . Create copula terms ------------------------------------------------------
   # Haschka 2025 section 3.2 step 2: regressing each P*_l on exo X* only, without intercept
@@ -36,7 +36,7 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # Exogenous normal scores: all the columns that are not endo
   # chapter 3.2 step 2: regressing P*l on X1*, ..., XK* (exogenous only)
 
-  cop.terms <- copula_create_1ststage_copdata_matrix(
+  cop.terms <- copula2stage_create_1ststage_copdata_matrix(
     nrow = nrow(data),
     labels.endo = labels.endo
   )
@@ -57,7 +57,7 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   }
 
   # Stage 2 --------------------------------------------------------------------
-  res.2nd.stage <- copula_fit_2ndstage(
+  res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
     cop.terms = cop.terms

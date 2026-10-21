@@ -53,7 +53,7 @@ new_rendo_copula2stage <- function(
   ...
 ) {
   # Fitted values and residuals of the structural model (without the correction terms)
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
+  l.fitted.resid <- copula2stage_compute_structural_fitted_residuals(
     res.lm.aug = res.lm.augmented,
     names.aux.regs = labels.pcop
   )

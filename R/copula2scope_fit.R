@@ -13,7 +13,7 @@ copula2scope_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
 
   # endo: only numeric, no intercept
   X.endo <- model.matrix(reformulate(labels.endo, intercept = FALSE), data = mf)
-  copula_stop_if_constant(X.endo)
+  copula2stage_stop_if_constant(X.endo)
 
   # exo: in order to get k-1 dummies for each factor, there needs to be an
   # intercept. Otherwise model.matrix creates the first factor with k dummies.
@@ -22,23 +22,23 @@ copula2scope_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
     # create with intercept for k-1 dummies, then immediately drop again
     X.exo <- model.matrix(reformulate(labels.exo, intercept = TRUE), data = mf)
     X.exo <- X.exo[, colnames(X.exo) != "(Intercept)", drop = FALSE]
-    copula_stop_if_constant(X.exo)
+    copula2stage_stop_if_constant(X.exo)
   }
 
   # . Pstar --------------------------------------------------------------------
 
   # apply CDF to endo and exo regressors, neither of which has an intercept
-  P.star.endo <- copula_pstar(P = X.endo, cdf = cdf)
+  P.star.endo <- copula2stage_pstar(P = X.endo, cdf = cdf)
   Z.endo <- qnorm(P.star.endo)
   if (has.exo) {
-    P.star.exo <- copula_pstar(P = X.exo, cdf = cdf)
+    P.star.exo <- copula2stage_pstar(P = X.exo, cdf = cdf)
     Z.exo <- qnorm(P.star.exo)
   }
 
   # . 1st stage residuals ------------------------------------------------------
   #first-stage residuals: regressing each endogenous P* on exogenous W*, Eq (9) from Yang et. al 2024
 
-  cop.terms <- copula_create_1ststage_copdata_matrix(
+  cop.terms <- copula2stage_create_1ststage_copdata_matrix(
     nrow = nrow(X.endo),
     labels.endo = labels.endo
   )
@@ -75,7 +75,7 @@ copula2scope_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   }
 
   # 2nd Stage --------------------------------------------------------------------
-  res.2nd.stage <- copula_fit_2ndstage(
+  res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
     cop.terms = cop.terms
