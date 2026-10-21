@@ -1,4 +1,4 @@
-#' @importFrom stats lm reformulate model.matrix model.frame model.response
+#' @importFrom stats lm reformulate model.matrix model.frame model.response na.fail
 copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # Stage 1 --------------------------------------------------------------------
   # BMW correction
@@ -26,7 +26,8 @@ copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
       intercept = TRUE
     )
 
-    res.lm.first <- lm(formula = f.endo.k.on.all.exo, data = data)
+    # na.fail: never silently drop rows used for the correction terms
+    res.lm.first <- lm(formula = f.endo.k.on.all.exo, data = data, na.action = na.fail)
 
     # Check for constant regressors (eg in bootstrap sample): lm() does not fail but
     # contain NA coefs. Use the 1st stage design rather than deriving the model
