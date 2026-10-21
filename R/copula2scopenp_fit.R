@@ -1,27 +1,26 @@
-#' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame reformulate update qnorm
+#' @importFrom stats model.frame na.fail qnorm reformulate
 #' @importFrom np npcdist
-copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, verbose) {
+copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo, bws) {
   #conditional CDF smooths the discrete distribution through X
 
-  # First stage: conditional CDF ----------------------------------------------------
+  # 1st stage: conditional CDF ------------------------------------------------------
   # Computing conditional CDF correction term nonparametrically (via helper) C_p
   # from equation 21 of Hu et al. 2025
 
-  cop.term <- copula_create_1ststage_copdata_matrix(
+  cop.terms <- copula2stage_get_1ststage_copterms(
     nrow = nrow(data),
     labels.endo = labels.endo
   )
 
   condists <- list()
-  mfs <- list()
+  first.stage.frames <- list()
 
   for (k in seq_along(labels.endo)) {
     p.label <- labels.endo[k]
 
     if (verbose) {
-      msg.k <- paste0(p.label, "' (",k," of ",length(labels.endo),") ...")
-      message("Computing conditional CDF for endogenous regressor '",msg.k)
+      msg.k <- paste0(p.label, "' (", k, " of ", length(labels.endo), ") ...")
+      message("Computing conditional CDF for endogenous regressor '", msg.k)
     }
 
     # exo column is everything that is non-intercept and non-endo col
@@ -33,8 +32,8 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
     # specify endo as DV to know where to read from
     mf.p <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
     mf.p <- copula2scopenp_mf_drop_asis(mf.p)
-    copula_stop_if_constant(mf.p)
-    mfs[[p.label]] <- mf.p
+    copula2stage_stop_if_constant(mf.p)
+    first.stage.frames[[p.label]] <- mf.p
 
     # TODO: Check if bw were fit with formula or 2 data inputs as user might specify differently?
 
@@ -48,7 +47,8 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
     tydat <- mf.p[, 1, drop = FALSE]
     if (!identical(sort(colnames(txdat)), sort(bw.p$xnames))) {
       stop(
-        "Names in fitted bandwith and names of generated variables mismatch. This is likely because the bootstrap sample is degenerate."
+        "Names in fitted bandwidth and names of generated variables mismatch. This is likely because the bootstrap sample is degenerate.",
+        call. = FALSE
       )
     }
 
@@ -78,25 +78,25 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
     # applying normal quantile transformation:  C_{i,pk} = phi^{-1} (F hat_ (P_k | X))
     # table 3 stage 1 and equation 21 from Hu et al. 2025
     conditional.cdf <- cdf.fit$condist
-    # write to results using index and not p.var (label) as colnames have been stripped
+    # write to results using index and not p.label (label) as colnames have been stripped
     # from backticks
-    cop.term[, k] <- qnorm(conditional.cdf)
+    cop.terms[, k] <- qnorm(conditional.cdf)
   }
 
-  # Second stage: augmented OLS ----------------------------------------------------
+  # 2nd stage ----------------------------------------------------------------------
   # using equation 20: Y = mu + sum_{k=1} ^ {K} ( P_{i,k} * alpha_k + beta' X_i + sum_{k=1}^{K} C_{i,pk} * gamma_k + epsilon_i
 
-  res.2nd.stage <- copula_fit_2ndstage(
+  l.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
-    cop.terms = cop.term
+    cop.terms = cop.terms
   )
 
   return(list(
-    res.augmented = res.2nd.stage$res.augmented,
-    labels.pcop = res.2nd.stage$labels.pcop,
+    res.lm.augmented = l.2nd.stage$res.lm.augmented,
+    labels.pcop = l.2nd.stage$labels.pcop,
     condists = condists,
-    mfs = mfs
+    first.stage.frames = first.stage.frames
   ))
 }
 
@@ -108,23 +108,24 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
 #F hat_(P_k |X) nonparametrically using Kernel methods (Hu et al 2025, mentions mostly Nadaraya-Watson (NW) kernel
 #before eq. 10) Stage 1 from table 3
 #Then the normal quantile transformation is applied to get the copula correction term
-#' @importFrom stats model.frame model.matrix
+#' @importFrom stats model.frame na.fail reformulate
+#' @importFrom utils modifyList
 #' @importFrom np npcdistbw npcdist
 copula2scopenp_bandwidth <- function(
   data,
-  bws,
-  npcdistbw.args,
-  labels.exo,
+  verbose,
   labels.endo,
-  verbose
+  labels.exo,
+  bws,
+  npcdistbw.args
 ) {
   k <- 1
 
-  l.bws <- lapply(labels.endo, function(p.var) {
+  l.bws <- lapply(labels.endo, function(p.label) {
     if (verbose) {
       message(
         "Computing bandwidth for endogenous regressor '",
-        p.var,
+        p.label,
         "' (",
         k,
         " of ",
@@ -155,7 +156,7 @@ copula2scopenp_bandwidth <- function(
     # exogenous data passed here is without intercept
     f.endo.exo <- reformulate(
       termlabels = labels.exo,
-      response = p.var,
+      response = p.label,
       intercept = FALSE
     )
 
@@ -171,7 +172,7 @@ copula2scopenp_bandwidth <- function(
     # Dont set to NULL because docu doesnt explicitly specify this as not-specified.
     # Rather leave entirely unset.
     if (!is.null(bws)) {
-      bw.call.args[["bws"]] <- bws[[p.var]]
+      bw.call.args[["bws"]] <- bws[[p.label]]
     }
     bw.call.args <- modifyList(bw.call.args, npcdistbw.args)
 

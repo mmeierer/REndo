@@ -7,71 +7,46 @@ data("dataCopIMAMultiEndo")
 data("dataCopIMABinExo")
 
 
-# Data sorting ----------------------------------------------------------------------
-test_that("Differently sorted data produces same results", {
-  data_sorted <- dataCopIMAContExo[order(dataCopIMAContExo$y), ]
-  data_rev <- dataCopIMAContExo[rev(order(dataCopIMAContExo$y)), ]
+# Setup --------------------------------------------------------------------------------
+# IMA tests without intercept
+setup.correctness <- list(
+  method = copulaIMA,
+  fn = fit_ima_fast,
+  data = dataCopIMAContExo,
+  formula = y ~ X + P - 1 | P,
+  label = "copulaIMA"
+)
 
-  res_sorted <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = data_sorted
-  )
-  res_rev <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = data_rev
-  )
+# Invariance ---------------------------------------------------------------------------
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-  expect_equal(object = coef(res_sorted), expected = coef(res_rev))
-})
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ P + X - 1 | P
+)
+
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ X + X + P - 1 | P
+)
+
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . - 1 | P
+)
 
 # Formula specifications ------------------------------------------------------
 
-test_that("Intercept in formula is correctly respected", {
-  res_with <- fit_ima_fast(
-    formula = y ~ X + P | P,
-    data = dataCopIMAContExo
-  )
+test_correctness_formula_intercept(setup = setup.correctness)
 
-  res_without <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
+test_correctness_formula_transformations_endo_exo(
+  setup = setup.correctness,
+  formula.endo = y ~ X + log(P) - 1 | log(P),
+  formula.exo = y ~ log(X) + P - 1 | P
+)
 
-  expect_true("(Intercept)" %in% names(coef(res_with)))
-  expect_false("(Intercept)" %in% names(coef(res_without)))
-  expect_equal(
-    object = length(coef(res_with)),
-    expected = length(coef(res_without)) + 1L
-  )
-})
-
-test_that("Regressor order in formula does not affect results", {
-  res_xy <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  res_yx <- fit_ima_fast(
-    formula = y ~ P + X - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  expect_equal(object = sort(coef(res_xy)), expected = sort(coef(res_yx)))
-})
-
-test_that("Duplicate regressors are handled correctly", {
-  res_normal <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  res_dup <- fit_ima_fast(
-    formula = y ~ X + X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  expect_equal(object = coef(res_dup), expected = coef(res_normal))
-})
+# Parameter cdf ------------------------------------------------------------------------
+test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 # Parameter recovery -------------------------------------------------------
 
@@ -106,35 +81,31 @@ test_that("Parameter recovery: dataCopIMABinExo", {
 
 # Internal consistency --------------------------------------------------------------
 
-test_that("Formula edge cases", {
-  # Are labels etc are correctly preserved
-  run_cases(
-    fn = fit_ima_fast,
-    cases = fixture_ima_formula_edge_cases(),
-    check = function(res) {
-      check_labelled_consistently(res)
-      check_struct_residuals(res = res, aux.names = res$labels.pcop)
-    }
-  )
-})
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_ima_formula_edge_cases()
+)
 
 # Bootstrap: Degenerate cases ---------------------------------------------------
 
 test_that("fit() stops on constant data (required for bootstrapping)", {
-  for (col in c("X", "P")) {
-    df.const <- dataCopIMAContExo
-    df.const[[col]] <- 1
+  df.const.x <- dataCopIMAContExo
+  df.const.x$X <- 1
+  df.const.p <- dataCopIMAContExo
+  df.const.p$P <- 1
 
-    expect_error(
-      copulaima_fit(
-        F.formula = as.Formula(y ~ X + P | P),
-        data = df.const,
-        cdf = "ecdf",
-        labels.endo = "P",
-        labels.exo = "X"
-      ),
-      regexp = "Constant regressor",
-      info = col
-    )
-  }
+  run_cases_error(
+    fn = copulaima_fit,
+    base.args = list(
+      F.formula = as.Formula(y ~ X + P | P),
+      labels.endo = "P",
+      labels.exo = "X",
+      cdf = "ecdf"
+    ),
+    cases = list(
+      "constant exo" = list(data = df.const.x),
+      "constant endo" = list(data = df.const.p)
+    ),
+    regexp = "must not be constant"
+  )
 })

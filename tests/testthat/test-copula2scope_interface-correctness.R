@@ -6,70 +6,40 @@ data("dataCopula2sCOPECase1")
 data("dataCopula2sCOPECase2")
 data("dataCopula2sCOPECase3")
 
-# Data sorting ----------------------------------------------------------------------
-test_that("Differently sorted data produces same results", {
-  data_sorted <- dataCopula2sCOPECase1[order(dataCopula2sCOPECase1$y), ]
-  data_rev <- dataCopula2sCOPECase1[rev(order(dataCopula2sCOPECase1$y)), ]
+# Setup --------------------------------------------------------------------------------
+setup.correctness <- list(
+  method = copula2sCOPE,
+  fn = fit_2scope_fast,
+  data = dataCopula2sCOPECase1,
+  formula = y ~ P + X | P,
+  label = "copula2sCOPE"
+)
 
-  res_sorted <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = data_sorted
-  )
-  res_rev <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = data_rev
-  )
+# Invariance ---------------------------------------------------------------------------
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-  expect_equal(object = coef(res_sorted), expected = coef(res_rev))
-})
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ X + P | P
+)
+
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ P + X + X | P
+)
+
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . | P
+)
 
 # Formula specifications ------------------------------------------------------
-test_that("Intercept in formula is correctly respected", {
-  res_with <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1
-  )
+test_correctness_formula_intercept(setup = setup.correctness)
 
-  res_without <- fit_2scope_fast(
-    formula = y ~ P + X - 1 | P,
-    data = dataCopula2sCOPECase1
-  )
+test_correctness_formula_transformations_endo_exo(setup = setup.correctness)
 
-  expect_true("(Intercept)" %in% names(coef(res_with)))
-  expect_false("(Intercept)" %in% names(coef(res_without)))
-  expect_equal(
-    object = length(coef(res_with)),
-    expected = length(coef(res_without)) + 1L
-  )
-})
-
-test_that("Regressor order in formula does not affect results", {
-  res_px <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1
-  )
-
-  res_xp <- fit_2scope_fast(
-    formula = y ~ X + P | P,
-    data = dataCopula2sCOPECase1
-  )
-
-  expect_equal(object = sort(coef(res_px)), expected = sort(coef(res_xp)))
-})
-
-test_that("Duplicate regressors are handled correctly", {
-  res_normal <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1
-  )
-
-  res_dup <- fit_2scope_fast(
-    formula = y ~ P + X + X | P,
-    data = dataCopula2sCOPECase1
-  )
-
-  expect_equal(object = coef(res_dup), expected = coef(res_normal))
-})
+# Parameter cdf ------------------------------------------------------------------------
+test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 # Parameter recovery -------------------------------------------------------
 
@@ -101,50 +71,12 @@ test_that("Parameter recovery: dataCopula2sCOPECase3", {
 })
 
 
-# Parameter transformations ----------------------------------------------------------
-
-test_that("Parameter transformations (exo): Recovery", {
-  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
-  dataCopula2sCOPECase1_trans$X <- exp(dataCopula2sCOPECase1_trans$X)
-
-  res <- fit_2scope_defaults(
-    formula = y ~ P + log(X) | P,
-    data = dataCopula2sCOPECase1_trans
-  )
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, P = 1, "log(X)" = -1)
-  )
-})
-
-
-test_that("Parameter transformations (endo): Recovery", {
-  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
-  dataCopula2sCOPECase1_trans$P <- exp(dataCopula2sCOPECase1_trans$P)
-
-  res <- fit_2scope_defaults(
-    formula = y ~ log(P) + X | log(P),
-    data = dataCopula2sCOPECase1_trans
-  )
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, "log(P)" = 1, X = -1)
-  )
-})
-
-
 # Internal consistency --------------------------------------------------------------
 
-test_that("Formula edge cases", {
-  run_cases(
-    fn = fit_2scope_fast,
-    cases = fixture_2scope_formula_edge_cases(),
-    check = function(res) {
-      check_labelled_consistently(res)
-      check_struct_residuals(res = res, aux.names = res$labels.pcop)
-    }
-  )
-})
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_2scope_formula_edge_cases()
+)
 
 # Single endo + 0 exo: Collapses to copulaCorrection case 1 (continuous only) ---------
 # (equivalent according to the paper)

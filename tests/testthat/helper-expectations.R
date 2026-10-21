@@ -1,10 +1,10 @@
-# check_errmsg() + check_errmsg_empty -------------------------------------------------
+# run_cases_errmsg() + run_cases_errmsg_empty ------------------------------------------
 # Mostly for testing the internal methods that return error messages (char vecs) and
 # do not stop()
 
 # Methods to apply expect_<X> to multiple test cases
 # Expect error messages returned
-check_errmsg <- function(fn, base.args = list(), cases, regexp) {
+run_cases_errmsg <- function(fn, base.args = list(), cases, regexp) {
   if (length(regexp) == 1) {
     regexp <- rep(regexp, length(cases))
   }
@@ -26,12 +26,36 @@ check_errmsg <- function(fn, base.args = list(), cases, regexp) {
 }
 
 # Expect no error message returned
-check_errmsg_empty <- function(fn, base.args = list(), cases) {
+run_cases_errmsg_empty <- function(fn, base.args = list(), cases) {
   run_cases(
     fn = fn,
     base.args = base.args,
     cases = cases,
     check = expect_null
+  )
+}
+
+# run_cases_error -------------------------------------------------------------------
+# Expect an error is thrown matching given regexp(s)
+run_cases_error <- function(fn, base.args = list(), cases, regexp) {
+  if (length(regexp) == 1) {
+    regexp <- rep(regexp, length(cases))
+  }
+  # for printing labels on failure
+  names(regexp) <- names(cases)
+  case.i <- 0
+
+  run_cases(
+    # error is thrown by fn() and caught in expect_error, before param check() is run
+    fn = function(...) {
+      # <<- to manipulate outer var
+      case.i <<- case.i + 1
+      nm <- names(cases)[case.i]
+      expect_error(fn(...), regexp = regexp[[nm]], info = paste0("[case: ", nm, "]"))
+    },
+    base.args = base.args,
+    cases = cases,
+    check = function(res) invisible(NULL)
   )
 }
 
@@ -138,12 +162,12 @@ check_param_recovery <- function(res, true_vals) {
 
 # check_struct_residuals ----------------------------------------------------------
 #' @importFrom stats residuals fitted coef
-check_struct_residuals <- function(res, aux.names) {
+check_struct_residuals <- function(res) {
   # Alternative route: Remove cop contribution from augmented fit
   res.lm <- res$res.lm.augmented
 
-  cop.coefs <- coef(res.lm)[aux.names]
-  cop.matrix <- model.matrix(res.lm)[, aux.names, drop = FALSE]
+  cop.coefs <- coef(res.lm)[res$labels.pcop]
+  cop.matrix <- model.matrix(res.lm)[, res$labels.pcop, drop = FALSE]
 
   residuals.alt <- drop(residuals(res.lm) + cop.matrix %*% cop.coefs)
   fitted.alt <- drop(fitted(res.lm) - cop.matrix %*% cop.coefs)

@@ -93,6 +93,7 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.bmw")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
 #'
 #' @seealso \code{\link[REndo:dataCopBMW]{dataCopBMW},
 #' \link[REndo:dataCopBMWMultiEndo]{dataCopBMWMultiEndo}} for detailed
@@ -153,13 +154,31 @@ copulaBMW <- function(
 ) {
   cl <- match.call()
 
-  #Input checks
+  # Input checks -----------------------------------------------------------------------
   allowed.cdfs <- c("resc.ecdf", "adj.ecdf", "ecdf", "kde")
-  check_err_msg(checkinput_copulashared_data_basics(data))
-  check_err_msg(checkinput_copulabmw_formula_data(formula = formula, data = data))
-  check_err_msg(checkinput_copulashared_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_data_basics(data))
+
+  # - >= 1 endogenous regressor
+  # - >= 1 exogenous regressor (equation 2.2 & assumption A4)
+  # - endogenous: numeric
+  # - exogenous: any class
+  check_err_msg(checkinput_copula2stage_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 1,
+    msg.min.num.exo = "At least one exogenous regressor is required for the first-stage regression of each endogenous regressor P on X.",
+    allow.interactions = TRUE,
+    allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
+    allowed.classes.endo = "numeric",
+    allowed.classes.exo = NULL # allows any
+  ))
+
+  check_err_msg(checkinput_copula2stage_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
+
+  # Fit original data ------------------------------------------------------------------
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
 
@@ -194,14 +213,14 @@ copulaBMW <- function(
       labels.exo = labels.exo,
       cdf = cdf
     )
-    return(fit.b$res.augmented)
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit$res.augmented)),
+    coef.names = names(coef(fit$res.lm.augmented)),
     verbose = verbose
   )
 
@@ -210,7 +229,7 @@ copulaBMW <- function(
   return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    res.lm.augmented = fit$res.augmented,
+    res.lm.augmented = fit$res.lm.augmented,
     res.boots = res.boots,
     cdf = cdf,
     labels.endo = labels.endo,

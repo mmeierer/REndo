@@ -36,6 +36,50 @@ doc_rendocopula2stage_return <- function(subclass, extra.items = NULL) {
 }
 
 
+#' @importFrom stats coef model.frame model.matrix model.response
+copula2stage_get_structural_parts <- function(
+  res.lm.augmented,
+  labels.pcop
+) {
+  if (
+    is.null(labels.pcop) ||
+      length(labels.pcop) == 0 ||
+      anyNA(labels.pcop) ||
+      any(nchar(labels.pcop) == 0)
+  ) {
+    stop(
+      "Internal error: 'labels.pcop' is empty. This should not happen - please report as a bug!",
+      call. = FALSE
+    )
+  }
+
+  names.coefs.all <- names(coef(res.lm.augmented))
+
+  # Check if all aux regs are here
+  missing.aux <- setdiff(labels.pcop, names.coefs.all)
+  if (length(missing.aux)) {
+    stop(
+      "Internal error: Auxiliary regressor(s) not found in coefficients: ",
+      toString(missing.aux),
+      ". This should not happen - please report as a bug!",
+      call. = FALSE
+    )
+  }
+
+  names.structural <- names.coefs.all[!names.coefs.all %in% labels.pcop]
+  coefs.structural <- coef(res.lm.augmented)[names.structural]
+  mm.structural <- model.matrix(res.lm.augmented)[, names.structural, drop = FALSE]
+
+  fitted.values <- drop(mm.structural %*% coefs.structural)
+  names(fitted.values) <- row.names(mm.structural)
+
+  residuals <- drop(model.response(model.frame(res.lm.augmented)) - fitted.values)
+  names(residuals) <- names(fitted.values)
+
+  return(list(fitted.values = fitted.values, residuals = residuals))
+}
+
+
 # Shared constructor for the two-stage copula methods.
 # Method-specific fields are passed in `...`.
 #' @importFrom stats coef model.frame
@@ -53,9 +97,9 @@ new_rendo_copula2stage <- function(
   ...
 ) {
   # Fitted values and residuals of the structural model (without the correction terms)
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = res.lm.augmented,
-    names.aux.regs = labels.pcop
+  l.structural <- copula2stage_get_structural_parts(
+    res.lm.augmented = res.lm.augmented,
+    labels.pcop = labels.pcop
   )
 
   return(.new_rendo_boots_degenerates_removed(
@@ -66,8 +110,8 @@ new_rendo_copula2stage <- function(
     coefficients = coef(res.lm.augmented),
     # WHat to show in the coef table: All coefs incl the correction terms
     names.main.coefs = names(coef(res.lm.augmented)),
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
+    fitted.values = l.structural$fitted.values,
+    residuals = l.structural$residuals,
     boots.params = res.boots$boots.params,
     n.boots.attempted = res.boots$n.attempted,
     n.boots.failed = res.boots$n.failed,

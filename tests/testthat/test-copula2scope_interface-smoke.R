@@ -4,15 +4,19 @@ set.seed(42)
 # Required data ---------------------------------------------------------------------
 data("dataCopula2sCOPECase1")
 
+# Setup --------------------------------------------------------------------------------
+setup.smoke <- list(
+  method = copula2sCOPE,
+  fn = fit_2scope_fast,
+  data = dataCopula2sCOPECase1,
+  formula = y ~ P + X | P,
+  label = "copula2sCOPE"
+)
+
 # Works out of the box --------------------------------------------------------------
-# also checks verbose=T
-test_that("Works out of the box", {
-  expect_message(res <- copula2sCOPE(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1
-  ))
-  check_clean_fit(res)
-})
+test_smoke_out_of_the_box(setup = setup.smoke)
+
+test_smoke_verbose(setup = setup.smoke)
 
 
 # Specifications for smoke tests ----------------------------------------------------
@@ -57,57 +61,21 @@ specs <- list(
   )
 )
 
-cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
-
 
 # specs x cdf ----------------------------------------------------------------------
-test_that("copula2sCOPE runs across specs and cdf options", {
-  for (cdf in cdfs) {
-    run_cases(
-      fn = fit_2scope_fast,
-      base.args = list(cdf = cdf),
-      cases = specs,
-      check = check_clean_fit
-    )
-  }
-})
+test_smoke_all_cdfs(setup = setup.smoke, specs = specs)
 
 # small sample ---------------------------------------------------------------------
-test_that("copula2sCOPE runs on small sample", {
-  small_data <- dataCopula2sCOPECase1[1:50, ]
-
-  res <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = small_data
-  )
-  check_clean_fit(res)
-})
+test_smoke_small_sample(setup = setup.smoke)
 
 
-test_that("copula2sCOPE allows NA in non-relevant column", {
-  bad_data <- dataCopula2sCOPECase1
-  bad_data$Q <- rnorm(nrow(dataCopula2sCOPECase1))
-  bad_data$Q[1] <- NA
-  res <- fit_2scope_fast(
-    formula = y ~ P + X | P,
-    data = bad_data
-  )
-  check_clean_fit(res)
-})
+test_smoke_na_irrelevant_col(setup = setup.smoke)
 
 # Formula -------------------------------------------------------------------------
-test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
-  results <- run_cases(
-    fn = fit_2scope_fast,
-    cases = fixture_2scope_formula_edge_cases(),
-    check = check_clean_fit
-  )
-
-  # S3 methods on each edge case
-  for (nm in names(results)) {
-    check_print_summary(results[[nm]])
-  }
-})
+test_smoke_formula_edge_cases(
+  setup = setup.smoke,
+  cases = fixture_2scope_formula_edge_cases()
+)
 
 
 # Warnings ------------------------------------------------------------------------

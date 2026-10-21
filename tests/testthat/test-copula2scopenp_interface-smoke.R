@@ -6,29 +6,24 @@ data("dataCopula2sCOPEnpBi")
 data("dataCopula2sCOPEnpMulti")
 
 
+# Setup --------------------------------------------------------------------------------
+setup.smoke <- list(
+  method = copula2sCOPEnp,
+  fn = fit_2scopenp_fast,
+  data = dataCopula2sCOPEnpCont,
+  formula = y ~ P + X | P,
+  label = "copula2sCOPEnp"
+)
+
 # Out of the box --------------------------------------------------------------------
-test_that("works out of the box with default params", {
-  expect_message(res <- copula2sCOPEnp(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont
-  ))
-  check_clean_fit(res)
-})
+test_smoke_out_of_the_box(setup = setup.smoke)
 
 
 # Formula -------------------------------------------------------------------------
-test_that("works for edge-cases, incl print & print(summary())", {
-  results <- run_cases(
-    fn = fit_2scopenp_fast,
-    cases = fixture_2scopenp_formula_edge_cases(),
-    check = check_clean_fit
-  )
-
-  # S3 methods on each edge case
-  for (nm in names(results)) {
-    check_print_summary(results[[nm]])
-  }
-})
+test_smoke_formula_edge_cases(
+  setup = setup.smoke,
+  cases = fixture_2scopenp_formula_edge_cases()
+)
 
 
 # Discrete endo ------------------------------------------------------------
@@ -51,21 +46,11 @@ test_that("works with ordered factors in in endo and exo", {
 
 
 # Tolerates irrelevant data ----------------------------------------------------------
-test_that("works with NA in an irrelevant column", {
-  df <- dataCopula2sCOPEnpCont
-  df$abc <- rnorm(nrow(df))
-  df$abc[1] <- NA
-  res <- fit_2scopenp_fast(formula = y ~ P + X | P, data = df)
-  check_clean_fit(res)
-})
+test_smoke_na_irrelevant_col(setup = setup.smoke)
 
 
 # Small sample ----------------------------------------------------------------------
-test_that("works on a small sample", {
-  small <- dataCopula2sCOPEnpCont[1:50, ]
-  res <- fit_2scopenp_fast(formula = y ~ P + X | P, data = small)
-  check_clean_fit(res)
-})
+test_smoke_small_sample(setup = setup.smoke)
 
 
 # npcdistbw.args + bws: iterative refinement -----------------------------------------
@@ -98,19 +83,4 @@ test_that("works with a supplied bws and via iterative refinement", {
 
 
 # verbose ---------------------------------------------------------------------------
-test_that("verbose works", {
-  expect_message(
-    suppress_lowboots_warning(
-      copula2sCOPEnp(
-        formula = y ~ P + X | P,
-        data = dataCopula2sCOPEnpCont,
-        npcdistbw.args = list(bwmethod = "normal-reference"),
-        num.boots = 2,
-        verbose = TRUE
-      )
-    )
-  )
-  expect_no_message(
-    fit_2scopenp_fast(formula = y ~ P + X | P, data = dataCopula2sCOPEnpCont)
-  )
-})
+test_smoke_verbose(setup = setup.smoke)

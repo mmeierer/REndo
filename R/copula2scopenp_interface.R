@@ -84,13 +84,16 @@
 #' this could result in oversmoothing and introducing bias, leading to underfitting (Hu et al. 2025).
 #' However, no closed-form rule-of-thumb bandwidth exists for conditional CDF estimator because these rules
 #' assume a known marginal distribution, yet this is an assumption that the 2sCOPEnp method relaxes. The default
-#' bandwidth is therefore selected through least-squares cross-validation (Li and Racine 2013) which is
+#' bandwidth is therefore selected through least-squares cross-validation (Li, Lin and Racine 2013) which is
 #' data-driven and distribution-free.
 #'
 #' The bandwidth is estimated using \link[np:npcdistbw]{\code{np::npcdistbw()}} with its
 #' default settings. To customize this, you may pass your own arguments via
 #' \code{npcdistbw.args}. Together with the \code{bws} parameter, this can be used to
 #' iteratively refine the bandwidth. See examples.
+#'
+#' The selected bandwidths are reported by `summary()`, see
+#' [summary.rendo.copula.2scope.np()] for what the reported columns mean.
 #'
 #' ## Parameter \code{bws}
 #'
@@ -157,7 +160,9 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope.np", extra.items = doc_rendocopula2scopenp_return_extra_items())
 #'
 #' @family copula-based methods
-#' @seealso \code{\link[REndo:summary.rendo.copula.2scope.np]{summary}}
+#' @template template_seealso_copula2stage
+#' @seealso [`summary()`][summary.rendo.copula.2scope.np()] for the summary, incl. the
+#'  table of the selected bandwidths
 #' @seealso \code{\link[np:npcdistbw]{npcdistbw}} for possible elements of parameter
 #'  \code{npcdistbw.args}.
 #' @seealso \code{\link[REndo:dataCopula2sCOPEnpCont]{dataCopula2sCOPEnpCont},
@@ -184,6 +189,8 @@
 #' res1 <- copula2sCOPEnp(
 #'  y ~ P + X | P,
 #'   data = dataCopula2sCOPEnpCont)
+#' # also shows the selected bandwidths, see ?summary.rendo.copula.2scope.np
+#' summary(res1)
 #'
 #' #--------------------------------------------------------------
 #' # Example 2: Binary endogenous regressor
@@ -311,7 +318,7 @@ copula2sCOPEnp <- function(
   data,
   npcdistbw.args = list(
     #to communicate to the user that bw estimation uses CV by default
-    bwmethod='cv.ls'
+    bwmethod = 'cv.ls'
   ),
   bws = NULL,
   num.boots = 1000,
@@ -319,12 +326,33 @@ copula2sCOPEnp <- function(
 ) {
   cl <- match.call()
 
-  #Input checks
-  check_err_msg(checkinput_copulashared_data_basics(data))
-  check_err_msg(checkinput_copula2scopenp_formula_data(formula = formula, data = data))
+  # Input checks -----------------------------------------------------------------------
+  check_err_msg(checkinput_copula2stage_data_basics(data))
+
+  # - >= 1 endogenous regressor
+  # - >= 1 exogenous regressor
+  # - endogenous: numeric, ordered
+  # - exogenous: numeric, factor, ordered
+  # - Block interaction terms: Are only resolved in model.matrix() but only use model.frame()
+  #    in this method. Specifying them would silently ignore them and NOT forward
+  #    them into np conditional CDF
+  check_err_msg(checkinput_copula2stage_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 1,
+    msg.min.num.exo = "copula2sCOPEnp requires at least one exogenous regressor for the nonparametric conditional CDF estimation.",
+    allow.interactions = FALSE,
+    allow.constant.regressors = FALSE,
+    warn.low.card.endo = FALSE,
+    allowed.classes.endo = c("numeric", "ordered"),
+    allowed.classes.exo = c("numeric", "factor", "ordered")
+  ))
+
   check_err_msg(checkinput_copula2scopenp_npcdistbwargs(npcdistbw.args))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
+
+  # Fit original data ------------------------------------------------------------------
 
   F.formula <- as.Formula(formula)
   labels.main <- labels(terms(F.formula, data = data, rhs = 1))
@@ -332,8 +360,6 @@ copula2sCOPEnp <- function(
   labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   check_err_msg(checkinput_copula2scopenp_bws(bws = bws, labels.endo = labels.endo))
-
-
 
   if (verbose) {
     message(
@@ -348,11 +374,11 @@ copula2sCOPEnp <- function(
   # on the bootstrap distribution of the structural coefficients
   bws <- copula2scopenp_bandwidth(
     data = data,
-    labels.exo = labels.exo,
+    verbose = verbose,
     labels.endo = labels.endo,
+    labels.exo = labels.exo,
     bws = bws,
-    npcdistbw.args = npcdistbw.args,
-    verbose = verbose
+    npcdistbw.args = npcdistbw.args
   )
 
   # TODO: warn if itnmax was hit or bws are at search boundaries (lower bound for
@@ -363,31 +389,31 @@ copula2sCOPEnp <- function(
   fit <- copula2scopenp_fit(
     F.formula = F.formula,
     data = data,
-    labels.exo = labels.exo,
-    labels.endo = labels.endo,
     verbose = verbose,
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
     bws = bws
   )
 
-  # Bootstrapping -------------------------------------------------------------------
+  # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
     fit.b <- copula2scopenp_fit(
       F.formula = F.formula,
       data = data.b,
-      labels.exo = labels.exo,
-      labels.endo = labels.endo,
       verbose = FALSE,
+      labels.endo = labels.endo,
+      labels.exo = labels.exo,
       bws = bws
     )
-    return(fit.b$res.augmented)
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit$res.augmented)),
+    coef.names = names(coef(fit$res.lm.augmented)),
     verbose = verbose
   )
 
@@ -396,7 +422,7 @@ copula2sCOPEnp <- function(
   return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    res.lm.augmented = fit$res.augmented,
+    res.lm.augmented = fit$res.lm.augmented,
     res.boots = res.boots,
     cdf = NULL, # will be skipped when printing
     labels.endo = labels.endo,
@@ -404,7 +430,7 @@ copula2sCOPEnp <- function(
     labels.pcop = fit$labels.pcop,
     subclass = "rendo.copula.2scope.np",
     # 2sCOPEnp-specific
-    first.stage.frames = fit$mfs,
+    first.stage.frames = fit$first.stage.frames,
     bws = bws,
     condists = fit$condists
   ))
@@ -416,7 +442,7 @@ doc_rendocopula2scopenp_return_extra_items <- function() {
     cdf = "\\item{\\code{cdf}}{Always \\code{NULL}: The conditional CDFs are estimated nonparametrically (see \\code{condists}).}",
     bws = "\\item{\\code{bws}}{A named list with one \\code{np::condbandwidth} object per endogenous
     regressor (named accordingly), each used to estimate the conditional CDF
-    \\eqn{\\hat{F}(P_k \\mid X)}.}",
+    \\eqn{\\hat{F}(P_k \\mid X)} (shown in \\code{summary()}).}",
     first.stage.frames = "\\item{\\code{first.stage.frames}}{List of first-stage model frames, one per endogenous regressor (named after the respective endo regressor).}",
     condists = "\\item{\\code{condists}}{A named list with one \\code{np::condistribution}
     object per endogenous regressor (named accordingly).

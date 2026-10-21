@@ -233,6 +233,10 @@ endogeneity correction using copulas. NBER Working Paper No. w32231.
 \doi{10.2139/ssrn.4754776}
 }
 \seealso{
+[`vcov()`][vcov.rendo.boots()] for how the variance-covariance matrix is derived
+
+[`confint()`][confint.rendo.boots()] for how confidence intervals are derived
+
 \code{\link[REndo:dataCopBMW]{dataCopBMW},
 \link[REndo:dataCopBMWMultiEndo]{dataCopBMWMultiEndo}} for detailed
 information about the simulated datasets

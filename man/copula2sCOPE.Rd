@@ -106,15 +106,6 @@ error term.
 }
 }
 
-\subsection{Bootstrap inference}{
-Bootstrap inference is performed by resampling the data with replacement.
-Degenerate bootstrap samples (e.g. singular design matrices or failed
-model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
-}
-
 \subsection{CDF Methods}{
 \describe{
 \item{cdf="adj.ecdf"}{Adjusted empirical CDF with midrank correction (Liengaard et al., 2024).
@@ -163,6 +154,15 @@ At least one exogenous regressor should be present in the model.
 When no exogenous regressor is present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
+}
+
+\subsection{Bootstrap inference}{
+Bootstrap inference is performed by resampling the data with replacement.
+Degenerate bootstrap samples (e.g. singular design matrices or failed
+model estimation) are discarded and resampled until the requested number
+of valid bootstrap replications is obtained. The percentage of discarded
+samples is reported as a warning. Confidence intervals are computed
+using only successful bootstrap replications.
 }
 }
 \examples{
@@ -249,6 +249,10 @@ endogeneity correction using copulas. NBER Working Paper No. w32231.
 \doi{10.2139/ssrn.4754776}
 }
 \seealso{
+[`vcov()`][vcov.rendo.boots()] for how the variance-covariance matrix is derived
+
+[`confint()`][confint.rendo.boots()] for how confidence intervals are derived
+
 \code{\link[REndo:dataCopula2sCOPECase1]{dataCopula2sCOPECase1},
 \link[REndo:dataCopula2sCOPECase2]{dataCopula2sCOPECase2},
 \link[REndo:dataCopula2sCOPECase3]{dataCopula2sCOPECase3}} for detailed

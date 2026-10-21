@@ -1,12 +1,12 @@
 # dont skip on cran: These are important tests! (and fast)
 set.seed(42)
 
-# checkinput_copulashared_data_basics ---------------------------------------
+# checkinput_copula2stage_data_basics ---------------------------------------
 test_that("_data_basics rejects invalid data", {
   df <- fixture_copula_df()
 
-  check_errmsg(
-    checkinput_copulashared_data_basics,
+  run_cases_errmsg(
+    checkinput_copula2stage_data_basics,
     cases = list(
       "NULL" = list(data = NULL),
       "not a df" = list(data = list(1, 2)),
@@ -22,19 +22,19 @@ test_that("_data_basics rejects invalid data", {
   )
 
   # row + col messages
-  expect_length(checkinput_copulashared_data_basics(data = df[0, 0]), 2)
+  expect_length(checkinput_copula2stage_data_basics(data = df[0, 0]), 2)
 })
 
 test_that("data_basics accepts valid data", {
   # the data.frame itself is valid
-  expect_null(checkinput_copulashared_data_basics(data = fixture_copula_df()))
+  expect_null(checkinput_copula2stage_data_basics(data = fixture_copula_df()))
 })
 
 
-# checkinput_copulashared_formula_basics --------------------------------------------
+# checkinput_copula2stage_formula_basics --------------------------------------------
 test_that("_formula_basics rejects invalid formulas", {
-  check_errmsg(
-    fn = checkinput_copulashared_formula_basics,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_formula_basics,
     cases = list(
       "not a formula" = list(formula = "y ~ x | z"),
       "NULL" = list(formula = NULL),
@@ -66,12 +66,12 @@ test_that("_formula_basics accepts valid formulas incl all kinds of edge cases",
     "inline function" = list(formula = y ~ I(x^2) | z),
     "multi term" = list(formula = y ~ x1 + x2 | z1 + z2)
   )
-  check_errmsg_empty(fn = checkinput_copulashared_formula_basics, cases = cases)
+  run_cases_errmsg_empty(fn = checkinput_copula2stage_formula_basics, cases = cases)
 })
-# checkinput_copulashared_vars_in_data -------------------------------------------
+# checkinput_copula2stage_vars_in_data -------------------------------------------
 test_that("_vars_in_data reports missing variables", {
-  check_errmsg(
-    fn = checkinput_copulashared_vars_in_data,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_vars_in_data,
     base.args = list(data = fixture_copula_df()),
     cases = list(
       "missing in rhs1" = list(F.formula = as.Formula(y ~ mis | x_num)),
@@ -89,8 +89,8 @@ test_that("_vars_in_data reports missing variables", {
 })
 test_that("_vars_in_data works with valid, non-syntactic, dot", {
   df <- fixture_copula_df()
-  check_errmsg_empty(
-    fn = checkinput_copulashared_vars_in_data,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_vars_in_data,
     base.args = list(data = df),
     cases = list(
       "non syntactic" = list(F.formula = as.Formula(y ~ `x space` | x_num)),
@@ -100,10 +100,10 @@ test_that("_vars_in_data works with valid, non-syntactic, dot", {
   )
 })
 
-# checkinput_copulashared_response_not_in_rhs ------------------------------------------
+# checkinput_copula2stage_response_not_in_rhs ------------------------------------------
 test_that("_response_not_in_rhs fails if response in rhs1", {
   expect_match(
-    checkinput_copulashared_response_not_in_rhs(
+    checkinput_copula2stage_response_not_in_rhs(
       F.formula = as.Formula(y ~ y + x_num),
       rhs1.terms = terms(
         as.Formula(y ~ y + x_num),
@@ -117,7 +117,7 @@ test_that("_response_not_in_rhs fails if response in rhs1", {
 
   # with transformation
   expect_match(
-    checkinput_copulashared_response_not_in_rhs(
+    checkinput_copula2stage_response_not_in_rhs(
       F.formula = as.Formula(y ~ exp(y) + x_num),
       rhs1.terms = terms(
         as.Formula(y ~ log(y)),
@@ -134,7 +134,7 @@ test_that("_response_not_in_rhs works when response not in rhs", {
   F.formula <- as.Formula(y ~ x_num + x_fac | x_num)
   rhs.terms <- terms(F.formula, lhs = 0, rhs = 1, data = fixture_copula_df())
   expect_null(
-    checkinput_copulashared_response_not_in_rhs(
+    checkinput_copula2stage_response_not_in_rhs(
       F.formula = F.formula,
       rhs1.terms = rhs.terms
     )
@@ -142,36 +142,38 @@ test_that("_response_not_in_rhs works when response not in rhs", {
 })
 
 
-# label_to_colname -------------------------------------------------------------------
-test_that("label_to_colname normalizes labels to col names", {
+# copula2stage_label_to_colname ------------------------------------------------------
+test_that("copula2stage_label_to_colname normalizes labels to col names", {
   # plain
-  expect_equal(label_to_colname(lab = "x_num"), "x_num")
+  expect_equal(copula2stage_label_to_colname(lab = "x_num"), "x_num")
   # backticks (space)
-  expect_equal(label_to_colname(lab = "`x space`"), "x space")
+  expect_equal(copula2stage_label_to_colname(lab = "`x space`"), "x space")
   # cannot have space in label (requires backticks)
-  # expect_equal(label_to_colname(lab = "x space"), "x space")
+  # expect_equal(copula2stage_label_to_colname(lab = "x space"), "x space")
   # transformation
-  expect_equal(label_to_colname(lab = "log(P)"), "log(P)")
+  expect_equal(copula2stage_label_to_colname(lab = "log(P)"), "log(P)")
 })
 
 
-# checkinput_copulashared_modelframe ---------------------------------------------------
+# checkinput_copula2stage_modelframe ---------------------------------------------------
 test_that("_modelframe fails on NAs, illegal classes", {
   # NAs from transformation (also produces warning)
-  expect_warning(res <- checkinput_copulashared_modelframe(
-    F.formula = as.Formula(y ~ log(x_num - 1000)),
-    data = fixture_copula_df(),
-    allowed.classes = list("log(x_num - 1000)" = "numeric"),
-    labels.warn.low.card = NULL,
-    forbid.constant = FALSE
-  ))
+  expect_warning(
+    res <- checkinput_copula2stage_modelframe(
+      F.formula = as.Formula(y ~ log(x_num - 1000)),
+      data = fixture_copula_df(),
+      allowed.classes = list("log(x_num - 1000)" = "numeric"),
+      labels.warn.low.card = NULL,
+      forbid.constant = FALSE
+    )
+  )
   expect_match(res, regexp = "missing values")
 
   df.na.response <- fixture_copula_df()
   df.na.response$y[1] <- NA
 
-  check_errmsg(
-    fn = checkinput_copulashared_modelframe,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_modelframe,
     base.args = list(data = fixture_copula_df()),
     cases = list(
       "NA already in data" = list(
@@ -206,7 +208,7 @@ test_that("_modelframe warns for low-cardinality numerics", {
 
   # warns for given labels
   expect_warning(
-    checkinput_copulashared_modelframe(
+    checkinput_copula2stage_modelframe(
       F.formula = as.Formula(y ~ x_lowcard + x_num),
       data = df,
       allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
@@ -218,7 +220,7 @@ test_that("_modelframe warns for low-cardinality numerics", {
 
   # dont warn if col is not numeric (factors are low card)
   expect_no_warning(
-    checkinput_copulashared_modelframe(
+    checkinput_copula2stage_modelframe(
       F.formula = as.Formula(y ~ x_fac),
       data = df,
       allowed.classes = list(x_fac = "factor"),
@@ -229,7 +231,7 @@ test_that("_modelframe warns for low-cardinality numerics", {
 
   # dont warn if another column is low cardinality (not all columns in mf!)
   expect_no_warning(
-    checkinput_copulashared_modelframe(
+    checkinput_copula2stage_modelframe(
       F.formula = as.Formula(y ~ x_lowcard + x_num),
       data = df,
       allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
@@ -240,7 +242,7 @@ test_that("_modelframe warns for low-cardinality numerics", {
 
   # works if no low card cols are specified
   expect_no_warning(
-    checkinput_copulashared_modelframe(
+    checkinput_copula2stage_modelframe(
       F.formula = as.Formula(y ~ x_lowcard),
       data = df,
       allowed.classes = list(x_lowcard = "numeric"),
@@ -260,14 +262,14 @@ test_that("_modelframe fails on constant cols", {
     labels.warn.low.card = NULL
   )
 
-  check_errmsg(
-    fn = checkinput_copulashared_modelframe,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_modelframe,
     base.args = base.args,
     cases = list("forbidden" = list(forbid.constant = TRUE)),
     regexp = "must not be constant: x_const"
   )
-  check_errmsg_empty(
-    fn = checkinput_copulashared_modelframe,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_modelframe,
     base.args = base.args,
     cases = list("allowed" = list(forbid.constant = FALSE))
   )
@@ -275,7 +277,7 @@ test_that("_modelframe fails on constant cols", {
 
 test_that("_modelframe works for valid data", {
   expect_null(
-    checkinput_copulashared_modelframe(
+    checkinput_copula2stage_modelframe(
       F.formula = as.Formula(y ~ x_num + x_fac + x_ord + `x space` + exp(x_num)),
       data = fixture_copula_df(),
       allowed.classes = list(
@@ -292,7 +294,7 @@ test_that("_modelframe works for valid data", {
 })
 
 
-# checkinput_copulashared_formula_data -----------------------------------------
+# checkinput_copula2stage_formula_data -----------------------------------------
 # check only its intrinsic parts + that building blocks are wired in
 
 formuladata_base_args <- function() {
@@ -312,8 +314,8 @@ formuladata_base_args <- function() {
 }
 
 test_that("_formula_data has building blocks wired in", {
-  check_errmsg(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_formula_data,
     base.args = formuladata_base_args(),
     cases = list(
       "formula_basics" = list(formula = "y ~ x_num | x_num"),
@@ -333,8 +335,8 @@ test_that("_formula_data has building blocks wired in", {
 test_that("_formula_data rules hardcoded for all methods", {
   base.args <- formuladata_base_args()
 
-  check_errmsg(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "continuous() special" = list(formula = y ~ x_num + x_fac | continuous(x_num)),
@@ -372,7 +374,7 @@ test_that("_formula_data parameters work correctly", {
     list(formula = y ~ x_num + x_lowcard | x_lowcard, warn.low.card.endo = TRUE)
   )
   expect_warning(
-    res <- do.call(checkinput_copulashared_formula_data, args.lowcard.endo),
+    res <- do.call(checkinput_copula2stage_formula_data, args.lowcard.endo),
     regexp = "low cardinality"
   )
   expect_null(res)
@@ -381,17 +383,17 @@ test_that("_formula_data parameters work correctly", {
     base.args,
     list(formula = y ~ x_num + x_lowcard | x_num, warn.low.card.endo = TRUE)
   )
-  expect_no_warning(do.call(checkinput_copulashared_formula_data, args.lowcard.exo))
+  expect_no_warning(do.call(checkinput_copula2stage_formula_data, args.lowcard.exo))
   # turned off
   args.lowcard.off <- modifyList(
     base.args,
     list(formula = y ~ x_num + x_lowcard | x_lowcard, warn.low.card.endo = FALSE)
   )
-  expect_no_warning(do.call(checkinput_copulashared_formula_data, args.lowcard.off))
+  expect_no_warning(do.call(checkinput_copula2stage_formula_data, args.lowcard.off))
 
   # min.num.exo
-  check_errmsg(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "no exo, min 1" = list(formula = y ~ x_num | x_num, min.num.exo = 1),
@@ -399,8 +401,8 @@ test_that("_formula_data parameters work correctly", {
     ),
     regexp = "exogenous regressor"
   )
-  check_errmsg_empty(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "no exo, min 0" = list(formula = y ~ x_num | x_num, min.num.exo = 0),
@@ -409,8 +411,8 @@ test_that("_formula_data parameters work correctly", {
   )
 
   # allow.interactions
-  check_errmsg(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "interaction in rhs1" = list(
@@ -424,8 +426,8 @@ test_that("_formula_data parameters work correctly", {
     ),
     regexp = "Interaction terms"
   )
-  check_errmsg_empty(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "interaction allowed" = list(
@@ -436,8 +438,8 @@ test_that("_formula_data parameters work correctly", {
   )
 
   # allowed.classes.endo / allowed.classes.exo
-  check_errmsg(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "ordered endo, restricted" = list(
@@ -451,8 +453,8 @@ test_that("_formula_data parameters work correctly", {
     ),
     regexp = "has class"
   )
-  check_errmsg_empty(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "ordered endo, any class" = list(
@@ -481,7 +483,7 @@ test_that("_formula_data parameters work correctly", {
     list(formula = y ~ x_num | x_num, min.num.exo = 1, msg.min.num.exo = "MSG EXO")
   )
   expect_identical(
-    do.call(checkinput_copulashared_formula_data, args.msg.exo),
+    do.call(checkinput_copula2stage_formula_data, args.msg.exo),
     "MSG EXO"
   )
 
@@ -494,7 +496,7 @@ test_that("_formula_data parameters work correctly", {
     )
   )
   expect_identical(
-    do.call(checkinput_copulashared_formula_data, args.msg.inter),
+    do.call(checkinput_copula2stage_formula_data, args.msg.inter),
     "MSG INTERACTIONS"
   )
 })
@@ -502,8 +504,8 @@ test_that("_formula_data parameters work correctly", {
 test_that("_formula_data works with all kinds of formula edge cases", {
   base.args <- formuladata_base_args()
 
-  check_errmsg_empty(
-    fn = checkinput_copulashared_formula_data,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_formula_data,
     base.args = base.args,
     cases = list(
       "plain" = list(formula = y ~ x_num + x_fac | x_num),
@@ -529,10 +531,10 @@ test_that("_formula_data works with all kinds of formula edge cases", {
 })
 
 
-# checkinput_copulashared_cdf -------------------------------------------------------
+# checkinput_copula2stage_cdf -------------------------------------------------------
 test_that("_cdf rejects invalid cdf", {
-  check_errmsg(
-    fn = checkinput_copulashared_cdf,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_cdf,
     base.args = list(allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")),
     cases = list(
       "invalid string" = list(cdf = "invalid"),
@@ -553,8 +555,8 @@ test_that("_cdf rejects invalid cdf", {
 
 test_that("_cdf accepts valid cdf incl full default vector", {
   allowed <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
-  check_errmsg_empty(
-    fn = checkinput_copulashared_cdf,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_cdf,
     base.args = list(allowed.cdf = allowed),
     cases = list(
       "single allowed" = list(cdf = "ecdf"),
@@ -565,10 +567,10 @@ test_that("_cdf accepts valid cdf incl full default vector", {
 })
 
 
-# checkinput_copulashared_numboots --------------------------------------------------
+# checkinput_copula2stage_numboots --------------------------------------------------
 test_that("_numboots rejects invalid num.boots", {
-  check_errmsg(
-    fn = checkinput_copulashared_numboots,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_numboots,
     cases = list(
       "NULL" = list(num.boots = NULL),
       "NA" = list(num.boots = NA_real_),
@@ -595,19 +597,19 @@ test_that("_numboots rejects invalid num.boots", {
 })
 
 test_that("_numboots accepts valid num.boots, warns if < 1000", {
-  expect_null(expect_no_warning(checkinput_copulashared_numboots(num.boots = 1000)))
+  expect_null(expect_no_warning(checkinput_copula2stage_numboots(num.boots = 1000)))
   expect_warning(
-    res <- checkinput_copulashared_numboots(num.boots = 2),
+    res <- checkinput_copula2stage_numboots(num.boots = 2),
     regexp = "recommended to run 1000"
   )
   expect_null(res)
 })
 
 
-# checkinput_copulashared_verbose ---------------------------------------------------
+# checkinput_copula2stage_verbose ---------------------------------------------------
 test_that("_verbose rejects invalid verbose", {
-  check_errmsg(
-    fn = checkinput_copulashared_verbose,
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_verbose,
     cases = list(
       "NULL" = list(verbose = NULL),
       "numeric" = list(verbose = 1),
@@ -626,8 +628,8 @@ test_that("_verbose rejects invalid verbose", {
 })
 
 test_that("_verbose accepts TRUE and FALSE", {
-  check_errmsg_empty(
-    fn = checkinput_copulashared_verbose,
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_verbose,
     cases = list("TRUE" = list(verbose = TRUE), "FALSE" = list(verbose = FALSE))
   )
 })

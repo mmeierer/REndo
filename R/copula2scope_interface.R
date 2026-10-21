@@ -59,8 +59,6 @@
 #'         error term.
 #' }
 #'
-#' @template template_text_details_bootsdegenerates
-#'
 #' @template template_text_details_cdfmethods
 #'
 #' @details
@@ -77,6 +75,7 @@
 #' the normal scores of each endogenous regressor directly, equivalent to
 #' the approach of Park and Gupta (2012).
 #'
+#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_yang2025
 #' @template template_references_parkgupta2012
@@ -85,6 +84,7 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
 #'
 #' @seealso \code{\link[REndo:dataCopula2sCOPECase1]{dataCopula2sCOPECase1},
 #' \link[REndo:dataCopula2sCOPECase2]{dataCopula2sCOPECase2},
@@ -161,16 +161,16 @@ copula2sCOPE <- function(
 ) {
   cl <- match.call()
 
-  # Input checks  -------------------------------------------------------------------
-
-  check_err_msg(checkinput_copulashared_data_basics(data))
+  # Input checks -----------------------------------------------------------------------
+  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  check_err_msg(checkinput_copula2stage_data_basics(data))
 
   # - >= 1 endogenous regressor
   # - >= 0 exogenous regressor
   # - no interactions
   # - endogenous: numeric
   # - exogenous: any
-  check_err_msg(checkinput_copulashared_formula_data(
+  check_err_msg(checkinput_copula2stage_formula_data(
     formula = formula,
     data = data,
     min.num.exo = 0, # may have no exo regressor, resulting in warning
@@ -182,12 +182,11 @@ copula2sCOPE <- function(
     allowed.classes.exo = c("numeric", "factor", "character", "logical")
   ))
 
-  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
-  check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf = allowed.cdfs))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
 
-  # Fit original data ---------------------------------------------------------------
+  # Fit original data ------------------------------------------------------------------
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
 
@@ -213,7 +212,6 @@ copula2sCOPE <- function(
     )
   }
 
-  # Fitting with 2sCOPE
   if (verbose) {
     message(
       "Fitting 2sCOPE model with ",
@@ -224,29 +222,29 @@ copula2sCOPE <- function(
   fit <- copula2scope_fit(
     F.formula = F.formula,
     data = data,
-    cdf = cdf,
     labels.endo = labels.endo,
-    labels.exo = labels.exo
+    labels.exo = labels.exo,
+    cdf = cdf
   )
 
   # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    res.b <- copula2scope_fit(
+    fit.b <- copula2scope_fit(
       F.formula = F.formula,
       data = data.b,
-      cdf = cdf,
       labels.endo = labels.endo,
-      labels.exo = labels.exo
+      labels.exo = labels.exo,
+      cdf = cdf
     )
-    return(res.b$res.augmented)
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit$res.augmented)),
+    coef.names = names(coef(fit$res.lm.augmented)),
     verbose = verbose
   )
 
@@ -255,7 +253,7 @@ copula2sCOPE <- function(
   return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    res.lm.augmented = fit$res.augmented,
+    res.lm.augmented = fit$res.lm.augmented,
     res.boots = res.boots,
     cdf = cdf,
     labels.endo = labels.endo,
