@@ -76,7 +76,7 @@ test_correctness_formula_edge_cases <- function(
   cases,
   check = function(res) {
     check_labelled_consistently(res)
-    check_struct_residuals(res = res, aux.names = res$labels.pcop)
+    check_struct_residuals(res = res)
   }
 ) {
   test_that(paste0(setup$label, ": Formula edge cases are fitted consistently"), {

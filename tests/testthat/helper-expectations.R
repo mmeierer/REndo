@@ -162,12 +162,12 @@ check_param_recovery <- function(res, true_vals) {
 
 # check_struct_residuals ----------------------------------------------------------
 #' @importFrom stats residuals fitted coef
-check_struct_residuals <- function(res, aux.names) {
+check_struct_residuals <- function(res) {
   # Alternative route: Remove cop contribution from augmented fit
   res.lm <- res$res.lm.augmented
 
-  cop.coefs <- coef(res.lm)[aux.names]
-  cop.matrix <- model.matrix(res.lm)[, aux.names, drop = FALSE]
+  cop.coefs <- coef(res.lm)[res$labels.pcop]
+  cop.matrix <- model.matrix(res.lm)[, res$labels.pcop, drop = FALSE]
 
   residuals.alt <- drop(residuals(res.lm) + cop.matrix %*% cop.coefs)
   fitted.alt <- drop(fitted(res.lm) - cop.matrix %*% cop.coefs)

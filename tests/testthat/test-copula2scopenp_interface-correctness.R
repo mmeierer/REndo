@@ -61,7 +61,7 @@ test_correctness_formula_edge_cases(
   cases = fixture_2scopenp_formula_edge_cases(),
   check = function(res) {
     check_labelled_consistently_2scopenp(res)
-    check_struct_residuals(res = res, aux.names = res$labels.pcop)
+    check_struct_residuals(res = res)
   }
 )
 
@@ -94,7 +94,7 @@ test_that("Ordered and factors in endo / exo", {
     data = df.small
   )
   check_labelled_consistently_2scopenp(res)
-  check_struct_residuals(res = res, aux.names = res$labels.pcop)
+  check_struct_residuals(res = res)
 
   # correct param names
   expect_named(
