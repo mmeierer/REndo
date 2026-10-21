@@ -59,8 +59,6 @@
 #'         error term.
 #' }
 #'
-#' @template template_text_details_bootsdegenerates
-#'
 #' @template template_text_details_cdfmethods
 #'
 #' @details
@@ -77,6 +75,7 @@
 #' the normal scores of each endogenous regressor directly, equivalent to
 #' the approach of Park and Gupta (2012).
 #'
+#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_yang2025
 #' @template template_references_parkgupta2012

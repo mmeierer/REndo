@@ -106,15 +106,6 @@ error term.
 }
 }
 
-\subsection{Bootstrap inference}{
-Bootstrap inference is performed by resampling the data with replacement.
-Degenerate bootstrap samples (e.g. singular design matrices or failed
-model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
-}
-
 \subsection{CDF Methods}{
 \describe{
 \item{cdf="adj.ecdf"}{Adjusted empirical CDF with midrank correction (Liengaard et al., 2024).
@@ -163,6 +154,15 @@ At least one exogenous regressor should be present in the model.
 When no exogenous regressor is present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
+}
+
+\subsection{Bootstrap inference}{
+Bootstrap inference is performed by resampling the data with replacement.
+Degenerate bootstrap samples (e.g. singular design matrices or failed
+model estimation) are discarded and resampled until the requested number
+of valid bootstrap replications is obtained. The percentage of discarded
+samples is reported as a warning. Confidence intervals are computed
+using only successful bootstrap replications.
 }
 }
 \examples{

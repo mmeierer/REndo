@@ -138,8 +138,7 @@ default settings. To customize this, you may pass your own arguments via
 iteratively refine the bandwidth. See examples.
 
 The selected bandwidths are reported by \code{summary()}, see
-\code{\link[REndo:summary.rendo.copula.2scope.np]{summary.rendo.copula.2scope.np()}}
-for what the reported columns mean.
+\code{\link[=summary.rendo.copula.2scope.np]{summary.rendo.copula.2scope.np()}} for what the reported columns mean.
 }
 
 \subsection{Parameter \code{bws}}{
@@ -355,8 +354,8 @@ Hayfield, T. and Racine, J. S. (2008). Nonparametric econometrics: The np packag
 \doi{10.18637/jss.v027.i05}
 }
 \seealso{
-\code{\link[REndo:summary.rendo.copula.2scope.np]{summary}} for the summary,
-incl. the table of the selected bandwidths
+\code{\link[=summary.rendo.copula.2scope.np]{summary()}} for the summary, incl. the
+table of the selected bandwidths
 
 \code{\link[np:npcdistbw]{npcdistbw}} for possible elements of parameter
 \code{npcdistbw.args}.
