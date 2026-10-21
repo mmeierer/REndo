@@ -48,7 +48,8 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
     tydat <- mf.p[, 1, drop = FALSE]
     if (!identical(sort(colnames(txdat)), sort(bw.p$xnames))) {
       stop(
-        "Names in fitted bandwith and names of generated variables mismatch. This is likely because the bootstrap sample is degenerate."
+        "Names in fitted bandwith and names of generated variables mismatch. This is likely because the bootstrap sample is degenerate.",
+        call. = FALSE
       )
     }
 

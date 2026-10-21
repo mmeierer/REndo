@@ -42,7 +42,8 @@ copula2stage_pstar <- function(P, cdf) {
     P.star <- as.matrix(P.star)
   } else {
     stop(
-      "Internal error: Invalid 'cdf' passed to copula2stage_pstar(). This should not happen - please report as a bug!"
+      "Internal error: Invalid 'cdf' passed to copula2stage_pstar(). This should not happen - please report as a bug!",
+      call. = FALSE
     )
   }
 
@@ -83,7 +84,7 @@ copula2stage_compute_structural_fitted_residuals <- function(
   ) {
     stop(
       "Internal error: 'labels.pcop' is empty. This should not happen - please report as a bug!",
-      call. = TRUE
+      call. = FALSE
     )
   }
 
@@ -95,7 +96,8 @@ copula2stage_compute_structural_fitted_residuals <- function(
     stop(
       "Internal error: Auxiliary regressor(s) not found in coefficients: ",
       toString(missing.aux),
-      ". This should not happen - please report as a bug!"
+      ". This should not happen - please report as a bug!",
+      call. = FALSE
     )
   }
 
