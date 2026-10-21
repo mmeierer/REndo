@@ -212,7 +212,6 @@ copula2sCOPE <- function(
     )
   }
 
-  # Fitting with 2sCOPE
   if (verbose) {
     message(
       "Fitting 2sCOPE model with ",

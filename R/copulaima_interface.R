@@ -212,7 +212,6 @@ copulaIMA <- function(
   labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
   labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
-  # Fitting with copula IMA model
   if (verbose) {
     message(
       "Fitting Haschka's copula-based IMA model with ",
