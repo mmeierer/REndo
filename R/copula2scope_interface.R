@@ -84,6 +84,7 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
 #'
 #' @seealso \code{\link[REndo:dataCopula2sCOPECase1]{dataCopula2sCOPECase1},
 #' \link[REndo:dataCopula2sCOPECase2]{dataCopula2sCOPECase2},

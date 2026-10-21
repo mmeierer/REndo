@@ -104,6 +104,7 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.ima")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
 #'
 #' @seealso \code{\link[REndo:dataCopIMABinExo]{dataCopIMABinExo},
 #' \link[REndo:dataCopIMAContExo]{dataCopIMAContExo},

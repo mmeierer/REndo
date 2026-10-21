@@ -160,6 +160,7 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope.np", extra.items = doc_rendocopula2scopenp_return_extra_items())
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
 #' @seealso [`summary()`][summary.rendo.copula.2scope.np()] for the summary, incl. the
 #'  table of the selected bandwidths
 #' @seealso \code{\link[np:npcdistbw]{npcdistbw}} for possible elements of parameter

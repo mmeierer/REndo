@@ -93,6 +93,7 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.bmw")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
 #'
 #' @seealso \code{\link[REndo:dataCopBMW]{dataCopBMW},
 #' \link[REndo:dataCopBMWMultiEndo]{dataCopBMWMultiEndo}} for detailed
