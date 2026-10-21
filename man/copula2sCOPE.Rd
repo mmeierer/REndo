@@ -15,7 +15,7 @@ copula2sCOPE(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous regressors must be \code{numeric}. Exogenous regressors may be \code{numeric}, \code{factor}, \code{character}, or \code{logical}, but not \code{ordered}.}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.
@@ -150,7 +150,6 @@ The second part identifies the continuous endogenous regressors:
 \preformatted{y ~ X + P | P                       # one}
 \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endo}
 
-At least one exogenous regressor should be present in the model.
 When no exogenous regressor is present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
