@@ -161,7 +161,7 @@ copula2sCOPE <- function(
 ) {
   cl <- match.call()
 
-  # Input checks  -------------------------------------------------------------------
+  # Input checks -----------------------------------------------------------------------
 
   check_err_msg(checkinput_copula2stage_data_basics(data))
 
@@ -187,7 +187,7 @@ copula2sCOPE <- function(
   check_err_msg(checkinput_copula2stage_numboots(num.boots))
   check_err_msg(checkinput_copula2stage_verbose(verbose))
 
-  # Fit original data ---------------------------------------------------------------
+  # Fit original data ------------------------------------------------------------------
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
 

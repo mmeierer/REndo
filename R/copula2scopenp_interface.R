@@ -319,7 +319,7 @@ copula2sCOPEnp <- function(
 ) {
   cl <- match.call()
 
-  #Input checks
+  # Input checks -----------------------------------------------------------------------
   check_err_msg(checkinput_copula2stage_data_basics(data))
 
   # - >= 1 endogenous regressor
@@ -344,6 +344,8 @@ copula2sCOPEnp <- function(
   check_err_msg(checkinput_copula2scopenp_npcdistbwargs(npcdistbw.args))
   check_err_msg(checkinput_copula2stage_numboots(num.boots))
   check_err_msg(checkinput_copula2stage_verbose(verbose))
+
+  # Fit original data ------------------------------------------------------------------
 
   F.formula <- as.Formula(formula)
   labels.main <- labels(terms(F.formula, data = data, rhs = 1))
@@ -388,7 +390,7 @@ copula2sCOPEnp <- function(
     bws = bws
   )
 
-  # Bootstrapping -------------------------------------------------------------------
+  # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
     fit.b <- copula2scopenp_fit(

@@ -173,7 +173,7 @@ copulaIMA <- function(
 ) {
   cl <- match.call()
 
-  # Input checks  -------------------------------------------------------------------
+  # Input checks -----------------------------------------------------------------------
   allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
   check_err_msg(checkinput_copula2stage_data_basics(data))
 
@@ -203,7 +203,7 @@ copulaIMA <- function(
   check_err_msg(checkinput_copula2stage_numboots(num.boots))
   check_err_msg(checkinput_copula2stage_verbose(verbose))
 
-  # Fit original data ---------------------------------------------------------------
+  # Fit original data ------------------------------------------------------------------
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
 
@@ -228,7 +228,7 @@ copulaIMA <- function(
     labels.exo = labels.exo
   )
 
-  # Bootstrapping -------------------------------------------------------------------
+  # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
     fit.b <- copulaima_fit(
@@ -249,7 +249,7 @@ copulaIMA <- function(
     verbose = verbose
   )
 
-  # Return value ----------------------------------------------------------------------
+  # Return object ----------------------------------------------------------------------
   return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
