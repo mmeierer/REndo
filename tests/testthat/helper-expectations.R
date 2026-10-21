@@ -35,6 +35,30 @@ run_cases_errmsg_empty <- function(fn, base.args = list(), cases) {
   )
 }
 
+# run_cases_error -------------------------------------------------------------------
+# Expect an error is thrown matching given regexp(s)
+run_cases_error <- function(fn, base.args = list(), cases, regexp) {
+  if (length(regexp) == 1) {
+    regexp <- rep(regexp, length(cases))
+  }
+  # for printing labels on failure
+  names(regexp) <- names(cases)
+  case.i <- 0
+
+  run_cases(
+    # error is thrown by fn() and caught in expect_error, before param check() is run
+    fn = function(...) {
+      # <<- to manipulate outer var
+      case.i <<- case.i + 1
+      nm <- names(cases)[case.i]
+      expect_error(fn(...), regexp = regexp[[nm]], info = paste0("[case: ", nm, "]"))
+    },
+    base.args = base.args,
+    cases = cases,
+    check = function(res) invisible(NULL)
+  )
+}
+
 # check_clean_fit -------------------------------------------------------------------
 # No NAs anywhere. Basic sanity checks. Mostly used for smoke tests.
 check_clean_fit <- function(res) {
