@@ -175,11 +175,11 @@ copulaIMA <- function(
 
   # Input checks  -------------------------------------------------------------------
   allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
-  check_err_msg(checkinput_copulashared_data_basics(data))
+  check_err_msg(checkinput_copula2stage_data_basics(data))
   check_err_msg(checkinput_copulaima_formula_data(data = data, formula = formula))
-  check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf = allowed.cdfs))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
 
   # Fit original data ---------------------------------------------------------------
 

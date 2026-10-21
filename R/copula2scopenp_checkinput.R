@@ -7,7 +7,7 @@
 #    them into np conditional CDF
 #
 checkinput_copula2scopenp_formula_data <- function(formula, data) {
-  return(checkinput_copulashared_formula_data(
+  return(checkinput_copula2stage_formula_data(
     formula = formula,
     data = data,
     min.num.exo = 1,

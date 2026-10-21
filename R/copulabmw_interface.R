@@ -155,11 +155,11 @@ copulaBMW <- function(
 
   #Input checks
   allowed.cdfs <- c("resc.ecdf", "adj.ecdf", "ecdf", "kde")
-  check_err_msg(checkinput_copulashared_data_basics(data))
+  check_err_msg(checkinput_copula2stage_data_basics(data))
   check_err_msg(checkinput_copulabmw_formula_data(formula = formula, data = data))
-  check_err_msg(checkinput_copulashared_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
 

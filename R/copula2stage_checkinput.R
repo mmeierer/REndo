@@ -1,4 +1,4 @@
-checkinput_copulashared_cdf <- function(cdf, allowed.cdf) {
+checkinput_copula2stage_cdf <- function(cdf, allowed.cdf) {
   return(checkinputhelper_choice(
     choice = cdf,
     allowed = allowed.cdf,
@@ -6,11 +6,11 @@ checkinput_copulashared_cdf <- function(cdf, allowed.cdf) {
   ))
 }
 
-checkinput_copulashared_numboots <- function(num.boots) {
+checkinput_copula2stage_numboots <- function(num.boots) {
   return(checkinputhelper_numboots(num.boots))
 }
 
-checkinput_copulashared_verbose <- function(verbose) {
+checkinput_copula2stage_verbose <- function(verbose) {
   checkinputhelper_single_logical(logical = verbose, param.name = "verbose")
 }
 
@@ -22,7 +22,7 @@ checkinput_copulashared_verbose <- function(verbose) {
 # - is data.frame
 # - has row & cols (>0)
 #
-checkinput_copulashared_data_basics <- function(data) {
+checkinput_copula2stage_data_basics <- function(data) {
   err.msg <- c()
 
   if (!is.data.frame(data)) {
@@ -47,7 +47,7 @@ checkinput_copulashared_data_basics <- function(data) {
 #  - single response
 #
 #' @importFrom Formula as.Formula
-checkinput_copulashared_formula_basics <- function(formula) {
+checkinput_copula2stage_formula_basics <- function(formula) {
   if (!inherits(formula, "formula")) {
     return("Parameter 'formula' must be a formula.")
   }
@@ -77,7 +77,7 @@ checkinput_copulashared_formula_basics <- function(formula) {
 }
 
 # All formula variables exist in the data
-checkinput_copulashared_vars_in_data <- function(F.formula, data) {
+checkinput_copula2stage_vars_in_data <- function(F.formula, data) {
   # Use unexpanded formula and not terms object: Check what the user actually specified
 
   # Also correct if there are non-syntactic names
@@ -99,7 +99,7 @@ checkinput_copulashared_vars_in_data <- function(F.formula, data) {
 }
 
 # LHS is not also in RHS1
-checkinput_copulashared_response_not_in_rhs <- function(F.formula, rhs1.terms) {
+checkinput_copula2stage_response_not_in_rhs <- function(F.formula, rhs1.terms) {
   # needs terms object of expanded terms object
   # use all.vars() and not labels as its about the variable ( y ~ log(y) is illegal)
   lhs.vars <- all.vars(formula(F.formula, lhs = 1, rhs = 0))
@@ -118,7 +118,7 @@ checkinput_copulashared_response_not_in_rhs <- function(F.formula, rhs1.terms) {
 }
 
 # Normalizes a term label to column names (as in model.frame())
-label_to_colname <- function(lab) {
+copula2stage_label_to_colname <- function(lab) {
   # strips backticks from non-syntactic names
   return(deparse1(parse(text = lab)[[1]]))
 }
@@ -133,7 +133,7 @@ label_to_colname <- function(lab) {
 # - forbid.constant: error on constant data in any mf column
 #
 #' @importFrom stats model.frame na.fail .MFclass terms
-checkinput_copulashared_modelframe <- function(
+checkinput_copula2stage_modelframe <- function(
   F.formula,
   data,
   allowed.classes,
@@ -160,7 +160,7 @@ checkinput_copulashared_modelframe <- function(
 
   # For each column: Check if is allowed class
   for (lab in names(allowed.classes)) {
-    col <- label_to_colname(lab)
+    col <- copula2stage_label_to_colname(lab)
 
     # Should not happen: Previous check should verify already that all formula labels
     # are in data
@@ -178,7 +178,7 @@ checkinput_copulashared_modelframe <- function(
 
   # only for given labels: warn about low-cardinality numeric variable
   if (length(labels.warn.low.card) > 0) {
-    colnames.low.card <- vapply(labels.warn.low.card, label_to_colname, character(1))
+    colnames.low.card <- vapply(labels.warn.low.card, copula2stage_label_to_colname, character(1))
     stopifnot(all(colnames.low.card %in% mf.cols))
 
     is.low.card <- sapply(mf[colnames.low.card], function(x) {
@@ -240,7 +240,7 @@ checkinput_copulashared_modelframe <- function(
 #
 #' @importFrom Formula as.Formula
 #' @importFrom stats terms setNames
-checkinput_copulashared_formula_data <- function(
+checkinput_copula2stage_formula_data <- function(
   formula,
   data,
   min.num.exo,
@@ -257,7 +257,7 @@ checkinput_copulashared_formula_data <- function(
   msg.interactions = "Interaction terms are not supported for this method."
 ) {
   # Formula only ----------------------------------------------------------------
-  err.msg <- checkinput_copulashared_formula_basics(formula = formula)
+  err.msg <- checkinput_copula2stage_formula_basics(formula = formula)
   if (length(err.msg) > 0) {
     return(err.msg)
   }
@@ -265,7 +265,7 @@ checkinput_copulashared_formula_data <- function(
   F.formula <- as.Formula(formula)
 
   # Formula vs data ------------------------------------------------------------
-  err.msg <- checkinput_copulashared_vars_in_data(F.formula = F.formula, data = data)
+  err.msg <- checkinput_copula2stage_vars_in_data(F.formula = F.formula, data = data)
   if (length(err.msg) > 0) {
     return(err.msg)
   }
@@ -281,7 +281,7 @@ checkinput_copulashared_formula_data <- function(
   endo.labels <- labels(rhs2.terms)
   exo.labels <- rhs1.labels[!rhs1.labels %in% endo.labels]
 
-  err.msg <- checkinput_copulashared_response_not_in_rhs(
+  err.msg <- checkinput_copula2stage_response_not_in_rhs(
     F.formula = F.formula,
     rhs1.terms = rhs1.terms
   )
@@ -338,7 +338,7 @@ checkinput_copulashared_formula_data <- function(
     )
   }
 
-  return(checkinput_copulashared_modelframe(
+  return(checkinput_copula2stage_modelframe(
     F.formula = F.formula,
     data = data,
     allowed.classes = allowed.classes,

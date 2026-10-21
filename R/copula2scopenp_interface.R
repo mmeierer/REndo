@@ -320,11 +320,11 @@ copula2sCOPEnp <- function(
   cl <- match.call()
 
   #Input checks
-  check_err_msg(checkinput_copulashared_data_basics(data))
+  check_err_msg(checkinput_copula2stage_data_basics(data))
   check_err_msg(checkinput_copula2scopenp_formula_data(formula = formula, data = data))
   check_err_msg(checkinput_copula2scopenp_npcdistbwargs(npcdistbw.args))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
 
   F.formula <- as.Formula(formula)
   labels.main <- labels(terms(F.formula, data = data, rhs = 1))

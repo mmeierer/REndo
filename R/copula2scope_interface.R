@@ -163,14 +163,14 @@ copula2sCOPE <- function(
 
   # Input checks  -------------------------------------------------------------------
 
-  check_err_msg(checkinput_copulashared_data_basics(data))
+  check_err_msg(checkinput_copula2stage_data_basics(data))
 
   # - >= 1 endogenous regressor
   # - >= 0 exogenous regressor
   # - no interactions
   # - endogenous: numeric
   # - exogenous: any
-  check_err_msg(checkinput_copulashared_formula_data(
+  check_err_msg(checkinput_copula2stage_formula_data(
     formula = formula,
     data = data,
     min.num.exo = 0, # may have no exo regressor, resulting in warning
@@ -183,9 +183,9 @@ copula2sCOPE <- function(
   ))
 
   allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
-  check_err_msg(checkinput_copulashared_cdf(cdf, allowed.cdf = allowed.cdfs))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
 
   # Fit original data ---------------------------------------------------------------
 
