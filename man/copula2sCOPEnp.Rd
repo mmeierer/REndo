@@ -51,7 +51,7 @@ An object of class \code{rendo.copula.2scope.np} which is a list that contains:
 \item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}
 \item{\code{bws}}{A named list with one \code{np::condbandwidth} object per endogenous
     regressor (named accordingly), each used to estimate the conditional CDF
-    \eqn{\hat{F}(P_k \mid X)}.}
+    \eqn{\hat{F}(P_k \mid X)} (shown in \code{summary()}).}
 \item{\code{first.stage.frames}}{List of first-stage model frames, one per endogenous regressor (named after the respective endo regressor).}
 \item{\code{condists}}{A named list with one \code{np::condistribution}
     object per endogenous regressor (named accordingly).
@@ -136,6 +136,10 @@ The bandwidth is estimated using \link[np:npcdistbw]{\code{np::npcdistbw()}} wit
 default settings. To customize this, you may pass your own arguments via
 \code{npcdistbw.args}. Together with the \code{bws} parameter, this can be used to
 iteratively refine the bandwidth. See examples.
+
+The selected bandwidths are reported by \code{summary()}, see
+\code{\link[REndo:summary.rendo.copula.2scope.np]{summary.rendo.copula.2scope.np()}}
+for what the reported columns mean.
 }
 
 \subsection{Parameter \code{bws}}{
@@ -211,6 +215,8 @@ data("dataCopula2sCOPEnpCont")
 res1 <- copula2sCOPEnp(
  y ~ P + X | P,
   data = dataCopula2sCOPEnpCont)
+# also shows the selected bandwidths, see ?summary.rendo.copula.2scope.np
+summary(res1)
 
 #--------------------------------------------------------------
 # Example 2: Binary endogenous regressor
@@ -349,7 +355,8 @@ Hayfield, T. and Racine, J. S. (2008). Nonparametric econometrics: The np packag
 \doi{10.18637/jss.v027.i05}
 }
 \seealso{
-\code{\link[REndo:summary.rendo.copula.2scope.np]{summary}}
+\code{\link[REndo:summary.rendo.copula.2scope.np]{summary}} for the summary,
+incl. the table of the selected bandwidths
 
 \code{\link[np:npcdistbw]{npcdistbw}} for possible elements of parameter
 \code{npcdistbw.args}.

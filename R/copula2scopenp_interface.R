@@ -92,6 +92,9 @@
 #' \code{npcdistbw.args}. Together with the \code{bws} parameter, this can be used to
 #' iteratively refine the bandwidth. See examples.
 #'
+#' The selected bandwidths are reported by `summary()`, see
+#' [summary.rendo.copula.2scope.np()] for what the reported columns mean.
+#'
 #' ## Parameter \code{bws}
 #'
 #' If given, the items in \code{bws} will serve as the starting points for the bandwidth
@@ -157,7 +160,8 @@
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope.np", extra.items = doc_rendocopula2scopenp_return_extra_items())
 #'
 #' @family copula-based methods
-#' @seealso \code{\link[REndo:summary.rendo.copula.2scope.np]{summary}}
+#' @seealso [`summary()`][summary.rendo.copula.2scope.np()] for the summary, incl. the
+#'  table of the selected bandwidths
 #' @seealso \code{\link[np:npcdistbw]{npcdistbw}} for possible elements of parameter
 #'  \code{npcdistbw.args}.
 #' @seealso \code{\link[REndo:dataCopula2sCOPEnpCont]{dataCopula2sCOPEnpCont},
@@ -184,6 +188,8 @@
 #' res1 <- copula2sCOPEnp(
 #'  y ~ P + X | P,
 #'   data = dataCopula2sCOPEnpCont)
+#' # also shows the selected bandwidths, see ?summary.rendo.copula.2scope.np
+#' summary(res1)
 #'
 #' #--------------------------------------------------------------
 #' # Example 2: Binary endogenous regressor
@@ -437,7 +443,7 @@ doc_rendocopula2scopenp_return_extra_items <- function() {
     cdf = "\\item{\\code{cdf}}{Always \\code{NULL}: The conditional CDFs are estimated nonparametrically (see \\code{condists}).}",
     bws = "\\item{\\code{bws}}{A named list with one \\code{np::condbandwidth} object per endogenous
     regressor (named accordingly), each used to estimate the conditional CDF
-    \\eqn{\\hat{F}(P_k \\mid X)}.}",
+    \\eqn{\\hat{F}(P_k \\mid X)} (shown in \\code{summary()}).}",
     first.stage.frames = "\\item{\\code{first.stage.frames}}{List of first-stage model frames, one per endogenous regressor (named after the respective endo regressor).}",
     condists = "\\item{\\code{condists}}{A named list with one \\code{np::condistribution}
     object per endogenous regressor (named accordingly).
