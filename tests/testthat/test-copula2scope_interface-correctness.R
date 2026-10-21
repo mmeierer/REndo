@@ -156,6 +156,15 @@ test_that("No exo: Same result as P&G implementation (copulaCorrection) - single
   )
 })
 
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo, no intercept (dataCopula2sCOPECase1)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopula2sCOPECase1,
+    formula.2scope = y ~ P - 1 | P,
+    formula.cc = y ~ P - 1 | continuous(P),
+    params = c("P")
+  )
+})
+
 test_that("No exo: Same result as P&G implementation (copulaCorrection) - multi endo (dataCopCont2)", {
   run_2scope_parkgupta_equivalent(
     data = dataCopCont2,
