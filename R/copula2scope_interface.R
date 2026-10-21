@@ -162,7 +162,7 @@ copula2sCOPE <- function(
   cl <- match.call()
 
   # Input checks -----------------------------------------------------------------------
-
+  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
   check_err_msg(checkinput_copula2stage_data_basics(data))
 
   # - >= 1 endogenous regressor
@@ -182,7 +182,6 @@ copula2sCOPE <- function(
     allowed.classes.exo = c("numeric", "factor", "character", "logical")
   ))
 
-  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
   check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))
   check_err_msg(checkinput_copula2stage_numboots(num.boots))
   check_err_msg(checkinput_copula2stage_verbose(verbose))
