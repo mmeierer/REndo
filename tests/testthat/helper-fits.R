@@ -1,6 +1,6 @@
 # For each method:
 #   fit_<method>_fast
-#   fit_<method>_cv
+#   fit_<method>_defaults
 
 # Suppress boots warning -----------------------------------------------------------
 # Suppress 1000 num.boots warning but lets all other warnings propagate
@@ -127,7 +127,7 @@ fit_2scopenp_defaults <- function(
   data,
   num.boots = 1000,
   verbose = FALSE,
-  npcdistbw.args = list(),
+  npcdistbw.args = list(bwmethod = "cv.ls"),
   bws = NULL
 ) {
   return(suppress_lowboots_warning(
@@ -165,7 +165,7 @@ fit_bmw_fast <- function(
 fit_bmw_defaults <- function(
   formula,
   data,
-  cdf = "adj.ecdf",
+  cdf = "resc.ecdf",
   num.boots = 1000,
   verbose = FALSE
 ) {
