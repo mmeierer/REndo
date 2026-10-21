@@ -36,6 +36,49 @@ doc_rendocopula2stage_return <- function(subclass, extra.items = NULL) {
 }
 
 
+copula2stage_compute_structural_fitted_residuals <- function(
+  res.lm.augmented,
+  labels.pcop
+) {
+  if (
+    is.null(labels.pcop) ||
+      length(labels.pcop) == 0 ||
+      anyNA(labels.pcop) ||
+      any(nchar(labels.pcop) == 0)
+  ) {
+    stop(
+      "Internal error: 'labels.pcop' is empty. This should not happen - please report as a bug!",
+      call. = FALSE
+    )
+  }
+
+  names.coefs.all <- names(coef(res.lm.augmented))
+
+  # Check if all aux regs are here
+  missing.aux <- setdiff(labels.pcop, names.coefs.all)
+  if (length(missing.aux)) {
+    stop(
+      "Internal error: Auxiliary regressor(s) not found in coefficients: ",
+      toString(missing.aux),
+      ". This should not happen - please report as a bug!",
+      call. = FALSE
+    )
+  }
+
+  names.structural <- names.coefs.all[!names.coefs.all %in% labels.pcop]
+  coefs.structural <- coef(res.lm.augmented)[names.structural]
+  mm.structural <- model.matrix(res.lm.augmented)[, names.structural, drop = FALSE]
+
+  fitted.values <- drop(mm.structural %*% coefs.structural)
+  names(fitted.values) <- row.names(mm.structural)
+
+  residuals <- drop(model.response(model.frame(res.lm.augmented)) - fitted.values)
+  names(residuals) <- names(fitted.values)
+
+  return(list(fitted.values = fitted.values, residuals = residuals))
+}
+
+
 # Shared constructor for the two-stage copula methods.
 # Method-specific fields are passed in `...`.
 #' @importFrom stats coef model.frame
