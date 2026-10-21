@@ -66,16 +66,16 @@ copula2stage_stop_if_constant <- function(X) {
 
 copula2stage_compute_structural_fitted_residuals <- function(
   res.lm.aug,
-  names.aux.regs
+  labels.pcop
 ) {
   if (
-    is.null(names.aux.regs) ||
-      length(names.aux.regs) == 0 ||
-      anyNA(names.aux.regs) ||
-      any(nchar(names.aux.regs) == 0)
+    is.null(labels.pcop) ||
+      length(labels.pcop) == 0 ||
+      anyNA(labels.pcop) ||
+      any(nchar(labels.pcop) == 0)
   ) {
     stop(
-      "Internal error: 'names.aux.regs' is empty. This should not happen - please report as a bug!",
+      "Internal error: 'labels.pcop' is empty. This should not happen - please report as a bug!",
       call. = TRUE
     )
   }
@@ -83,7 +83,7 @@ copula2stage_compute_structural_fitted_residuals <- function(
   names.coefs.all <- names(coef(res.lm.aug))
 
   # Check if all aux regs are here
-  missing.aux <- setdiff(names.aux.regs, names.coefs.all)
+  missing.aux <- setdiff(labels.pcop, names.coefs.all)
   if (length(missing.aux)) {
     stop(
       "Aux regressor(s) not found in coefficients: ",
@@ -92,7 +92,7 @@ copula2stage_compute_structural_fitted_residuals <- function(
     )
   }
 
-  names.structural <- names.coefs.all[!names.coefs.all %in% names.aux.regs]
+  names.structural <- names.coefs.all[!names.coefs.all %in% labels.pcop]
   coefs.structural <- coef(res.lm.aug)[names.structural]
   mm.structural <- model.matrix(res.lm.aug)[, names.structural, drop = FALSE]
 
