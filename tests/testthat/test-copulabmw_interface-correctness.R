@@ -9,58 +9,41 @@ data("dataCopBMWMultiEndo")
 data("dataCopCont")
 
 
+# Setup --------------------------------------------------------------------------------
+setup.correctness <- list(
+  fn = fit_bmw_fast,
+  data = dataCopBMW,
+  formula = y ~ X + P | P,
+  label = "copulaBMW"
+)
+
 # Invariance ---------------------------------------------------------------------------
-test_that("Differently sorted data produces same coefs", {
-  res.sorted <- fit_bmw_fast(
-    formula = y ~ X + P | P,
-    data = dataCopBMW[order(dataCopBMW$y), ]
-  )
-  res.rev <- fit_bmw_fast(
-    formula = y ~ X + P | P,
-    data = dataCopBMW[rev(order(dataCopBMW$y)), ]
-  )
-  expect_equal(coef(res.sorted), coef(res.rev))
-})
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-test_that("Formula order does not impact coefs", {
-  res.px <- fit_bmw_fast(formula = y ~ P + X | P, data = dataCopBMW)
-  res.xp <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  expect_equal(sort(coef(res.px)), sort(coef(res.xp)))
-})
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ P + X | P
+)
 
-test_that("Dot yields same result as explicit", {
-  res.dot <- fit_bmw_fast(formula = y ~ . | P, data = dataCopBMW)
-  res.explicit <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  expect_equal(coef(res.dot), coef(res.explicit))
-})
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ X + X + P | P
+)
 
-test_that("Duplicate regressor yields same result as single", {
-  res.normal <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  res.dup <- fit_bmw_fast(formula = y ~ X + X + P | P, data = dataCopBMW)
-  expect_equal(coef(res.dup), coef(res.normal))
-})
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . | P
+)
 
-test_that("Intercept is respected", {
-  res.with <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  res.without <- fit_bmw_fast(formula = y ~ X + P - 1 | P, data = dataCopBMW)
-  expect_true("(Intercept)" %in% names(coef(res.with)))
-  expect_false("(Intercept)" %in% names(coef(res.without)))
-  expect_equal(length(coef(res.with)), length(coef(res.without)) + 1)
-})
+# Formula specifications ------------------------------------------------------
+test_correctness_formula_intercept(setup = setup.correctness)
 
 
 # Internal consistency --------------------------------------------------------------
-test_that("Formula edge cases", {
-  # Are labels etc correctly preserved
-  run_cases(
-    fn = fit_bmw_fast,
-    cases = fixture_bmw_formula_edge_cases(),
-    check = function(res) {
-      check_labelled_consistently(res)
-      check_struct_residuals(res = res, aux.names = res$labels.pcop)
-    }
-  )
-})
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_bmw_formula_edge_cases()
+)
 
 test_that("Internals have correct shape", {
   res <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW, num.boots = 10)

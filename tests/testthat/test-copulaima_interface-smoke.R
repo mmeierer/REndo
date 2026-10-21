@@ -5,16 +5,19 @@ data("dataCopIMAContExo")
 data("dataCopIMAMultiEndo")
 data("dataCopIMABinExo")
 
-# Works out of the box --------------------------------------------------------------
-# this also checks running with verbose=T
-test_that("Works out of the box", {
-  expect_message(res <- copulaIMA(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  ))
-  check_clean_fit(res)
-})
+# Setup --------------------------------------------------------------------------------
+setup.smoke <- list(
+  method = copulaIMA,
+  fn = fit_ima_fast,
+  data = dataCopIMAContExo,
+  formula = y ~ X + P - 1 | P,
+  label = "copulaIMA"
+)
 
+# Defaults -----------------------------------------------------------------------------
+test_smoke_out_of_the_box(setup = setup.smoke)
+
+test_smoke_verbose(setup = setup.smoke)
 
 # Specifications for smoke tests ----------------------------------------------------
 # Specs vary along three dimensions:
@@ -46,53 +49,12 @@ specs <- list(
   )
 )
 
-cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+test_smoke_all_cdfs(setup = setup.smoke, specs = specs)
 
-# specs x cdf ----------------------------------------------------------------------
-test_that("copulaIMA runs across specs and cdf options", {
-  for (cdf in cdfs) {
-    run_cases(
-      fn = fit_ima_fast,
-      base.args = list(cdf = cdf),
-      cases = specs,
-      check = check_clean_fit
-    )
-  }
-})
+# Formula ------------------------------------------------------------------------------
+test_smoke_formula_edge_cases(setup = setup.smoke, cases = fixture_ima_formula_edge_cases())
 
-# Formula -------------------------------------------------------------------------
+# Data ---------------------------------------------------------------------------------
+test_smoke_na_irrelevant_col(setup = setup.smoke)
 
-test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
-  #   Do s3 methods work correctly
-  results <- run_cases(
-    fn = fit_ima_fast,
-    cases = fixture_ima_formula_edge_cases(),
-    check = check_clean_fit
-  )
-
-  # S3 methods on each edge case
-  for (nm in names(results)) {
-    check_print_summary(results[[nm]])
-  }
-})
-
-
-# Tolerate irrelevant data ----------------------------------------------------------
-test_that("Works with NA in irrelevant col", {
-  df <- dataCopIMAContExo
-  df$abc <- rnorm(nrow(df))
-  df$abc[1] <- NA
-  res <- fit_ima_fast(formula = y ~ X + P | P, data = df)
-  check_clean_fit(res)
-})
-
-
-# small sample ---------------------------------------------------------------------
-test_that("copulaIMA runs on small sample", {
-  small_data <- dataCopIMAContExo[1:50, ]
-  res <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = small_data
-  )
-  check_clean_fit(res)
-})
+test_smoke_small_sample(setup = setup.smoke)

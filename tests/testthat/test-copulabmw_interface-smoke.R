@@ -4,17 +4,21 @@ set.seed(42)
 data("dataCopBMW")
 data("dataCopBMWMultiEndo")
 
-all.cdfs <- c("ecdf", "adj.ecdf", "resc.ecdf", "kde")
 
+
+# Setup --------------------------------------------------------------------------------
+setup.smoke <- list(
+  method = copulaBMW,
+  fn = fit_bmw_fast,
+  data = dataCopBMW,
+  formula = y ~ X + P | P,
+  label = "copulaBMW"
+)
 
 # Out of the box --------------------------------------------------------------------
-test_that("Works out of the box", {
-  expect_message(res <- copulaBMW(
-    formula = y ~ X + P | P,
-    data = dataCopBMW
-  ))
-  check_clean_fit(res)
-})
+test_smoke_out_of_the_box(setup = setup.smoke)
+
+test_smoke_verbose(setup = setup.smoke)
 
 
 # specs x cdf ----------------------------------------------------------------------
@@ -23,65 +27,38 @@ test_that("Works out of the box", {
 # - endo: 1 vs multiple
 #
 # All combinations: cross each spec with all 4 cdf options
-test_that("Works for all specs and cdf combinations", {
-  specs <- list(
-    "with intercept, single endo" = list(
-      formula = y ~ X + P | P,
-      data = dataCopBMW
-    ),
-    "no intercept, single endo" = list(
-      formula = y ~ X + P - 1 | P,
-      data = dataCopBMW
-    ),
-    "with intercept, multiple endo" = list(
-      formula = y ~ X + P1 + P2 | P1 + P2,
-      data = dataCopBMWMultiEndo
-    ),
-    "no intercept, multiple endo" = list(
-      formula = y ~ X + P1 + P2 - 1 | P1 + P2,
-      data = dataCopBMWMultiEndo
-    )
+specs <- list(
+  "with intercept, single endo" = list(
+    formula = y ~ X + P | P,
+    data = dataCopBMW
+  ),
+  "no intercept, single endo" = list(
+    formula = y ~ X + P - 1 | P,
+    data = dataCopBMW
+  ),
+  "with intercept, multiple endo" = list(
+    formula = y ~ X + P1 + P2 | P1 + P2,
+    data = dataCopBMWMultiEndo
+  ),
+  "no intercept, multiple endo" = list(
+    formula = y ~ X + P1 + P2 - 1 | P1 + P2,
+    data = dataCopBMWMultiEndo
   )
+)
 
-  for (cdf in all.cdfs) {
-    run_cases(
-      fn = fit_bmw_fast,
-      base.args = list(cdf = cdf),
-      cases = specs,
-      check = check_clean_fit
-    )
-  }
-})
+test_smoke_all_cdfs(setup = setup.smoke, specs = specs)
 
 
 # Formula -------------------------------------------------------------------------
-test_that("Works for formula edge-cases, incl basic s3 (print, summary)", {
-  results <- run_cases(
-    fn = fit_bmw_fast,
-    cases = fixture_bmw_formula_edge_cases(),
-    check = check_clean_fit
-  )
-
-  # S3 methods on each edge case
-  for (nm in names(results)) {
-    check_print_summary(results[[nm]])
-  }
-})
+test_smoke_formula_edge_cases(
+  setup = setup.smoke,
+  cases = fixture_bmw_formula_edge_cases()
+)
 
 
 # Tolerate irrelevant data ----------------------------------------------------------
-test_that("Works with NA in irrelevant col", {
-  df <- dataCopBMW
-  df$abc <- rnorm(nrow(df))
-  df$abc[1] <- NA
-  res <- fit_bmw_fast(formula = y ~ X + P | P, data = df)
-  check_clean_fit(res)
-})
+test_smoke_na_irrelevant_col(setup = setup.smoke)
 
 
 # Small sample ----------------------------------------------------------------------
-test_that("Works on small sample", {
-  small <- dataCopBMW[1:50, ]
-  res <- fit_bmw_fast(formula = y ~ X + P | P, data = small)
-  check_clean_fit(res)
-})
+test_smoke_small_sample(setup = setup.smoke)

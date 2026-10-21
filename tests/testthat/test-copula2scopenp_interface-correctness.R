@@ -24,67 +24,46 @@ check_labelled_consistently_2scopenp <- function(res) {
 }
 
 
+# Setup --------------------------------------------------------------------------------
+setup.correctness <- list(
+  fn = fit_2scopenp_fast,
+  data = dataCopula2sCOPEnpCont,
+  formula = y ~ P + X | P,
+  label = "copula2sCOPEnp"
+)
+
 # Invariance ---------------------------------------------------------------------------
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-test_that("Different sorted data produces same coefs", {
-  # uses heuristic which should produce the exact same number
-  res.sorted <- fit_2scopenp_fast(
-    formula = y ~ P + X | P,
-    data = data.cont.pos[order(data.cont.pos$y), ]
-  )
-  res.rev <- fit_2scopenp_fast(
-    formula = y ~ P + X | P,
-    data = data.cont.pos[rev(order(data.cont.pos$y)), ]
-  )
-  expect_equal(coef(res.sorted), coef(res.rev))
-})
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ X + P | P
+)
 
-test_that("Order in formula does not impact coefs", {
-  res.px <- fit_2scopenp_fast(formula = y ~ P + X | P, data = data.cont.pos)
-  res.xp <- fit_2scopenp_fast(formula = y ~ X + P | P, data = data.cont.pos)
-  expect_equal(sort(coef(res.px)), sort(coef(res.xp)))
-})
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ P + X + X | P
+)
 
-test_that("Dot yields same as explicitly specified regressors", {
-  res.dot <- fit_2scopenp_fast(
-    formula = y ~ . |
-      P,
-    data = dataCopula2sCOPEnpCont
-  )
-  res.explicit <- fit_2scopenp_fast(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont
-  )
-  expect_equal(coef(res.dot), coef(res.explicit))
-})
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . | P
+)
 
-test_that("Duplicate regressor has same result as single", {
-  res.normal <- fit_2scopenp_fast(formula = y ~ P + X | P, data = data.cont.pos)
-  res.dup <- fit_2scopenp_fast(formula = y ~ P + X + X | P, data = data.cont.pos)
-  expect_equal(coef(res.dup), coef(res.normal))
-})
-
-test_that("Correctly respect intercept", {
-  res.with <- fit_2scopenp_fast(formula = y ~ P + X | P, data = data.cont.pos)
-  res.without <- fit_2scopenp_fast(formula = y ~ P + X - 1 | P, data = data.cont.pos)
-  expect_true("(Intercept)" %in% names(coef(res.with)))
-  expect_false("(Intercept)" %in% names(coef(res.without)))
-  expect_equal(length(coef(res.with)), length(coef(res.without)) + 1)
-})
+# Formula specifications ------------------------------------------------------
+test_correctness_formula_intercept(setup = setup.correctness)
 
 
 # Internal consistency --------------------------------------------------------------
 
-test_that("Formula edge cases: Label & residuals correct", {
-  run_cases(
-    fn = fit_2scopenp_fast,
-    cases = fixture_2scopenp_formula_edge_cases(),
-    check = function(res) {
-      check_labelled_consistently_2scopenp(res)
-      check_struct_residuals(res = res, aux.names = res$labels.pcop)
-    }
-  )
-})
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_2scopenp_formula_edge_cases(),
+  check = function(res) {
+    check_labelled_consistently_2scopenp(res)
+    check_struct_residuals(res = res, aux.names = res$labels.pcop)
+  }
+)
 
 
 test_that("Internals have correct shape", {

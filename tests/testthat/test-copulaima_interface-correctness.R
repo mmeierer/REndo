@@ -7,71 +7,36 @@ data("dataCopIMAMultiEndo")
 data("dataCopIMABinExo")
 
 
-# Data sorting ----------------------------------------------------------------------
-test_that("Differently sorted data produces same results", {
-  data_sorted <- dataCopIMAContExo[order(dataCopIMAContExo$y), ]
-  data_rev <- dataCopIMAContExo[rev(order(dataCopIMAContExo$y)), ]
+# Setup --------------------------------------------------------------------------------
+# IMA tests without intercept
+setup.correctness <- list(
+  fn = fit_ima_fast,
+  data = dataCopIMAContExo,
+  formula = y ~ X + P - 1 | P,
+  label = "copulaIMA"
+)
 
-  res_sorted <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = data_sorted
-  )
-  res_rev <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = data_rev
-  )
+# Invariance ---------------------------------------------------------------------------
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-  expect_equal(object = coef(res_sorted), expected = coef(res_rev))
-})
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ P + X - 1 | P
+)
+
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ X + X + P - 1 | P
+)
+
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . - 1 | P
+)
 
 # Formula specifications ------------------------------------------------------
 
-test_that("Intercept in formula is correctly respected", {
-  res_with <- fit_ima_fast(
-    formula = y ~ X + P | P,
-    data = dataCopIMAContExo
-  )
-
-  res_without <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  expect_true("(Intercept)" %in% names(coef(res_with)))
-  expect_false("(Intercept)" %in% names(coef(res_without)))
-  expect_equal(
-    object = length(coef(res_with)),
-    expected = length(coef(res_without)) + 1L
-  )
-})
-
-test_that("Regressor order in formula does not affect results", {
-  res_xy <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  res_yx <- fit_ima_fast(
-    formula = y ~ P + X - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  expect_equal(object = sort(coef(res_xy)), expected = sort(coef(res_yx)))
-})
-
-test_that("Duplicate regressors are handled correctly", {
-  res_normal <- fit_ima_fast(
-    formula = y ~ X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  res_dup <- fit_ima_fast(
-    formula = y ~ X + X + P - 1 | P,
-    data = dataCopIMAContExo
-  )
-
-  expect_equal(object = coef(res_dup), expected = coef(res_normal))
-})
+test_correctness_formula_intercept(setup = setup.correctness)
 
 # Parameter recovery -------------------------------------------------------
 
@@ -106,17 +71,10 @@ test_that("Parameter recovery: dataCopIMABinExo", {
 
 # Internal consistency --------------------------------------------------------------
 
-test_that("Formula edge cases", {
-  # Are labels etc are correctly preserved
-  run_cases(
-    fn = fit_ima_fast,
-    cases = fixture_ima_formula_edge_cases(),
-    check = function(res) {
-      check_labelled_consistently(res)
-      check_struct_residuals(res = res, aux.names = res$labels.pcop)
-    }
-  )
-})
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_ima_formula_edge_cases()
+)
 
 # Bootstrap: Degenerate cases ---------------------------------------------------
 
