@@ -41,7 +41,9 @@ copula2stage_pstar <- function(P, cdf) {
     })
     P.star <- as.matrix(P.star)
   } else {
-    stop("Invalid `cdf` to copula2stage_pstar!")
+    stop(
+      "Internal error: Invalid 'cdf' passed to copula2stage_pstar(). This should not happen - please report as a bug!"
+    )
   }
 
   colnames(P.star) <- colnames(P)
@@ -59,7 +61,12 @@ copula2stage_stop_if_constant <- function(X) {
     FUN.VALUE = logical(1)
   )
   if (any(is.const)) {
-    stop("Constant regressor(s): ", toString(colnames(X)[is.const]), call. = FALSE)
+    stop(
+      "Regressor(s) must not be constant: ",
+      toString(colnames(X)[is.const]),
+      ".",
+      call. = FALSE
+    )
   }
 }
 
@@ -86,9 +93,9 @@ copula2stage_compute_structural_fitted_residuals <- function(
   missing.aux <- setdiff(labels.pcop, names.coefs.all)
   if (length(missing.aux)) {
     stop(
-      "Aux regressor(s) not found in coefficients: ",
+      "Internal error: Auxiliary regressor(s) not found in coefficients: ",
       toString(missing.aux),
-      " This should not happen - please report as a bug!"
+      ". This should not happen - please report as a bug!"
     )
   }
 

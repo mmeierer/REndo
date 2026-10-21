@@ -90,7 +90,7 @@ checkinput_copula2stage_vars_in_data <- function(F.formula, data) {
   if (length(missing.vars) > 0) {
     return(paste0(
       "Variable(s) in parameter 'formula' not found in parameter 'data': ",
-      paste0(missing.vars, collapse = "', '"),
+      toString(missing.vars),
       "."
     ))
   }
@@ -191,6 +191,7 @@ checkinput_copula2stage_modelframe <- function(
       warning(
         "The following numeric regressors have low cardinality (<= 10 distinct values) and may be non-continuous: ",
         toString(low.card.vars),
+        ".",
         call. = FALSE,
         immediate. = TRUE
       )
