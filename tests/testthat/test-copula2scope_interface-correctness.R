@@ -8,6 +8,7 @@ data("dataCopula2sCOPECase3")
 
 # Setup --------------------------------------------------------------------------------
 setup.correctness <- list(
+  method = copula2sCOPE,
   fn = fit_2scope_fast,
   data = dataCopula2sCOPECase1,
   formula = y ~ P + X | P,
@@ -34,6 +35,9 @@ test_correctness_invariance_dot(
 
 # Formula specifications ------------------------------------------------------
 test_correctness_formula_intercept(setup = setup.correctness)
+
+# Parameter cdf ------------------------------------------------------------------------
+test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 # Parameter recovery -------------------------------------------------------
 

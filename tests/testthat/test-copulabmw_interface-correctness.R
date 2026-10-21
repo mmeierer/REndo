@@ -11,6 +11,7 @@ data("dataCopCont")
 
 # Setup --------------------------------------------------------------------------------
 setup.correctness <- list(
+  method = copulaBMW,
   fn = fit_bmw_fast,
   data = dataCopBMW,
   formula = y ~ X + P | P,
@@ -58,20 +59,7 @@ test_that("Internals have correct shape", {
 
 
 # Parameter cdf ----------------------------------------------------------------------
-test_that("Different cdf produce different result", {
-  f.all <- y ~ X + P1 + P2 | P1 + P2
-  res.adj <- fit_bmw_fast(formula = f.all, data = dataCopBMWMultiEndo, cdf = "adj.ecdf")
-  res.ecdf <- fit_bmw_fast(formula = f.all, data = dataCopBMWMultiEndo, cdf = "ecdf")
-  res.resc <- fit_bmw_fast(
-    formula = f.all,
-    data = dataCopBMWMultiEndo,
-    cdf = "resc.ecdf"
-  )
-  res.kde <- fit_bmw_fast(formula = f.all, data = dataCopBMWMultiEndo, cdf = "kde")
-  expect_false(isTRUE(all.equal(coef(res.adj), coef(res.ecdf))))
-  expect_false(isTRUE(all.equal(coef(res.ecdf), coef(res.resc))))
-  expect_false(isTRUE(all.equal(coef(res.resc), coef(res.kde))))
-})
+test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 
 # Parameter recovery -------------------------------------------------------------------

@@ -1,5 +1,5 @@
 # Correctness tests for the copula2stage methods
-# `setup`: list(fn, data, formula, label)
+# `setup`: list(fn, data, formula, label), and `method` (eg copulaBMW) for the cdf tests
 
 # Invariances --------------------------------------------------------------------------
 # test_that() wrappers that fit the same specification twice and check for equal coefs
@@ -81,5 +81,26 @@ test_correctness_formula_edge_cases <- function(
 ) {
   test_that(paste0(setup$label, ": Formula edge cases are fitted consistently"), {
     run_cases(fn = setup$fn, cases = cases, check = check)
+  })
+}
+
+
+# Parameter cdf ------------------------------------------------------------------------
+# Each pair of cdfs of the method (taken from its signature) gives different coefs.
+# All pairs: "different" is not transitive
+test_correctness_all_cdfs_different_result <- function(setup) {
+  test_that(paste0(setup$label, ": All cdfs give different results"), {
+    cdfs <- eval(formals(setup$method)$cdf)
+    coefs <- lapply(cdfs, function(cdf) {
+      return(coef(setup$fn(formula = setup$formula, data = setup$data, cdf = cdf)))
+    })
+    names(coefs) <- cdfs
+
+    for (pair in combn(cdfs, 2, simplify = FALSE)) {
+      expect_false(
+        isTRUE(all.equal(coefs[[pair[1]]], coefs[[pair[2]]])),
+        info = paste(pair, collapse = " vs ")
+      )
+    }
   })
 }

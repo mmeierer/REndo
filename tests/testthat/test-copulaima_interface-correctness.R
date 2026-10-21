@@ -10,6 +10,7 @@ data("dataCopIMABinExo")
 # Setup --------------------------------------------------------------------------------
 # IMA tests without intercept
 setup.correctness <- list(
+  method = copulaIMA,
   fn = fit_ima_fast,
   data = dataCopIMAContExo,
   formula = y ~ X + P - 1 | P,
@@ -37,6 +38,9 @@ test_correctness_invariance_dot(
 # Formula specifications ------------------------------------------------------
 
 test_correctness_formula_intercept(setup = setup.correctness)
+
+# Parameter cdf ------------------------------------------------------------------------
+test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 # Parameter recovery -------------------------------------------------------
 
