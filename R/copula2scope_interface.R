@@ -231,14 +231,14 @@ copula2sCOPE <- function(
   # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    res.b <- copula2scope_fit(
+    fit.b <- copula2scope_fit(
       F.formula = F.formula,
       data = data.b,
       cdf = cdf,
       labels.endo = labels.endo,
       labels.exo = labels.exo
     )
-    return(res.b$res.lm.augmented)
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
