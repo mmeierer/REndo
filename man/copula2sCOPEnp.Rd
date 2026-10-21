@@ -354,6 +354,10 @@ Hayfield, T. and Racine, J. S. (2008). Nonparametric econometrics: The np packag
 \doi{10.18637/jss.v027.i05}
 }
 \seealso{
+[`vcov()`][vcov.rendo.boots()] for how the variance-covariance matrix is derived
+
+[`confint()`][confint.rendo.boots()] for how confidence intervals are derived
+
 \code{\link[=summary.rendo.copula.2scope.np]{summary()}} for the summary, incl. the
 table of the selected bandwidths
 
