@@ -14,7 +14,7 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
   )
 
   condists <- list()
-  mfs <- list()
+  first.stage.frames <- list()
 
   for (k in seq_along(labels.endo)) {
     p.label <- labels.endo[k]
@@ -34,7 +34,7 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     mf.p <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
     mf.p <- copula2scopenp_mf_drop_asis(mf.p)
     copula2stage_stop_if_constant(mf.p)
-    mfs[[p.label]] <- mf.p
+    first.stage.frames[[p.label]] <- mf.p
 
     # TODO: Check if bw were fit with formula or 2 data inputs as user might specify differently?
 
@@ -97,7 +97,7 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     res.lm.augmented = res.2nd.stage$res.lm.augmented,
     labels.pcop = res.2nd.stage$labels.pcop,
     condists = condists,
-    mfs = mfs
+    first.stage.frames = first.stage.frames
   ))
 }
 

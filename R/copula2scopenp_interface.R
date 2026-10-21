@@ -425,7 +425,7 @@ copula2sCOPEnp <- function(
     labels.pcop = fit$labels.pcop,
     subclass = "rendo.copula.2scope.np",
     # 2sCOPEnp-specific
-    first.stage.frames = fit$mfs,
+    first.stage.frames = fit$first.stage.frames,
     bws = bws,
     condists = fit$condists
   ))
