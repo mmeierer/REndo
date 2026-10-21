@@ -99,7 +99,8 @@ test_correctness_formula_transformations_endo_exo <- function(
     res.endo <- setup$fn(formula = formula.endo, data = df)
 
     coefs <- coef(res.endo)
-    names(coefs) <- sub("log(P)", "P", names(coefs), fixed = TRUE)
+    # also strip backticks: correction term of log(P) is `log(P)_cop` but P_cop for P
+    names(coefs) <- gsub("`", "", sub("log(P)", "P", names(coefs), fixed = TRUE))
     expect_setequal(names(coefs), names(coef(res)))
     expect_equal(coefs[names(coef(res))], coef(res))
   })
