@@ -2,17 +2,22 @@
 #   fit_<method>_fast
 #   fit_<method>_defaults
 
-# Suppress boots warning -----------------------------------------------------------
-# Suppress 1000 num.boots warning but lets all other warnings propagate
-suppress_lowboots_warning <- function(expr) {
+# Suppress warnings ----------------------------------------------------------------
+# Suppress warnings matching `regexp` but lets all other warnings propagate
+suppress_warning_matching <- function(expr, regexp) {
   return(withCallingHandlers(
     expr,
     warning = function(w) {
-      if (grepl(pattern = "recommended to run 1000", x = conditionMessage(w))) {
+      if (grepl(pattern = regexp, x = conditionMessage(w))) {
         invokeRestart("muffleWarning")
       }
     }
   ))
+}
+
+# Suppress 1000 num.boots warning
+suppress_lowboots_warning <- function(expr) {
+  return(suppress_warning_matching(expr, regexp = "recommended to run 1000"))
 }
 
 # copulaIMA ----------------------------------------------------------------------------
@@ -55,14 +60,7 @@ fit_ima_defaults <- function(
 # copula2sCOPE -------------------------------------------------------------------------
 
 suppress_2scope_noexo_warning <- function(expr) {
-  return(withCallingHandlers(
-    expr,
-    warning = function(w) {
-      if (grepl(pattern = "No exogenous regressors found", x = conditionMessage(w))) {
-        invokeRestart("muffleWarning")
-      }
-    }
-  ))
+  return(suppress_warning_matching(expr, regexp = "No exogenous regressors found"))
 }
 
 fit_2scope_fast <- function(
