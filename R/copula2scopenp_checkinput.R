@@ -32,7 +32,7 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
 
   # Plain list
   if (!identical(class(npcdistbw.args), "list")) {
-    return("Parameter `npcdistbw.args` must be a plain list.")
+    return("Parameter 'npcdistbw.args' must be a plain list.")
   }
 
   # Must be named
@@ -47,7 +47,7 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
     err.msg <- c(
       err.msg,
       paste0(
-        "`npcdistbw.args` may not contain reserved argument(s): ",
+        "'npcdistbw.args' may not contain reserved argument(s): ",
         toString(reserved.nms)
       )
     )
@@ -59,9 +59,9 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
   if (length(unknown.nms) > 0) {
     # only WARN because there is the `...` parameter in np::npcdistbw which may be used!
     warning(
-      "Unknown argument(s) in `npcdistbw.args`: ",
+      "Unknown argument(s) in 'npcdistbw.args': ",
       toString(unknown.nms),
-      ". Check docu `?np::npcdistbw` for accepted parameters.",
+      ". Check the documentation '?np::npcdistbw' for accepted parameters.",
       call. = FALSE,
       immediate. = TRUE
     )
