@@ -321,7 +321,26 @@ copula2sCOPEnp <- function(
 
   #Input checks
   check_err_msg(checkinput_copula2stage_data_basics(data))
-  check_err_msg(checkinput_copula2scopenp_formula_data(formula = formula, data = data))
+
+  # - >= 1 endogenous regressor
+  # - >= 1 exogenous regressor
+  # - endogenous: numeric, ordered
+  # - exogenous: numeric, factor, ordered
+  # - Block interaction terms: Are only resolved in model.matrix() but only use model.frame()
+  #    in this method. Specifying them would silently ignore them and NOT forward
+  #    them into np conditional CDF
+  check_err_msg(checkinput_copula2stage_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 1,
+    msg.min.num.exo = "copula2sCOPEnp requires at least one exogenous regressor for the nonparametric conditional CDF estimation.",
+    allow.interactions = FALSE,
+    allow.constant.regressors = FALSE,
+    warn.low.card.endo = FALSE,
+    allowed.classes.endo = c("numeric", "ordered"),
+    allowed.classes.exo = c("numeric", "factor", "ordered")
+  ))
+
   check_err_msg(checkinput_copula2scopenp_npcdistbwargs(npcdistbw.args))
   check_err_msg(checkinput_copula2stage_numboots(num.boots))
   check_err_msg(checkinput_copula2stage_verbose(verbose))

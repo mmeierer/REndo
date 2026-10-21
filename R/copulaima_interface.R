@@ -176,7 +176,29 @@ copulaIMA <- function(
   # Input checks  -------------------------------------------------------------------
   allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
   check_err_msg(checkinput_copula2stage_data_basics(data))
-  check_err_msg(checkinput_copulaima_formula_data(data = data, formula = formula))
+
+  # - >= 1 endogenous regressor
+  # - >= 1 exogenous regressor
+  # - no interactions
+  # - endogenous: numeric
+  # - exogenous: numeric
+  # - no constant regressors
+  check_err_msg(checkinput_copula2stage_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 1,
+    msg.min.num.exo = paste0(
+      "At least one exogenous regressor is required for the first-stage regression. ",
+      "Without exogenous regressors, IMA is equivalent to Park and Gupta (2012): ",
+      "Use copulaCorrection() instead."
+    ),
+    allow.interactions = FALSE,
+    allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
+    allowed.classes.endo = "numeric",
+    allowed.classes.exo = "numeric"
+  ))
+
   check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))
   check_err_msg(checkinput_copula2stage_numboots(num.boots))
   check_err_msg(checkinput_copula2stage_verbose(verbose))
