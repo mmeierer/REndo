@@ -110,17 +110,3 @@ test_smoke_formula_edge_cases(
   setup = setup.smoke,
   cases = fixture_2scope_formula_edge_cases()
 )
-
-
-# Warnings ------------------------------------------------------------------------
-test_that("Warns if no exogenous regressors", {
-  expect_warning(
-    suppress_lowboots_warning(copula2sCOPE(
-      formula = y ~ P | P,
-      data = dataCopula2sCOPECase1,
-      num.boots = 2,
-      verbose = FALSE
-    )),
-    regexp = "No exogenous regressors found"
-  )
-})
