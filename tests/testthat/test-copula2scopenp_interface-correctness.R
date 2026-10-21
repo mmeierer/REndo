@@ -218,7 +218,7 @@ test_that("Recovery: Continuous endo (dataCopula2sCOPEnpCont)", {
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = 2))
 })
 
-test_that("Recovery: Binary enod (dataCopula2sCOPEnpCont)", {
+test_that("Recovery: Binary endo (dataCopula2sCOPEnpBi)", {
   skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ P + X | P,
