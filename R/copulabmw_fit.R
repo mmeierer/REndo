@@ -1,5 +1,5 @@
 #' @importFrom stats lm reformulate model.matrix model.frame model.response
-copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
+copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # Stage 1 --------------------------------------------------------------------
   # BMW correction
   # step 1: first-stage in the original space

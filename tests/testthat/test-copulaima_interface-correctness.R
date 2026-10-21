@@ -129,9 +129,9 @@ test_that("fit() stops on constant data (required for bootstrapping)", {
       copulaima_fit(
         F.formula = as.Formula(y ~ X + P | P),
         data = df.const,
-        cdf = "ecdf",
         labels.endo = "P",
-        labels.exo = "X"
+        labels.exo = "X",
+        cdf = "ecdf"
       ),
       regexp = "must not be constant",
       info = col

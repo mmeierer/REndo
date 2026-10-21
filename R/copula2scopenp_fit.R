@@ -1,7 +1,7 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm model.frame reformulate update qnorm
 #' @importFrom np npcdist
-copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, verbose) {
+copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo, bws) {
   #conditional CDF smooths the discrete distribution through X
 
   # First stage: conditional CDF ----------------------------------------------------
@@ -113,11 +113,11 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
 #' @importFrom np npcdistbw npcdist
 copula2scopenp_bandwidth <- function(
   data,
-  bws,
-  npcdistbw.args,
-  labels.exo,
+  verbose,
   labels.endo,
-  verbose
+  labels.exo,
+  bws,
+  npcdistbw.args
 ) {
   k <- 1
 

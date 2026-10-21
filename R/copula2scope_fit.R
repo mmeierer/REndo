@@ -1,6 +1,6 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats formula lm model.frame model.matrix reformulate qnorm residuals
-copula2scope_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
+copula2scope_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # 1st Stage ------------------------------------------------------------------
 
   # . prepare data -------------------------------------------------------------

@@ -1,6 +1,6 @@
 #' @importFrom Formula as.Formula
 #' @importFrom stats lm model.frame model.matrix model.response qnorm residuals
-copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
+copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # Stage 1 --------------------------------------------------------------------
 
   # . Create Pstar -------------------------------------------------------------

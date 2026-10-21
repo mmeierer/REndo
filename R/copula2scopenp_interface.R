@@ -369,11 +369,11 @@ copula2sCOPEnp <- function(
   # on the bootstrap distribution of the structural coefficients
   bws <- copula2scopenp_bandwidth(
     data = data,
-    labels.exo = labels.exo,
+    verbose = verbose,
     labels.endo = labels.endo,
+    labels.exo = labels.exo,
     bws = bws,
-    npcdistbw.args = npcdistbw.args,
-    verbose = verbose
+    npcdistbw.args = npcdistbw.args
   )
 
   # TODO: warn if itnmax was hit or bws are at search boundaries (lower bound for
@@ -384,9 +384,9 @@ copula2sCOPEnp <- function(
   fit <- copula2scopenp_fit(
     F.formula = F.formula,
     data = data,
-    labels.exo = labels.exo,
-    labels.endo = labels.endo,
     verbose = verbose,
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
     bws = bws
   )
 
@@ -396,9 +396,9 @@ copula2sCOPEnp <- function(
     fit.b <- copula2scopenp_fit(
       F.formula = F.formula,
       data = data.b,
-      labels.exo = labels.exo,
-      labels.endo = labels.endo,
       verbose = FALSE,
+      labels.endo = labels.endo,
+      labels.exo = labels.exo,
       bws = bws
     )
     return(fit.b$res.lm.augmented)

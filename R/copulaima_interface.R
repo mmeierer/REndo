@@ -223,9 +223,9 @@ copulaIMA <- function(
   fit <- copulaima_fit(
     F.formula = F.formula,
     data = data,
-    cdf = cdf,
     labels.endo = labels.endo,
-    labels.exo = labels.exo
+    labels.exo = labels.exo,
+    cdf = cdf
   )
 
   # Bootstrapping ----------------------------------------------------------------------
@@ -234,9 +234,9 @@ copulaIMA <- function(
     fit.b <- copulaima_fit(
       F.formula = F.formula,
       data = data.b,
-      cdf = cdf,
       labels.endo = labels.endo,
-      labels.exo = labels.exo
+      labels.exo = labels.exo,
+      cdf = cdf
     )
     return(fit.b$res.lm.augmented)
   }
