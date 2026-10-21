@@ -1,5 +1,5 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame model.matrix model.response qnorm residuals
+#' @importFrom stats lm model.frame model.matrix model.response na.fail qnorm residuals
 copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # Stage 1 --------------------------------------------------------------------
 
@@ -8,7 +8,7 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # Haschka IMA 2024, section 3.2 step 1
   # Haschka 2025 page 164 eq. 3.1
 
-  mf.all <- model.frame(formula(F.formula, lhs = 1, rhs = 1), data = data)
+  mf.all <- model.frame(formula(F.formula, lhs = 1, rhs = 1), data = data, na.action = na.fail)
 
   f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
   X.endo <- model.matrix(f.endo, data = mf.all)
