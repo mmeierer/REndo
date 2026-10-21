@@ -84,7 +84,7 @@
 #' this could result in oversmoothing and introducing bias, leading to underfitting (Hu et al. 2025).
 #' However, no closed-form rule-of-thumb bandwidth exists for conditional CDF estimator because these rules
 #' assume a known marginal distribution, yet this is an assumption that the 2sCOPEnp method relaxes. The default
-#' bandwidth is therefore selected through least-squares cross-validation (Li and Racine 2013) which is
+#' bandwidth is therefore selected through least-squares cross-validation (Li, Lin and Racine 2013) which is
 #' data-driven and distribution-free.
 #'
 #' The bandwidth is estimated using \link[np:npcdistbw]{\code{np::npcdistbw()}} with its
