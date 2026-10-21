@@ -43,6 +43,7 @@ checkinput_copula2stage_data_basics <- function(data) {
 #  - single response
 #
 #' @importFrom Formula as.Formula
+#' @importFrom stats formula
 checkinput_copula2stage_formula_basics <- function(formula) {
   if (!inherits(formula, "formula")) {
     return("Parameter 'formula' must be a formula.")

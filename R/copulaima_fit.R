@@ -1,5 +1,4 @@
-#' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame model.matrix model.response na.fail qnorm residuals
+#' @importFrom stats formula lm model.frame model.matrix na.fail qnorm reformulate residuals
 copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # 1st stage ------------------------------------------------------------------
 

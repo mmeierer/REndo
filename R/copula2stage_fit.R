@@ -86,6 +86,7 @@ copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
   return(m)
 }
 
+#' @importFrom stats lm reformulate terms update
 copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
   stopifnot(!is.null(colnames(cop.terms)))
 

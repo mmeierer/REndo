@@ -1,5 +1,4 @@
-#' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame reformulate update qnorm
+#' @importFrom stats model.frame na.fail qnorm reformulate
 #' @importFrom np npcdist
 copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo, bws) {
   #conditional CDF smooths the discrete distribution through X
@@ -109,7 +108,8 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
 #F hat_(P_k |X) nonparametrically using Kernel methods (Hu et al 2025, mentions mostly Nadaraya-Watson (NW) kernel
 #before eq. 10) Stage 1 from table 3
 #Then the normal quantile transformation is applied to get the copula correction term
-#' @importFrom stats model.frame model.matrix
+#' @importFrom stats model.frame na.fail reformulate
+#' @importFrom utils modifyList
 #' @importFrom np npcdistbw npcdist
 copula2scopenp_bandwidth <- function(
   data,

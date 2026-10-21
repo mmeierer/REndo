@@ -1,4 +1,4 @@
-#' @importFrom stats lm reformulate model.matrix model.frame model.response na.fail
+#' @importFrom stats lm reformulate model.matrix model.frame model.response na.fail qnorm residuals
 copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # 1st stage ------------------------------------------------------------------
   # BMW correction

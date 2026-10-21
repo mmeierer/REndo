@@ -36,6 +36,7 @@ doc_rendocopula2stage_return <- function(subclass, extra.items = NULL) {
 }
 
 
+#' @importFrom stats coef model.frame model.matrix model.response
 copula2stage_get_structural_parts <- function(
   res.lm.augmented,
   labels.pcop
