@@ -20,11 +20,19 @@ test_smoke_verbose(setup = setup.smoke)
 
 
 # Specifications for smoke tests ----------------------------------------------------
-# Specs vary along three dimensions:
+# Specs vary along four dimensions:
 # - Intercept: w/ vs w/o
 # - Exo: present vs absent
 # - Endo: single vs multiple (X is not actually endo)
+# - Exo class: numeric vs factor vs ordered vs character vs logical vs numeric matrix
 # Each spec is crossed with all 4 cdf options
+
+# exo factor, ordered and character with >2 levels (ordered: .L, .Q, .C columns)
+data.classes <- dataCopula2sCOPECase1
+data.classes$x_fac <- factor(rep(c("a", "b", "c", "d"), length.out = nrow(data.classes)))
+data.classes$x_ord <- ordered(data.classes$x_fac)
+data.classes$x_char <- as.character(data.classes$x_fac)
+data.classes$x_lgl <- rep(c(TRUE, FALSE), length.out = nrow(data.classes))
 
 specs <- list(
   "with intercept, with exo, single endo" = list(
@@ -58,6 +66,32 @@ specs <- list(
   "no intercept, with exo, multiple endo" = list(
     formula = y ~ P + X + X2 - 1 | P + X,
     data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1)))
+  ),
+  "with intercept, factor exo, single endo" = list(
+    formula = y ~ P + X + x_fac | P,
+    data = data.classes
+  ),
+  "with intercept, ordered exo, single endo" = list(
+    formula = y ~ P + X + x_ord | P,
+    data = data.classes
+  ),
+  "with intercept, character exo, single endo" = list(
+    formula = y ~ P + X + x_char | P,
+    data = data.classes
+  ),
+  "with intercept, logical exo, single endo" = list(
+    formula = y ~ P + X + x_lgl | P,
+    data = data.classes
+  ),
+  # model.frame class nmatrix.1
+  "with intercept, 1-col matrix exo, single endo" = list(
+    formula = y ~ P + scale(X) | P,
+    data = data.classes
+  ),
+  # model.frame class nmatrix.2
+  "with intercept, 2-col matrix exo, single endo" = list(
+    formula = y ~ P + poly(X, 2) | P,
+    data = data.classes
   )
 )
 

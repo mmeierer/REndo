@@ -15,7 +15,7 @@ copula2sCOPE(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous regressors must be \code{numeric}. Exogenous regressors may be \code{numeric}, \code{factor}, \code{character}, or \code{logical}, but not \code{ordered}.}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.
