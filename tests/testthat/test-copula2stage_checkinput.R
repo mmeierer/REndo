@@ -158,13 +158,15 @@ test_that("copula2stage_label_to_colname normalizes labels to col names", {
 # checkinput_copula2stage_modelframe ---------------------------------------------------
 test_that("_modelframe fails on NAs, illegal classes", {
   # NAs from transformation (also produces warning)
-  expect_warning(res <- checkinput_copula2stage_modelframe(
-    F.formula = as.Formula(y ~ log(x_num - 1000)),
-    data = fixture_copula_df(),
-    allowed.classes = list("log(x_num - 1000)" = "numeric"),
-    labels.warn.low.card = NULL,
-    forbid.constant = FALSE
-  ))
+  expect_warning(
+    res <- checkinput_copula2stage_modelframe(
+      F.formula = as.Formula(y ~ log(x_num - 1000)),
+      data = fixture_copula_df(),
+      allowed.classes = list("log(x_num - 1000)" = "numeric"),
+      labels.warn.low.card = NULL,
+      forbid.constant = FALSE
+    )
+  )
   expect_match(res, regexp = "missing values")
 
   df.na.response <- fixture_copula_df()

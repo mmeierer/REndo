@@ -52,7 +52,10 @@ specs <- list(
 test_smoke_all_cdfs(setup = setup.smoke, specs = specs)
 
 # Formula ------------------------------------------------------------------------------
-test_smoke_formula_edge_cases(setup = setup.smoke, cases = fixture_ima_formula_edge_cases())
+test_smoke_formula_edge_cases(
+  setup = setup.smoke,
+  cases = fixture_ima_formula_edge_cases()
+)
 
 # Data ---------------------------------------------------------------------------------
 test_smoke_na_irrelevant_col(setup = setup.smoke)

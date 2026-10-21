@@ -62,7 +62,6 @@ specs <- list(
 )
 
 
-
 # specs x cdf ----------------------------------------------------------------------
 test_smoke_all_cdfs(setup = setup.smoke, specs = specs)
 

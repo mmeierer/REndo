@@ -19,8 +19,8 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     p.label <- labels.endo[k]
 
     if (verbose) {
-      msg.k <- paste0(p.label, "' (",k," of ",length(labels.endo),") ...")
-      message("Computing conditional CDF for endogenous regressor '",msg.k)
+      msg.k <- paste0(p.label, "' (", k, " of ", length(labels.endo), ") ...")
+      message("Computing conditional CDF for endogenous regressor '", msg.k)
     }
 
     # exo column is everything that is non-intercept and non-endo col

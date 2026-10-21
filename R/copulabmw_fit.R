@@ -40,7 +40,11 @@ copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
 
     # endo: Its in the response. Make matrix for check, named for error message
     k.endo <- model.response(model.frame(res.lm.first))
-    copula2stage_stop_if_constant(matrix(k.endo, ncol = 1, dimnames = list(NULL, p.label)))
+    copula2stage_stop_if_constant(matrix(
+      k.endo,
+      ncol = 1,
+      dimnames = list(NULL, p.label)
+    ))
 
     e.hat <- residuals(res.lm.first)
 

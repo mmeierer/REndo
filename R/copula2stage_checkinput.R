@@ -175,7 +175,11 @@ checkinput_copula2stage_modelframe <- function(
 
   # only for given labels: warn about low-cardinality numeric variable
   if (length(labels.warn.low.card) > 0) {
-    colnames.low.card <- vapply(labels.warn.low.card, copula2stage_label_to_colname, character(1))
+    colnames.low.card <- vapply(
+      labels.warn.low.card,
+      copula2stage_label_to_colname,
+      character(1)
+    )
     stopifnot(all(colnames.low.card %in% mf.cols))
 
     is.low.card <- vapply(

@@ -318,7 +318,7 @@ copula2sCOPEnp <- function(
   data,
   npcdistbw.args = list(
     #to communicate to the user that bw estimation uses CV by default
-    bwmethod='cv.ls'
+    bwmethod = 'cv.ls'
   ),
   bws = NULL,
   num.boots = 1000,
@@ -360,8 +360,6 @@ copula2sCOPEnp <- function(
   labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   check_err_msg(checkinput_copula2scopenp_bws(bws = bws, labels.endo = labels.endo))
-
-
 
   if (verbose) {
     message(

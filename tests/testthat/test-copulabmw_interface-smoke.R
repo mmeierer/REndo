@@ -5,7 +5,6 @@ data("dataCopBMW")
 data("dataCopBMWMultiEndo")
 
 
-
 # Setup --------------------------------------------------------------------------------
 setup.smoke <- list(
   method = copulaBMW,

@@ -13,7 +13,11 @@ test_smoke_out_of_the_box <- function(setup) {
 test_smoke_verbose <- function(setup) {
   test_that(paste0(setup$label, ": verbose controls messages"), {
     expect_message(setup$fn(formula = setup$formula, data = setup$data, verbose = TRUE))
-    expect_no_message(setup$fn(formula = setup$formula, data = setup$data, verbose = FALSE))
+    expect_no_message(setup$fn(
+      formula = setup$formula,
+      data = setup$data,
+      verbose = FALSE
+    ))
   })
 }
 
@@ -35,12 +39,15 @@ test_smoke_all_cdfs <- function(setup, specs) {
 
 # Formula edge cases, incl print/summary
 test_smoke_formula_edge_cases <- function(setup, cases) {
-  test_that(paste0(setup$label, ": Works for formula edge cases, incl print & summary"), {
-    results <- run_cases(fn = setup$fn, cases = cases, check = check_clean_fit)
-    for (nm in names(results)) {
-      check_print_summary(results[[nm]])
+  test_that(
+    paste0(setup$label, ": Works for formula edge cases, incl print & summary"),
+    {
+      results <- run_cases(fn = setup$fn, cases = cases, check = check_clean_fit)
+      for (nm in names(results)) {
+        check_print_summary(results[[nm]])
+      }
     }
-  })
+  )
 }
 
 # Data ---------------------------------------------------------------------------------

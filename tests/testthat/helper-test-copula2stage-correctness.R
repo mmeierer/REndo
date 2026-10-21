@@ -21,7 +21,10 @@ test_correctness_invariance_row_order <- function(setup) {
   })
 }
 
-test_correctness_invariance_regressor_order <- function(setup, formula.reordered = y ~ P + X | P) {
+test_correctness_invariance_regressor_order <- function(
+  setup,
+  formula.reordered = y ~ P + X | P
+) {
   test_that(paste0(setup$label, ": Regressor order does not change coefs"), {
     res <- setup$fn(formula = setup$formula, data = setup$data)
     res.reordered <- setup$fn(formula = formula.reordered, data = setup$data)

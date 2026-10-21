@@ -7,7 +7,11 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # Haschka IMA 2024, section 3.2 step 1
   # Haschka 2025 page 164 eq. 3.1
 
-  mf.all <- model.frame(formula(F.formula, lhs = 1, rhs = 1), data = data, na.action = na.fail)
+  mf.all <- model.frame(
+    formula(F.formula, lhs = 1, rhs = 1),
+    data = data,
+    na.action = na.fail
+  )
 
   f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
   X.endo <- model.matrix(f.endo, data = mf.all)
@@ -41,7 +45,6 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   )
 
   for (j in seq_len(ncol(Z.endo))) {
-
     # There are always exo regressors
     Z.j <- Z.endo[, j, drop = TRUE]
     lm.j <- lm(Z.j ~ Z.exo - 1)

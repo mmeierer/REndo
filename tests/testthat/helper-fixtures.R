@@ -137,7 +137,10 @@ fixture_2scopenp_formula_edge_cases <- function() {
     list(
       # I() gives class "AsIs" in the model frame which np does not accept
       "inline function endo" = list(formula = y ~ X + I(P^2) | I(P^2), data = df),
-      "inline function factor exo" = list(formula = y ~ X + I(x_fac) + P | P, data = df),
+      "inline function factor exo" = list(
+        formula = y ~ X + I(x_fac) + P | P,
+        data = df
+      ),
       "factor exo" = list(formula = y ~ X + x_fac + P | P, data = df),
       "multiple endo with backtick" = list(
         # continuous variables only: X1, X2, P1 to run faster

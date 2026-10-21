@@ -49,7 +49,7 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
 
 checkinput_copula2scopenp_bws <- function(bws, labels.endo) {
   # NULL is default value
-  if(is.null(bws)){
+  if (is.null(bws)) {
     return(c())
   }
 
@@ -68,14 +68,23 @@ checkinput_copula2scopenp_bws <- function(bws, labels.endo) {
   }
 
   if (!setequal(names(bws), labels.endo)) {
-    return(paste0("Parameter 'bws' must be named after the endogenous variables: ",
-                  toString(labels.endo),"."))
+    return(paste0(
+      "Parameter 'bws' must be named after the endogenous variables: ",
+      toString(labels.endo),
+      "."
+    ))
   }
 
   for (name in names(bws)) {
     if (!is(bws[[name]], "condbandwidth")) {
-      err.msg <- c(err.msg,
-                   paste0("Element '", name, "' of parameter 'bws' must be of class 'condbandwidth', usually the output of 'np::npcdistbw(xdat=<all exo>, ydat=<single endo>)'."))
+      err.msg <- c(
+        err.msg,
+        paste0(
+          "Element '",
+          name,
+          "' of parameter 'bws' must be of class 'condbandwidth', usually the output of 'np::npcdistbw(xdat=<all exo>, ydat=<single endo>)'."
+        )
+      )
     }
   }
 
