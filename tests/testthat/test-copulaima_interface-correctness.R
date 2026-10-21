@@ -39,6 +39,12 @@ test_correctness_invariance_dot(
 
 test_correctness_formula_intercept(setup = setup.correctness)
 
+test_correctness_formula_transformations_endo_exo(
+  setup = setup.correctness,
+  formula.endo = y ~ X + log(P) - 1 | log(P),
+  formula.exo = y ~ log(X) + P - 1 | P
+)
+
 # Parameter cdf ------------------------------------------------------------------------
 test_correctness_all_cdfs_different_result(setup = setup.correctness)
 

@@ -53,6 +53,8 @@ test_correctness_invariance_dot(
 # Formula specifications ------------------------------------------------------
 test_correctness_formula_intercept(setup = setup.correctness)
 
+test_correctness_formula_transformations_endo_exo(setup = setup.correctness)
+
 
 # Internal consistency --------------------------------------------------------------
 

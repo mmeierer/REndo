@@ -84,6 +84,40 @@ test_correctness_formula_edge_cases <- function(
   })
 }
 
+# Transformations in the formula are applied: log() on exp()-ed data gives the same coefs
+# as the untransformed base formula (names differ only by the log())
+test_correctness_formula_transformations_endo_exo <- function(
+  setup,
+  formula.endo = y ~ X + log(P) | log(P),
+  formula.exo = y ~ log(X) + P | P
+) {
+  test_that(paste0(setup$label, ": Transformed endo in formula gives same coefs"), {
+    res <- setup$fn(formula = setup$formula, data = setup$data)
+
+    df <- setup$data
+    df$P <- exp(df$P)
+    res.endo <- setup$fn(formula = formula.endo, data = df)
+
+    coefs <- coef(res.endo)
+    names(coefs) <- sub("log(P)", "P", names(coefs), fixed = TRUE)
+    expect_setequal(names(coefs), names(coef(res)))
+    expect_equal(coefs[names(coef(res))], coef(res))
+  })
+
+  test_that(paste0(setup$label, ": Transformed exo in formula gives same coefs"), {
+    res <- setup$fn(formula = setup$formula, data = setup$data)
+
+    df <- setup$data
+    df$X <- exp(df$X)
+    res.exo <- setup$fn(formula = formula.exo, data = df)
+
+    coefs <- coef(res.exo)
+    names(coefs) <- sub("log(X)", "X", names(coefs), fixed = TRUE)
+    expect_setequal(names(coefs), names(coef(res)))
+    expect_equal(coefs[names(coef(res))], coef(res))
+  })
+}
+
 
 # Parameter cdf ------------------------------------------------------------------------
 # Each pair of cdfs of the method (taken from its signature) gives different coefs.

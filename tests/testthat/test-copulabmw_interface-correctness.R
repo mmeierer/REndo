@@ -39,6 +39,8 @@ test_correctness_invariance_dot(
 # Formula specifications ------------------------------------------------------
 test_correctness_formula_intercept(setup = setup.correctness)
 
+test_correctness_formula_transformations_endo_exo(setup = setup.correctness)
+
 
 # Internal consistency --------------------------------------------------------------
 test_correctness_formula_edge_cases(
@@ -81,32 +83,6 @@ test_that("Recovery: multiple endo (dataCopBMWMultiEndo)", {
   check_param_recovery(
     res = res,
     true_vals = c("(Intercept)" = 1, X = -1, P1 = 1, P2 = 1)
-  )
-})
-
-
-# Parameter transformations ------------------------------------------------------------
-test_that("Recovery: Parameter transformations in endo", {
-  set.seed(42)
-  df.trans <- dataCopBMW
-  df.trans$P <- exp(df.trans$P)
-
-  res <- fit_bmw_defaults(formula = y ~ X + log(P) | log(P), data = df.trans)
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, X = -1, "log(P)" = 1)
-  )
-})
-
-test_that("Recovery: Parameter transformations in exo", {
-  set.seed(42)
-  df.trans <- dataCopBMW
-  df.trans$X <- exp(df.trans$X)
-
-  res <- fit_bmw_defaults(formula = y ~ log(X) + P | P, data = df.trans)
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, "log(X)" = -1, P = 1)
   )
 })
 

@@ -36,6 +36,8 @@ test_correctness_invariance_dot(
 # Formula specifications ------------------------------------------------------
 test_correctness_formula_intercept(setup = setup.correctness)
 
+test_correctness_formula_transformations_endo_exo(setup = setup.correctness)
+
 # Parameter cdf ------------------------------------------------------------------------
 test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
@@ -66,38 +68,6 @@ test_that("Parameter recovery: dataCopula2sCOPECase3", {
     data = dataCopula2sCOPECase3
   )
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = -1))
-})
-
-
-# Parameter transformations ----------------------------------------------------------
-
-test_that("Parameter transformations (exo): Recovery", {
-  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
-  dataCopula2sCOPECase1_trans$X <- exp(dataCopula2sCOPECase1_trans$X)
-
-  res <- fit_2scope_defaults(
-    formula = y ~ P + log(X) | P,
-    data = dataCopula2sCOPECase1_trans
-  )
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, P = 1, "log(X)" = -1)
-  )
-})
-
-
-test_that("Parameter transformations (endo): Recovery", {
-  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
-  dataCopula2sCOPECase1_trans$P <- exp(dataCopula2sCOPECase1_trans$P)
-
-  res <- fit_2scope_defaults(
-    formula = y ~ log(P) + X | log(P),
-    data = dataCopula2sCOPECase1_trans
-  )
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, "log(P)" = 1, X = -1)
-  )
 })
 
 
