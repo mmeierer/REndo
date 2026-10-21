@@ -36,7 +36,7 @@ doc_rendocopula2stage_return <- function(subclass, extra.items = NULL) {
 }
 
 
-copula2stage_compute_structural_fitted_residuals <- function(
+copula2stage_get_structural_parts <- function(
   res.lm.augmented,
   labels.pcop
 ) {
@@ -96,7 +96,7 @@ new_rendo_copula2stage <- function(
   ...
 ) {
   # Fitted values and residuals of the structural model (without the correction terms)
-  l.fitted.resid <- copula2stage_compute_structural_fitted_residuals(
+  l.structural <- copula2stage_get_structural_parts(
     res.lm.augmented = res.lm.augmented,
     labels.pcop = labels.pcop
   )
@@ -109,8 +109,8 @@ new_rendo_copula2stage <- function(
     coefficients = coef(res.lm.augmented),
     # WHat to show in the coef table: All coefs incl the correction terms
     names.main.coefs = names(coef(res.lm.augmented)),
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
+    fitted.values = l.structural$fitted.values,
+    residuals = l.structural$residuals,
     boots.params = res.boots$boots.params,
     n.boots.attempted = res.boots$n.attempted,
     n.boots.failed = res.boots$n.failed,
