@@ -64,7 +64,7 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   )
 
   return(list(
-    res.augmented = res.2nd.stage$res.augmented,
+    res.lm.augmented = res.2nd.stage$res.lm.augmented,
     labels.pcop = res.2nd.stage$labels.pcop
   ))
 }

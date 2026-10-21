@@ -65,7 +65,7 @@ copula2stage_stop_if_constant <- function(X) {
 
 
 copula2stage_compute_structural_fitted_residuals <- function(
-  res.lm.aug,
+  res.lm.augmented,
   labels.pcop
 ) {
   if (
@@ -80,7 +80,7 @@ copula2stage_compute_structural_fitted_residuals <- function(
     )
   }
 
-  names.coefs.all <- names(coef(res.lm.aug))
+  names.coefs.all <- names(coef(res.lm.augmented))
 
   # Check if all aux regs are here
   missing.aux <- setdiff(labels.pcop, names.coefs.all)
@@ -93,13 +93,13 @@ copula2stage_compute_structural_fitted_residuals <- function(
   }
 
   names.structural <- names.coefs.all[!names.coefs.all %in% labels.pcop]
-  coefs.structural <- coef(res.lm.aug)[names.structural]
-  mm.structural <- model.matrix(res.lm.aug)[, names.structural, drop = FALSE]
+  coefs.structural <- coef(res.lm.augmented)[names.structural]
+  mm.structural <- model.matrix(res.lm.augmented)[, names.structural, drop = FALSE]
 
   fitted.values <- drop(mm.structural %*% coefs.structural)
   names(fitted.values) <- row.names(mm.structural)
 
-  residuals <- drop(model.response(model.frame(res.lm.aug)) - fitted.values)
+  residuals <- drop(model.response(model.frame(res.lm.augmented)) - fitted.values)
   names(residuals) <- names(fitted.values)
 
   return(list(fitted.values = fitted.values, residuals = residuals))
@@ -148,10 +148,10 @@ copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
 
   # TODO: Does cbind() work if non-continuous variables?
   # - Yes because will always dispatch to cbind.data.frame() if it contains any data.frame
-  res.augmented <- lm(formula = f.final, data = cbind(data, cop.terms))
+  res.lm.augmented <- lm(formula = f.final, data = cbind(data, cop.terms))
 
   return(list(
-    res.augmented = res.augmented,
+    res.lm.augmented = res.lm.augmented,
     # because cop.term is only numeric, coef() (actually model.matrix() used in lm())
     # preserves the terms as they are in the formula. For f.pcop these may be backticked
     # or not, depending if necessary.

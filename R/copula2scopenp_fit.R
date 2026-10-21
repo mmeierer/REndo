@@ -93,7 +93,7 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
   )
 
   return(list(
-    res.augmented = res.2nd.stage$res.augmented,
+    res.lm.augmented = res.2nd.stage$res.lm.augmented,
     labels.pcop = res.2nd.stage$labels.pcop,
     condists = condists,
     mfs = mfs

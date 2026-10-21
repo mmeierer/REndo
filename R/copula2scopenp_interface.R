@@ -380,14 +380,14 @@ copula2sCOPEnp <- function(
       verbose = FALSE,
       bws = bws
     )
-    return(fit.b$res.augmented)
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit$res.augmented)),
+    coef.names = names(coef(fit$res.lm.augmented)),
     verbose = verbose
   )
 
@@ -396,7 +396,7 @@ copula2sCOPEnp <- function(
   return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    res.lm.augmented = fit$res.augmented,
+    res.lm.augmented = fit$res.lm.augmented,
     res.boots = res.boots,
     cdf = NULL, # will be skipped when printing
     labels.endo = labels.endo,
