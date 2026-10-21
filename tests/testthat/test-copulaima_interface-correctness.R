@@ -133,7 +133,7 @@ test_that("fit() stops on constant data (required for bootstrapping)", {
         labels.endo = "P",
         labels.exo = "X"
       ),
-      regexp = "Constant regressor",
+      regexp = "must not be constant",
       info = col
     )
   }

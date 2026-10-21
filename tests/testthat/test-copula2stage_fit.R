@@ -12,17 +12,17 @@ test_that("copula2stage_stop_if_constant stops on constant cols", {
   # single column
   expect_error(
     copula2stage_stop_if_constant(cbind(a = rep(1, 5))),
-    regexp = "Constant regressor"
+    regexp = "must not be constant"
   )
   # single
   expect_error(
     copula2stage_stop_if_constant(cbind(a = 1:5, b = rep(2, 5))),
-    regexp = "Constant regressor"
+    regexp = "must not be constant"
   )
   # multiple
   expect_error(
     copula2stage_stop_if_constant(cbind(a = rep(1, 5), b = 1:5, c = rep(0, 5))),
-    regexp = "Constant regressor"
+    regexp = "must not be constant"
   )
 })
 
@@ -32,6 +32,6 @@ test_that("copula2stage_stop_if_constant works with data.frames incl factors", {
   ))
   expect_error(
     copula2stage_stop_if_constant(data.frame(a = 1:5, f = factor(rep("x", 5)))),
-    regexp = "Constant regressor"
+    regexp = "must not be constant"
   )
 })
