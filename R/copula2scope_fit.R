@@ -38,7 +38,7 @@ copula2scope_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # . 1st stage residuals ------------------------------------------------------
   #first-stage residuals: regressing each endogenous P* on exogenous W*, Eq (9) from Yang et. al 2024
 
-  cop.terms <- copula2stage_create_1ststage_copdata_matrix(
+  cop.terms <- copula2stage_get_1ststage_copterms(
     nrow = nrow(X.endo),
     labels.endo = labels.endo
   )

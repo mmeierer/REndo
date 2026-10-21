@@ -36,7 +36,7 @@ copulaima_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # Exogenous normal scores: all the columns that are not endo
   # chapter 3.2 step 2: regressing P*l on X1*, ..., XK* (exogenous only)
 
-  cop.terms <- copula2stage_create_1ststage_copdata_matrix(
+  cop.terms <- copula2stage_get_1ststage_copterms(
     nrow = nrow(data),
     labels.endo = labels.endo
   )

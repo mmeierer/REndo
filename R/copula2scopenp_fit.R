@@ -8,7 +8,7 @@ copula2scopenp_fit <- function(F.formula, data, labels.endo, labels.exo, bws, ve
   # Computing conditional CDF correction term nonparametrically (via helper) C_p
   # from equation 21 of Hu et al. 2025
 
-  cop.term <- copula2stage_create_1ststage_copdata_matrix(
+  cop.term <- copula2stage_get_1ststage_copterms(
     nrow = nrow(data),
     labels.endo = labels.endo
   )

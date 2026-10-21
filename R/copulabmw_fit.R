@@ -6,7 +6,7 @@ copulabmw_fit <- function(F.formula, data, cdf, labels.endo, labels.exo) {
   # step 2: CDF on residuals
   # step 3: apply qnorm
 
-  cop.terms <- copula2stage_create_1ststage_copdata_matrix(
+  cop.terms <- copula2stage_get_1ststage_copterms(
     nrow = nrow(data),
     labels.endo = labels.endo
   )
