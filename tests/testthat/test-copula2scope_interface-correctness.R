@@ -5,6 +5,8 @@ set.seed(42)
 data("dataCopula2sCOPECase1")
 data("dataCopula2sCOPECase2")
 data("dataCopula2sCOPECase3")
+data("dataCopCont")
+data("dataCopCont2")
 
 # Setup --------------------------------------------------------------------------------
 setup.correctness <- list(
@@ -77,6 +79,34 @@ test_correctness_formula_edge_cases(
   setup = setup.correctness,
   cases = fixture_2scope_formula_edge_cases()
 )
+
+# Consistent with Park and Gupta -------------------------------------------------------
+
+# . With exo: recovers true values ----------------------------------------------------
+# P&G continuous endo data: 2sCOPE contains PG, therefore can also recover its params
+test_that("Recovery on P&G (copulaCorrection) data: With exo, single endo (dataCopCont)", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ X1 + X2 + P | P,
+    data = dataCopCont
+  )
+  check_param_recovery(
+    res = res,
+    true_vals = c("(Intercept)" = 2, X1 = 1.5, X2 = -3, P = -1)
+  )
+})
+
+test_that("Recovery on P&G (copulaCorrection) data: With exo, multi endo (dataCopCont2)", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ X1 + X2 + P1 + P2 | P1 + P2,
+    data = dataCopCont2
+  )
+  check_param_recovery(
+    res = res,
+    true_vals = c("(Intercept)" = 2, X1 = 1.5, X2 = -3, P1 = -1, P2 = 0.8)
+  )
+})
 
 # Single endo + 0 exo: Collapses to copulaCorrection case 1 (continuous only) ---------
 # (equivalent according to the paper)
