@@ -27,13 +27,10 @@ test_that("interface has methods wired in", {
     verbose = FALSE
   )
 
-  for (nm in names(cases)) {
-    # all from base.args except the one being tested
-    args <- c(cases[[nm]], base.args[!names(base.args) %in% names(cases[[nm]])])
-    expect_error(
-      object = do.call(what = copulaIMA, args = args),
-      regexp = "The above errors",
-      info = nm
-    )
-  }
+  run_cases_error(
+    fn = copulaIMA,
+    base.args = base.args,
+    cases = cases,
+    regexp = "The above errors"
+  )
 })

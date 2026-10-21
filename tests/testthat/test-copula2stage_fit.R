@@ -9,19 +9,13 @@ test_that("copula2stage_stop_if_constant passes for non-constant columns", {
 })
 
 test_that("copula2stage_stop_if_constant stops on constant cols", {
-  # single column
-  expect_error(
-    copula2stage_stop_if_constant(cbind(a = rep(1, 5))),
-    regexp = "must not be constant"
-  )
-  # single
-  expect_error(
-    copula2stage_stop_if_constant(cbind(a = 1:5, b = rep(2, 5))),
-    regexp = "must not be constant"
-  )
-  # multiple
-  expect_error(
-    copula2stage_stop_if_constant(cbind(a = rep(1, 5), b = 1:5, c = rep(0, 5))),
+  run_cases_error(
+    fn = copula2stage_stop_if_constant,
+    cases = list(
+      "single column" = list(X = cbind(a = rep(1, 5))),
+      "single constant" = list(X = cbind(a = 1:5, b = rep(2, 5))),
+      "multiple constant" = list(X = cbind(a = rep(1, 5), b = 1:5, c = rep(0, 5)))
+    ),
     regexp = "must not be constant"
   )
 })

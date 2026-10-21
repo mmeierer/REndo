@@ -121,20 +121,23 @@ test_that("Formula edge cases", {
 # Bootstrap: Degenerate cases ---------------------------------------------------
 
 test_that("fit() stops on constant data (required for bootstrapping)", {
-  for (col in c("X", "P")) {
-    df.const <- dataCopIMAContExo
-    df.const[[col]] <- 1
+  df.const.x <- dataCopIMAContExo
+  df.const.x$X <- 1
+  df.const.p <- dataCopIMAContExo
+  df.const.p$P <- 1
 
-    expect_error(
-      copulaima_fit(
-        F.formula = as.Formula(y ~ X + P | P),
-        data = df.const,
-        labels.endo = "P",
-        labels.exo = "X",
-        cdf = "ecdf"
-      ),
-      regexp = "must not be constant",
-      info = col
-    )
-  }
+  run_cases_error(
+    fn = copulaima_fit,
+    base.args = list(
+      F.formula = as.Formula(y ~ X + P | P),
+      labels.endo = "P",
+      labels.exo = "X",
+      cdf = "ecdf"
+    ),
+    cases = list(
+      "constant exo" = list(data = df.const.x),
+      "constant endo" = list(data = df.const.p)
+    ),
+    regexp = "must not be constant"
+  )
 })
