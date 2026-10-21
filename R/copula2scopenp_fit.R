@@ -86,15 +86,15 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
   # 2nd stage ----------------------------------------------------------------------
   # using equation 20: Y = mu + sum_{k=1} ^ {K} ( P_{i,k} * alpha_k + beta' X_i + sum_{k=1}^{K} C_{i,pk} * gamma_k + epsilon_i
 
-  res.2nd.stage <- copula2stage_fit_2ndstage(
+  l.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
     cop.terms = cop.terms
   )
 
   return(list(
-    res.lm.augmented = res.2nd.stage$res.lm.augmented,
-    labels.pcop = res.2nd.stage$labels.pcop,
+    res.lm.augmented = l.2nd.stage$res.lm.augmented,
+    labels.pcop = l.2nd.stage$labels.pcop,
     condists = condists,
     first.stage.frames = first.stage.frames
   ))

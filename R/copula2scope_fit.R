@@ -74,14 +74,14 @@ copula2scope_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   }
 
   # 2nd stage --------------------------------------------------------------------
-  res.2nd.stage <- copula2stage_fit_2ndstage(
+  l.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
     cop.terms = cop.terms
   )
 
   return(list(
-    res.lm.augmented = res.2nd.stage$res.lm.augmented,
-    labels.pcop = res.2nd.stage$labels.pcop
+    res.lm.augmented = l.2nd.stage$res.lm.augmented,
+    labels.pcop = l.2nd.stage$labels.pcop
   ))
 }
