@@ -11,12 +11,8 @@ checkinput_copula2stage_numboots <- function(num.boots) {
 }
 
 checkinput_copula2stage_verbose <- function(verbose) {
-  checkinputhelper_single_logical(logical = verbose, param.name = "verbose")
+  return(checkinputhelper_single_logical(logical = verbose, param.name = "verbose"))
 }
-
-
-
-# NEW INPUT CHECKS ------------------------------------------------------------------
 
 # Basic structure of data
 # - is data.frame
@@ -181,10 +177,14 @@ checkinput_copula2stage_modelframe <- function(
     colnames.low.card <- vapply(labels.warn.low.card, copula2stage_label_to_colname, character(1))
     stopifnot(all(colnames.low.card %in% mf.cols))
 
-    is.low.card <- sapply(mf[colnames.low.card], function(x) {
-      # no NAs at this point
-      is.numeric(x) && length(unique(x)) <= 10
-    })
+    is.low.card <- vapply(
+      mf[colnames.low.card],
+      function(x) {
+        # no NAs at this point
+        return(is.numeric(x) && length(unique(x)) <= 10)
+      },
+      logical(1)
+    )
 
     if (any(is.low.card)) {
       low.card.vars <- labels.warn.low.card[is.low.card]

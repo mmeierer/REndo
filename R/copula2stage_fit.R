@@ -155,8 +155,8 @@ copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
   f.main <- terms(F.formula, data = data, lhs = 1, rhs = 1)
   f.final <- update(old = f.main, new = f.pcop)
 
-  # TODO: Does cbind() work if non-continuous variables?
-  # - Yes because will always dispatch to cbind.data.frame() if it contains any data.frame
+  # cbind() also works with non-continuous variables because it dispatches to
+  # cbind.data.frame() if any argument is a data.frame
   res.lm.augmented <- lm(formula = f.final, data = cbind(data, cop.terms))
 
   return(list(
