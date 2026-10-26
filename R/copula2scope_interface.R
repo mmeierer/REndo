@@ -74,6 +74,9 @@
 #' the normal scores of each endogenous regressor directly, equivalent to
 #' the approach of Park and Gupta (2012).
 #'
+#' The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+#' in either part.
+#'
 #' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_yang2025
