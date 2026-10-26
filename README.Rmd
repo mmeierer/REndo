@@ -117,7 +117,7 @@ Here **y** is the response variable, **X + P**  represents the model to be estim
 ### **Two-Stage Nonparametric Copula Endogeneity Correction**
 
 ```
-copula2sCOPEnp(y ~ X + P | P, data, num.boots, npcdistbw.args)
+copula2sCOPEnp(y ~ X + P | P, data, npcdistbw.args, bws, num.boots)
 ```
 
 Here **y** is the response variable, **X + P**  represents the model to be estimated; the second part lists the endogenous regressors . The second argument is the name of the dataset. **num.boots** sets the number of bootstrap replications used to compute standard errors (default 1000). 
