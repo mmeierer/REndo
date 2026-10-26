@@ -51,7 +51,7 @@
 #' }
 #'
 #' This method requires at least one exogenous regressor for the first-stage
-#' regression and supports only continuous regressors.
+#' regression and supports only continuous endogenous regressors.
 #'
 #' ## Important assumptions
 #' The method requires the following assumptions (Assumption A, Breitung et al. 2024):

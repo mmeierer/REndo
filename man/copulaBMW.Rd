@@ -96,7 +96,7 @@ where \eqn{\rho_k} is the coefficient of the correction term \eqn{P^*_{i,k}}.
 }
 
 This method requires at least one exogenous regressor for the first-stage
-regression and supports only continuous regressors.
+regression and supports only continuous endogenous regressors.
 }
 
 \subsection{Important assumptions}{
