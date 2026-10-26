@@ -132,14 +132,9 @@ residuals.
 
 \item{cdf="resc.ecdf"}{Rescaled empirical cdf \deqn{\hat{F}(x_i) = \frac{\text{rank}(x_i)}{n + 1}}.
    Keeps values strictly inside \eqn{(0,1)} without an arbitrary boundary constant.
-   Breitung et al. (2024) adopts this as their theoretical recommendation.
    Compared to "ecdf", the maximum value is  \eqn{\Phi^{-1}(n/(n+1))},
    which is considerably smaller in small samples (e.g., \eqn{\pm 2.8} for \eqn{n=400}).
-   For their method (\code{copulaBMW()}), the point estimates may
-   vary significantly when the sample size is small (e.g., n < 1000) because the
-   boundary observations exert high leverage in the augmented OLS regression.
-   They explain this finite-sample bias through their tail decay condition
-   (copulaBMW's Assumption A5).
+   Breitung et al. (2024) adopts this as their theoretical recommendation. For their method (\code{copulaBMW()}), the point estimates may vary significantly when the sample size is small (e.g., n < 1000) because the boundary observations exert high leverage in the augmented OLS regression. They explain this finite-sample bias through their tail decay condition (copulaBMW's Assumption A5).
    }
 
 \item{cdf="ecdf"}{Standard empirical CDF with \eqn{10^{-7}} boundary replacement,
