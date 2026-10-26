@@ -80,7 +80,6 @@
 #' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_yang2025
-#' @template template_references_parkgupta2012
 #' @template template_param_cdf_references
 #'
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope")

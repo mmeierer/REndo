@@ -223,6 +223,10 @@ means of an adjusted estimator for the Gaussian copula approach.
 \emph{Journal of the Academy of Marketing Science}, 53(1), 279-299
 \doi{10.1007/s11747-024-01055-4}
 
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+Joint Estimation Using Copulas",
+Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
+
 Qian, Y., Koschmann, A., and Xie, H. (2024). A practical guide to
 endogeneity correction using copulas. NBER Working Paper No. w32231.
 \doi{10.2139/ssrn.4754776}
