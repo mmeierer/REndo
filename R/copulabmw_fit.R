@@ -18,7 +18,7 @@ copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
     #first-stage OLS of Z on X in original space
     #BMW (2024) eq. 2.2, Z = delta'x + e
 
-    # Regress endo ~ (all exo), intercept should be included because of assumption A4 from Breitrung et al.
+    # Regress endo ~ (all exo), intercept should be included because of assumption A4 from Breitung et al.
     f.endo.k.on.all.exo <- reformulate(
       #page 367
       response = p.label,
