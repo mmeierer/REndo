@@ -218,7 +218,7 @@
 #' #X3 is ordered factor exogenous (3 levels)
 #'
 #' # True values: mu = 1, alpha1 = -1 (P1), alpha2 = 1 (P2),
-#' #              beta1 = 2 (X1), beta2 = 0.5, beta3 = 1 (X3)
+#' #              beta1 = 2 (X1), beta2 = 0.5 (X2), beta3 = 1 (X3)
 #' # note that P2.Q may have small significant coefficient. This is expected
 #' #when there is stronger endogeneity with discrete ordered regressors.
 #'
@@ -382,7 +382,7 @@ copula2sCOPEnp <- function(
     npcdistbw.args = npcdistbw.args
   )
 
-  # TODO: warn if itnmax was hit or bws are at search boundaries (lower bound for
+  # TODO: warn if itmax was hit or bws are at search boundaries (lower bound for
   #   continuous, or lambda at its max). Warn here and not in copula2scopenp_bandwidth
   #   because should also check the user-given bws
   # TODO: warn if the fit diagnostics of the bandwidths are bad?

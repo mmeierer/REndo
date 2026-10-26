@@ -242,7 +242,7 @@ summary(res2)
 #X3 is ordered factor exogenous (3 levels)
 
 # True values: mu = 1, alpha1 = -1 (P1), alpha2 = 1 (P2),
-#              beta1 = 2 (X1), beta2 = 0.5, beta3 = 1 (X3)
+#              beta1 = 2 (X1), beta2 = 0.5 (X2), beta3 = 1 (X3)
 # note that P2.Q may have small significant coefficient. This is expected
 #when there is stronger endogeneity with discrete ordered regressors.
 
