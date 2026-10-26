@@ -122,7 +122,7 @@ copula2sCOPEnp(y ~ X + P | P, data, npcdistbw.args, bws, num.boots)
 
 Here **y** is the response variable, **X + P**  represents the model to be estimated; the second part lists the endogenous regressors . The second argument is the name of the dataset. **num.boots** sets the number of bootstrap replications used to compute standard errors (default 1000). 
 The optional argument **npcdistbw.args** is a named list of arguments passed to the kernel bandwidth selector **npcdistbw** from the **np** package, allowing the user to control bandwidth selection. 
-The method estimates the conditional CDF of each endogenous regressor given the exogenous regressors nonparametrically, using the Nadaraya-Warson kernel regression. This relaxes the Gaussian copula assumption. The method supports both continuous and discrete endogenous regressors. Bandwidths are computed once on the original data and reused across all bootstrap resamples. Multiple endogenous and exogenous regressors are also supported.
+The method estimates the conditional CDF of each endogenous regressor given the exogenous regressors nonparametrically, using the Nadaraya-Watson kernel regression. This relaxes the Gaussian copula assumption. The method supports both continuous and discrete endogenous regressors. Bandwidths are computed once on the original data and reused across all bootstrap resamples. Multiple endogenous and exogenous regressors are also supported.
 
 ### **Nonparametric Control Function (BMW method)** 
 
