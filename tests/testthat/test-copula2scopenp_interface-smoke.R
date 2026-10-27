@@ -83,6 +83,28 @@ test_that("works with a supplied bws and via iterative refinement", {
   check_clean_fit(res_refined)
 })
 
+test_that("works with a supplied bws without recomputing them (bandwidth.compute = FALSE)", {
+  # fit bws on subsample: recomputation on the full data would give other values
+  res_subset <- fit_2scopenp_fast(
+    formula = y ~ P + X | P,
+    data = dataCopula2sCOPEnpCont[1:100, ]
+  )
+
+  res <- fit_2scopenp_fast(
+    formula = y ~ P + X | P,
+    data = dataCopula2sCOPEnpCont,
+    bws = res_subset$bws,
+    npcdistbw.args = list(bandwidth.compute = FALSE)
+  )
+  check_clean_fit(res)
+
+  # bws kept as supplied
+  expect_equal(res$bws$P$ybw, res_subset$bws$P$ybw)
+  expect_equal(res$bws$P$xbw, res_subset$bws$P$xbw)
+})
+
+})
+
 
 # verbose ---------------------------------------------------------------------------
 test_smoke_verbose(setup = setup.smoke)
