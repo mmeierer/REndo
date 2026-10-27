@@ -297,10 +297,6 @@ res4 <- copula2sCOPEnp(
 res.loosely <- copula2sCOPEnp(
  y ~ X + P | P,
  npcdistbw.args = list(
-   # alternative: Directly calculate 'rule-of-thumb' bandwidth.
-   # Performs no search (other params irrelevant)
-   # bwmethod = "normal-reference",
-
    # depending on data:
    #  Get close quickly (low 'nmulti')
    #  Avoid local minima (high 'nmulti')
