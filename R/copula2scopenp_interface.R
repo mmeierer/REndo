@@ -102,6 +102,11 @@
 #' \code{np::npcdistbw(bws=bws[[p]])}. This allows iteratively refining the bandwidth
 #' search by passing the result of a previous fit. See examples.
 #'
+#' If both \code{bws} and \code{bwmethod} in \code{npcdistbw.args} are given,
+#' \code{bwmethod} must match the method used to estimate \code{bws}. Otherwise an
+#' error is raised, because \code{np::npcdistbw()} would silently keep the method of
+#' \code{bws}.
+#'
 #' For each endogenous term, \code{bws} must contain a
 #' \code{condbandwidth} object for the conditional CDF \code{(single endo) ~ (all exo)}.
 #' \code{bws} must be a named list, with each element named after the corresponding
@@ -361,6 +366,10 @@ copula2sCOPEnp <- function(
   labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   check_err_msg(checkinput_copula2scopenp_bws(bws = bws, labels.endo = labels.endo))
+  check_err_msg(checkinput_copula2scopenp_bws_npcdistbwargs(
+    bws = bws,
+    npcdistbw.args = npcdistbw.args
+  ))
 
   if (verbose) {
     message(

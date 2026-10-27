@@ -92,3 +92,29 @@ checkinput_copula2scopenp_bws <- function(bws, labels.endo) {
 
   return(err.msg)
 }
+
+# When bws are given, np::npcdistbw() takes the method from given `bws[[p]]$method`
+# and silently ignores `npcdistbw.args=list(bwmethod=...)`.
+# Therefore stop if they disagree.
+# Assumes bws and npcdistbw.args were checked before
+checkinput_copula2scopenp_bws_npcdistbwargs <- function(bws, npcdistbw.args) {
+  bwmethod <- npcdistbw.args$bwmethod
+
+  # No `bws`, no `npcdistbw.args$bwmethod`, no compute = no problem
+  if (is.null(bws) || is.null(bwmethod) || isFALSE(npcdistbw.args$bandwidth.compute)) {
+    return(c())
+  }
+
+  err.msg <- c()
+  for (name in names(bws)) {
+    bws.method <- bws[[name]]$method
+    if (!identical(bws.method, bwmethod)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Element '", name, "' of parameter 'bws' was estimated with bwmethod '", bws.method, "' but 'npcdistbw.args' requires bwmethod '", bwmethod, "'. ",
+        "When 'bws' is given, np::npcdistbw() (silently) uses the method in 'bws' and ignores the specified 'bwmethod'. Pass npcdistbw.args = list(bwmethod = '", bws.method, "') or omit 'bws'."))
+    }
+  }
+
+  return(err.msg)
+}
