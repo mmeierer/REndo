@@ -69,3 +69,53 @@ test_that("bws works for NULL and valid list", {
     labels.endo = "P"
   ))
 })
+
+# checkinput_copula2scopenp_bws_npcdistbwargs ----------------------------------------
+test_that("bws_npcdistbwargs fails if bwmethod differs from method of bws", {
+  bw.nr <- structure(list(method = "normal-reference"), class = "condbandwidth")
+  bw.cv <- structure(list(method = "cv.ls"), class = "condbandwidth")
+  cases <- list(
+    "nr bws, cv.ls" = list(
+      bws = list(P = bw.nr),
+      npcdistbw.args = list(bwmethod = "cv.ls")
+    ),
+    "cv bws, nr" = list(
+      bws = list(P = bw.cv),
+      npcdistbw.args = list(bwmethod = "normal-reference")
+    ),
+    "multi endo, only one differs" = list(
+      bws = list(P1 = bw.cv, P2 = bw.nr),
+      npcdistbw.args = list(bwmethod = "cv.ls")
+    )
+  )
+  run_cases_errmsg(
+    fn = checkinput_copula2scopenp_bws_npcdistbwargs,
+    cases = cases,
+    regexp = c(
+      "Element 'P' of parameter 'bws' was estimated with bwmethod 'normal-reference'",
+      "Element 'P' of parameter 'bws' was estimated with bwmethod 'cv.ls'",
+      "^Element 'P2'"
+    )
+  )
+})
+
+test_that("bws_npcdistbwargs works if no conflict or nothing to check", {
+  bw.nr <- structure(list(method = "normal-reference"), class = "condbandwidth")
+  bw.cv <- structure(list(method = "cv.ls"), class = "condbandwidth")
+  cases <- list(
+    "no bws" = list(bws = NULL, npcdistbw.args = list(bwmethod = "cv.ls")),
+    "same method" = list(
+      bws = list(P = bw.cv),
+      npcdistbw.args = list(bwmethod = "cv.ls")
+    ),
+    "no bwmethod" = list(bws = list(P = bw.nr), npcdistbw.args = list(nmulti = 2)),
+    "no bandwidth search" = list(
+      bws = list(P = bw.nr),
+      npcdistbw.args = list(bwmethod = "cv.ls", bandwidth.compute = FALSE)
+    )
+  )
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2scopenp_bws_npcdistbwargs,
+    cases = cases
+  )
+})
