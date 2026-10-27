@@ -56,11 +56,13 @@ test_smoke_small_sample(setup = setup.smoke)
 # npcdistbw.args + bws: iterative refinement -----------------------------------------
 
 test_that("works with a supplied bws and via iterative refinement", {
+  # refinement starting with normal-reference does not work! It just uses
+  # normal-reference again (uses bws$method and ignores bwmethod)!
   res_loose <- suppress_lowboots_warning(
     copula2sCOPEnp(
       formula = y ~ P + X | P,
       data = dataCopula2sCOPEnpCont,
-      npcdistbw.args = list(bwmethod = "normal-reference"),
+      npcdistbw.args = list(bwmethod = "cv.ls", nmulti = 1, ftol = 1, tol = 1),
       num.boots = 2,
       verbose = FALSE
     )
