@@ -103,6 +103,46 @@ test_that("works with a supplied bws without recomputing them (bandwidth.compute
   expect_equal(res$bws$P$xbw, res_subset$bws$P$xbw)
 })
 
+
+# S3: Summary & print ------------------------------------------------------------
+# They use nps internal (bw object) which differ by bw method and variable type
+
+df.types <- dataCopula2sCOPEnpMulti[1:250, ]
+# unordered exo (X3 is ordered)
+df.types$X4 <- factor(sample(c("a", "b", "c"), nrow(df.types), replace = TRUE))
+
+
+check_summary_bws_types <- function(res) {
+  # print() and summary()
+  check_print_summary(res)
+
+  # bw table has each variable type
+  out <- capture_output(print(summary(res)))
+  for (type in c("continuous", "ordered", "unordered")) {
+    # word boundary: 'ordered' is part of 'unordered'
+    expect_match(out, paste0("\\b", type, "\\b"))
+  }
+}
+
+test_that("summary and print work for normal-reference bws (for all types of exo)", {
+  # normal-reference does not work for ordered endo
+  res <- fit_2scopenp_fast(
+    formula = y ~ P1 + X1 + X3 + X4 | P1,
+    data = df.types,
+    npcdistbw.args = list(bwmethod = "normal-reference")
+  )
+  check_clean_fit(res)
+  check_summary_bws_types(res)
+})
+
+test_that("summary and print work for CV bws (for all types of endo and exo)", {
+  res <- fit_2scopenp_fast(
+    formula = y ~ P1 + P2 + X1 + X3 + X4 | P1 + P2,
+    data = df.types,
+    npcdistbw.args = list(bwmethod = "cv.ls", nmulti = 1, tol = 1, ftol = 1)
+  )
+  check_clean_fit(res)
+  check_summary_bws_types(res)
 })
 
 
