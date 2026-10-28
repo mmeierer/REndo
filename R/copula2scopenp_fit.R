@@ -50,20 +50,6 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
       identical(colnames(tydat), bw.p$ynames)
     )
 
-    # if (length(endo.cols) == 0) {
-    #   stop("No endogenous regressors found in the design matrix.", call. = FALSE)
-    # }
-    #
-    # if (length(endo.cols) < length(names.endo.regs)) {
-    #   stop(
-    #     paste0(
-    #       "Bootstrap sample dropped at least one endogenous regressor. ",
-    #       "This happened when a regressor becomes constant in the resampling."
-    #     ),
-    #     call. = FALSE
-    #   )
-    # }
-
     cdf.fit <- np::npcdist(
       bws = bw.p,
       txdat = txdat,
