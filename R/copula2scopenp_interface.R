@@ -111,6 +111,9 @@
 #' \code{condbandwidth} object for the conditional CDF \code{(single endo) ~ (all exo)}.
 #' \code{bws} must be a named list, with each element named after the corresponding
 #' endogenous terms.
+#' Each element must be estimated for exactly this endogenous term and with the exogenous
+#' regressors in the same order as in the formula because the bandwidths are applied by
+#' position.
 #' The bandwidths must be estimated using the default \code{np::npcdistbw(xdat=,ydat=)}
 #' interface, not the formula interface because this will break downstream usage in
 #' \code{np::npcdist()}.
