@@ -1,4 +1,4 @@
-#' @importFrom stats model.frame na.fail qnorm reformulate
+#' @importFrom stats qnorm
 #' @importFrom np npcdist
 copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo, bws) {
   #conditional CDF smooths the discrete distribution through X
@@ -23,15 +23,13 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
       message("Computing conditional CDF for endogenous regressor '", msg.k)
     }
 
-    # exo column is everything that is non-intercept and non-endo col
-    f.endo.exo <- reformulate(
-      response = p.label,
-      termlabels = labels.exo
-    )
-
     # specify endo as DV to know where to read from
-    mf.p <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
-    mf.p <- copula2scopenp_mf_drop_asis(mf.p)
+    mf.p <- copula2scopenp_mf_endo_given_exo(
+      F.formula = F.formula,
+      data = data,
+      p.label = p.label,
+      labels.exo = labels.exo
+    )
     copula2stage_stop_if_constant(mf.p)
     first.stage.frames[[p.label]] <- mf.p
 
@@ -108,10 +106,10 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
 #F hat_(P_k |X) nonparametrically using Kernel methods (Hu et al 2025, mentions mostly Nadaraya-Watson (NW) kernel
 #before eq. 10) Stage 1 from table 3
 #Then the normal quantile transformation is applied to get the copula correction term
-#' @importFrom stats model.frame na.fail reformulate
 #' @importFrom utils modifyList
 #' @importFrom np npcdistbw npcdist
 copula2scopenp_bandwidth <- function(
+  F.formula,
   data,
   verbose,
   labels.endo,
@@ -151,17 +149,12 @@ copula2scopenp_bandwidth <- function(
     #   - not model.matrix because need to preserve factors
     #   - not columns of `data` because transformations need to be applied
 
-    # formula (single endo) ~ (all exo)
-    # there is no intercept produced by model.frame() but be explicit here that the
-    # exogenous data passed here is without intercept
-    f.endo.exo <- reformulate(
-      termlabels = labels.exo,
-      response = p.label,
-      intercept = FALSE
+    mf.p <- copula2scopenp_mf_endo_given_exo(
+      F.formula = F.formula,
+      data = data,
+      p.label = p.label,
+      labels.exo = labels.exo
     )
-
-    mf.p <- model.frame(f.endo.exo, data = data, na.action = na.fail)
-    mf.p <- copula2scopenp_mf_drop_asis(mf.p)
 
     bw.call.args <- list(
       ydat = mf.p[, 1, drop = FALSE], # endo: response (first col)
@@ -181,6 +174,26 @@ copula2scopenp_bandwidth <- function(
 
   names(l.bws) <- labels.endo
   return(l.bws)
+}
+
+
+# Model frame of (single endo) ~ (all exo), for bandwidth selection and fit()
+#' @importFrom stats model.frame na.fail reformulate
+copula2scopenp_mf_endo_given_exo <- function(F.formula, data, p.label, labels.exo) {
+  # there is no intercept produced by model.frame() but be explicit here that the
+  # exogenous data passed here is without intercept
+  f.endo.exo <- reformulate(
+    termlabels = labels.exo,
+    response = p.label,
+    intercept = FALSE
+  )
+
+  # evaluate in the user's formula env and not the env here.
+  # Set with env(f) because reformulate(env=) requires R >= 3.6
+  environment(f.endo.exo) <- environment(F.formula)
+
+  mf <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
+  return(copula2scopenp_mf_drop_asis(mf))
 }
 
 

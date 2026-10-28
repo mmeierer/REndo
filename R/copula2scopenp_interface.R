@@ -379,6 +379,7 @@ copula2sCOPEnp <- function(
   # bws estimates are consistent and sampling variability has negligible effect
   # on the bootstrap distribution of the structural coefficients
   bws <- copula2scopenp_bandwidth(
+    F.formula = F.formula,
     data = data,
     verbose = verbose,
     labels.endo = labels.endo,
