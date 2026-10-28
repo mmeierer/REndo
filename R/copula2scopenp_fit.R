@@ -43,12 +43,12 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     bw.p <- bws[[p.label]]
     txdat <- mf.p[, -1, drop = FALSE]
     tydat <- mf.p[, 1, drop = FALSE]
-    if (!identical(sort(colnames(txdat)), sort(bw.p$xnames))) {
-      stop(
-        "Names in fitted bandwidth and names of generated variables mismatch. This is likely because the bootstrap sample is degenerate.",
-        call. = FALSE
-      )
-    }
+    # np applies the bandwidths by position: Name & order must match.
+    # Checked in input checks but keep assertion for docu and safety
+    stopifnot(
+      identical(colnames(txdat), bw.p$xnames),
+      identical(colnames(tydat), bw.p$ynames)
+    )
 
     # if (length(endo.cols) == 0) {
     #   stop("No endogenous regressors found in the design matrix.", call. = FALSE)

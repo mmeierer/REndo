@@ -361,7 +361,11 @@ copula2sCOPEnp <- function(
   labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
   labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
-  check_err_msg(checkinput_copula2scopenp_bws(bws = bws, labels.endo = labels.endo))
+  check_err_msg(checkinput_copula2scopenp_bws(
+    bws = bws,
+    labels.endo = labels.endo,
+    labels.exo = labels.exo
+  ))
   check_err_msg(checkinput_copula2scopenp_bws_npcdistbwargs(
     bws = bws,
     npcdistbw.args = npcdistbw.args

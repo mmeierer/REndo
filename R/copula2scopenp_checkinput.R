@@ -47,7 +47,7 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
   return(err.msg)
 }
 
-checkinput_copula2scopenp_bws <- function(bws, labels.endo) {
+checkinput_copula2scopenp_bws <- function(bws, labels.endo, labels.exo) {
   # NULL is default value
   if (is.null(bws)) {
     return(c())
@@ -88,7 +88,38 @@ checkinput_copula2scopenp_bws <- function(bws, labels.endo) {
     }
   }
 
-  # check that fit with xday/ydat and not formula interface?
+  # TODO: check that fit with xday/ydat and not formula interface?
+
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # np applies the bandwidths by position - and not by name. Therefore, the
+  # variables must be exactly the same, incl ordering as the cols of the
+  # model frame (endo) ~ (all exo)
+  colnames.exo <- vapply(
+    labels.exo,
+    FUN = copula2stage_label_to_colname,
+    FUN.VALUE = character(1),
+    USE.NAMES = FALSE
+  )
+  for (name in names(bws)) {
+    colname.endo <- copula2stage_label_to_colname(name)
+    # single response
+    if (!identical(bws[[name]]$ynames, colname.endo)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Element '", name, "' of 'bws' was estimated for endogenous regressor '",
+        toString(bws[[name]]$ynames), "' but must be for '", colname.endo, "'."))
+    }
+    # many dep vars
+    if (!identical(bws[[name]]$xnames, colnames.exo)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Element '", name, "' of 'bws' was estimated for exogenous regressors '",
+        toString(bws[[name]]$xnames), "' but must be for '", toString(colnames.exo), "' (same order required)."))
+    }
+  }
 
   return(err.msg)
 }
