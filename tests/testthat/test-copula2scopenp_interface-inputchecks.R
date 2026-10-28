@@ -18,14 +18,21 @@ test_that("interface has methods wired in", {
     "bws" = list(bws = list(P = 1)),
     # variables differ from the model frame columns (labels.exo passed)
     "bws (variables)" = list(
-      bws = list(P = structure(
-        list(method = "normal-reference", ynames = "P", xnames = "Z"),
-        class = "condbandwidth"
-      ))
+      bws = list(
+        P = structure(
+          list(method = "normal-reference", ynames = "P", xnames = "Z"),
+          class = "condbandwidth"
+        )
+      )
     ),
     # conflicts with bwmethod in base.args
     "bws_npcdistbwargs" = list(
-      bws = list(P = structure(list(method = "cv.ls"), class = "condbandwidth"))
+      bws = list(
+        P = structure(
+          list(method = "cv.ls", ynames = "P", xnames = "X"),
+          class = "condbandwidth"
+        )
+      )
     ),
     "num.boots" = list(num.boots = -1),
     "verbose" = list(verbose = NULL)

@@ -62,20 +62,30 @@ test_that("bws fails for illegal inputs", {
 })
 
 test_that("bws works for NULL and valid list", {
-  bw <- structure(list(), class = "condbandwidth")
-  expect_null(checkinput_copula2scopenp_bws(bws = NULL, labels.endo = "P"))
+  bw <- structure(list(ynames = "P", xnames = "X"), class = "condbandwidth")
+  expect_null(checkinput_copula2scopenp_bws(
+    bws = NULL,
+    labels.endo = "P",
+    labels.exo = "X"
+  ))
   expect_null(checkinput_copula2scopenp_bws(
     bws = setNames(list(bw), "P"),
-    labels.endo = "P"
+    labels.endo = "P",
+    labels.exo = "X"
   ))
 })
 
 test_that("bws fails if variables differ from the mf cols (incl order)", {
   bw.P <- structure(list(ynames = "P", xnames = c("X1", "X2")), class = "condbandwidth")
   bw.X21 <- structure(
-
-    list(ynames = "P", xnames = c("X2", "X
-1   ")),
+    list(
+      ynames = "P",
+      xnames = c(
+        "X2",
+        "X
+1   "
+      )
+    ),
     class = "condb
   andwidth"
   )
