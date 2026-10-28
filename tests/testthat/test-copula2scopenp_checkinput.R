@@ -70,6 +70,65 @@ test_that("bws works for NULL and valid list", {
   ))
 })
 
+test_that("bws fails if variables differ from the mf cols (incl order)", {
+  bw.P <- structure(list(ynames = "P", xnames = c("X1", "X2")), class = "condbandwidth")
+  bw.X21 <- structure(
+
+    list(ynames = "P", xnames = c("X2", "X
+1   ")),
+    class = "condb
+  andwidth"
+  )
+  bw.X1 <- structure(list(ynames = "P", xnames = "X1"), class = "condbandwidth")
+  bw.X123 <- structure(
+    list(ynames = "P", xnames = c("X1", "X2", "X3")),
+    class = "condbandwidth"
+  )
+  cases <- list(
+    "exo different order" = list(bws = list(P = bw.X21), labels.endo = "P"),
+    "exo missing" = list(bws = list(P = bw.X1), labels.endo = "P"),
+    "exo additional" = list(bws = list(P = bw.X123), labels.endo = "P"),
+    "endo different (transformed)" = list(
+      bws = list("log(P)" = bw.P),
+      labels.endo = "log(P)"
+    )
+  )
+  run_cases_errmsg(
+    fn = checkinput_copula2scopenp_bws,
+    base.args = list(labels.exo = c("X1", "X2")),
+    cases = cases,
+    regexp = c(
+      "exogenous regressors 'X2, X1' but must be for 'X1, X2' \\(same order required\\)",
+      "exogenous regressors 'X1' but must be for 'X1, X2'",
+      "exogenous regressors 'X1, X2, X3' but must be for 'X1, X2'",
+      "endogenous regressor 'P' but must be for 'log\\(P\\)'"
+    )
+  )
+})
+
+test_that("bws works if variables match model frame columns (transformed, non-syntactic)", {
+  bw.P1 <- structure(
+    list(ynames = "P 1", xnames = c("log(X1)", "X 2")),
+    class = "condbandwidth"
+  )
+  bw.logP2 <- structure(
+    list(ynames = "log(P2)", xnames = c("log(X1)", "X 2")),
+    class = "condbandwidth"
+  )
+  cases <- list(
+    "single endo" = list(bws = list("`P 1`" = bw.P1), labels.endo = "`P 1`"),
+    "multi endo" = list(
+      bws = list("`P 1`" = bw.P1, "log(P2)" = bw.logP2),
+      labels.endo = c("`P 1`", "log(P2)")
+    )
+  )
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2scopenp_bws,
+    base.args = list(labels.exo = c("log(X1)", "`X 2`")),
+    cases = cases
+  )
+})
+
 # checkinput_copula2scopenp_bws_npcdistbwargs ----------------------------------------
 test_that("bws_npcdistbwargs fails if bwmethod differs from method of bws", {
   bw.nr <- structure(list(method = "normal-reference"), class = "condbandwidth")
