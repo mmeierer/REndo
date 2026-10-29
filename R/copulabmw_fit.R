@@ -25,6 +25,8 @@ copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
       termlabels = labels.exo,
       intercept = TRUE
     )
+    # evaluate in the user's formula env and not the env here
+    environment(f.endo.k.on.all.exo) <- environment(F.formula)
 
     # na.fail: never silently drop rows used for the correction terms
     res.lm.first <- lm(formula = f.endo.k.on.all.exo, data = data, na.action = na.fail)
