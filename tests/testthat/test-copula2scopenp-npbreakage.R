@@ -9,6 +9,12 @@
 # Redundant by design: Everything is also verified in the other test files
 # (skipped on CRAN). If too slow on CRAN, disable by adding skip_on_cran() here.
 # This only loses the early warning but no verification.
+#
+# Runtime of this file (GitHub Actions, 2026-10-29, np 0.80-1):
+#  - windows-latest, R release: 3.9s
+#  - windows-latest, R devel:   4.0s
+#  - ubuntu-latest, R release:  1.4s
+# Slowest tests: object fields (~2.0s on Windows), variable types cv.ls (~1.0s)
 
 set.seed(42)
 
