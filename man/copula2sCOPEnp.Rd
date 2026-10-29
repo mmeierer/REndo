@@ -153,6 +153,9 @@ If both \code{bws} and \code{bwmethod} in \code{npcdistbw.args} are given,
 error is raised, because \code{np::npcdistbw()} would silently keep the method of
 \code{bws}.
 
+If \code{npcdistbw.args} contains \code{bandwidth.compute = FALSE}, \code{bws} is
+required and used as-is, without further estimation.
+
 For each endogenous term, \code{bws} must contain a
 \code{condbandwidth} object for the conditional CDF \code{(single endo) ~ (all exo)}.
 \code{bws} must be a named list, with each element named after the corresponding

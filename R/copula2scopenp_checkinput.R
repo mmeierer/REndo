@@ -131,6 +131,13 @@ checkinput_copula2scopenp_bws <- function(bws, labels.endo, labels.exo) {
 checkinput_copula2scopenp_bws_npcdistbwargs <- function(bws, npcdistbw.args) {
   bwmethod <- npcdistbw.args$bwmethod
 
+  # Fitted bws is required, if dont want to compute
+  if (is.null(bws) && isFALSE(npcdistbw.args$bandwidth.compute)) {
+    return(
+      "Parameter 'bws' is required if 'npcdistbw.args=list(bandwidth.compute=FALSE)'."
+    )
+  }
+
   # No `bws`, no `npcdistbw.args$bwmethod`, no compute = no problem
   if (is.null(bws) || is.null(bwmethod) || isFALSE(npcdistbw.args$bandwidth.compute)) {
     return(c())

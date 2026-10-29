@@ -168,6 +168,17 @@ test_that("bws_npcdistbwargs fails if bwmethod differs from method of bws", {
   )
 })
 
+test_that("bws_npcdistbwargs fails if no fitted bws and dont want to compute (bandwidth.compute=FALSE)", {
+  cases <- list(
+    "no bws" = list(bws = NULL, npcdistbw.args = list(bandwidth.compute = FALSE))
+  )
+  run_cases_errmsg(
+    fn = checkinput_copula2scopenp_bws_npcdistbwargs,
+    cases = cases,
+    regexp = "Parameter 'bws' is required"
+  )
+})
+
 test_that("bws_npcdistbwargs works if no conflict or nothing to check", {
   bw.nr <- structure(list(method = "normal-reference"), class = "condbandwidth")
   bw.cv <- structure(list(method = "cv.ls"), class = "condbandwidth")
