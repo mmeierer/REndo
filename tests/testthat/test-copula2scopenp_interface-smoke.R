@@ -38,7 +38,7 @@ test_that("works with ordered factors in in endo and exo", {
     formula = y ~ P1 + P2 + X1 + X2 + X3 | P1 + P2,
     data = dataCopula2sCOPEnpMulti[1:250, ],
     # cannot run with heuristic
-    npcdistbw.args = list(nmulti = 1, tol = 1, ftol = 1)
+    npcdistbw.args = list(nmulti = 1, tol = 1, ftol = 1, itmax = 20)
   )
   check_clean_fit(res)
   check_print_summary(res)
@@ -62,7 +62,7 @@ test_that("works with a supplied bws and via iterative refinement", {
     copula2sCOPEnp(
       formula = y ~ P + X | P,
       data = dataCopula2sCOPEnpCont,
-      npcdistbw.args = list(bwmethod = "cv.ls", nmulti = 1, ftol = 1, tol = 1),
+      npcdistbw.args = list(bwmethod = "cv.ls", nmulti = 1, ftol = 1, tol = 1, itmax = 20),
       num.boots = 2,
       verbose = FALSE
     )
@@ -75,7 +75,7 @@ test_that("works with a supplied bws and via iterative refinement", {
       formula = y ~ P + X | P,
       data = dataCopula2sCOPEnpCont,
       bws = res_loose$bws,
-      npcdistbw.args = list(nmulti = 1, ftol = 1, tol = 1),
+      npcdistbw.args = list(nmulti = 1, ftol = 1, tol = 1, itmax = 20),
       num.boots = 2,
       verbose = FALSE
     )
@@ -158,7 +158,7 @@ test_that("summary and print work for CV bws (for all types of endo and exo)", {
   res <- fit_2scopenp_fast(
     formula = y ~ P1 + P2 + X1 + X3 + X4 | P1 + P2,
     data = df.types,
-    npcdistbw.args = list(bwmethod = "cv.ls", nmulti = 1, tol = 1, ftol = 1)
+    npcdistbw.args = list(bwmethod = "cv.ls", nmulti = 1, tol = 1, ftol = 1, itmax = 20)
   )
   check_clean_fit(res)
   check_summary_bws_types(res)
