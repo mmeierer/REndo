@@ -78,16 +78,8 @@ test_that("bws works for NULL and valid list", {
 test_that("bws fails if variables differ from the mf cols (incl order)", {
   bw.P <- structure(list(ynames = "P", xnames = c("X1", "X2")), class = "condbandwidth")
   bw.X21 <- structure(
-    list(
-      ynames = "P",
-      xnames = c(
-        "X2",
-        "X
-1   "
-      )
-    ),
-    class = "condb
-  andwidth"
+    list(ynames = "P", xnames = c("X2", "X1")),
+    class = "condbandwidth"
   )
   bw.X1 <- structure(list(ynames = "P", xnames = "X1"), class = "condbandwidth")
   bw.X123 <- structure(
