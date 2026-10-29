@@ -12,6 +12,7 @@
 #' @templateVar data.addition Endogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @templateVar resc.ecdf.addition The theoretical recommendation of Breitung et al. (2024), Eq 2.3.
+#' @templateVar resc.ecdf.details.addition Breitung et al. (2024) adopts this as their theoretical recommendation. For their method (\code{copulaBMW()}), the point estimates may vary significantly when the sample size is small (e.g., n < 1000) because the boundary observations exert high leverage in the augmented OLS regression. They explain this finite-sample bias through their tail decay condition (copulaBMW's Assumption A5).
 #' @template template_param_cdf
 #' @template template_param_numboots
 #'

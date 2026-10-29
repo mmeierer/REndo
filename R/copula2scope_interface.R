@@ -13,7 +13,7 @@
 #' that at least one exogenous regressor is non-normally distributed. In that case, the identification
 #' would then come from the non-normal exogenous regressor instead of the endogenous regressor itself.
 #'
-#' @templateVar data.addition Endogenous regressors must be \code{numeric}. Exogenous regressors may be \code{numeric}, \code{factor}, \code{character}, or \code{logical}, but not \code{ordered}.
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @template template_param_cdf
 #' @template template_param_numboots
@@ -70,15 +70,16 @@
 #' \preformatted{y ~ X + P | P                       # one}
 #' \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endo}
 #'
-#' At least one exogenous regressor should be present in the model.
 #' When no exogenous regressor is present, the correction terms reduce to
 #' the normal scores of each endogenous regressor directly, equivalent to
 #' the approach of Park and Gupta (2012).
 #'
+#' The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+#' in either part.
+#'
 #' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_yang2025
-#' @template template_references_parkgupta2012
 #' @template template_param_cdf_references
 #'
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope")
@@ -178,8 +179,7 @@ copula2sCOPE <- function(
     allow.constant.regressors = FALSE,
     warn.low.card.endo = TRUE,
     allowed.classes.endo = "numeric",
-    # forbid ordered factors
-    allowed.classes.exo = c("numeric", "factor", "character", "logical")
+    allowed.classes.exo = NULL # allows any
   ))
 
   check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))

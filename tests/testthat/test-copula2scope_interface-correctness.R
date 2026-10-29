@@ -5,6 +5,8 @@ set.seed(42)
 data("dataCopula2sCOPECase1")
 data("dataCopula2sCOPECase2")
 data("dataCopula2sCOPECase3")
+data("dataCopCont")
+data("dataCopCont2")
 
 # Setup --------------------------------------------------------------------------------
 setup.correctness <- list(
@@ -78,32 +80,96 @@ test_correctness_formula_edge_cases(
   cases = fixture_2scope_formula_edge_cases()
 )
 
-# Single endo + 0 exo: Collapses to copulaCorrection case 1 (continuous only) ---------
-# (equivalent according to the paper)
-# data case 3: need non-normally distributed exogenous
+# Consistent with Park and Gupta -------------------------------------------------------
 
-run_2scope_parkgupta_equivalent <- function(data) {
-  # Need SE: With boots=1000
-  res.2scope <- fit_2scope_defaults(
-    formula = y ~ P | P,
-    data = data
+# . With exo: recovers true values ----------------------------------------------------
+# P&G continuous endo data: 2sCOPE contains PG, therefore can also recover its params
+test_that("Recovery on P&G (copulaCorrection) data: With exo, single endo (dataCopCont)", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ X1 + X2 + P | P,
+    data = dataCopCont
   )
-
-  res.cc <- fit_copulacorrection_fast(
-    formula = y ~ P | continuous(P),
-    data = data
-  )
-
   check_param_recovery(
-    res = res.2scope,
-    true_vals = coef(res.cc)[c("(Intercept)", "P")]
+    res = res,
+    true_vals = c("(Intercept)" = 2, X1 = 1.5, X2 = -3, P = -1)
   )
-}
-
-test_that("Single endo + NO exo: Same result as PG copulaCorrection (LL case 1) - data case 1", {
-  run_2scope_parkgupta_equivalent(dataCopula2sCOPECase1)
 })
 
-test_that("Single endo + NO exo: Same result as PG copulaCorrection (LL case 1) - data case 2", {
-  run_2scope_parkgupta_equivalent(dataCopula2sCOPECase2)
+test_that("Recovery on P&G (copulaCorrection) data: With exo, multi endo (dataCopCont2)", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ X1 + X2 + P1 + P2 | P1 + P2,
+    data = dataCopCont2
+  )
+  check_param_recovery(
+    res = res,
+    true_vals = c("(Intercept)" = 2, X1 = 1.5, X2 = -3, P1 = -1, P2 = 0.8)
+  )
+})
+
+# . No exo: Collapses to copulaCorrection --------------------------------------------------
+# Collapses to P&G according to the paper = same result as copulaCorrection!
+# Here is not about parameter recovery but to get same results through different
+# estimator
+# - single endo: compare vs MLE
+# - multiple endo: both are augmented OLS but
+#
+# Data:
+# - from copulaCorrection
+# - from 2sCOPE (but 3rd case not ok for PG)
+
+run_2scope_parkgupta_equivalent <- function(data, formula.2scope, formula.cc, params) {
+  set.seed(42)
+  # Need SE: With boots=1000
+  res.2scope <- fit_2scope_defaults(formula = formula.2scope, data = data)
+
+  res.cc <- fit_copulacorrection_fast(formula = formula.cc, data = data)
+
+  check_param_recovery(res = res.2scope, true_vals = coef(res.cc)[params])
+}
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCopula2sCOPECase1)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopula2sCOPECase1,
+    formula.2scope = y ~ P | P,
+    formula.cc = y ~ P | continuous(P),
+    params = c("(Intercept)", "P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCopula2sCOPECase2)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopula2sCOPECase2,
+    formula.2scope = y ~ P | P,
+    formula.cc = y ~ P | continuous(P),
+    params = c("(Intercept)", "P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCopCont)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopCont,
+    formula.2scope = y ~ P | P,
+    formula.cc = y ~ P | continuous(P),
+    params = c("(Intercept)", "P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo, no intercept (dataCopula2sCOPECase1)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopula2sCOPECase1,
+    formula.2scope = y ~ P - 1 | P,
+    formula.cc = y ~ P - 1 | continuous(P),
+    params = c("P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - multi endo (dataCopCont2)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopCont2,
+    formula.2scope = y ~ P1 + P2 | P1 + P2,
+    formula.cc = y ~ P1 + P2 | continuous(P1, P2),
+    params = c("(Intercept)", "P1", "P2")
+  )
 })
