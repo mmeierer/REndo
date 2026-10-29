@@ -1,4 +1,4 @@
-#' @importFrom stats model.frame na.fail qnorm reformulate
+#' @importFrom stats qnorm
 #' @importFrom np npcdist
 copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo, bws) {
   #conditional CDF smooths the discrete distribution through X
@@ -23,19 +23,20 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
       message("Computing conditional CDF for endogenous regressor '", msg.k)
     }
 
-    # exo column is everything that is non-intercept and non-endo col
-    f.endo.exo <- reformulate(
-      response = p.label,
-      termlabels = labels.exo
-    )
-
     # specify endo as DV to know where to read from
-    mf.p <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
-    mf.p <- copula2scopenp_mf_drop_asis(mf.p)
+    mf.p <- copula2scopenp_mf_endo_given_exo(
+      F.formula = F.formula,
+      data = data,
+      p.label = p.label,
+      labels.exo = labels.exo
+    )
     copula2stage_stop_if_constant(mf.p)
     first.stage.frames[[p.label]] <- mf.p
 
-    # TODO: Check if bw were fit with formula or 2 data inputs as user might specify differently?
+    # No check whether bws were fit with np's formula interface: Detectable (bws$formula,
+    # bws$terms) but harmless because txdat/tydat are always passed to npcdist() (np only
+    # falls back to the formula's own data if txdat is missing). The marker is also lost
+    # once bws are refit via npcdistbw(bws = ).
 
     # nonpara conditional CDF estimate
     # calculating F hat_ (P_{i,k} | X_i) for each observation
@@ -45,26 +46,12 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     bw.p <- bws[[p.label]]
     txdat <- mf.p[, -1, drop = FALSE]
     tydat <- mf.p[, 1, drop = FALSE]
-    if (!identical(sort(colnames(txdat)), sort(bw.p$xnames))) {
-      stop(
-        "Names in fitted bandwidth and names of generated variables mismatch. This is likely because the bootstrap sample is degenerate.",
-        call. = FALSE
-      )
-    }
-
-    # if (length(endo.cols) == 0) {
-    #   stop("No endogenous regressors found in the design matrix.", call. = FALSE)
-    # }
-    #
-    # if (length(endo.cols) < length(names.endo.regs)) {
-    #   stop(
-    #     paste0(
-    #       "Bootstrap sample dropped at least one endogenous regressor. ",
-    #       "This happened when a regressor becomes constant in the resampling."
-    #     ),
-    #     call. = FALSE
-    #   )
-    # }
+    # np applies the bandwidths by position: Name & order must match.
+    # Checked in input checks but keep assertion for docu and safety
+    stopifnot(
+      identical(colnames(txdat), bw.p$xnames),
+      identical(colnames(tydat), bw.p$ynames)
+    )
 
     cdf.fit <- np::npcdist(
       bws = bw.p,
@@ -108,10 +95,10 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
 #F hat_(P_k |X) nonparametrically using Kernel methods (Hu et al 2025, mentions mostly Nadaraya-Watson (NW) kernel
 #before eq. 10) Stage 1 from table 3
 #Then the normal quantile transformation is applied to get the copula correction term
-#' @importFrom stats model.frame na.fail reformulate
 #' @importFrom utils modifyList
 #' @importFrom np npcdistbw npcdist
 copula2scopenp_bandwidth <- function(
+  F.formula,
   data,
   verbose,
   labels.endo,
@@ -143,25 +130,20 @@ copula2scopenp_bandwidth <- function(
     # Needs to be able to recognize discrete data as such
     # -> not pass encoded dummies but keep as factors!
     #
-    # Option formula interface `npcdistbw(formula, data)`: Would be nice, but their
-    #   formula interface is broken. It does not seem to use the given `data` parameter
-    #   (rather looks in the environment of formula which is also broken)
+    # Option formula interface `npcdistbw(formula, data)`: Would be nice, but in the past
+    #   their formula interface did not seem to use the given `data` parameter (rather
+    #   looked in the environment of formula which was also broken)
     #
     # Instead use xdat/ydat which requires to pass in model.frame() columns:
     #   - not model.matrix because need to preserve factors
     #   - not columns of `data` because transformations need to be applied
 
-    # formula (single endo) ~ (all exo)
-    # there is no intercept produced by model.frame() but be explicit here that the
-    # exogenous data passed here is without intercept
-    f.endo.exo <- reformulate(
-      termlabels = labels.exo,
-      response = p.label,
-      intercept = FALSE
+    mf.p <- copula2scopenp_mf_endo_given_exo(
+      F.formula = F.formula,
+      data = data,
+      p.label = p.label,
+      labels.exo = labels.exo
     )
-
-    mf.p <- model.frame(f.endo.exo, data = data, na.action = na.fail)
-    mf.p <- copula2scopenp_mf_drop_asis(mf.p)
 
     bw.call.args <- list(
       ydat = mf.p[, 1, drop = FALSE], # endo: response (first col)
@@ -176,11 +158,39 @@ copula2scopenp_bandwidth <- function(
     }
     bw.call.args <- modifyList(bw.call.args, npcdistbw.args)
 
-    return(do.call(what = np::npcdistbw, args = bw.call.args))
+    # Call in way to avoid inlining this (REndo) functions frame and all its data
+    # in bws $call param. Evaluate in env with only required data (bw.call.args)
+    return(do.call(
+      # quoted to not pass deserialized method into $call
+      what = "npcdistbw",
+      args = sapply(names(bw.call.args), as.name, simplify = FALSE),
+      # np namespace as parent so later usage of npcdistbw() in `$call` resolves
+      envir = list2env(bw.call.args, parent = asNamespace("np"))
+    ))
   })
 
   names(l.bws) <- labels.endo
   return(l.bws)
+}
+
+
+# Model frame of (single endo) ~ (all exo), for bandwidth selection and fit()
+#' @importFrom stats model.frame na.fail reformulate
+copula2scopenp_mf_endo_given_exo <- function(F.formula, data, p.label, labels.exo) {
+  # there is no intercept produced by model.frame() but be explicit here that the
+  # exogenous data passed here is without intercept
+  f.endo.exo <- reformulate(
+    termlabels = labels.exo,
+    response = p.label,
+    intercept = FALSE
+  )
+
+  # evaluate in the user's formula env and not the env here.
+  # Set with env(f) because reformulate(env=) requires R >= 3.6
+  environment(f.endo.exo) <- environment(F.formula)
+
+  mf <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
+  return(copula2scopenp_mf_drop_asis(mf))
 }
 
 
