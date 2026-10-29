@@ -132,14 +132,9 @@ residuals.
 
 \item{cdf="resc.ecdf"}{Rescaled empirical cdf \deqn{\hat{F}(x_i) = \frac{\text{rank}(x_i)}{n + 1}}.
    Keeps values strictly inside \eqn{(0,1)} without an arbitrary boundary constant.
-   Breitung et al. (2024) adopts this as their theoretical recommendation.
    Compared to "ecdf", the maximum value is  \eqn{\Phi^{-1}(n/(n+1))},
    which is considerably smaller in small samples (e.g., \eqn{\pm 2.8} for \eqn{n=400}).
-   For their method (\code{copulaBMW()}), the point estimates may
-   vary significantly when the sample size is small (e.g., n < 1000) because the
-   boundary observations exert high leverage in the augmented OLS regression.
-   They explain this finite-sample bias through their tail decay condition
-   (copulaBMW's Assumption A5).
+   Breitung et al. (2024) adopts this as their theoretical recommendation. For their method (\code{copulaBMW()}), the point estimates may vary significantly when the sample size is small (e.g., n < 1000) because the boundary observations exert high leverage in the augmented OLS regression. They explain this finite-sample bias through their tail decay condition (copulaBMW's Assumption A5).
    }
 
 \item{cdf="ecdf"}{Standard empirical CDF with \eqn{10^{-7}} boundary replacement,
@@ -227,6 +222,10 @@ Liengaard, B. D., Becker, J.-M., Bennedsen, M., Heiler, P., Taylor, L. N.,
 means of an adjusted estimator for the Gaussian copula approach.
 \emph{Journal of the Academy of Marketing Science}, 53(1), 279-299
 \doi{10.1007/s11747-024-01055-4}
+
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+Joint Estimation Using Copulas",
+Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 
 Qian, Y., Koschmann, A., and Xie, H. (2024). A practical guide to
 endogeneity correction using copulas. NBER Working Paper No. w32231.
