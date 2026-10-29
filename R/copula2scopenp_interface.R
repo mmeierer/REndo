@@ -398,10 +398,11 @@ copula2sCOPEnp <- function(
     npcdistbw.args = npcdistbw.args
   )
 
-  # TODO: warn if itmax was hit or bws are at search boundaries (lower bound for
-  #   continuous, or lambda at its max). Warn here and not in copula2scopenp_bandwidth
-  #   because should also check the user-given bws
-  # TODO: warn if the fit diagnostics of the bandwidths are bad?
+  # No warnings about the results of the bandwidth optimization:
+  # - itmax reached: Not stored in returned object (no iteration, no convergence)
+  # - lower bound for continuous bws: only approx
+  # - max lambda: maybe, but keep consistent with not warning about lower bound
+  # - diagnostics: left to the user
 
   fit <- copula2scopenp_fit(
     F.formula = F.formula,
