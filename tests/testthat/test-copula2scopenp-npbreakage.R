@@ -150,8 +150,10 @@ test_that("np uses the method of bws and ignores bwmethod", {
 
 
 # Object fields ------------------------------------------------------------------------
-# REndo reads undocumented fields of np's condbandwidth object directly:
+# REndo reads undocumented fields of np's objects directly:
+#  - input checks: class condbandwidth (is())
 #  - input checks and fit: method, xnames, ynames
+#  - fit: condist of the condistribution object (output of npcdist())
 #  - summary(): type flags (ixcon, ixuno, iycon, iyuno), bandwidth (raw bandwidth or
 #    lambda), sumNum (scale factor or lambda max), pmethod, ptype, fval, fval.history
 # If np renames or restructures them, the checks break or summary() prints wrong values
@@ -173,6 +175,9 @@ test_that("np's condbandwidth object has the fields read by REndo", {
   # P1 continuous, P2 ordered
   for (p in c("P1", "P2")) {
     bw <- bws[[p]]
+
+    # input checks: class
+    expect_true(is(bw, "condbandwidth"), info = p)
 
     # input checks and fit
     expect_identical(bw$method, "cv.ls", info = p)
@@ -199,6 +204,17 @@ test_that("np's condbandwidth object has the fields read by REndo", {
     # summary(): objective function, one value per restart
     expect_true(is.numeric(bw$fval) && length(bw$fval) == 1, info = p)
     expect_true(is.numeric(bw$fval.history) && length(bw$fval.history) == 2, info = p)
+
+    # fit: conditional CDF, one value per observation
+    cdf.fit <- np::npcdist(
+      bws = bw,
+      txdat = data.types[, c("X1", "X3", "X4"), drop = FALSE],
+      tydat = data.types[, p, drop = FALSE]
+    )
+    expect_true(
+      is.numeric(cdf.fit$condist) && length(cdf.fit$condist) == nrow(data.types),
+      info = p
+    )
   }
 })
 
