@@ -1,0 +1,63 @@
+# TEMPORARY: Runtime of test-copula2scopenp-npbreakage.R (runs on CRAN) on Windows.
+# Delete before merging.
+#
+# Triggered by pushing to the branch below. workflow_dispatch (Actions tab) only works
+# once this file is also on the default branch.
+
+name: tmp-npbreakage-timing
+
+on:
+  push:
+    branches:
+      - copula2scopenp-last-questions
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  timing:
+    runs-on: ${{ matrix.config.os }}
+
+    name: npbreakage-timing-${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: windows-latest, r: 'release'}
+          - {os: windows-latest, r: 'devel'}
+          # baseline for comparison
+          - {os: ubuntu-latest,  r: 'release'}
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgload, any::testthat
+
+      - name: Time test file
+        shell: Rscript {0}
+        run: |
+          cat("np version:", as.character(packageVersion("np")), "\n")
+          pkgload::load_all(quiet = TRUE)
+
+          path <- "tests/testthat/test-copula2scopenp-npbreakage.R"
+          timing <- system.time(
+            res <- testthat::test_file(path, reporter = "summary")
+          )
+
+          cat("\n== Total runtime of the file (seconds):\n")
+          print(timing)
+
+          cat("\n== Runtime per test (seconds):\n")
+          df <- as.data.frame(res)
+          print(df[order(-df$real), c("test", "real", "failed", "error")], row.names = FALSE)
