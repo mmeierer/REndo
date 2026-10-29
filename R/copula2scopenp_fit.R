@@ -33,7 +33,10 @@ copula2scopenp_fit <- function(F.formula, data, verbose, labels.endo, labels.exo
     copula2stage_stop_if_constant(mf.p)
     first.stage.frames[[p.label]] <- mf.p
 
-    # TODO: Check if bw were fit with formula or 2 data inputs as user might specify differently?
+    # No check whether bws were fit with np's formula interface: Detectable (bws$formula,
+    # bws$terms) but harmless because txdat/tydat are always passed to npcdist() (np only
+    # falls back to the formula's own data if txdat is missing). The marker is also lost
+    # once bws are refit via npcdistbw(bws = ).
 
     # nonpara conditional CDF estimate
     # calculating F hat_ (P_{i,k} | X_i) for each observation
