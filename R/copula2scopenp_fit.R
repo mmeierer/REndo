@@ -130,9 +130,9 @@ copula2scopenp_bandwidth <- function(
     # Needs to be able to recognize discrete data as such
     # -> not pass encoded dummies but keep as factors!
     #
-    # Option formula interface `npcdistbw(formula, data)`: Would be nice, but their
-    #   formula interface is broken. It does not seem to use the given `data` parameter
-    #   (rather looks in the environment of formula which is also broken)
+    # Option formula interface `npcdistbw(formula, data)`: Would be nice, but in the past
+    #   their formula interface did not seem to use the given `data` parameter (rather
+    #   looked in the environment of formula which was also broken)
     #
     # Instead use xdat/ydat which requires to pass in model.frame() columns:
     #   - not model.matrix because need to preserve factors
