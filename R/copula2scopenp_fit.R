@@ -158,7 +158,15 @@ copula2scopenp_bandwidth <- function(
     }
     bw.call.args <- modifyList(bw.call.args, npcdistbw.args)
 
-    return(do.call(what = np::npcdistbw, args = bw.call.args))
+    # Call in way to avoid inlining this (REndo) functions frame and all its data
+    # in bws $call param. Evaluate in env with only required data (bw.call.args)
+    return(do.call(
+      # quoted to not pass deserialized method into $call
+      what = "npcdistbw",
+      args = sapply(names(bw.call.args), as.name, simplify = FALSE),
+      # np namespace as parent so later usage of npcdistbw() in `$call` resolves
+      envir = list2env(bw.call.args, parent = asNamespace("np"))
+    ))
   })
 
   names(l.bws) <- labels.endo
