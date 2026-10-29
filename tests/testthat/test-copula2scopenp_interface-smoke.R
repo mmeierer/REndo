@@ -104,6 +104,25 @@ test_that("works with a supplied bws without recomputing them (bandwidth.compute
 })
 
 
+test_that("works with a supplied bws estimated with the np formula interface", {
+  bws <- list(
+    P = np::npcdistbw(
+      formula = P ~ X,
+      data = dataCopula2sCOPEnpCont,
+      bwmethod = "normal-reference"
+    )
+  )
+
+  res <- fit_2scopenp_fast(
+    formula = y ~ P + X | P,
+    data = dataCopula2sCOPEnpCont,
+    bws = bws,
+    npcdistbw.args = list(bandwidth.compute = FALSE)
+  )
+  check_clean_fit(res)
+})
+
+
 # S3: Summary & print ------------------------------------------------------------
 # They use nps internal (bw object) which differ by bw method and variable type
 
