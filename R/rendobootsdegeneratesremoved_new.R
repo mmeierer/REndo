@@ -113,7 +113,8 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
       b <- b + 1
 
       if (verbose) {
-        setTxtProgressBar(pb = pb, value = b)
+        # b-1: minus 1 because b has already been increased (b+1)
+        setTxtProgressBar(pb = pb, value = b - 1)
       }
     } else {
       failed <- failed + 1
