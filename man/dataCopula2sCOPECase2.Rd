@@ -34,6 +34,6 @@ Marketing Research}, 62(4), 601-623.
 \doi{10.1177/00222437241296453}
 }
 \author{
-Kimberly Lew \email{kimberlylew12@gmail.com}
+Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }
 \keyword{datasets}

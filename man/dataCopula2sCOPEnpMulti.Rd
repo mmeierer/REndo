@@ -57,6 +57,6 @@ regression separating the structural \code{P2} coefficients from the discrete co
 at stronger endogeneity levels (\eqn{\rho = 0.7}).
 }
 \author{
-Kimberly Lew \email{kimberlylew12@gmail.com}
+Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }
 \keyword{datasets}

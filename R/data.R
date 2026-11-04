@@ -217,7 +217,7 @@
 #'     \code{X}.}
 #' }
 #' @docType data
-#' @author Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopBMW"
 
 #' @title Simulated Dataset for the BMW Approach with Two Endogenous Regressors
@@ -248,7 +248,7 @@
 #'     \code{X} and \code{e1}.}
 #' }
 #' @docType data
-#' @author Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopBMWMultiEndo"
 
 
@@ -277,7 +277,7 @@
 #' }
 #' @docType data
 #' @template template_references_hu2025
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopula2sCOPEnpCont"
 
 
@@ -308,7 +308,7 @@
 #' }
 #' @docType data
 #' @template template_references_hu2025
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopula2sCOPEnpBi"
 
 #' @title Simulated Dataset for 2sCOPEnp -  Multiple Endogenous and Exogenous Regressors with
@@ -360,7 +360,7 @@
 #' regression separating the structural \code{P2} coefficients from the discrete correction term
 #' at stronger endogeneity levels (\eqn{\rho = 0.7}).
 #' @docType data
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopula2sCOPEnpMulti"
 
 #' @title Simulated Dataset for 2sCOPE - Non-normal Endogenous and Exogenous Regressors
@@ -386,7 +386,7 @@
 #' }
 #' @docType data
 #' @template template_references_yang2025
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopula2sCOPECase1"
 
 #' @title Simulated Dataset for 2sCOPE - Non-normal Endogenous and Normal Exogenous Regressor
@@ -410,7 +410,7 @@
 #' }
 #' @docType data
 #' @template template_references_yang2025
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopula2sCOPECase2"
 
 
@@ -437,7 +437,7 @@
 #' }
 #' @docType data
 #' @template template_references_yang2025
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopula2sCOPECase3"
 
 
@@ -462,7 +462,7 @@
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
 #' @docType data
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopIMAContExo"
 
 
@@ -489,7 +489,7 @@
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
 #' @docType data
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopIMABinExo"
 
 #' @title Simulated Dataset for Copula IMA - Two Continuous Endogenous Regressors,
@@ -521,5 +521,5 @@
 #'    at \eqn{\rho = 0.5} but uncorrelated with structural error.}
 #' }
 #' @docType data
-#' @author Kimberly Lew \email{kimberlylew12@@gmail.com}
+#' @template template_author_kimberlylew
 "dataCopIMAMultiEndo"
