@@ -15,10 +15,10 @@
 #' the exogenous control variables to smooth the discrete conditional CDF.
 #'
 #' When the endogenous regressor \eqn{P} is independent of all exogenous regressors \eqn{X},
-#' the conditional CDF collapses to the marginal CDF, \eqn{\hat{F})(P|X) = \hat{F}(P)} and the
+#' the conditional CDF collapses to the marginal CDF, \eqn{\hat{F}(P|X) = \hat{F}(P)} and the
 #' method then reduces to the Park and Gupta (2012) copula correction.
 #'
-#' @templateVar data.addition Variables classes must be set correctly before calling the function. Endogenous regressors must be \code{numeric} or \code{ordered}. Exogenous regressors must be \code{numeric}, \code{factor}, or \code{ordered}.
+#' @templateVar data.addition Variable classes must be set correctly before calling the function. Endogenous regressors must be \code{numeric} or \code{ordered}. Exogenous regressors must be \code{numeric}, \code{factor}, or \code{ordered}.
 #' @template template_param_formuladataverbose
 #' @template template_param_numboots
 #' @param npcdistbw.args A named list of arguments which are passed to
@@ -43,7 +43,7 @@
 #' \eqn{P_{i,k}} are endogenous regressors (continuous or discrete) that may be correlated
 #' with the structural error \eqn{\varepsilon_i},
 #' \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
-#' \eqn{\mu, \alpha_k, \beta} are structural model paramters.
+#' \eqn{\mu, \alpha_k, \beta} are structural model parameters.
 #'
 #'
 #' ## Methodology
@@ -78,11 +78,11 @@
 #'
 #' ## Bandwidth Selection
 #'
-#' The accuracy of the copula correction terms depend on the quality of the nonparametric
+#' The accuracy of the copula correction terms depends on the quality of the nonparametric
 #' conditional CDF estimate, which depends on the choice of the bandwidth. If a bandwidth is
 #' too small, this could lead to overfitting of the conditional CDF. Likewise, if it is too large,
 #' this could result in oversmoothing and introducing bias, leading to underfitting (Hu et al. 2025).
-#' However, no closed-form rule-of-thumb bandwidth exists for conditional CDF estimator because these rules
+#' However, no closed-form rule-of-thumb bandwidth exists for the conditional CDF estimator because these rules
 #' assume a known marginal distribution, yet this is an assumption that the 2sCOPEnp method relaxes. The default
 #' bandwidth is therefore selected through least-squares cross-validation (Li, Lin and Racine 2013) which is
 #' data-driven and distribution-free.
@@ -99,21 +99,29 @@
 #'
 #' If given, the items in \code{bws} will serve as the starting points for the bandwidth
 #' estimation of the respective endogenous regressor, by passing them into
-#' \code{np::npcdistbw(bws=bws[[p]])}. This allows to iteratively refine the bandwidth
+#' \code{np::npcdistbw(bws=bws[[p]])}. This allows iteratively refining the bandwidth
 #' search by passing the result of a previous fit. See examples.
+#'
+#' If both \code{bws} and \code{bwmethod} in \code{npcdistbw.args} are given,
+#' \code{bwmethod} must match the method used to estimate \code{bws}. Otherwise an
+#' error is raised, because \code{np::npcdistbw()} would silently keep the method of
+#' \code{bws}.
+#'
+#' If \code{npcdistbw.args} contains \code{bandwidth.compute = FALSE}, \code{bws} is
+#' required and used as-is, without further estimation.
 #'
 #' For each endogenous term, \code{bws} must contain a
 #' \code{condbandwidth} object for the conditional CDF \code{(single endo) ~ (all exo)}.
-#' \code{bws} must be a named list, with each each element named after the corresponding
+#' \code{bws} must be a named list, with each element named after the corresponding
 #' endogenous terms.
-#' The bandwidths must be estimated using the default \code{np::npcdistbw(xdat=,ydat=)}
-#' interface, not the formula interface because this will break downstream usage in
-#' \code{np::npcdist()}.
+#' Each element must be estimated for exactly this endogenous term and with the exogenous
+#' regressors in the same order as in the formula because the bandwidths are applied by
+#' position.
 #'
 #' ## Parameter \code{formula}
 #'
 #' The \code{formula} argument follows a two part notation separated by \code{|}.
-#' The first part specifies the structural model (e.g \code{y ~ X + P}).
+#' The first part specifies the structural model (e.g. \code{y ~ X + P}).
 #' The second part lists the endogenous regressors:
 #'
 #' \preformatted{y ~ X + P | P                       # endogenous P}
@@ -121,7 +129,7 @@
 #'
 #' At least one exogenous regressor must be present in the model for the
 #' nonparametric conditional CDF estimation to be feasible.
-#' The formula may not contain interaction term (\code{A:B}) in either part because these
+#' The formula may not contain interaction terms (\code{A:B}) in either part because these
 #' are only expanded by \code{model.matrix()} but the method uses \code{model.frame()}
 #' output to preserve factor structure for the kernel.
 #'
@@ -139,9 +147,10 @@
 #' If the bootstrap standard errors of the endogenous regressor coefficients are more
 #' than 6 times larger than the corresponding OLS standard errors, this may indicate
 #' near-multicollinearity between the copula correction term and the original regressors,
-#' which may suggest a potential identification issue. (Hu et al. 2025, section 3.5)
+#' which may suggest a potential identification issue (Hu et al. 2025, section 3.5).
 #'
 #' @template template_references_hu2025
+#' @template template_references_parkgupta2012
 #'
 #' @references
 #' Li, Q. and Racine, J. S. (2008). Nonparametric estimation of conditional CDF and
@@ -217,9 +226,9 @@
 #' #X3 is ordered factor exogenous (3 levels)
 #'
 #' # True values: mu = 1, alpha1 = -1 (P1), alpha2 = 1 (P2),
-#' #              beta1 = 2 (X1), beta2 = 0.5, beta3 = 1 (X3)
+#' #              beta1 = 2 (X1), beta2 = 0.5 (X2), beta3 = 1 (X3)
 #' # note that P2.Q may have small significant coefficient. This is expected
-#' #when there is stronger endogeneity with discreted ordered regressors.
+#' #when there is stronger endogeneity with discrete ordered regressors.
 #'
 #' #--------------------------------------------------------------
 #'
@@ -267,13 +276,9 @@
 #' res.loosely <- copula2sCOPEnp(
 #'  y ~ X + P | P,
 #'  npcdistbw.args = list(
-#'    # alternative: Directly calculate 'rule-of-thumb’ bandwidth.
-#'    # Performs no search (other params irrelevant)
-#'    # bwmethod = "normal-reference",
-#'
 #'    # depending on data:
 #'    #  Get close quickly (low 'nmulti')
-#'    #  Avoid local minimas (high 'nmulti')
+#'    #  Avoid local minima (high 'nmulti')
 #'    # np::npcdistbw() still recommends multiple restarts
 #'    # for exploratory search
 #'    nmulti = 3,
@@ -359,7 +364,15 @@ copula2sCOPEnp <- function(
   labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
   labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
-  check_err_msg(checkinput_copula2scopenp_bws(bws = bws, labels.endo = labels.endo))
+  check_err_msg(checkinput_copula2scopenp_bws(
+    bws = bws,
+    labels.endo = labels.endo,
+    labels.exo = labels.exo
+  ))
+  check_err_msg(checkinput_copula2scopenp_bws_npcdistbwargs(
+    bws = bws,
+    npcdistbw.args = npcdistbw.args
+  ))
 
   if (verbose) {
     message(
@@ -373,6 +386,7 @@ copula2sCOPEnp <- function(
   # bws estimates are consistent and sampling variability has negligible effect
   # on the bootstrap distribution of the structural coefficients
   bws <- copula2scopenp_bandwidth(
+    F.formula = F.formula,
     data = data,
     verbose = verbose,
     labels.endo = labels.endo,
@@ -381,10 +395,11 @@ copula2sCOPEnp <- function(
     npcdistbw.args = npcdistbw.args
   )
 
-  # TODO: warn if itnmax was hit or bws are at search boundaries (lower bound for
-  #   continuous, or lambda at its max). Warn here and not in copula2scopenp_bandwidth
-  #   because should also check the user-given bws
-  # TODO: warn if the fit diagnostics of the bandwidths are bad?
+  # No warnings about the results of the bandwidth optimization:
+  # - itmax reached: Not stored in returned object (no iteration, no convergence)
+  # - lower bound for continuous bws: only approx
+  # - max lambda: maybe, but keep consistent with not warning about lower bound
+  # - diagnostics: left to the user
 
   fit <- copula2scopenp_fit(
     F.formula = F.formula,

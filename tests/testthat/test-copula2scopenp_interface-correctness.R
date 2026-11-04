@@ -149,6 +149,38 @@ test_that("Parameter bws is used as-is", {
   expect_false(isTRUE(all.equal(coef(res.perturbed), coef(res1))))
 })
 
+# bws call ------------------------------------------------------------------------
+
+test_that("Call in bws has no data inlined and a small env", {
+  npcdistbw.args <- list(bwmethod = "normal-reference", nmulti = 2)
+  res <- fit_2scopenp_fast(
+    formula = y ~ P + X | P,
+    data = dataCopula2sCOPEnpCont,
+    npcdistbw.args = npcdistbw.args
+  )
+  bw.call <- res$bws$P$call
+  expected.args <- c("xdat", "ydat", names(npcdistbw.args))
+
+  # all args passed as symbols, incl the ones which np collects in `...`
+  call.args <- as.list(bw.call)[-1]
+  call.args <- c(call.args[names(call.args) != "..."], as.list(call.args[["..."]]))
+  expect_setequal(names(call.args), expected.args)
+  for (nm in names(call.args)) {
+    expect_true(is.name(call.args[[nm]]), info = nm)
+  }
+
+  # env contains only the args, parent is np
+  env <- environment(bw.call)
+  expect_setequal(ls(env, all.names = TRUE), expected.args)
+  expect_identical(parent.env(env), asNamespace("np"))
+
+  # downstream usage in np without data still works
+  expect_no_error(predict(res$bws$P))
+  dist <- expect_no_error(np::npcdist(bws = res$bws$P))
+  expect_no_error(fitted(dist))
+  expect_no_error(predict(dist))
+})
+
 # Consistency with Park & Gupta ------------------------------------------------
 # According to Kimberly:
 # When the endogenous regressor \eqn{P} is independent of all exogenous regressors \eqn{X},

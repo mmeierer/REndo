@@ -44,7 +44,7 @@ Imports:
     corpcor (>= 1.6.9),
     Rcpp (>= 1.0.3), 
     lmtest (>= 0.9-35),
-    np (>= 0.60-18),
+    np (>= 0.80-1),
     ks (>= 1.10.0)
 Suggests:
     testthat (>= 3.1.5),
