@@ -43,9 +43,9 @@ xi <- qnorm(pnorm(xistar)) #normally distributed
 
 y <-  mu + alpha * P + beta * X + xi
 
-dataCopula2sCOPECase1 <- data.frame(y = y, P = P, X = X)
+dataCop2sCOPECase1 <- data.frame(y = y, P = P, X = X)
 
-usethis::use_data(dataCopula2sCOPECase1, overwrite = TRUE)
+usethis::use_data(dataCop2sCOPECase1, overwrite = TRUE)
 
 ## Data for case 2 : 2sCOPE - Endo regressors (P) is nonnormal and Exo regressors (X) is normal
 
@@ -79,9 +79,9 @@ xi <- qnorm(pnorm(xistar)) #normal
 
 y <- mu + alpha * P + beta * X + xi
 
-dataCopula2sCOPECase2 <- data.frame(y = y, P = P, X = X)
+dataCop2sCOPECase2 <- data.frame(y = y, P = P, X = X)
 
-usethis::use_data(dataCopula2sCOPECase2, overwrite = TRUE)
+usethis::use_data(dataCop2sCOPECase2, overwrite = TRUE)
 
 #Case 3: endo reg (P) is normal, exo reg (X) is nonnormal
 
@@ -119,8 +119,8 @@ xi <- qnorm(pnorm(xistar)) #normal
 
 y <- mu + alpha * P + beta * X + xi
 
-dataCopula2sCOPECase3 <- data.frame(y = y, P = P, X = X)
+dataCop2sCOPECase3 <- data.frame(y = y, P = P, X = X)
 
-usethis::use_data(dataCopula2sCOPECase3, overwrite = TRUE)
+usethis::use_data(dataCop2sCOPECase3, overwrite = TRUE)
 
 

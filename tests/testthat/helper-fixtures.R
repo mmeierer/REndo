@@ -67,15 +67,15 @@ fixture_ima_formula_edge_cases <- function() {
 
 # copula2sCOPE formula edge cases ------------------------------------------------------
 fixture_2scope_formula_edge_cases <- function() {
-  data("dataCopula2sCOPECase1", envir = environment())
+  data("dataCop2sCOPECase1", envir = environment())
 
-  df <- dataCopula2sCOPECase1
+  df <- dataCop2sCOPECase1
   df$`P 1` <- df$P
   df$P2 <- df$P * df$X # not collinear or P
   df$x_fac <- factor(rep(c("a", "b", "c"), length.out = nrow(df)))
 
   return(c(
-    .fixture_copula2stage_formula_edge_cases(dataCopula2sCOPECase1),
+    .fixture_copula2stage_formula_edge_cases(dataCop2sCOPECase1),
     list(
       "factor exo" = list(formula = y ~ X + x_fac + P | P, data = df),
       "multiple endo with backtick" = list(

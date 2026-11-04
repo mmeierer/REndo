@@ -374,7 +374,7 @@
 #' The true parameter values are `mu = 1` for the intercept,
 #' `alpha = 1` for `P` and `beta = -1` for `X`.
 #'
-#' @usage data("dataCopula2sCOPECase1")
+#' @usage data("dataCop2sCOPECase1")
 #' @format A data frame with 1000 observations on 3 variables:
 #' - `y`: a numeric vector representing the dependent variable.
 #' - `P`: a numeric vector, continuous and endogenous,
@@ -385,7 +385,7 @@
 #' @template template_references_yang2025
 #' @template template_author_kimberlylew
 #' @md
-"dataCopula2sCOPECase1"
+"dataCop2sCOPECase1"
 
 #' Simulated Dataset for 2sCOPE - Non-normal Endogenous and Normal Exogenous Regressor
 #'
@@ -398,7 +398,7 @@
 #' The true parameter values are `mu = 1` for the intercept,
 #' `alpha = 1` for `P` and `beta = -1` for `X`.
 #'
-#' @usage data("dataCopula2sCOPECase2")
+#' @usage data("dataCop2sCOPECase2")
 #' @format A data frame with 1000 observations on 3 variables:
 #' - `y`: a numeric vector representing the dependent variable.
 #' - `P`: a numeric vector, continuous and endogenous,
@@ -409,7 +409,7 @@
 #' @template template_references_yang2025
 #' @template template_author_kimberlylew
 #' @md
-"dataCopula2sCOPECase2"
+"dataCop2sCOPECase2"
 
 
 #' Simulated Dataset for 2sCOPE - Normally Distributed Endogenous and Non-normal Exogenous Regressor
@@ -425,7 +425,7 @@
 #' The true parameter values are `mu = 1` for the intercept,
 #' `alpha = 1` for `P` and `beta = -1` for `X`.
 #'
-#' @usage data("dataCopula2sCOPECase3")
+#' @usage data("dataCop2sCOPECase3")
 #' @format A data frame with 2500 observations on 3 variables:
 #' - `y`: a numeric vector representing the dependent variable.
 #' - `P`: a numeric vector, continuous and endogenous,
@@ -436,7 +436,7 @@
 #' @template template_references_yang2025
 #' @template template_author_kimberlylew
 #' @md
-"dataCopula2sCOPECase3"
+"dataCop2sCOPECase3"
 
 
 #' Simulated Dataset for Copula IMA - Continuous Exogenous Regressor

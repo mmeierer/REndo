@@ -87,9 +87,9 @@
 #' @family copula-based methods
 #' @template template_seealso_copula2stage
 #'
-#' @seealso \code{\link[REndo:dataCopula2sCOPECase1]{dataCopula2sCOPECase1},
-#' \link[REndo:dataCopula2sCOPECase2]{dataCopula2sCOPECase2},
-#' \link[REndo:dataCopula2sCOPECase3]{dataCopula2sCOPECase3}} for detailed
+#' @seealso \code{\link[REndo:dataCop2sCOPECase1]{dataCop2sCOPECase1},
+#' \link[REndo:dataCop2sCOPECase2]{dataCop2sCOPECase2},
+#' \link[REndo:dataCop2sCOPECase3]{dataCop2sCOPECase3}} for detailed
 #' information about the simulated datasets
 #'
 #' @examples
@@ -102,10 +102,10 @@
 #' # are correlated.
 #' # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 #' # -------------------------------------------------------------------
-#' data("dataCopula2sCOPECase1")
+#' data("dataCop2sCOPECase1")
 #' res1 <- copula2sCOPE(
 #'   y ~ P + X | P,
-#'   data      = dataCopula2sCOPECase1,
+#'   data      = dataCop2sCOPECase1,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
 #' )
@@ -120,10 +120,10 @@
 #' # regressor X is normally distributed.
 #' # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 #' # -------------------------------------------------------------------
-#' data("dataCopula2sCOPECase2")
+#' data("dataCop2sCOPECase2")
 #' res2 <- copula2sCOPE(
 #'   y ~ P + X | P,
-#'   data      = dataCopula2sCOPECase2,
+#'   data      = dataCop2sCOPECase2,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
 #' )
@@ -139,10 +139,10 @@
 #' # identification comes from the nonnormal exogenous regressor X.
 #' # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 #' # -------------------------------------------------------------------
-#' data("dataCopula2sCOPECase3")
+#' data("dataCop2sCOPECase3")
 #' res3 <- copula2sCOPE(
 #'   y ~ P + X | P,
-#'   data      = dataCopula2sCOPECase3,
+#'   data      = dataCop2sCOPECase3,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
 #' )
