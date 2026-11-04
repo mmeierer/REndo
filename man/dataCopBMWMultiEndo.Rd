@@ -6,15 +6,13 @@
 \title{Simulated Dataset for the BMW Approach with Two Endogenous Regressors}
 \format{
 A data frame with 5000 observations on 4 variables:
-\describe{
-  \item{\code{y}}{a numeric vector representing the dependent variable.}
-  \item{\code{X}}{a numeric vector, Gamma(1,1) distributed and exogenous.}
-  \item{\code{P1}}{a numeric vector, continuous and endogenous, constructed
-    as \code{P1 = X + e1} where \code{e1 ~ Gamma(3,2)} is independent of
-    \code{X} and \code{e2}.}
-  \item{\code{P2}}{a numeric vector, continuous and endogenous, constructed
-    as \code{P2 = X + e2} where \code{e2 ~ Gamma(3,2)} is independent of
-    \code{X} and \code{e1}.}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{X}: a numeric vector, Gamma(1,1) distributed and exogenous.
+\item \code{P1}: a numeric vector, continuous and endogenous, constructed
+as \code{P1 = X + e1} where \code{e1 ~ Gamma(3,2)} is independent of \code{X} and \code{e2}.
+\item \code{P2}: a numeric vector, continuous and endogenous, constructed
+as \code{P2 = X + e2} where \code{e2 ~ Gamma(3,2)} is independent of \code{X} and \code{e1}.
 }
 }
 \usage{
@@ -22,17 +20,17 @@ data("dataCopBMWMultiEndo")
 }
 \description{
 A dataset with one exogenous regressor \code{X} and two
-  continuous endogenous regressors \code{P1} and \code{P2}, generated
-  as an extension of DGP1 to the multiple endogenous regressor case (Remark 2.1).
-  Both endogenous regressors are correlated with \code{X} (\code{delta1 = delta2 = 1})
-  and shows moderate endogeneity (\code{rho1 = rho2 = 0.5}).
-  The true parameter values are: \code{mu = 1} (intercept),
-  \code{beta = -1} (\code{X}), \code{alpha1 = 1} (\code{P1}),
-  and \code{alpha2 = 1} (\code{P2}).
-  The first-stage errors follow \eqn{\text{Gamma}(3,2)} where the
-  distribution of \eqn{e} is closer to Gaussian than \eqn{\text{Gamma}(1,1)}
-  making identification more challenging. It can be seen in Table 1 of J. Breitung
-  et al. (2024) that the method correctly removes bias when \eqn{\delta = 1}.
+continuous endogenous regressors \code{P1} and \code{P2}, generated
+as an extension of DGP1 to the multiple endogenous regressor case (Remark 2.1).
+Both endogenous regressors are correlated with \code{X} (\code{delta1 = delta2 = 1})
+and shows moderate endogeneity (\code{rho1 = rho2 = 0.5}).
+The true parameter values are: \code{mu = 1} (intercept),
+\code{beta = -1} (\code{X}), \code{alpha1 = 1} (\code{P1}),
+and \code{alpha2 = 1} (\code{P2}).
+The first-stage errors follow \eqn{\text{Gamma}(3,2)} where the
+distribution of \eqn{e} is closer to Gaussian than \eqn{\text{Gamma}(1,1)}
+making identification more challenging. It can be seen in Table 1 of J. Breitung
+et al. (2024) that the method correctly removes bias when \eqn{\delta = 1}.
 }
 \author{
 Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}

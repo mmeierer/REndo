@@ -6,12 +6,12 @@
 \title{Simulated Dataset for 2sCOPE - Non-normal Endogenous and Exogenous Regressors}
 \format{
 A data frame with 1000 observations on 3 variables:
-\describe{
-\item{\code{y}}{a numeric vector representing the dependent variable.}
-\item{\code{P}}{a numeric vector, continuous and endogenous,
-  Gamma(1,1) distributed and correlated with \code{X} (rho_px = 0.5).}
-\item{\code{X}}{a numeric vector, continuous and exogenous,
-  Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{P}: a numeric vector, continuous and endogenous,
+Gamma(1,1) distributed and correlated with \code{X} (rho_px = 0.5).
+\item \code{X}: a numeric vector, continuous and exogenous,
+Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).
 }
 }
 \usage{
@@ -19,15 +19,15 @@ data("dataCopula2sCOPECase1")
 }
 \description{
 A dataset simulated with one endogenous regressor \code{P}
-  and one exogenous regressor \code{X}, both non-normal and correlated
-  with each other (rho_px = 0.5). The endogenous regressor \code{P}
-  follows a Gamma(1,1) distribution and the exogenous regressor \code{X}
-  follows an Exp(1) distribution. The endogeneity strength is rho_pxi = 0.5.
-  This dataset corresponds to Case 1 of Yang et al. (2025) and
-  demonstrates 2sCOPE's main contribution: Consistent estimation when the
-  endogenous and exogenous regressors are correlated.
-  The true parameter values are \code{mu = 1} for the intercept,
-  \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
+and one exogenous regressor \code{X}, both non-normal and correlated
+with each other (rho_px = 0.5). The endogenous regressor \code{P}
+follows a Gamma(1,1) distribution and the exogenous regressor \code{X}
+follows an Exp(1) distribution. The endogeneity strength is rho_pxi = 0.5.
+This dataset corresponds to Case 1 of Yang et al. (2025) and
+demonstrates 2sCOPE's main contribution: Consistent estimation when the
+endogenous and exogenous regressors are correlated.
+The true parameter values are \code{mu = 1} for the intercept,
+\code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
 }
 \references{
 Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a

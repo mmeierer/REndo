@@ -6,12 +6,12 @@
 \title{Simulated Dataset for Copula IMA - Continuous Exogenous Regressor}
 \format{
 A data frame with 1000 observations on 3 variables:
-\describe{
-\item{\code{y}}{a numeric vector representing the dependent variable.}
-\item{\code{X}}{a numeric vector, normally distributed with mean 1, exogenous
-  and correlated with \code{P}.}
-\item{\code{P}}{a numeric vector, continuous and endogenous, following a
-  bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{X}: a numeric vector, normally distributed with mean 1, exogenous
+and correlated with \code{P}.
+\item \code{P}: a numeric vector, continuous and endogenous, following a
+bounded distribution \verb{Phi(P*) + 0.5} with values in (0.5, 1.5).
 }
 }
 \usage{
@@ -19,13 +19,13 @@ data("dataCopIMAContExo")
 }
 \description{
 A dataset simulated with one exogenous regressor \code{X} and one
-  endogenous continuous regressor \code{P}, and a dependent variable \code{y}.
-  The exogenous regressor \code{X} follows a normal distribution with mean 1
-  and is correlated with \code{P} (r = 0.5). The endogenous regressor \code{P}
-  follows a bounded continuous distribution (Phi(P*) + 0.5). The endogeneity
-  strength is rho = 0.5. There is no intercept in the data generating process.
-  The true parameter values are given as \code{alpha = 1} for \code{P} and
-  \code{beta = 1} for \code{X}.
+endogenous continuous regressor \code{P}, and a dependent variable \code{y}.
+The exogenous regressor \code{X} follows a normal distribution with mean 1
+and is correlated with \code{P} (r = 0.5). The endogenous regressor \code{P}
+follows a bounded continuous distribution (\verb{Phi(P*) + 0.5}). The endogeneity
+strength is rho = 0.5. There is no intercept in the data generating process.
+The true parameter values are given as \code{alpha = 1} for \code{P} and
+\code{beta = 1} for \code{X}.
 }
 \references{
 Haschka, R. E. (2025). Robustness of copula-correction models in causal

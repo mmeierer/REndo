@@ -7,29 +7,29 @@
 mixed continuous, ordered and factor variables}
 \format{
 A data frame with 5000 observations on 6 variables:
-\describe{
-\item{\code{y}}{a numeric vector representing the dependent variable.}
-\item{\code{P1}}{a numeric vector which is continuous and endogenous following a
-lognormal distribution and correlated with structural error (\eqn{\rho = 0.5}) and with \code{X1}}
-\item{\code{P2}}{an ordered factor with 4 levels (low, medium, high and very high) endogenous.
-\code{P2} is correlated with the structural error (\eqn{\rho = 0.7}) and with \code{X2}.}
-\item{\code{X1}}{a numeric vector which is continuous and exogenous.
-It follows a  \eqn{N(0,1)} distribution and is correlated with \code{P1}.}
-\item{\code{X2}}{a numeric vector which is continuous and exogenous and approximately
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{P1}: a numeric vector which is continuous and endogenous following a
+lognormal distribution and correlated with structural error (\eqn{\rho = 0.5}) and with \code{X1}
+\item \code{P2}: an ordered factor with 4 levels (low, medium, high and very high) endogenous.
+\code{P2} is correlated with the structural error (\eqn{\rho = 0.7}) and with \code{X2}.
+\item \code{X1}: a numeric vector which is continuous and exogenous.
+It follows a  \eqn{N(0,1)} distribution and is correlated with \code{P1}.
+\item \code{X2}: a numeric vector which is continuous and exogenous and approximately
 follows a \eqn{N(0,1)} distribution. It is Correlated with \code{P2}.
 Note that this was kept continuous (not a factor) so that cross-validation for \eqn{\hat{F}(P_2 | X)}
-finds a finite non-degenerate bandwidth rather than collapsing to exact category matching.}
-\item{\code{X3}}{an ordered factor with three levels (low, medium and high) purely exogenous.
+finds a finite non-degenerate bandwidth rather than collapsing to exact category matching.
+\item \code{X3}: an ordered factor with three levels (low, medium and high) purely exogenous.
 Used as an  ordered control variable in the outcome equation.
 Note that it was not used in the generation of \code{P2} so that cross-validation does not
-collapse to exact category matching on \code{X3}.}
+collapse to exact category matching on \code{X3}.
 }
 }
 \usage{
 data("dataCopula2sCOPEnpMulti")
 }
 \description{
-A dataset simulated with to demonstrate how \code{\link{copula2sCOPEnp}} interacts
+A dataset simulated with to demonstrate how \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}} interacts
 with different types of variables and multiple endogenous and exogenous regressors. The structural
 model here is:
 \deqn{y_i = \mu + \alpha_1 P_{1,i} + \alpha_2 P_{2,i} + \beta_1 X_{1,i} + \beta_2 X_{2,i} + \beta_3 X_{3,i} + \varepsilon_i}

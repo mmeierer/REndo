@@ -6,12 +6,12 @@
 \title{Simulated Dataset for 2sCOPE - Normally Distributed Endogenous and Non-normal Exogenous Regressor}
 \format{
 A data frame with 2500 observations on 3 variables:
-\describe{
-\item{\code{y}}{a numeric vector representing the dependent variable.}
-\item{\code{P}}{a numeric vector, continuous and endogenous,
-  normally distributed and correlated with \code{X} (rho_px = 0.5).}
-\item{\code{X}}{a numeric vector, continuous and exogenous,
-  Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{P}: a numeric vector, continuous and endogenous,
+normally distributed and correlated with \code{X} (rho_px = 0.5).
+\item \code{X}: a numeric vector, continuous and exogenous,
+Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).
 }
 }
 \usage{
@@ -19,15 +19,15 @@ data("dataCopula2sCOPECase3")
 }
 \description{
 A dataset simulated with one normally distributed endogenous
-  regressor \code{P} and one non-normal exogenous regressor \code{X}
-  (Exp(1)), correlated with each other (rho_px = 0.5). The endogeneity
-  strength is rho_pxi = 0.5. This dataset corresponds to another type of Case 2
-  of Yang et al. (2025) and demonstrates a key advantage of
-  2sCOPE. The method is still consistently estimating, even when the endogenous regressor \code{P}
-  is normally distributed, because the identification comes from the non-normal
-  exogenous regressor \code{X}.
-  The true parameter values are \code{mu = 1} for the intercept,
-  \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
+regressor \code{P} and one non-normal exogenous regressor \code{X}
+(Exp(1)), correlated with each other (rho_px = 0.5). The endogeneity
+strength is rho_pxi = 0.5. This dataset corresponds to another type of Case 2
+of Yang et al. (2025) and demonstrates a key advantage of
+2sCOPE. The method is still consistently estimating, even when the endogenous regressor \code{P}
+is normally distributed, because the identification comes from the non-normal
+exogenous regressor \code{X}.
+The true parameter values are \code{mu = 1} for the intercept,
+\code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
 }
 \references{
 Yang, F., Qian, Y., and Xie, H. (2025). Addressing Endogeneity Using a

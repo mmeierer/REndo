@@ -6,13 +6,13 @@
 \title{Simulated Dataset for 2sCOPEnp - Binary Endogenous Regressor}
 \format{
 A data frame with 2000 observations on 3 variables:
-\describe{
-\item{\code{y}}{a numeric vector representing the dependent variable.}
-\item{\code{P}}{an integer vector, binary (0 or 1) and endogenous,
-  representing a balanced binary treatment with approximately 50\%
-  treated observations.}
-\item{\code{X}}{a numeric vector, continuous and exogenous, following
-  a Student-t distribution with 3 degrees of freedom.}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{P}: an integer vector, binary (0 or 1) and endogenous,
+representing a balanced binary treatment with approximately 50\%
+treated observations.
+\item \code{X}: a numeric vector, continuous and exogenous, following
+a Student-t distribution with 3 degrees of freedom.
 }
 }
 \usage{
@@ -20,18 +20,18 @@ data("dataCopula2sCOPEnpBi")
 }
 \description{
 A dataset simulated with one binary endogenous regressor
-  \code{P} (Bernoulli, taking values 0 or 1) and one continuous exogenous
-  regressor \code{X} following a Student-t distribution with 3 degrees of
-  freedom. The latent variables \code{(P*, X*, Xi*)} follow a trivariate
-  normal distribution with rho_px = 0.5 and rho_pxi = 0.5
-  (Equation 44, Hu et al. 2025). The binary treatment status \code{P} is
-  obtained via the indicator function \eqn{P = \mathbf{1}\{\Phi(P^*) > 0.5\}},
-  corresponding to a balanced binary treatment (approximately 50\% treated).
-  This dataset corresponds to Case 5 of the simulation study in Hu et al.
-  (2025) and demonstrates the ability of 2sCOPEnp method to handle
-  discrete endogenous regressors.
-  The true parameter values are \code{mu = 0} for the intercept,
-  \code{alpha = 1} for \code{P} and \code{beta = 2} for \code{X}.
+\code{P} (Bernoulli, taking values 0 or 1) and one continuous exogenous
+regressor \code{X} following a Student-t distribution with 3 degrees of
+freedom. The latent variables \verb{(P*, X*, Xi*)} follow a trivariate
+normal distribution with rho_px = 0.5 and rho_pxi = 0.5
+(Equation 44, Hu et al. 2025). The binary treatment status \code{P} is
+obtained via the indicator function \eqn{P = \mathbf{1}\{\Phi(P^*) > 0.5\}},
+corresponding to a balanced binary treatment (approximately 50\% treated).
+This dataset corresponds to Case 5 of the simulation study in Hu et al.
+(2025) and demonstrates the ability of 2sCOPEnp method to handle
+discrete endogenous regressors.
+The true parameter values are \code{mu = 0} for the intercept,
+\code{alpha = 1} for \code{P} and \code{beta = 2} for \code{X}.
 }
 \references{
 Hu, X., Qian, Y., and Xie, H. (2025). Correcting endogeneity via
