@@ -206,7 +206,6 @@
 #'   The dependent variable is \code{y}.
 #'   The true parameter values are: \code{mu = 1} (intercept),
 #'   \code{beta = -1} (\code{X}), and \code{alpha = 1} (\code{P}).
-#' @name dataCopBMW
 #' @usage data("dataCopBMW")
 #' @format A data frame with 1000 observations on 3 variables:
 #' \describe{
@@ -216,7 +215,6 @@
 #'     as \code{P = X + e} where \code{e ~ lognormal(0,1)} is independent of
 #'     \code{X}.}
 #' }
-#' @docType data
 #' @template template_author_kimberlylew
 "dataCopBMW"
 
@@ -234,7 +232,6 @@
 #'   making identification more challenging. It can be seen in Table 1 of J. Breitung
 #'   et al. (2024) that the method correctly removes bias when \eqn{\delta = 1}.
 #'
-#' @name dataCopBMWMultiEndo
 #' @usage data("dataCopBMWMultiEndo")
 #' @format A data frame with 5000 observations on 4 variables:
 #' \describe{
@@ -247,7 +244,6 @@
 #'     as \code{P2 = X + e2} where \code{e2 ~ Gamma(3,2)} is independent of
 #'     \code{X} and \code{e1}.}
 #' }
-#' @docType data
 #' @template template_author_kimberlylew
 "dataCopBMWMultiEndo"
 
@@ -264,7 +260,6 @@
 #'   in Hu et al. (2025).
 #'   The true parameter values are \code{mu = 1} for the intercept,
 #'   \code{alpha = 1} for \code{P} and \code{beta = 2} for \code{X}.
-#' @name dataCopula2sCOPEnpCont
 #' @usage data("dataCopula2sCOPEnpCont")
 #' @format A data frame with 1000 observations on 3 variables:
 #' \describe{
@@ -275,7 +270,6 @@
 #' \item{\code{X}}{a numeric vector, continuous and exogenous, following
 #'   a Student-t distribution with 3 degrees of freedom.}
 #' }
-#' @docType data
 #' @template template_references_hu2025
 #' @template template_author_kimberlylew
 "dataCopula2sCOPEnpCont"
@@ -295,7 +289,6 @@
 #'   discrete endogenous regressors.
 #'   The true parameter values are \code{mu = 0} for the intercept,
 #'   \code{alpha = 1} for \code{P} and \code{beta = 2} for \code{X}.
-#' @name dataCopula2sCOPEnpBi
 #' @usage data("dataCopula2sCOPEnpBi")
 #' @format A data frame with 2000 observations on 3 variables:
 #' \describe{
@@ -306,7 +299,6 @@
 #' \item{\code{X}}{a numeric vector, continuous and exogenous, following
 #'   a Student-t distribution with 3 degrees of freedom.}
 #' }
-#' @docType data
 #' @template template_references_hu2025
 #' @template template_author_kimberlylew
 "dataCopula2sCOPEnpBi"
@@ -333,7 +325,6 @@
 #' The true parameter values are: \code{mu =1} (intercept), \code{alpha1 = -1} (\code{P1}), \code{alpha2 = 1}(\code{P2}, per ordered level),
 #' \code{beta1 =2} (\code{X1}), \code{beta2 = 0.5}(\code{X2}) and \code{beta3 = 1} (\code{X3}, per ordered level)
 #'
-#' @name dataCopula2sCOPEnpMulti
 #' @usage data("dataCopula2sCOPEnpMulti")
 #' @format A data frame with 5000 observations on 6 variables:
 #' \describe{
@@ -359,7 +350,6 @@
 #' the true relationship is linear in the ordered levels — this is an expected behaviour of the augmented
 #' regression separating the structural \code{P2} coefficients from the discrete correction term
 #' at stronger endogeneity levels (\eqn{\rho = 0.7}).
-#' @docType data
 #' @template template_author_kimberlylew
 "dataCopula2sCOPEnpMulti"
 
@@ -374,7 +364,6 @@
 #'   endogenous and exogenous regressors are correlated.
 #'   The true parameter values are \code{mu = 1} for the intercept,
 #'   \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
-#' @name dataCopula2sCOPECase1
 #' @usage data("dataCopula2sCOPECase1")
 #' @format A data frame with 1000 observations on 3 variables:
 #' \describe{
@@ -384,7 +373,6 @@
 #' \item{\code{X}}{a numeric vector, continuous and exogenous,
 #'   Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).}
 #' }
-#' @docType data
 #' @template template_references_yang2025
 #' @template template_author_kimberlylew
 "dataCopula2sCOPECase1"
@@ -398,7 +386,6 @@
 #'   normally distributed.
 #'   The true parameter values are \code{mu = 1} for the intercept,
 #'   \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
-#' @name dataCopula2sCOPECase2
 #' @usage data("dataCopula2sCOPECase2")
 #' @format A data frame with 1000 observations on 3 variables:
 #' \describe{
@@ -408,7 +395,6 @@
 #' \item{\code{X}}{a numeric vector, continuous and exogenous,
 #'   normally distributed and correlated with \code{P} (rho_px = 0.5).}
 #' }
-#' @docType data
 #' @template template_references_yang2025
 #' @template template_author_kimberlylew
 "dataCopula2sCOPECase2"
@@ -425,7 +411,6 @@
 #'   exogenous regressor \code{X}.
 #'   The true parameter values are \code{mu = 1} for the intercept,
 #'   \code{alpha = 1} for \code{P} and \code{beta = -1} for \code{X}.
-#' @name dataCopula2sCOPECase3
 #' @usage data("dataCopula2sCOPECase3")
 #' @format A data frame with 2500 observations on 3 variables:
 #' \describe{
@@ -435,7 +420,6 @@
 #' \item{\code{X}}{a numeric vector, continuous and exogenous,
 #'   Exp(1) distributed and correlated with \code{P} (rho_px = 0.5).}
 #' }
-#' @docType data
 #' @template template_references_yang2025
 #' @template template_author_kimberlylew
 "dataCopula2sCOPECase3"
@@ -451,7 +435,6 @@
 #'   The true parameter values are given as \code{alpha = 1} for \code{P} and
 #'   \code{beta = 1} for \code{X}.
 #' @template template_references_haschka2025ima
-#' @name dataCopIMAContExo
 #' @usage data("dataCopIMAContExo")
 #' @format A data frame with 1000 observations on 3 variables:
 #' \describe{
@@ -461,7 +444,6 @@
 #' \item{\code{P}}{a numeric vector, continuous and endogenous, following a
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
-#' @docType data
 #' @template template_author_kimberlylew
 "dataCopIMAContExo"
 
@@ -478,7 +460,6 @@
 #'   data generating process. The true parameter values are \code{alpha = 1}
 #'   for \code{P} and \code{beta = 1} for \code{X}.
 #' @template template_references_haschka2025ima
-#' @name dataCopIMABinExo
 #' @usage data("dataCopIMABinExo")
 #' @format A data frame with 1000 observations on 3 variables:
 #' \describe{
@@ -488,7 +469,6 @@
 #' \item{\code{P}}{a numeric vector, continuous and endogenous, following a
 #'   bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
 #' }
-#' @docType data
 #' @template template_author_kimberlylew
 "dataCopIMABinExo"
 
@@ -507,7 +487,6 @@
 #'   how well \code{copulaIMA()} works with an intercept and multiple endogenous regressors.
 #'   N = 5000 to avoid the problem of finite sample bias.
 #' @template template_references_haschka2025ima
-#' @name dataCopIMAMultiEndo
 #' @usage data("dataCopIMAMultiEndo")
 #' @format A data frame with 5000 observations on 4 variables:
 #' \describe{
@@ -520,6 +499,5 @@
 #'    a distribution \eqn{N(1,1)}. Correlated with both \code{P1} and \code{P2}
 #'    at \eqn{\rho = 0.5} but uncorrelated with structural error.}
 #' }
-#' @docType data
 #' @template template_author_kimberlylew
 "dataCopIMAMultiEndo"
