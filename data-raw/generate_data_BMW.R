@@ -2,7 +2,7 @@
 
 ## Based on DGP1 with correlated endogenous and exogenous regressors (delta = 1):
 ## y = mu + beta * X + alpha * P + epsilon
-## P = delta * X + e , where e ~ gamma(1,1), X ~ gamma(1,1)
+## P = delta * X + e , where e ~ lognormal(0,1), X ~ gamma(1,1)
 ## epsilon = rho * eta + xi
 ## where eta = Phi^{-1} (F_e (e)), xi ~ N(0,1)
 
@@ -31,7 +31,7 @@ X <- rgamma(n, shape=1, rate =1)
 #making it more non-normal
 e <- rlnorm(n, meanlog = 0, sdlog = 1) #must be nonnormal as per assumption A5
 
-#eta = phi^{-1} (F_e (e)), where F_e is Gamma(1,1) CDF
+#eta = phi^{-1} (F_e (e)), where F_e is the lognormal(0,1) CDF
 #the control function from eq. 2.2
 eta <- qnorm(plnorm(e, meanlog = 0, sdlog = 1))
 
