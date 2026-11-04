@@ -4,7 +4,7 @@
 \name{dataCopula2sCOPEnpCont}
 \alias{dataCopula2sCOPEnpCont}
 \title{Simulated Dataset for 2sCOPEnp - Continuous Endogenous Regressor without
-neither Gaussian Copula nor Mean-Dependence Model Assumption.}
+neither Gaussian Copula nor Mean-Dependence Model Assumption}
 \format{
 A data frame with 1000 observations on 3 variables:
 \itemize{

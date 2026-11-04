@@ -52,9 +52,15 @@ The true parameter values are: \code{mu =1} (intercept), \code{alpha1 = -1} (\co
 \note{
 Both \code{P1_cop} and \code{P2_cop} are statistically significant, confirming endogeneity of both
 regressors. The quadratic contrast \code{P2.Q} may show a small but significant coefficient even though
-the true relationship is linear in the ordered levels — this is an expected behaviour of the augmented
+the true relationship is linear in the ordered levels - this is an expected behaviour of the augmented
 regression separating the structural \code{P2} coefficients from the discrete correction term
 at stronger endogeneity levels (\eqn{\rho = 0.7}).
+}
+\references{
+Hu, X., Qian, Y., and Xie, H. (2025). Correcting endogeneity via
+instrument-free two-stage nonparametric copula control functions.
+NBER Working Paper No. 33607.
+\url{http://www.nber.org/papers/w33607}
 }
 \author{
 Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}

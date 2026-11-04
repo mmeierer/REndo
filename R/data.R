@@ -356,6 +356,7 @@
 #' the true relationship is linear in the ordered levels - this is an expected behaviour of the augmented
 #' regression separating the structural `P2` coefficients from the discrete correction term
 #' at stronger endogeneity levels (\eqn{\rho = 0.7}).
+#' @template template_references_hu2025
 #' @template template_author_kimberlylew
 #' @md
 "dataCopula2sCOPEnpMulti"
