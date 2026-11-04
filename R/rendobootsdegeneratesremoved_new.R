@@ -86,7 +86,13 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
     fit.b <- try(fn.fit(data.b = data.b), silent = TRUE)
 
     # taking into account only adequate draws
-    if (!inherits(fit.b, "try-error")) {
+    # - did not throw any error
+    # - coefs: equal names (incl order) and length
+    is.adequate <- !inherits(fit.b, "try-error") &&
+      # identical checks both: length & order
+      identical(names(coef(fit.b)), coef.names)
+
+    if (is.adequate) {
       boots[, b] <- coef(fit.b)
       b <- b + 1
 
