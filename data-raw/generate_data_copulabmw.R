@@ -49,7 +49,7 @@ dataCopBMW <- data.frame(y=y, X=X, P=P)
 usethis::use_data(dataCopBMW, overwrite = TRUE)
 
 
-## Dataset for dataCopMultiEndo
+## Dataset for dataCopBMWMultiEndo
 ## Each endogenous regressor has its own first-stage regression on X
 ## and its own correction term eta_j = Phi^{-1} (F_{e_j} (e_j))
 
