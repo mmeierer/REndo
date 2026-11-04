@@ -1,5 +1,3 @@
-## code to prepare `generate_data_BMW` dataset goes here
-
 ## Based on DGP1 with correlated endogenous and exogenous regressors (delta = 1):
 ## y = mu + beta * X + alpha * P + epsilon
 ## P = delta * X + e , where e ~ lognormal(0,1), X ~ gamma(1,1)

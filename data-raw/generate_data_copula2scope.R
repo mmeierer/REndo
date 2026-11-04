@@ -1,5 +1,3 @@
-## code to prepare `generate_data_2scope` dataset goes here
-
 ## Data for case 1 from chapter simulation study (Yang et al. 2024)
 
 #2sCOPE when nonnormal regressors (both endo (P) and exo (X)) and correlation between P and X

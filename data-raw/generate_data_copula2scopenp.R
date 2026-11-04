@@ -1,5 +1,3 @@
-## code to prepare `generate_data_2sCOPEnp` dataset goes here
-
 ## Dataset 1: dataCop2sCOPEnpCont - based on case 3 of Hu et al. 2025, continuous P
 
 library(MASS)
