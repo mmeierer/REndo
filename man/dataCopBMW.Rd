@@ -25,6 +25,11 @@ The dependent variable is \code{y}.
 The true parameter values are: \code{mu = 1} (intercept),
 \code{beta = -1} (\code{X}), and \code{alpha = 1} (\code{P}).
 }
+\references{
+Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
+corrections using nonlinear transformations. \emph{The Econometrics Journal},
+27, 362--383. \doi{10.1093/ectj/utae002}
+}
 \author{
 Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }

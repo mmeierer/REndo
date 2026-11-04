@@ -215,6 +215,7 @@
 #' - `P`: a numeric vector, continuous and endogenous, constructed
 #'   as `P = X + e` where `e ~ lognormal(0,1)` is independent of `X`.
 #'
+#' @template template_references_breitung2024
 #' @template template_author_kimberlylew
 #' @md
 "dataCopBMW"
@@ -243,6 +244,7 @@
 #' - `P2`: a numeric vector, continuous and endogenous, constructed
 #'   as `P2 = X + e2` where `e2 ~ Gamma(3,2)` is independent of `X` and `e1`.
 #'
+#' @template template_references_breitung2024
 #' @template template_author_kimberlylew
 #' @md
 "dataCopBMWMultiEndo"

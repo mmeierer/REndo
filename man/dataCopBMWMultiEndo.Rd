@@ -32,6 +32,11 @@ distribution of \eqn{e} is closer to Gaussian than \eqn{\text{Gamma}(1,1)}
 making identification more challenging. It can be seen in Table 1 of J. Breitung
 et al. (2024) that the method correctly removes bias when \eqn{\delta = 1}.
 }
+\references{
+Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
+corrections using nonlinear transformations. \emph{The Econometrics Journal},
+27, 362--383. \doi{10.1093/ectj/utae002}
+}
 \author{
 Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }

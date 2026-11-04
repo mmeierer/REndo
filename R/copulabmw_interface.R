@@ -84,10 +84,7 @@
 #'
 #' @template template_text_details_bootsdegenerates
 #'
-#' @references
-#' Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
-#' corrections using nonlinear transformations. \emph{The Econometrics Journal},
-#' 27, 362--383. \doi{10.1093/ectj/utae002}
+#' @template template_references_breitung2024
 #'
 #' @template template_param_cdf_references
 #'
