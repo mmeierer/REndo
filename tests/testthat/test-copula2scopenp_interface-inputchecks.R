@@ -3,11 +3,11 @@
 
 skip_on_cran()
 set.seed(42)
-data("dataCopula2sCOPEnpCont")
+data("dataCop2sCOPEnpCont")
 
 
 test_that("interface has methods wired in", {
-  df.na <- dataCopula2sCOPEnpCont
+  df.na <- dataCop2sCOPEnpCont
   df.na$P[1] <- NA
 
   cases <- list(
@@ -40,7 +40,7 @@ test_that("interface has methods wired in", {
 
   base.args <- list(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont,
+    data = dataCop2sCOPEnpCont,
     npcdistbw.args = list(bwmethod = "normal-reference"),
     bws = NULL,
     num.boots = 1000,

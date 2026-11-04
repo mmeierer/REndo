@@ -124,16 +124,16 @@ fixture_bmw_formula_edge_cases <- function() {
 # copula2sCOPEnp formula edge cases ----------------------------------------------------
 # only continuous and factor data to run fast (ordered factors are tested separately)
 fixture_2scopenp_formula_edge_cases <- function() {
-  data("dataCopula2sCOPEnpCont", "dataCopula2sCOPEnpMulti", envir = environment())
+  data("dataCop2sCOPEnpCont", "dataCop2sCOPEnpMulti", envir = environment())
 
-  df <- dataCopula2sCOPEnpCont
+  df <- dataCop2sCOPEnpCont
   df$x_fac <- factor(rep(c("a", "b", "c"), length.out = nrow(df)))
 
-  df.multi <- dataCopula2sCOPEnpMulti
+  df.multi <- dataCop2sCOPEnpMulti
   df.multi$`P 1` <- df.multi$P1
 
   return(c(
-    .fixture_copula2stage_formula_edge_cases(dataCopula2sCOPEnpCont),
+    .fixture_copula2stage_formula_edge_cases(dataCop2sCOPEnpCont),
     list(
       # I() gives class "AsIs" in the model frame which np does not accept
       "inline function endo" = list(formula = y ~ X + I(P^2) | I(P^2), data = df),

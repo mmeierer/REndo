@@ -264,7 +264,7 @@
 #' The true parameter values are `mu = 1` for the intercept,
 #' `alpha = 1` for `P` and `beta = 2` for `X`.
 #'
-#' @usage data("dataCopula2sCOPEnpCont")
+#' @usage data("dataCop2sCOPEnpCont")
 #' @format A data frame with 1000 observations on 3 variables:
 #' - `y`: a numeric vector representing the dependent variable.
 #' - `P`: a numeric vector, continuous and endogenous, following
@@ -276,7 +276,7 @@
 #' @template template_references_hu2025
 #' @template template_author_kimberlylew
 #' @md
-"dataCopula2sCOPEnpCont"
+"dataCop2sCOPEnpCont"
 
 
 #' Simulated Dataset for 2sCOPEnp - Binary Endogenous Regressor
@@ -295,7 +295,7 @@
 #' The true parameter values are `mu = 0` for the intercept,
 #' `alpha = 1` for `P` and `beta = 2` for `X`.
 #'
-#' @usage data("dataCopula2sCOPEnpBi")
+#' @usage data("dataCop2sCOPEnpBi")
 #' @format A data frame with 2000 observations on 3 variables:
 #' - `y`: a numeric vector representing the dependent variable.
 #' - `P`: an integer vector, binary (0 or 1) and endogenous,
@@ -307,7 +307,7 @@
 #' @template template_references_hu2025
 #' @template template_author_kimberlylew
 #' @md
-"dataCopula2sCOPEnpBi"
+"dataCop2sCOPEnpBi"
 
 #' Simulated Dataset for 2sCOPEnp -  Multiple Endogenous and Exogenous Regressors with
 #' mixed continuous, ordered and factor variables
@@ -332,7 +332,7 @@
 #' The true parameter values are: `mu =1` (intercept), `alpha1 = -1` (`P1`), `alpha2 = 1`(`P2`, per ordered level),
 #' `beta1 =2` (`X1`), `beta2 = 0.5`(`X2`) and `beta3 = 1` (`X3`, per ordered level)
 #'
-#' @usage data("dataCopula2sCOPEnpMulti")
+#' @usage data("dataCop2sCOPEnpMulti")
 #' @format A data frame with 5000 observations on 6 variables:
 #' - `y`: a numeric vector representing the dependent variable.
 #' - `P1`: a numeric vector which is continuous and endogenous following a
@@ -359,7 +359,7 @@
 #' @template template_references_hu2025
 #' @template template_author_kimberlylew
 #' @md
-"dataCopula2sCOPEnpMulti"
+"dataCop2sCOPEnpMulti"
 
 #' Simulated Dataset for 2sCOPE - Non-normal Endogenous and Exogenous Regressors
 #'

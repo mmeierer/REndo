@@ -1,16 +1,16 @@
 skip_on_cran()
 set.seed(42)
 
-data("dataCopula2sCOPEnpCont")
-data("dataCopula2sCOPEnpBi")
-data("dataCopula2sCOPEnpMulti")
+data("dataCop2sCOPEnpCont")
+data("dataCop2sCOPEnpBi")
+data("dataCop2sCOPEnpMulti")
 
 
 # Setup --------------------------------------------------------------------------------
 setup.smoke <- list(
   method = copula2sCOPEnp,
   fn = fit_2scopenp_fast,
-  data = dataCopula2sCOPEnpCont,
+  data = dataCop2sCOPEnpCont,
   formula = y ~ P + X | P,
   label = "copula2sCOPEnp"
 )
@@ -28,7 +28,7 @@ test_smoke_formula_edge_cases(
 
 # Discrete endo ------------------------------------------------------------
 test_that("works with a discrete endo", {
-  res <- fit_2scopenp_fast(formula = y ~ P + X | P, data = dataCopula2sCOPEnpBi)
+  res <- fit_2scopenp_fast(formula = y ~ P + X | P, data = dataCop2sCOPEnpBi)
   check_clean_fit(res)
 })
 
@@ -36,7 +36,7 @@ test_that("works with a discrete endo", {
 test_that("works with ordered factors in in endo and exo", {
   res <- fit_2scopenp_fast(
     formula = y ~ P1 + P2 + X1 + X2 + X3 | P1 + P2,
-    data = dataCopula2sCOPEnpMulti[1:250, ],
+    data = dataCop2sCOPEnpMulti[1:250, ],
     # cannot run with heuristic
     npcdistbw.args = list(nmulti = 1, tol = 1, ftol = 1, itmax = 20)
   )
@@ -61,7 +61,7 @@ test_that("works with a supplied bws and via iterative refinement", {
   res_loose <- suppress_lowboots_warning(
     copula2sCOPEnp(
       formula = y ~ P + X | P,
-      data = dataCopula2sCOPEnpCont,
+      data = dataCop2sCOPEnpCont,
       npcdistbw.args = list(bwmethod = "cv.ls", nmulti = 1, ftol = 1, tol = 1, itmax = 20),
       num.boots = 2,
       verbose = FALSE
@@ -73,7 +73,7 @@ test_that("works with a supplied bws and via iterative refinement", {
   res_refined <- suppress_lowboots_warning(
     copula2sCOPEnp(
       formula = y ~ P + X | P,
-      data = dataCopula2sCOPEnpCont,
+      data = dataCop2sCOPEnpCont,
       bws = res_loose$bws,
       npcdistbw.args = list(nmulti = 1, ftol = 1, tol = 1, itmax = 20),
       num.boots = 2,
@@ -87,12 +87,12 @@ test_that("works with a supplied bws without recomputing them (bandwidth.compute
   # fit bws on subsample: recomputation on the full data would give other values
   res_subset <- fit_2scopenp_fast(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont[1:100, ]
+    data = dataCop2sCOPEnpCont[1:100, ]
   )
 
   res <- fit_2scopenp_fast(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont,
+    data = dataCop2sCOPEnpCont,
     bws = res_subset$bws,
     npcdistbw.args = list(bandwidth.compute = FALSE)
   )
@@ -108,14 +108,14 @@ test_that("works with a supplied bws estimated with the np formula interface", {
   bws <- list(
     P = np::npcdistbw(
       formula = P ~ X,
-      data = dataCopula2sCOPEnpCont,
+      data = dataCop2sCOPEnpCont,
       bwmethod = "normal-reference"
     )
   )
 
   res <- fit_2scopenp_fast(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont,
+    data = dataCop2sCOPEnpCont,
     bws = bws,
     npcdistbw.args = list(bandwidth.compute = FALSE)
   )
@@ -126,7 +126,7 @@ test_that("works with a supplied bws estimated with the np formula interface", {
 # S3: Summary & print ------------------------------------------------------------
 # They use nps internal (bw object) which differ by bw method and variable type
 
-df.types <- dataCopula2sCOPEnpMulti[1:250, ]
+df.types <- dataCop2sCOPEnpMulti[1:250, ]
 # unordered exo (X3 is ordered)
 df.types$X4 <- factor(sample(c("a", "b", "c"), nrow(df.types), replace = TRUE))
 

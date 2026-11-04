@@ -1,16 +1,16 @@
 skip_on_cran()
 set.seed(42)
 
-data("dataCopula2sCOPEnpCont")
-data("dataCopula2sCOPEnpBi")
-data("dataCopula2sCOPEnpMulti")
+data("dataCop2sCOPEnpCont")
+data("dataCop2sCOPEnpBi")
+data("dataCop2sCOPEnpMulti")
 
 # data from copulaCorrection for tests vs P&G
 data("dataCopCont")
 
 
 data.cont.pos <- local({
-  df <- dataCopula2sCOPEnpCont
+  df <- dataCop2sCOPEnpCont
   df$P.pos <- abs(df$P) + 1
   df$X.pos <- abs(df$X) + 1
   return(df)
@@ -27,7 +27,7 @@ check_labelled_consistently_2scopenp <- function(res) {
 # Setup --------------------------------------------------------------------------------
 setup.correctness <- list(
   fn = fit_2scopenp_fast,
-  data = dataCopula2sCOPEnpCont,
+  data = dataCop2sCOPEnpCont,
   formula = y ~ P + X | P,
   label = "copula2sCOPEnp"
 )
@@ -80,7 +80,7 @@ test_that("Internals have correct shape", {
 
 test_that("Ordered and factors in endo / exo", {
   # Also check if formula can make ordered and factor
-  df.small <- dataCopula2sCOPEnpMulti[1:250, ]
+  df.small <- dataCop2sCOPEnpMulti[1:250, ]
   df.small$P2.char <- as.character(df.small$P2)
   df.small$X3.char <- as.character(df.small$X3)
 
@@ -155,7 +155,7 @@ test_that("Call in bws has no data inlined and a small env", {
   npcdistbw.args <- list(bwmethod = "normal-reference", nmulti = 2)
   res <- fit_2scopenp_fast(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont,
+    data = dataCop2sCOPEnpCont,
     npcdistbw.args = npcdistbw.args
   )
   bw.call <- res$bws$P$call
@@ -240,11 +240,11 @@ test_that("Collapses to P&G - single continuous, single discrete", {
 
 # Params recovery ------------------------------------------------------------------
 
-test_that("Recovery: Continuous endo (dataCopula2sCOPEnpCont)", {
+test_that("Recovery: Continuous endo (dataCop2sCOPEnpCont)", {
   skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont,
+    data = dataCop2sCOPEnpCont,
     npcdistbw.args = list(nmulti = 1, tol = 0.1, ftol = 0.1),
     num.boots = 100,
     verbose = FALSE
@@ -252,11 +252,11 @@ test_that("Recovery: Continuous endo (dataCopula2sCOPEnpCont)", {
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = 2))
 })
 
-test_that("Recovery: Binary endo (dataCopula2sCOPEnpBi)", {
+test_that("Recovery: Binary endo (dataCop2sCOPEnpBi)", {
   skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpBi,
+    data = dataCop2sCOPEnpBi,
     npcdistbw.args = list(nmulti = 1, tol = 0.1, ftol = 0.1),
     num.boots = 100,
     verbose = FALSE
@@ -264,11 +264,11 @@ test_that("Recovery: Binary endo (dataCopula2sCOPEnpBi)", {
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 0, P = 1, X = 2))
 })
 
-test_that("Recovery: multiple endo (dataCopula2sCOPEnpMulti)", {
+test_that("Recovery: multiple endo (dataCop2sCOPEnpMulti)", {
   skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ . | P1 + P2,
-    data = dataCopula2sCOPEnpMulti,
+    data = dataCop2sCOPEnpMulti,
     npcdistbw.args = list(nmulti = 1, tol = 0.5, ftol = 0.5),
     num.boots = 100,
     verbose = FALSE
