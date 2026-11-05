@@ -6,12 +6,12 @@
 \title{Simulated Dataset for Copula IMA - Binary Exogenous Regressor}
 \format{
 A data frame with 1000 observations on 3 variables:
-\describe{
-\item{\code{y}}{a numeric vector representing the dependent variable.}
-\item{\code{X}}{a numeric vector, binary (0 or 1) and exogenous,
-  correlated with \code{P}.}
-\item{\code{P}}{a numeric vector, continuous and endogenous, following a
-  bounded distribution Phi(P*) + 0.5 with values in (0.5, 1.5).}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{X}: a numeric vector, binary (0 or 1) and exogenous,
+correlated with \code{P}.
+\item \code{P}: a numeric vector, continuous and endogenous, following a
+bounded distribution \verb{Phi(P*) + 0.5} with values in (0.5, 1.5).
 }
 }
 \usage{
@@ -19,15 +19,15 @@ data("dataCopIMABinExo")
 }
 \description{
 A dataset simulated with one binary exogenous regressor \code{X}
-  and one endogenous continuous regressor \code{P}, and a dependent variable \code{y}.
-  The exogenous regressor \code{X} is a binary variable (0 or 1) derived from
-  a latent standard normal variable and is correlated with \code{P} (r = 0.5).
-  The endogenous regressor \code{P} follows a bounded continuous distribution
-  (Phi(P*) + 0.5). The endogeneity strength is given by rho = 0.5. This dataset
-  illustrates that the IMA estimator does not require the exogenous regressor
-  to be continuously or normally distributed. There is no intercept in the
-  data generating process. The true parameter values are \code{alpha = 1}
-  for \code{P} and \code{beta = 1} for \code{X}.
+and one endogenous continuous regressor \code{P}, and a dependent variable \code{y}.
+The exogenous regressor \code{X} is a binary variable (0 or 1) derived from
+a latent standard normal variable and is correlated with \code{P} (r = 0.5).
+The endogenous regressor \code{P} follows a bounded continuous distribution
+(\verb{Phi(P*) + 0.5}). The endogeneity strength is given by rho = 0.5. This dataset
+illustrates that the IMA estimator does not require the exogenous regressor
+to be continuously or normally distributed. There is no intercept in the
+data generating process. The true parameter values are \code{alpha = 1}
+for \code{P} and \code{beta = 1} for \code{X}.
 }
 \references{
 Haschka, R. E. (2025). Robustness of copula-correction models in causal
@@ -35,6 +35,6 @@ Haschka, R. E. (2025). Robustness of copula-correction models in causal
   IMA Journal of Management Mathematics, 36, 161-180. \doi{10.1093/imaman/dpae018}
 }
 \author{
-Kimberly Lew \email{kimberlylew12@gmail.com}
+Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }
 \keyword{datasets}

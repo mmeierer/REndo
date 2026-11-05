@@ -1,5 +1,3 @@
-## Code to prepare `dataCopIMAMultiEndo` dataset
-
 ## Generate dataCopIMAMultiEndo - two continuous endogenous regressors correlated with each other and with one exogenous regressor
 
 set.seed(1234)

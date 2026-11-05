@@ -218,10 +218,10 @@ which may suggest a potential identification issue (Hu et al. 2025, section 3.5)
 # the mean-dependence assumption holds.
 # True values: mu = 1, alpha = 1 (P), beta = 2 (X).
 #--------------------------------------------------------------
-data("dataCopula2sCOPEnpCont")
+data("dataCop2sCOPEnpCont")
 res1 <- copula2sCOPEnp(
  y ~ P + X | P,
-  data = dataCopula2sCOPEnpCont)
+  data = dataCop2sCOPEnpCont)
 # also shows the selected bandwidths, see ?summary.rendo.copula.2scope.np
 summary(res1)
 
@@ -234,10 +234,10 @@ summary(res1)
 # the smooth conditional CDF.
 # True values: mu = 0, alpha = 1 (P), beta = 2 (X).
 #--------------------------------------------------------------
-data("dataCopula2sCOPEnpBi")
+data("dataCop2sCOPEnpBi")
 res2 <- copula2sCOPEnp(
   y ~ P + X | P,
-  data = dataCopula2sCOPEnpBi
+  data = dataCop2sCOPEnpBi
 )
 summary(res2)
 
@@ -256,10 +256,10 @@ summary(res2)
 
 #--------------------------------------------------------------
 
-data("dataCopula2sCOPEnpMulti")
+data("dataCop2sCOPEnpMulti")
 res3 <- copula2sCOPEnp(
   y ~ P1 + P2 + X1 + X2 + X3 | P1 + P2,
-  data = dataCopula2sCOPEnpMulti
+  data = dataCop2sCOPEnpMulti
 )
 summary(res3)
 
@@ -286,7 +286,7 @@ res4 <- copula2sCOPEnp(
   nmulti = 25,
   itmax = 50000
  ),
- data = dataCopula2sCOPEnpCont)
+ data = dataCop2sCOPEnpCont)
 
 
 #--------------------------------------------------------------
@@ -311,7 +311,7 @@ res.loosely <- copula2sCOPEnp(
    ftol=.01,
    tol=.01
  ),
- data = dataCopula2sCOPEnpCont,
+ data = dataCop2sCOPEnpCont,
  num.boots = 2
 )
 
@@ -330,7 +330,7 @@ res.final <- copula2sCOPEnp(
    # low as starting close to optimum
    nmulti = 2
  ),
- data = dataCopula2sCOPEnpCont
+ data = dataCop2sCOPEnpCont
 )
 
 #--------------------------------------------------------------
@@ -372,9 +372,9 @@ table of the selected bandwidths
 \code{\link[np:npcdistbw]{npcdistbw}} for possible elements of parameter
 \code{npcdistbw.args}.
 
-\code{\link[REndo:dataCopula2sCOPEnpCont]{dataCopula2sCOPEnpCont},
-\link[REndo:dataCopula2sCOPEnpBi]{dataCopula2sCOPEnpBi},
-\link[REndo:dataCopula2sCOPEnpMulti]{dataCopula2sCOPEnpMulti}} for detailed
+\code{\link[REndo:dataCop2sCOPEnpCont]{dataCop2sCOPEnpCont},
+\link[REndo:dataCop2sCOPEnpBi]{dataCop2sCOPEnpBi},
+\link[REndo:dataCop2sCOPEnpMulti]{dataCop2sCOPEnpMulti}} for detailed
 information about the simulated datasets
 
 Other copula-based methods:

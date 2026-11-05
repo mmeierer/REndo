@@ -54,74 +54,92 @@ export(higherMomentsIV)
 export(latentIV)
 export(multilevelIV)
 importFrom(AER,ivreg)
-importFrom(Formula,as.Formula)
-importFrom(Formula,is.Formula)
-importFrom(Formula,model.part)
-importFrom(Matrix,Diagonal)
-importFrom(Matrix,Matrix)
-importFrom(Matrix,bdiag)
-importFrom(Matrix,crossprod)
-importFrom(Matrix,diag)
-importFrom(Matrix,drop0)
-importFrom(Matrix,rankMatrix)
-importFrom(Matrix,t)
-importFrom(Matrix,tcrossprod)
+importFrom(Formula,
+  as.Formula,
+  is.Formula,
+  model.part
+)
+importFrom(Matrix,
+  Diagonal,
+  Matrix,
+  bdiag,
+  crossprod,
+  diag,
+  drop0,
+  rankMatrix,
+  t,
+  tcrossprod
+)
 importFrom(Rcpp,sourceCpp)
-importFrom(corpcor,make.positive.definite)
-importFrom(corpcor,pseudoinverse)
-importFrom(data.table,as.data.table)
-importFrom(data.table,setkeyv)
+importFrom(corpcor,
+  make.positive.definite,
+  pseudoinverse
+)
+importFrom(data.table,
+  as.data.table,
+  setkeyv
+)
 importFrom(ks,kcde)
-importFrom(lme4,VarCorr)
-importFrom(lme4,lFormula)
-importFrom(lme4,lmer)
-importFrom(lme4,lmerControl)
+importFrom(lme4,
+  VarCorr,
+  lFormula,
+  lmer,
+  lmerControl
+)
 importFrom(lmtest,bptest)
-importFrom(methods,formalArgs)
-importFrom(methods,is)
+importFrom(methods,
+  formalArgs,
+  is
+)
 importFrom(mvtnorm,dmvnorm)
-importFrom(np,npcdist)
-importFrom(np,npcdistbw)
+importFrom(np,
+  npcdist,
+  npcdistbw
+)
 importFrom(optimx,optimx)
 importFrom(reformulas,nobars)
-importFrom(stats,.MFclass)
-importFrom(stats,AIC)
-importFrom(stats,BIC)
-importFrom(stats,as.formula)
-importFrom(stats,case.names)
-importFrom(stats,coef)
-importFrom(stats,confint)
-importFrom(stats,cov)
-importFrom(stats,delete.response)
-importFrom(stats,ecdf)
-importFrom(stats,fitted)
-importFrom(stats,formula)
-importFrom(stats,lm)
-importFrom(stats,logLik)
-importFrom(stats,model.frame)
-importFrom(stats,model.matrix)
-importFrom(stats,model.response)
-importFrom(stats,na.fail)
-importFrom(stats,nobs)
-importFrom(stats,pchisq)
-importFrom(stats,pnorm)
-importFrom(stats,predict)
-importFrom(stats,printCoefmat)
-importFrom(stats,pt)
-importFrom(stats,qnorm)
-importFrom(stats,quantile)
-importFrom(stats,reformulate)
-importFrom(stats,residuals)
-importFrom(stats,runif)
-importFrom(stats,sd)
-importFrom(stats,setNames)
-importFrom(stats,terms)
-importFrom(stats,update)
-importFrom(stats,update.formula)
-importFrom(stats,vcov)
-importFrom(utils,getFromNamespace)
-importFrom(utils,getS3method)
-importFrom(utils,modifyList)
-importFrom(utils,setTxtProgressBar)
-importFrom(utils,txtProgressBar)
+importFrom(stats,
+  .MFclass,
+  AIC,
+  BIC,
+  as.formula,
+  case.names,
+  coef,
+  confint,
+  cov,
+  delete.response,
+  ecdf,
+  fitted,
+  formula,
+  lm,
+  logLik,
+  model.frame,
+  model.matrix,
+  model.response,
+  na.fail,
+  nobs,
+  pchisq,
+  pnorm,
+  predict,
+  printCoefmat,
+  pt,
+  qnorm,
+  quantile,
+  reformulate,
+  residuals,
+  runif,
+  sd,
+  setNames,
+  terms,
+  update,
+  update.formula,
+  vcov
+)
+importFrom(utils,
+  getFromNamespace,
+  getS3method,
+  modifyList,
+  setTxtProgressBar,
+  txtProgressBar
+)
 useDynLib(REndo, .registration=TRUE)

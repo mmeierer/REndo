@@ -2,13 +2,13 @@ skip_on_cran()
 set.seed(42)
 
 # Required data ---------------------------------------------------------------------
-data("dataCopula2sCOPECase1")
+data("dataCop2sCOPECase1")
 
 # Setup --------------------------------------------------------------------------------
 setup.smoke <- list(
   method = copula2sCOPE,
   fn = fit_2scope_fast,
-  data = dataCopula2sCOPECase1,
+  data = dataCop2sCOPECase1,
   formula = y ~ P + X | P,
   label = "copula2sCOPE"
 )
@@ -28,7 +28,7 @@ test_smoke_verbose(setup = setup.smoke)
 # Each spec is crossed with all 4 cdf options
 
 # exo factor, ordered and character with >2 levels (ordered: .L, .Q, .C columns)
-data.classes <- dataCopula2sCOPECase1
+data.classes <- dataCop2sCOPECase1
 data.classes$x_fac <- factor(rep(c("a", "b", "c", "d"), length.out = nrow(data.classes)))
 data.classes$x_ord <- ordered(data.classes$x_fac)
 data.classes$x_char <- as.character(data.classes$x_fac)
@@ -37,35 +37,35 @@ data.classes$x_lgl <- rep(c(TRUE, FALSE), length.out = nrow(data.classes))
 specs <- list(
   "with intercept, with exo, single endo" = list(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1
+    data = dataCop2sCOPECase1
   ),
   "no intercept, with exo, single endo" = list(
     formula = y ~ P + X - 1 | P,
-    data = dataCopula2sCOPECase1
+    data = dataCop2sCOPECase1
   ),
   "with intercept, no exo, single endo" = list(
     formula = y ~ P | P,
-    data = dataCopula2sCOPECase1
+    data = dataCop2sCOPECase1
   ),
   "no intercept, no exo, single endo" = list(
     formula = y ~ P - 1 | P,
-    data = dataCopula2sCOPECase1
+    data = dataCop2sCOPECase1
   ),
   "with intercept, no exo, multiple endo" = list(
     formula = y ~ P + X | P + X,
-    data = dataCopula2sCOPECase1
+    data = dataCop2sCOPECase1
   ),
   "no intercept, no exo, multiple endo" = list(
     formula = y ~ P + X - 1 | P + X,
-    data = dataCopula2sCOPECase1
+    data = dataCop2sCOPECase1
   ),
   "with intercept, with exo, multiple endo" = list(
     formula = y ~ P + X + X2 | P + X,
-    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1)))
+    data = cbind(dataCop2sCOPECase1, X2 = rnorm(nrow(dataCop2sCOPECase1)))
   ),
   "no intercept, with exo, multiple endo" = list(
     formula = y ~ P + X + X2 - 1 | P + X,
-    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1)))
+    data = cbind(dataCop2sCOPECase1, X2 = rnorm(nrow(dataCop2sCOPECase1)))
   ),
   "with intercept, factor exo, single endo" = list(
     formula = y ~ P + X + x_fac | P,

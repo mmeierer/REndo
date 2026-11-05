@@ -18,11 +18,11 @@
 
 set.seed(42)
 
-data("dataCopula2sCOPEnpCont")
-data("dataCopula2sCOPEnpMulti")
+data("dataCop2sCOPEnpCont")
+data("dataCop2sCOPEnpMulti")
 
 # small data to keep runtime on CRAN low
-data.small <- dataCopula2sCOPEnpCont[1:200, ]
+data.small <- dataCop2sCOPEnpCont[1:200, ]
 
 
 # Calls --------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ test_that("np accepts the npcdistbw.args documented in REndos docu", {
 # the kernel
 
 # P2 and X3 are ordered
-data.types <- dataCopula2sCOPEnpMulti[1:200, ]
+data.types <- dataCop2sCOPEnpMulti[1:200, ]
 data.types$X4 <- factor(sample(c("a", "b", "c"), nrow(data.types), replace = TRUE))
 
 test_that("np accepts all variable types of exo (normal-reference)", {

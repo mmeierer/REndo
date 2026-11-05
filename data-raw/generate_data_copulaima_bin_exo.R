@@ -1,4 +1,3 @@
-## code to prepare dataCopIMABinExo dataset
 ## Generate dataCopIMABinExo ( Section 4.1, eq. 4.4 - binary exogenous regressors)
 set.seed(123)
 n <- 1000
