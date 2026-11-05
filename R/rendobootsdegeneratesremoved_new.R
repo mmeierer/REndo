@@ -131,7 +131,9 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
 
     warning(
       round(100 * fail.rate, 2),
-      "% of bootstrap samples were degenerate and discarded",
+      "% of bootstrap samples were degenerate and discarded. ",
+      "Error in the last degenerate sample: ",
+      last.reason,
       call. = FALSE
     )
   }
