@@ -94,7 +94,7 @@ copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
   return(m)
 }
 
-#' @importFrom stats lm reformulate terms update
+#' @importFrom stats lm na.fail reformulate terms update
 copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
   # Checks of data inputs to 2nd stage -------------------------------------------
 
@@ -149,7 +149,14 @@ copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
 
   # cbind() also works with non-continuous variables because it dispatches to
   # cbind.data.frame() if any argument is a data.frame
-  res.lm.augmented <- lm(formula = f.final, data = cbind(data, cop.terms))
+  # na.fail: never silently drop rows (na.omit is default). Should not happen
+  # with checks above but a) be explicit b) prevent misaligned or shorter result
+  # (cannot happen on original fit but theoretically during bootstrap)
+  res.lm.augmented <- lm(
+    formula = f.final,
+    data = cbind(data, cop.terms),
+    na.action = na.fail
+  )
 
   return(list(
     res.lm.augmented = res.lm.augmented,
