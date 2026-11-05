@@ -544,8 +544,8 @@ test_that("_cdf rejects invalid cdf", {
       "non-default vector" = list(cdf = c("ecdf", "kde"))
     ),
     regexp = c(
-      "is invalid",
-      "is invalid",
+      "must be one of",
+      "must be one of",
       "single character string",
       "single character string",
       "single character string"

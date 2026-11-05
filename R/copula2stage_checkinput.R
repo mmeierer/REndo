@@ -1,9 +1,19 @@
 checkinput_copula2stage_cdf <- function(cdf, allowed.cdf) {
-  return(checkinputhelper_choice(
-    choice = cdf,
-    allowed = allowed.cdf,
-    param.name = "cdf"
-  ))
+  # Default value of the param is the full vector of allowed values (match.arg() then
+  # selects the first)
+  if (identical(cdf, allowed.cdf)) {
+    return(c())
+  }
+
+  if (!is.character(cdf) || length(cdf) != 1) {
+    return("Parameter 'cdf' must be a single character string.")
+  }
+
+  if (!(cdf %in% allowed.cdf)) {
+    return(paste0("Parameter 'cdf' must be one of: ", toString(allowed.cdf), "."))
+  }
+
+  return(c())
 }
 
 checkinput_copula2stage_numboots <- function(num.boots) {
