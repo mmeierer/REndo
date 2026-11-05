@@ -43,7 +43,7 @@ An object of class \code{rendo.copula.2scope.np} which is a list that contains:
 \item{\code{residuals}}{The structural residuals.}
 \item{\code{boots.params}}{The bootstrapped coefficients.}
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
-\item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
+\item{\code{n.boots.failed}}{The number of bootstrap samples discarded as degenerate (failed fit, non-finite coefs, or coefs of different length or names than original).}
 \item{\code{cdf}}{Always \code{NULL}: The conditional CDFs are estimated nonparametrically (see \code{condists}).}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{labels.endo}}{The term labels of the endogenous regressors.}
@@ -185,9 +185,12 @@ output to preserve factor structure for the kernel.
 Bootstrap inference is performed by resampling the data with replacement.
 Degenerate bootstrap samples (e.g. singular design matrices or failed
 model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
+of valid bootstrap replications is obtained.
+If the requested number cannot
+be obtained within 2 x \code{num.boots} attempts, bootstrapping stops with an
+error. The percentage of discarded
+samples is reported as a warning. Standard errors and confidence intervals
+are computed using only successful bootstrap replications.
 }
 
 Note that the bandwidth is fit on the full \code{data} and then re-used across
