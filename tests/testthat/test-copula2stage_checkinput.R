@@ -198,7 +198,7 @@ test_that("copula2stage_label_to_colname normalizes labels to col names", {
 
 
 # checkinput_copula2stage_modelframe ---------------------------------------------------
-test_that("_modelframe fails on NAs, illegal classes", {
+test_that("_modelframe fails on NA/non-finite values, illegal classes", {
   # NAs from transformation (also produces warning)
   expect_warning(
     res <- checkinput_copula2stage_modelframe(
@@ -213,6 +213,13 @@ test_that("_modelframe fails on NAs, illegal classes", {
 
   df.na.response <- fixture_copula_df()
   df.na.response$y[1] <- NA
+
+  df.inf <- fixture_copula_df()
+  df.inf$x_inf <- df.inf$x_num
+  df.inf$x_inf[1] <- Inf
+
+  df.inf.response <- fixture_copula_df()
+  df.inf.response$y[1] <- Inf
 
   run_cases_errmsg(
     fn = checkinput_copula2stage_modelframe,
@@ -235,12 +242,35 @@ test_that("_modelframe fails on NAs, illegal classes", {
         allowed.classes = list(x_fac = "numeric"),
         labels.warn.low.card = NULL,
         forbid.constant = FALSE
+      ),
+      "Inf already in data" = list(
+        F.formula = as.Formula(y ~ x_inf),
+        data = df.inf,
+        allowed.classes = list(x_inf = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
+      ),
+      "-Inf from transformation" = list(
+        F.formula = as.Formula(y ~ log(x_lowcard - 1)),
+        allowed.classes = list("log(x_lowcard - 1)" = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
+      ),
+      "Inf in response" = list(
+        F.formula = as.Formula(y ~ x_num),
+        data = df.inf.response,
+        allowed.classes = list(x_num = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
       )
     ),
     regexp = c(
       "missing values",
       "missing values",
-      "has class"
+      "has class",
+      "finite values.*x_inf",
+      "finite values.*log\\(x_lowcard - 1\\)",
+      "finite values.*y"
     )
   )
 })
