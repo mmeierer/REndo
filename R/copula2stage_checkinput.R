@@ -148,6 +148,7 @@ copula2stage_label_to_colname <- function(lab) {
 # - build from lhs ~ rhs1
 # - expose failed builds to user
 # - na.fail to catch generated NAs
+# - no non-finite values
 # - check for each (formula) label / term, if the resulting regressor (colum) is
 #    of an allowed class
 # - warn about low cardinality (<=10) numeric variables
@@ -195,6 +196,21 @@ checkinput_copula2stage_modelframe <- function(
         "Regressor '", lab, "' has class '", cls,
         "' but must be one of: ", toString(allowed.classes[[lab]]), "."))
     }
+  }
+
+  # only finite values in numeric cols (n NA/NaN, +/-Inf)
+  is.nonfinite <- vapply(
+    mf,
+    function(x) {
+      return(is.numeric(x) && !all(is.finite(x)))
+    },
+    logical(1)
+  )
+  if (any(is.nonfinite)) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Variable(s) must contain only finite values: ",toString(names(mf)[is.nonfinite]), "."
+      ))
   }
 
   # only for given labels: warn about low-cardinality numeric variable
@@ -354,7 +370,10 @@ checkinput_copula2stage_formula_data <- function(
 
   # Data has no column named same as generated regressors
   # (after the checks above: at least one endo regressor guaranteed)
-  err.msg <- checkinput_copula2stage_data_copnames(data = data, labels.endo = endo.labels)
+  err.msg <- checkinput_copula2stage_data_copnames(
+    data = data,
+    labels.endo = endo.labels
+  )
   if (length(err.msg) > 0) {
     return(err.msg)
   }
