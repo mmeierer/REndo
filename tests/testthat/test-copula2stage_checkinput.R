@@ -100,6 +100,48 @@ test_that("_vars_in_data works with valid, non-syntactic, dot", {
   )
 })
 
+# checkinput_copula2stage_data_copnames ---------------------------------------------
+test_that("_data_copnames fails if data has cols named like the correction terms", {
+  df <- fixture_copula_df()
+  df$x_num_cop <- 1
+  df[["log(x_num)_cop"]] <- 1
+  df[["x space_cop"]] <- 1
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_data_copnames,
+    base.args = list(data = df),
+    cases = list(
+      "single endo" = list(labels.endo = "x_num"),
+      "multi endo, one clashes" = list(labels.endo = c("x_pos", "x_num")),
+      "multi endo, all clash" = list(labels.endo = c("x_num", "log(x_num)")),
+      "transformed endo" = list(labels.endo = "log(x_num)"),
+      "non-syntactic endo" = list(labels.endo = "`x space`")
+    ),
+    regexp = c(
+      "named 'x_num_cop' because",
+      "named 'x_num_cop' because",
+      "named 'x_num_cop', 'log\\(x_num\\)_cop' because",
+      "named 'log\\(x_num\\)_cop' because",
+      "named 'x space_cop' because"
+    )
+  )
+})
+
+test_that("_data_copnames works if col is named similar but different from the correction terms", {
+  df <- fixture_copula_df()
+
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_data_copnames,
+    base.args = list(),
+    cases = list(
+      "similar but different names" = list(
+        labels.endo = "x_num",
+        data = cbind(df, x_numcop = 1, x_num_cop2 = 1, cop_x_num = 1)
+      )
+    )
+  )
+})
+
 # checkinput_copula2stage_response_not_in_rhs ------------------------------------------
 test_that("_response_not_in_rhs fails if response in rhs1", {
   expect_match(
@@ -321,12 +363,17 @@ test_that("_formula_data has building blocks wired in", {
       "formula_basics" = list(formula = "y ~ x_num | x_num"),
       "vars_in_data" = list(formula = y ~ x_num + mis | x_num),
       "response_not_in_rhs" = list(formula = y ~ y + x_num | x_num),
+      "data_copnames" = list(
+        formula = y ~ x_num | x_num,
+        data = cbind(formuladata_base_args()$data, x_num_cop = 1)
+      ),
       "modelframe" = list(formula = y ~ x_na + x_num | x_num)
     ),
     regexp = c(
       "must be a formula",
       "not found",
       "also appear",
+      "generated correction terms",
       "missing values"
     )
   )

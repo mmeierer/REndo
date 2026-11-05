@@ -348,12 +348,13 @@ checkinput_copula2stage_formula_data <- function(
       toString(not.in.rhs1), "."))
   }
 
-  # Data has no column named same as generated regressors
-  err.msg <- c(
-    err.msg,
-    checkinput_copula2stage_data_copnames(data = data, labels.endo = endo.labels)
-  )
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
 
+  # Data has no column named same as generated regressors
+  # (after the checks above: at least one endo regressor guaranteed)
+  err.msg <- checkinput_copula2stage_data_copnames(data = data, labels.endo = endo.labels)
   if (length(err.msg) > 0) {
     return(err.msg)
   }
