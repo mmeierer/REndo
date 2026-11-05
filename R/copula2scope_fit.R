@@ -1,4 +1,4 @@
-#' @importFrom stats formula lm model.frame model.matrix na.fail reformulate qnorm residuals
+#' @importFrom stats formula lm model.frame model.matrix na.exclude na.fail reformulate qnorm residuals
 copula2scope_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # 1st stage ------------------------------------------------------------------
 
@@ -62,7 +62,11 @@ copula2scope_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
       #situation when there are exogenous regressors
       #projecting on exogenous W* with intercept
       # W_t* exogenous only
-      lm.j <- lm(Z.endo.j ~ Z.exo) # With intercept included from 2sCOPE table 1,
+      #
+      # Use na.exclude: keep rows with NA/NaN in Z and residuals so the input
+      # checks of the 2nd stage report them clearly. Dropping them would break
+      # assignment to `cop.terms[]<-`
+      lm.j <- lm(Z.endo.j ~ Z.exo, na.action = na.exclude) # With intercept included from 2sCOPE table 1,
       #from ADDRESSING ENDOGENEITY USING A TWO-STAGE COPULA GENERATED REGRESSOR APPROACH (From Yang et al. 2025, page 7 )
       cop.terms[, j] <- residuals(lm.j)
     }
