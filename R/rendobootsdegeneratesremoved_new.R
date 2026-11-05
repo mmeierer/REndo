@@ -73,7 +73,7 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
   attempt <- 0 # the number of total attempts
   # prevent infinite sampling: at most 2x num.boots attempts (50% degenerates)
   max.attempts <- 2 * num.boots
-  last.reason <- NULL # why the last sample failed
+  last.fail.reason <- NULL # why the last sample failed
 
   repeat {
     # stop repeating if successful B bootstrap have been drawn
@@ -85,7 +85,7 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
       # fmt: skip
       stop(paste0(
         "Bootstrapping stopped after reaching the maximum of ", max.attempts, " attempts (2 x num.boots): ",
-        failed, " samples were degenerate. Error in the last degenerate sample: ", last.reason),
+        failed, " samples were degenerate. Error of the last degenerate sample: ", last.fail.reason),
         call. = FALSE)
     }
 
@@ -98,16 +98,22 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
     # estimating
     fit.b <- try(fn.fit(data.b = data.b), silent = TRUE)
 
-    # taking into account only adequate draws
+    # taking into account only adequate draws (fail.reason is NULL if adequate)
     # - did not throw any error
-    # - coefs: equal names (incl order) and length
+    # - coefs: equal length and names (incl order)
     # - coefs: no non-finite (NA/NaN/+-Inf etc from linear combinations)
-    is.adequate <- !inherits(fit.b, "try-error") &&
-      # identical checks both: length & order
-      identical(names(coef(fit.b)), coef.names) &&
-      all(is.finite(coef(fit.b)))
+    fail.reason <- NULL
+    if (inherits(fit.b, "try-error")) {
+      fail.reason <- conditionMessage(attr(fit.b, "condition"))
+    } else if (length(coef(fit.b)) != length(coef.names)) {
+      fail.reason <- "Number of coefficients differs from the original fit (eg dropped factor level)."
+    } else if (!identical(names(coef(fit.b)), coef.names)) {
+      fail.reason <- "Coefficient names or their order differ from the original fit."
+    } else if (!all(is.finite(coef(fit.b)))) {
+      fail.reason <- "Coefficients are not finite."
+    }
 
-    if (is.adequate) {
+    if (is.null(fail.reason)) {
       boots[, b] <- coef(fit.b)
       b <- b + 1
 
@@ -118,11 +124,7 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
     } else {
       failed <- failed + 1
       # store failure reason here to use in max.attempts check
-      if (inherits(fit.b, "try-error")) {
-        last.reason <- conditionMessage(attr(fit.b, "condition"))
-      } else {
-        last.reason <- "Coefficients differ from the original fit or are not finite."
-      }
+      last.fail.reason <- fail.reason
     }
   }
 
@@ -132,8 +134,8 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
     warning(
       round(100 * fail.rate, 2),
       "% of bootstrap samples were degenerate and discarded. ",
-      "Error in the last degenerate sample: ",
-      last.reason,
+      "Error of the last degenerate sample: ",
+      last.fail.reason,
       call. = FALSE
     )
   }
