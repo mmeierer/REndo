@@ -105,6 +105,20 @@ checkinput_copula2stage_vars_in_data <- function(F.formula, data) {
   return(c())
 }
 
+# Cols with same name as the generated regressor, eg '<endo>_cop' would conflict in 2nd stage
+checkinput_copula2stage_data_copnames <- function(data, labels.endo) {
+  copterm.names <- copula2stage_get_copterm_names(labels.endo)
+  clashing <- intersect(copterm.names, colnames(data))
+  if (length(clashing) > 0) {
+    # fmt: skip
+    return(paste0(
+      "Parameter 'data' may not contain column(s) named ", toString(paste0("'", clashing, "'")),
+      " because these names are used for the generated correction terms."))
+  }
+
+  return(c())
+}
+
 # LHS is not also in RHS1
 checkinput_copula2stage_response_not_in_rhs <- function(F.formula, rhs1.terms) {
   # needs terms object of expanded terms object
@@ -333,6 +347,12 @@ checkinput_copula2stage_formula_data <- function(
       "Endogenous regressor(s) not in structural model (rhs1): ",
       toString(not.in.rhs1), "."))
   }
+
+  # Data has no column named same as generated regressors
+  err.msg <- c(
+    err.msg,
+    checkinput_copula2stage_data_copnames(data = data, labels.endo = endo.labels)
+  )
 
   if (length(err.msg) > 0) {
     return(err.msg)

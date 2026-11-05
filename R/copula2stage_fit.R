@@ -71,8 +71,10 @@ copula2stage_stop_if_constant <- function(X) {
   }
 }
 
-copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
-  m <- matrix(NA_real_, nrow = nrow, ncol = length(labels.endo))
+# Names for the generated regressors: '<label>_cop'
+copula2stage_get_copterm_names <- function(labels.endo) {
+  stopifnot(length(labels.endo) > 0)
+
   # Make labels plain strings before using as colnames (ie strips backticks) because
   # they need to feed into reformulate() later
   raw.labels <- vapply(
@@ -80,9 +82,15 @@ copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
     FUN = function(x) {
       return(deparse1(str2lang(x), backtick = FALSE))
     },
-    FUN.VALUE = character(1)
+    FUN.VALUE = character(1),
+    USE.NAMES = FALSE
   )
-  colnames(m) <- paste0(raw.labels, "_cop")
+  return(paste0(raw.labels, "_cop"))
+}
+
+copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
+  m <- matrix(NA_real_, nrow = nrow, ncol = length(labels.endo))
+  colnames(m) <- copula2stage_get_copterm_names(labels.endo)
   return(m)
 }
 
