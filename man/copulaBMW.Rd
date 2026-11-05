@@ -43,7 +43,7 @@ An object of class \code{rendo.copula.bmw} which is a list that contains:
 \item{\code{residuals}}{The structural residuals.}
 \item{\code{boots.params}}{The bootstrapped coefficients.}
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
-\item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
+\item{\code{n.boots.failed}}{The number of bootstrap samples discarded as degenerate (failed fit, non-finite coefs, or coefs of different length or names than original).}
 \item{\code{cdf}}{The used cdf function.}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{labels.endo}}{The term labels of the endogenous regressors.}

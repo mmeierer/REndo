@@ -2,7 +2,7 @@ doc_rendobootsdegeneratesremoved_return_list <- function() {
   doc_boots <- doc_rendoboots_return_list()
   doc_boots_removed <- c(
     n.boots.attempted = "\\item{\\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}",
-    n.boots.failed = "\\item{\\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}"
+    n.boots.failed = "\\item{\\code{n.boots.failed}}{The number of bootstrap samples discarded as degenerate (failed fit, non-finite coefs, or coefs of different length or names than original).}"
   )
 
   return(c(doc_boots, doc_boots_removed))
