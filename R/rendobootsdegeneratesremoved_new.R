@@ -54,6 +54,8 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
   if (verbose) {
     message("Running ", num.boots, " bootstraps.")
     pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
+    # always close: regular exist & cancel (ctrl+c)
+    on.exit(close(pb), add = TRUE)
   }
 
   n <- nrow(data)
@@ -80,9 +82,6 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
     }
 
     if (attempt >= max.attempts) {
-      if (verbose) {
-        close(pb)
-      }
       # fmt: skip
       stop(paste0(
         "Bootstrapping stopped after reaching the maximum of ", max.attempts, " attempts (2 x num.boots): ",
@@ -125,10 +124,6 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
         last.reason <- "Coefficients differ from the original fit or are not finite."
       }
     }
-  }
-
-  if (verbose) {
-    close(pb)
   }
 
   if (failed > 0) {
