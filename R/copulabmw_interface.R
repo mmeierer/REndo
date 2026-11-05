@@ -52,7 +52,7 @@
 #' }
 #'
 #' This method requires at least one exogenous regressor for the first-stage
-#' regression and supports only continuous regressors.
+#' regression and supports only continuous endogenous regressors.
 #'
 #' ## Important assumptions
 #' The method requires the following assumptions (Assumption A, Breitung et al. 2024):
@@ -105,7 +105,7 @@
 #' #------------------------------------------------------------------------
 #' # Example 1: Single endogenous regressor, correlated with
 #' # exogenous regressor (Breitung, Meyer, Wied 2024, Section 4,
-#' # Inspired by DGP1 with delta = 1 (correlation between x and P), rho = 0.5 (endogeneity),
+#' # Inspired by DGP1 with delta = 1 (correlation between x and P), rho = 0.9 (endogeneity),
 #' # x ~ Gamma(1,1), e ~ lognormal(0,1) first stage error)
 #' # n = 1000
 #' # True Parameters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
