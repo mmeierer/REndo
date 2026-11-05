@@ -1,9 +1,19 @@
 checkinput_copula2stage_cdf <- function(cdf, allowed.cdf) {
-  return(checkinputhelper_choice(
-    choice = cdf,
-    allowed = allowed.cdf,
-    param.name = "cdf"
-  ))
+  # Default value of the param is the full vector of allowed values (match.arg() then
+  # selects the first)
+  if (identical(cdf, allowed.cdf)) {
+    return(c())
+  }
+
+  if (!is.character(cdf) || length(cdf) != 1) {
+    return("Parameter 'cdf' must be a single character string.")
+  }
+
+  if (!(cdf %in% allowed.cdf)) {
+    return(paste0("Parameter 'cdf' must be one of: ", toString(allowed.cdf), "."))
+  }
+
+  return(c())
 }
 
 checkinput_copula2stage_numboots <- function(num.boots) {
@@ -95,6 +105,20 @@ checkinput_copula2stage_vars_in_data <- function(F.formula, data) {
   return(c())
 }
 
+# Cols with same name as the generated regressor, eg '<endo>_cop' would conflict in 2nd stage
+checkinput_copula2stage_data_copnames <- function(data, labels.endo) {
+  copterm.names <- copula2stage_get_copterm_names(labels.endo)
+  clashing <- intersect(copterm.names, colnames(data))
+  if (length(clashing) > 0) {
+    # fmt: skip
+    return(paste0(
+      "Parameter 'data' may not contain column(s) named ", toString(paste0("'", clashing, "'")),
+      " because these names are used for the generated correction terms."))
+  }
+
+  return(c())
+}
+
 # LHS is not also in RHS1
 checkinput_copula2stage_response_not_in_rhs <- function(F.formula, rhs1.terms) {
   # needs terms object of expanded terms object
@@ -124,6 +148,8 @@ copula2stage_label_to_colname <- function(lab) {
 # - build from lhs ~ rhs1
 # - expose failed builds to user
 # - na.fail to catch generated NAs
+# - no non-finite values
+# - no unused factor levels
 # - check for each (formula) label / term, if the resulting regressor (colum) is
 #    of an allowed class
 # - warn about low cardinality (<=10) numeric variables
@@ -171,6 +197,54 @@ checkinput_copula2stage_modelframe <- function(
         "Regressor '", lab, "' has class '", cls,
         "' but must be one of: ", toString(allowed.classes[[lab]]), "."))
     }
+  }
+
+  # only finite values in numeric cols (n NA/NaN, +/-Inf)
+  is.nonfinite <- vapply(
+    mf,
+    function(x) {
+      return(is.numeric(x) && !all(is.finite(x)))
+    },
+    logical(1)
+  )
+  if (any(is.nonfinite)) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Variable(s) must contain only finite values: ",toString(names(mf)[is.nonfinite]), "."
+      ))
+  }
+
+  # No unused factor levels: Error instead of (silently) dropping them or cryptic failure later.
+  # Considered options:
+  # - drop.unused.levels=TRUE in model.frame(): per method fit only, easy to
+  #   miss in (new) methods. BMW & np only work with unused levels because lm() drops
+  #   them internally
+  # - droplevels(data) in every interface (+ warning): consistent, but the action has to
+  #   be repeated in each interface and modifies user-data which we otherwise hardly touch
+  # - error in input check: single place for all methods, explicit and the data is used
+  #   as given. But: Fails on data that lm() accepts, which is easy to fix for the user
+  unused.levels <- vapply(
+    mf,
+    function(x) {
+      if (!is.factor(x)) {
+        return("")
+      }
+      # levels that occur 0 times, quoted to also show empty "" levels
+      lvls.unused <- levels(x)[table(x) == 0]
+      if (length(lvls.unused) == 0) {
+        return("")
+      }
+      return(toString(paste0("'", lvls.unused, "'")))
+    },
+    character(1)
+  )
+  has.unused.levels <- nchar(unused.levels) > 0
+  if (any(has.unused.levels)) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Factor variable(s) with unused levels: ",
+      toString(paste0(colnames(mf)[has.unused.levels], " (", unused.levels[has.unused.levels], ")")),
+      ". Drop the unused levels first, eg with `data <- droplevels(data)`."))
   }
 
   # only for given labels: warn about low-cardinality numeric variable
@@ -324,6 +398,16 @@ checkinput_copula2stage_formula_data <- function(
       toString(not.in.rhs1), "."))
   }
 
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Data has no column named same as generated regressors
+  # (after the checks above: at least one endo regressor guaranteed)
+  err.msg <- checkinput_copula2stage_data_copnames(
+    data = data,
+    labels.endo = endo.labels
+  )
   if (length(err.msg) > 0) {
     return(err.msg)
   }

@@ -29,3 +29,18 @@ test_that("copula2stage_stop_if_constant works with data.frames incl factors", {
     regexp = "must not be constant"
   )
 })
+
+
+# copula2stage_get_copterm_names -----------------------------------------------------
+
+test_that("copula2stage_get_copterm_names appends _cop to the endo labels", {
+  # plain
+  expect_identical(copula2stage_get_copterm_names("P"), "P_cop")
+  # multiple, order is kept
+  expect_identical(copula2stage_get_copterm_names(c("P1", "P2")), c("P1_cop", "P2_cop"))
+  # backticks are stripped (non-syntactic)
+  expect_identical(copula2stage_get_copterm_names("`P 1`"), "P 1_cop")
+  # transformations are kept as they are
+  expect_identical(copula2stage_get_copterm_names("log(P)"), "log(P)_cop")
+  expect_identical(copula2stage_get_copterm_names("I(P^2)"), "I(P^2)_cop")
+})

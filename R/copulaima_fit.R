@@ -1,4 +1,4 @@
-#' @importFrom stats formula lm model.frame model.matrix na.fail qnorm reformulate residuals
+#' @importFrom stats formula lm model.frame model.matrix na.exclude na.fail qnorm reformulate residuals
 copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   # 1st stage ------------------------------------------------------------------
 
@@ -13,6 +13,8 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
     na.action = na.fail
   )
 
+  # model.matrix() matches the terms by name to the mf columns and does not evalute.
+  # Therefore, the env of reformulate() does not matter
   f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
   X.endo <- model.matrix(f.endo, data = mf.all)
   copula2stage_stop_if_constant(X.endo)
@@ -47,7 +49,10 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
   for (j in seq_len(ncol(Z.endo))) {
     # There are always exo regressors
     Z.j <- Z.endo[, j, drop = TRUE]
-    lm.j <- lm(Z.j ~ Z.exo - 1)
+    # Use na.exclude: keep rows with NA/NaN in Z and residuals so the input
+    # checks of the 2nd stage report them clearly. Dropping them would break
+    # assignment to `cop.terms[]<-`
+    lm.j <- lm(Z.j ~ Z.exo - 1, na.action = na.exclude)
     cop.terms[, j] <- residuals(lm.j)
 
     # if (has.exo) {

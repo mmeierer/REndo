@@ -100,6 +100,48 @@ test_that("_vars_in_data works with valid, non-syntactic, dot", {
   )
 })
 
+# checkinput_copula2stage_data_copnames ---------------------------------------------
+test_that("_data_copnames fails if data has cols named like the correction terms", {
+  df <- fixture_copula_df()
+  df$x_num_cop <- 1
+  df[["log(x_num)_cop"]] <- 1
+  df[["x space_cop"]] <- 1
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_data_copnames,
+    base.args = list(data = df),
+    cases = list(
+      "single endo" = list(labels.endo = "x_num"),
+      "multi endo, one clashes" = list(labels.endo = c("x_pos", "x_num")),
+      "multi endo, all clash" = list(labels.endo = c("x_num", "log(x_num)")),
+      "transformed endo" = list(labels.endo = "log(x_num)"),
+      "non-syntactic endo" = list(labels.endo = "`x space`")
+    ),
+    regexp = c(
+      "named 'x_num_cop' because",
+      "named 'x_num_cop' because",
+      "named 'x_num_cop', 'log\\(x_num\\)_cop' because",
+      "named 'log\\(x_num\\)_cop' because",
+      "named 'x space_cop' because"
+    )
+  )
+})
+
+test_that("_data_copnames works if col is named similar but different from the correction terms", {
+  df <- fixture_copula_df()
+
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_data_copnames,
+    base.args = list(),
+    cases = list(
+      "similar but different names" = list(
+        labels.endo = "x_num",
+        data = cbind(df, x_numcop = 1, x_num_cop2 = 1, cop_x_num = 1)
+      )
+    )
+  )
+})
+
 # checkinput_copula2stage_response_not_in_rhs ------------------------------------------
 test_that("_response_not_in_rhs fails if response in rhs1", {
   expect_match(
@@ -156,7 +198,7 @@ test_that("copula2stage_label_to_colname normalizes labels to col names", {
 
 
 # checkinput_copula2stage_modelframe ---------------------------------------------------
-test_that("_modelframe fails on NAs, illegal classes", {
+test_that("_modelframe fails on NA/non-finite values, illegal classes", {
   # NAs from transformation (also produces warning)
   expect_warning(
     res <- checkinput_copula2stage_modelframe(
@@ -171,6 +213,13 @@ test_that("_modelframe fails on NAs, illegal classes", {
 
   df.na.response <- fixture_copula_df()
   df.na.response$y[1] <- NA
+
+  df.inf <- fixture_copula_df()
+  df.inf$x_inf <- df.inf$x_num
+  df.inf$x_inf[1] <- Inf
+
+  df.inf.response <- fixture_copula_df()
+  df.inf.response$y[1] <- Inf
 
   run_cases_errmsg(
     fn = checkinput_copula2stage_modelframe,
@@ -193,13 +242,59 @@ test_that("_modelframe fails on NAs, illegal classes", {
         allowed.classes = list(x_fac = "numeric"),
         labels.warn.low.card = NULL,
         forbid.constant = FALSE
+      ),
+      "Inf already in data" = list(
+        F.formula = as.Formula(y ~ x_inf),
+        data = df.inf,
+        allowed.classes = list(x_inf = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
+      ),
+      "-Inf from transformation" = list(
+        F.formula = as.Formula(y ~ log(x_lowcard - 1)),
+        allowed.classes = list("log(x_lowcard - 1)" = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
+      ),
+      "Inf in response" = list(
+        F.formula = as.Formula(y ~ x_num),
+        data = df.inf.response,
+        allowed.classes = list(x_num = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
       )
     ),
     regexp = c(
       "missing values",
       "missing values",
-      "has class"
+      "has class",
+      "finite values.*x_inf",
+      "finite values.*log\\(x_lowcard - 1\\)",
+      "finite values.*y"
     )
+  )
+})
+
+test_that("_modelframe fails on unused factor levels, works after droplevels()", {
+  df <- fixture_copula_df()
+  df$x_fac <- factor(df$x_fac, levels = c("a", "b", "c"))
+  base.args <- list(
+    F.formula = as.Formula(y ~ x_num + x_fac),
+    allowed.classes = list(x_num = "numeric", x_fac = "factor"),
+    labels.warn.low.card = NULL,
+    forbid.constant = FALSE
+  )
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_modelframe,
+    base.args = base.args,
+    cases = list("unused level" = list(data = df)),
+    regexp = "unused levels: x_fac \\('c'\\)"
+  )
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_modelframe,
+    base.args = base.args,
+    cases = list("after droplevels()" = list(data = droplevels(df)))
   )
 })
 
@@ -321,12 +416,17 @@ test_that("_formula_data has building blocks wired in", {
       "formula_basics" = list(formula = "y ~ x_num | x_num"),
       "vars_in_data" = list(formula = y ~ x_num + mis | x_num),
       "response_not_in_rhs" = list(formula = y ~ y + x_num | x_num),
+      "data_copnames" = list(
+        formula = y ~ x_num | x_num,
+        data = cbind(formuladata_base_args()$data, x_num_cop = 1)
+      ),
       "modelframe" = list(formula = y ~ x_na + x_num | x_num)
     ),
     regexp = c(
       "must be a formula",
       "not found",
       "also appear",
+      "generated correction terms",
       "missing values"
     )
   )
@@ -544,8 +644,8 @@ test_that("_cdf rejects invalid cdf", {
       "non-default vector" = list(cdf = c("ecdf", "kde"))
     ),
     regexp = c(
-      "is invalid",
-      "is invalid",
+      "must be one of",
+      "must be one of",
       "single character string",
       "single character string",
       "single character string"

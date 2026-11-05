@@ -35,8 +35,8 @@ copula2stage_pstar <- function(P, cdf) {
     ecdf0 <- apply(P, 2, ecdf)
     P.star <- sapply(seq_along(ecdf0), function(i) {
       u <- ecdf0[[i]](P[, i])
-      u[u == min(u)] <- 10e-7
-      u[u == max(u)] <- 1 - 10e-7
+      u[u == min(u)] <- 1e-7
+      u[u == max(u)] <- 1 - 1e-7
       return(u)
     })
     P.star <- as.matrix(P.star)
@@ -71,8 +71,10 @@ copula2stage_stop_if_constant <- function(X) {
   }
 }
 
-copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
-  m <- matrix(NA_real_, nrow = nrow, ncol = length(labels.endo))
+# Names for the generated regressors: '<label>_cop'
+copula2stage_get_copterm_names <- function(labels.endo) {
+  stopifnot(length(labels.endo) > 0)
+
   # Make labels plain strings before using as colnames (ie strips backticks) because
   # they need to feed into reformulate() later
   raw.labels <- vapply(
@@ -80,15 +82,47 @@ copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
     FUN = function(x) {
       return(deparse1(str2lang(x), backtick = FALSE))
     },
-    FUN.VALUE = character(1)
+    FUN.VALUE = character(1),
+    USE.NAMES = FALSE
   )
-  colnames(m) <- paste0(raw.labels, "_cop")
+  return(paste0(raw.labels, "_cop"))
+}
+
+copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
+  m <- matrix(NA_real_, nrow = nrow, ncol = length(labels.endo))
+  colnames(m) <- copula2stage_get_copterm_names(labels.endo)
   return(m)
 }
 
-#' @importFrom stats lm reformulate terms update
+#' @importFrom stats lm na.fail reformulate terms update
 copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
+  # Checks of data inputs to 2nd stage -------------------------------------------
+
+  # Internal guarantees, should never trigger
+  # - no colnames on data (required for building formula)
+  # - lost rows somewhere
+  # - data column of same name as generated regressors (should have been caught in input checks)
   stopifnot(!is.null(colnames(cop.terms)))
+  stopifnot(nrow(cop.terms) == nrow(data))
+  stopifnot(!any(colnames(cop.terms) %in% colnames(data)))
+
+  # Generated correction terms must be finite.
+  # Catches any source rather than try to identify and handle there (eg qnorm()).
+  # Fail loudly instead of lm() silently dropping rows (for NA/NaN) or hard to
+  # understand (for Inf)
+  is.nonfinite <- apply(cop.terms, MARGIN = 2, function(x) {
+    return(!all(is.finite(x)))
+  })
+  if (any(is.nonfinite)) {
+    stop(
+      paste0(
+        "The generated correction term(s) ",
+        toString(paste0("'", colnames(cop.terms)[is.nonfinite], "'")),
+        " contain non-finite values (NA, NaN or Inf)"
+      ),
+      call. = FALSE
+    )
+  }
 
   # 2nd stage ----------------------------------------------------------------------
   # Adding the correction term to the structural model and estimate by OLS
@@ -115,7 +149,14 @@ copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
 
   # cbind() also works with non-continuous variables because it dispatches to
   # cbind.data.frame() if any argument is a data.frame
-  res.lm.augmented <- lm(formula = f.final, data = cbind(data, cop.terms))
+  # na.fail: never silently drop rows (na.omit is default). Should not happen
+  # with checks above but a) be explicit b) prevent misaligned or shorter result
+  # (cannot happen on original fit but theoretically during bootstrap)
+  res.lm.augmented <- lm(
+    formula = f.final,
+    data = cbind(data, cop.terms),
+    na.action = na.fail
+  )
 
   return(list(
     res.lm.augmented = res.lm.augmented,
