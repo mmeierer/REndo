@@ -28,6 +28,8 @@ copulabmw_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
     # evaluate in the user's formula env and not the env here
     environment(f.endo.k.on.all.exo) <- environment(F.formula)
 
+    # Uses only variables that were also in the model.frame(y~structural model)
+    # and are therefore covered by the input checks (_modelframe())
     # na.fail: never silently drop rows used for the correction terms
     res.lm.first <- lm(formula = f.endo.k.on.all.exo, data = data, na.action = na.fail)
 

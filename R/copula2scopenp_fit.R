@@ -189,6 +189,8 @@ copula2scopenp_mf_endo_given_exo <- function(F.formula, data, p.label, labels.ex
   # Set with env(f) because reformulate(env=) requires R >= 3.6
   environment(f.endo.exo) <- environment(F.formula)
 
+  # Cols are a subset of the model.frame(y ~ structural model) that was
+  # checked in the input checks (_modelframe())
   mf <- model.frame(formula = f.endo.exo, data = data, na.action = na.fail)
   return(copula2scopenp_mf_drop_asis(mf))
 }
