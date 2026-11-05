@@ -96,7 +96,33 @@ copula2stage_get_1ststage_copterms <- function(nrow, labels.endo) {
 
 #' @importFrom stats lm reformulate terms update
 copula2stage_fit_2ndstage <- function(F.formula, data, cop.terms) {
+  # Checks of data inputs to 2nd stage -------------------------------------------
+
+  # Internal guarantees, should never trigger
+  # - no colnames on data (required for building formula)
+  # - lost rows somewhere
+  # - data column of same name as generated regressors (should have been caught in input checks)
   stopifnot(!is.null(colnames(cop.terms)))
+  stopifnot(nrow(cop.terms) == nrow(data))
+  stopifnot(!any(colnames(cop.terms) %in% colnames(data)))
+
+  # Generated correction terms must be finite.
+  # Catches any source rather than try to identify and handle there (eg qnorm()).
+  # Fail loudly instead of lm() silently dropping rows (for NA/NaN) or hard to
+  # understand (for Inf)
+  is.nonfinite <- apply(cop.terms, MARGIN = 2, function(x) {
+    return(!all(is.finite(x)))
+  })
+  if (any(is.nonfinite)) {
+    stop(
+      paste0(
+        "The generated correction term(s) ",
+        toString(paste0("'", colnames(cop.terms)[is.nonfinite], "'")),
+        " contain non-finite values (NA, NaN or Inf)"
+      ),
+      call. = FALSE
+    )
+  }
 
   # 2nd stage ----------------------------------------------------------------------
   # Adding the correction term to the structural model and estimate by OLS
