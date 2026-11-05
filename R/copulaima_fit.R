@@ -13,6 +13,8 @@ copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
     na.action = na.fail
   )
 
+  # model.matrix() matches the terms by name to the mf columns and does not evalute.
+  # Therefore, the env of reformulate() does not matter
   f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
   X.endo <- model.matrix(f.endo, data = mf.all)
   copula2stage_stop_if_constant(X.endo)
