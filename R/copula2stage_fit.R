@@ -35,8 +35,8 @@ copula2stage_pstar <- function(P, cdf) {
     ecdf0 <- apply(P, 2, ecdf)
     P.star <- sapply(seq_along(ecdf0), function(i) {
       u <- ecdf0[[i]](P[, i])
-      u[u == min(u)] <- 10e-7
-      u[u == max(u)] <- 1 - 10e-7
+      u[u == min(u)] <- 1e-7
+      u[u == max(u)] <- 1 - 1e-7
       return(u)
     })
     P.star <- as.matrix(P.star)
