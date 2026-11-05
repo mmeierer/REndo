@@ -275,6 +275,29 @@ test_that("_modelframe fails on NA/non-finite values, illegal classes", {
   )
 })
 
+test_that("_modelframe fails on unused factor levels, works after droplevels()", {
+  df <- fixture_copula_df()
+  df$x_fac <- factor(df$x_fac, levels = c("a", "b", "c"))
+  base.args <- list(
+    F.formula = as.Formula(y ~ x_num + x_fac),
+    allowed.classes = list(x_num = "numeric", x_fac = "factor"),
+    labels.warn.low.card = NULL,
+    forbid.constant = FALSE
+  )
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_modelframe,
+    base.args = base.args,
+    cases = list("unused level" = list(data = df)),
+    regexp = "unused levels: x_fac \\('c'\\)"
+  )
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_modelframe,
+    base.args = base.args,
+    cases = list("after droplevels()" = list(data = droplevels(df)))
+  )
+})
+
 test_that("_modelframe warns for low-cardinality numerics", {
   df <- fixture_copula_df()
 

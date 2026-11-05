@@ -149,6 +149,7 @@ copula2stage_label_to_colname <- function(lab) {
 # - expose failed builds to user
 # - na.fail to catch generated NAs
 # - no non-finite values
+# - no unused factor levels
 # - check for each (formula) label / term, if the resulting regressor (colum) is
 #    of an allowed class
 # - warn about low cardinality (<=10) numeric variables
@@ -211,6 +212,39 @@ checkinput_copula2stage_modelframe <- function(
     err.msg <- c(err.msg, paste0(
       "Variable(s) must contain only finite values: ",toString(names(mf)[is.nonfinite]), "."
       ))
+  }
+
+  # No unused factor levels: Error instead of (silently) dropping them or cryptic failure later.
+  # Considered options:
+  # - drop.unused.levels=TRUE in model.frame(): per method fit only, easy to
+  #   miss in (new) methods. BMW & np only work with unused levels because lm() drops
+  #   them internally
+  # - droplevels(data) in every interface (+ warning): consistent, but the action has to
+  #   be repeated in each interface and modifies user-data which we otherwise hardly touch
+  # - error in input check: single place for all methods, explicit and the data is used
+  #   as given. But: Fails on data that lm() accepts, which is easy to fix for the user
+  unused.levels <- vapply(
+    mf,
+    function(x) {
+      if (!is.factor(x)) {
+        return("")
+      }
+      # levels that occur 0 times, quoted to also show empty "" levels
+      lvls.unused <- levels(x)[table(x) == 0]
+      if (length(lvls.unused) == 0) {
+        return("")
+      }
+      return(toString(paste0("'", lvls.unused, "'")))
+    },
+    character(1)
+  )
+  has.unused.levels <- nchar(unused.levels) > 0
+  if (any(has.unused.levels)) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Factor variable(s) with unused levels: ",
+      toString(paste0(colnames(mf)[has.unused.levels], " (", unused.levels[has.unused.levels], ")")),
+      ". Drop the unused levels first, eg with `data <- droplevels(data)`."))
   }
 
   # only for given labels: warn about low-cardinality numeric variable
