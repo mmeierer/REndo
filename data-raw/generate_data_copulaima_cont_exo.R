@@ -1,5 +1,3 @@
-## code to prepare `dataCopIMAContExo` dataset goes here
-
 ## Generate dataCopIMAContExo (IMA – single endogenous continuous regressor)
 
 #Scenario 1: continuous exogenous, N(1,1)

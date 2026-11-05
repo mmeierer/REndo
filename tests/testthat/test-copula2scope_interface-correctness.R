@@ -2,9 +2,9 @@ skip_on_cran()
 set.seed(42)
 
 # Required data ---------------------------------------------------------------------
-data("dataCopula2sCOPECase1")
-data("dataCopula2sCOPECase2")
-data("dataCopula2sCOPECase3")
+data("dataCop2sCOPECase1")
+data("dataCop2sCOPECase2")
+data("dataCop2sCOPECase3")
 data("dataCopCont")
 data("dataCopCont2")
 
@@ -12,7 +12,7 @@ data("dataCopCont2")
 setup.correctness <- list(
   method = copula2sCOPE,
   fn = fit_2scope_fast,
-  data = dataCopula2sCOPECase1,
+  data = dataCop2sCOPECase1,
   formula = y ~ P + X | P,
   label = "copula2sCOPE"
 )
@@ -45,29 +45,29 @@ test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 # Parameter recovery -------------------------------------------------------
 
-test_that("Parameter recovery: dataCopula2sCOPECase1", {
+test_that("Parameter recovery: dataCop2sCOPECase1", {
   set.seed(42)
   res <- fit_2scope_defaults(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1
+    data = dataCop2sCOPECase1
   )
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = -1))
 })
 
-test_that("Parameter recovery: dataCopula2sCOPECase2", {
+test_that("Parameter recovery: dataCop2sCOPECase2", {
   set.seed(42)
   res <- fit_2scope_defaults(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase2
+    data = dataCop2sCOPECase2
   )
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = -1))
 })
 
-test_that("Parameter recovery: dataCopula2sCOPECase3", {
+test_that("Parameter recovery: dataCop2sCOPECase3", {
   set.seed(42)
   res <- fit_2scope_defaults(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase3
+    data = dataCop2sCOPECase3
   )
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = -1))
 })
@@ -129,18 +129,18 @@ run_2scope_parkgupta_equivalent <- function(data, formula.2scope, formula.cc, pa
   check_param_recovery(res = res.2scope, true_vals = coef(res.cc)[params])
 }
 
-test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCopula2sCOPECase1)", {
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCop2sCOPECase1)", {
   run_2scope_parkgupta_equivalent(
-    data = dataCopula2sCOPECase1,
+    data = dataCop2sCOPECase1,
     formula.2scope = y ~ P | P,
     formula.cc = y ~ P | continuous(P),
     params = c("(Intercept)", "P")
   )
 })
 
-test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCopula2sCOPECase2)", {
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCop2sCOPECase2)", {
   run_2scope_parkgupta_equivalent(
-    data = dataCopula2sCOPECase2,
+    data = dataCop2sCOPECase2,
     formula.2scope = y ~ P | P,
     formula.cc = y ~ P | continuous(P),
     params = c("(Intercept)", "P")
@@ -156,9 +156,9 @@ test_that("No exo: Same result as P&G implementation (copulaCorrection) - single
   )
 })
 
-test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo, no intercept (dataCopula2sCOPECase1)", {
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo, no intercept (dataCop2sCOPECase1)", {
   run_2scope_parkgupta_equivalent(
-    data = dataCopula2sCOPECase1,
+    data = dataCop2sCOPECase1,
     formula.2scope = y ~ P - 1 | P,
     formula.cc = y ~ P - 1 | continuous(P),
     params = c("P")

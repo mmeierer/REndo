@@ -1,13 +1,13 @@
 skip_on_cran()
 
 # Required data ---------------------------------------------------------------------
-data("dataCopula2sCOPECase1")
+data("dataCop2sCOPECase1")
 
 
 # Wired in --------------------------------------------------------------------------
 # just check if parameter tests are wired in
 test_that("interface has methods wired in", {
-  df.na <- dataCopula2sCOPECase1
+  df.na <- dataCop2sCOPECase1
   df.na$P[1] <- NA
 
   cases <- list(
@@ -21,7 +21,7 @@ test_that("interface has methods wired in", {
 
   base.args <- list(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPECase1,
+    data = dataCop2sCOPECase1,
     cdf = "adj.ecdf",
     num.boots = 1000,
     verbose = FALSE
@@ -42,7 +42,7 @@ test_that("Warns if no exogenous regressors", {
   expect_warning(
     suppress_lowboots_warning(copula2sCOPE(
       formula = y ~ P | P,
-      data = dataCopula2sCOPECase1,
+      data = dataCop2sCOPECase1,
       num.boots = 2,
       verbose = FALSE
     )),
@@ -53,7 +53,7 @@ test_that("Warns if no exogenous regressors", {
   expect_warning(
     suppress_lowboots_warning(copula2sCOPE(
       formula = y ~ P + X | P + X,
-      data = dataCopula2sCOPECase1,
+      data = dataCop2sCOPECase1,
       num.boots = 2,
       verbose = FALSE
     )),

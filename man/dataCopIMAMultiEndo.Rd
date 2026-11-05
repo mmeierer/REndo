@@ -7,15 +7,15 @@
 Intercept and One Exogenous Regressor}
 \format{
 A data frame with 5000 observations on 4 variables:
-\describe{
-\item{\code{y}}{a numeric vector representing the dependent variable.}
-\item{\code{P1}}{a numeric vector, continuous and endogenous, following a
-  bounded distribution Phi(P1*) + 0.5 with values in (0.5, 1.5)}
-\item{\code{P2}}{a numeric vector, continuous and endogenous, following a
-  bounded distribution Phi(P2*) + 0.5 with values in (0.5, 1.5)}
-  \item{\code{X}}{a numeric vector, continuous and exogenous and following
-   a distribution \eqn{N(1,1)}. Correlated with both \code{P1} and \code{P2}
-   at \eqn{\rho = 0.5} but uncorrelated with structural error.}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{P1}: a numeric vector, continuous and endogenous, following a
+bounded distribution \verb{Phi(P1*) + 0.5} with values in (0.5, 1.5)
+\item \code{P2}: a numeric vector, continuous and endogenous, following a
+bounded distribution \verb{Phi(P2*) + 0.5} with values in (0.5, 1.5)
+\item \code{X}: a numeric vector, continuous and exogenous and following
+a distribution \eqn{N(1,1)}. Correlated with both \code{P1} and \code{P2}
+at \eqn{\rho = 0.5} but uncorrelated with structural error.
 }
 }
 \usage{
@@ -23,17 +23,17 @@ data("dataCopIMAMultiEndo")
 }
 \description{
 A dataset simulated with two endogenous continuous regressors
- \code{P1} and \code{P2}, an intercept, a single continuous exogenous regressor \code{X}
-  and a dependent variable \code{y}. Both endogenous regressors follow a bounded
-  continuous distribution (Phi(P*) + 0.5) and are independent of each other.
-  The structural error and both endogenous regressors are correlated
-  (endogeneity strength rho = 0.5). They are also correlated with the exogenous regressor (rho = 0.5).
-  The true parameter values are \code{beta = 1} for \code{X},
-   \code{alpha1 = 1} for \code{P1}, \code{alpha2 = -1}
-  for \code{P2}, and \code{mu = 10} for the intercept. This was simulated as
-  an extension to the dataset 'dataCopIMAContExo'. This dataset was created to test
-  how well \code{copulaIMA()} works with an intercept and multiple endogenous regressors.
-  N = 5000 to avoid the problem of finite sample bias.
+\code{P1} and \code{P2}, an intercept, a single continuous exogenous regressor \code{X}
+and a dependent variable \code{y}. Both endogenous regressors follow a bounded
+continuous distribution (\verb{Phi(P*) + 0.5}) and are independent of each other.
+The structural error and both endogenous regressors are correlated
+(endogeneity strength rho = 0.5). They are also correlated with the exogenous regressor (rho = 0.5).
+The true parameter values are \code{beta = 1} for \code{X},
+\code{alpha1 = 1} for \code{P1}, \code{alpha2 = -1}
+for \code{P2}, and \code{mu = 10} for the intercept. This was simulated as
+an extension to the dataset 'dataCopIMAContExo'. This dataset was created to test
+how well \code{\link[=copulaIMA]{copulaIMA()}} works with an intercept and multiple endogenous regressors.
+N = 5000 to avoid the problem of finite sample bias.
 }
 \references{
 Haschka, R. E. (2025). Robustness of copula-correction models in causal
@@ -41,6 +41,6 @@ Haschka, R. E. (2025). Robustness of copula-correction models in causal
   IMA Journal of Management Mathematics, 36, 161-180. \doi{10.1093/imaman/dpae018}
 }
 \author{
-Kimberly Lew \email{kimberlylew12@gmail.com}
+Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }
 \keyword{datasets}

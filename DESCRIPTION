@@ -54,7 +54,6 @@ LinkingTo: Rcpp, RcppEigen
 Encoding: UTF-8
 VignetteBuilder: R.rsp
 LazyData: true
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1
 Config/testthat/edition: 3
 Config/testthat/start-first: copula2scopenp_interface-correctness
-RoxygenNote: 7.3.3
