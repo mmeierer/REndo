@@ -17,26 +17,23 @@ summary.rendo.boots.degenerates.removed <- function(object, ...) {
 
 #' @export
 print.summary.rendo.boots.degenerates.removed <- function(
-    x,
-    digits = max(3L, getOption("digits") - 3L),
-    signif.stars = getOption("show.signif.stars"),
-    ...
+  x,
+  digits = max(3L, getOption("digits") - 3L),
+  signif.stars = getOption("show.signif.stars"),
+  ...
 ) {
-  x
-  # Max width to not exceed the fixed width of some prints (printCoef/call)
-  max.width <- min(65, 0.9 * getOption("width"))
-
   # Print summary of inherited classes (`summary.rendo.boots.degenerates.removed`) -----
   NextMethod()
 
   # Print .degenerates.removed specific parts ------------------------------------------
   cat("\n")
 
-  # Some more bootstrapping info before break
+  # Some more bootstrapping info before break.
+  # Failed & attempted: indented below 'Number of bootstraps' (as printed by parent)
   fail.rate <- round(100 * x$n.boots.failed / x$n.boots.attempted, 2)
-  cat("Num bootstraps attempted: ", x$n.boots.attempted, "\n", sep = "")
+  cat("  attempted: ", x$n.boots.attempted, "\n", sep = "")
   cat(
-    "Num bootstraps failed and discarded: ",
+    "  discarded as degenerate: ",
     x$n.boots.failed,
     " (",
     fail.rate,
