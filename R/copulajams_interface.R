@@ -109,7 +109,7 @@
 #'
 #' @template template_param_cdf_references
 #'
-#' @eval doc_rendocopulajams_return()
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.jams", extra.items = doc_rendocopulajams_return_extra_items())
 #'
 #' @family copula-based methods
 #'
@@ -222,30 +222,30 @@ copulaJAMS <- function(
     verbose = verbose
   )
 
-  # Structural residuals --------------------------------------------------------------
-
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit$res.augmented,
-    names.aux.regs = fit$labels.pcop
-  )
-
   # Return object ----------------------------------------------------------------------
 
-  return(new_rendo_copulajams(
+  return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
     res.lm.augmented = fit$res.augmented,
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
-    boots.params = res.boots$boots.params,
-    n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed,
+    res.boots = res.boots,
     cdf = cdf,
     labels.endo = fit$labels.endo,
     labels.exo = fit$labels.exo,
     labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.jams",
+    # JAMS-specific
     P = fit$P,
     W = fit$W,
     df.Z = fit$df.Z
+  ))
+}
+
+
+doc_rendocopulajams_return_extra_items <- function() {
+  return(c(
+    P = "\\item{\\code{P}}{The matrix of (continuous) endogenous regressors.}",
+    W = "\\item{\\code{W}}{The matrix of continuous exogenous regressors. Only main effects: Discrete (\\code{factor}) regressors and interaction terms are excluded.}",
+    df.Z = "\\item{\\code{df.Z}}{\\code{data.frame} of discrete (\\code{factor}) exogenous regressors used to stratify. \\code{NULL} if there are none.}"
   ))
 }
