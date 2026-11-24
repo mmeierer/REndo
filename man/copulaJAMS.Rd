@@ -43,7 +43,7 @@ An object of class \code{rendo.copula.jams} which is a list that contains:
 \item{\code{residuals}}{The structural residuals.}
 \item{\code{boots.params}}{The bootstrapped coefficients.}
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
-\item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
+\item{\code{n.boots.failed}}{The number of bootstrap samples discarded as degenerate (failed fit, non-finite coefs, or coefs of different length or names than original).}
 \item{\code{cdf}}{The used cdf function.}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{labels.endo}}{The term labels of the endogenous regressors.}
@@ -147,14 +147,9 @@ helps to reduce finite-sample bias, especially in models with an intercept.
 
 \item{cdf="resc.ecdf"}{Rescaled empirical cdf \deqn{\hat{F}(x_i) = \frac{\text{rank}(x_i)}{n + 1}}.
    Keeps values strictly inside \eqn{(0,1)} without an arbitrary boundary constant.
-   Breitung et al. (2024) adopts this as their theoretical recommendation.
    Compared to "ecdf", the maximum value is  \eqn{\Phi^{-1}(n/(n+1))},
    which is considerably smaller in small samples (e.g., \eqn{\pm 2.8} for \eqn{n=400}).
-   For their method (\code{copulaBMW()}), the point estimates may
-   vary significantly when the sample size is small (e.g., n < 1000) because the
-   boundary observations exert high leverage in the augmented OLS regression.
-   They explain this finite-sample bias through their tail decay condition
-   (copulaBMW's Assumption A5).
+   
    }
 
 \item{cdf="ecdf"}{Standard empirical CDF with an endpoint adjustment. The minimum
@@ -198,9 +193,12 @@ converted to factor: \code{data$Z <- as.factor(data$Z)}.
 Bootstrap inference is performed by resampling the data with replacement.
 Degenerate bootstrap samples (e.g. singular design matrices or failed
 model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
+of valid bootstrap replications is obtained.
+If the requested number cannot
+be obtained within 2 x \code{num.boots} attempts, bootstrapping stops with an
+error. The percentage of discarded
+samples is reported as a warning. Standard errors and confidence intervals
+are computed using only successful bootstrap replications.
 }
 }
 \examples{
@@ -253,13 +251,12 @@ means of an adjusted estimator for the Gaussian copula approach.
 \emph{Journal of the Academy of Marketing Science}, 53(1), 279-299
 \doi{10.1007/s11747-024-01055-4}
 
-Breitung, J., Mayer, A., & Wied, D. (2024) Asymptotic properties of endogeneity
-corrections using nonlinear transformations. \emph{Econometrics Journal}, 27,
-362--383
-\doi{10.1093/ectj/utae002}
-
 Silverman, B.W. (1986). Density Estimation for Statistics and Data Analysis
 \doi{10.1201/9781315140919}
+
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+Joint Estimation Using Copulas",
+Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 }
 \seealso{
 Other copula-based methods:
