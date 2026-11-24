@@ -184,10 +184,12 @@ copulaJAMS <- function(
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
   F.formula <- as.Formula(formula)
+  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
+  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
+  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   #fitting the original data
   if (verbose) {
-    labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
     message(
       "Fitting JAMS copula model for ",
       length(labels.endo),
