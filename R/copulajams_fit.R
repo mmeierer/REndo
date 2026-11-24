@@ -49,7 +49,7 @@ copulajams_fit <- function(F.formula, data, cdf, verbose) {
   )
 
   return(list(
-    res.augmented = res.2nd.stage$res.lm.augmented,
+    res.lm.augmented = res.2nd.stage$res.lm.augmented,
     labels.pcop = res.2nd.stage$labels.pcop,
     labels.exo = l.parts$labels.exo,
     labels.endo = l.parts$labels.endo,
