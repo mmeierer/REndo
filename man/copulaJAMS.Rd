@@ -15,7 +15,7 @@ copulaJAMS(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.
@@ -202,7 +202,7 @@ are computed using only successful bootstrap replications.
 }
 }
 \examples{
-
+\donttest{
 #------------------------------------------------------------------------
 # Example 1: Two endogenous regressors, continuous and binary exogenous,
 # interactions, and varying copula structure by Z
@@ -230,16 +230,10 @@ res <- copulaJAMS(
   num.boots = 1000
 )
 summary(res)
-
+}
 
 }
 \references{
-Liengaard, B. D., Becker, J.-M., Bennedsen, M., Heiler, P., Taylor, L. N.,
-and Ringle, C. M. (2025). Dealing with regression models' endogeneity by means
-of an adjusted estimator for the Gaussian copula approach.
-\emph{Journal of the Academy of Marketing Science}, 53, 279--299.
-\doi{10.1007/s11747-024-01055-4}
-
 Becker, JM., Proksch, D., & Ringle, C.M. (2022) Revisiting Gaussian
 copulas to handle endogenous regressors. \emph{Journal of the Academy of
 Marketing Science}, 50, 46--66.
@@ -259,6 +253,13 @@ Joint Estimation Using Copulas",
 Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 }
 \seealso{
+[`vcov()`][vcov.rendo.boots()] for how the variance-covariance matrix is derived
+
+[`confint()`][confint.rendo.boots()] for how confidence intervals are derived
+
+\code{\link[REndo:dataCopJAMS]{dataCopJAMS}} for detailed
+information about the simulated dataset
+
 Other copula-based methods:
 \code{\link[=copula2sCOPE]{copula2sCOPE()}},
 \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}},

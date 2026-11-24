@@ -13,6 +13,7 @@
 #' stratifying the data into subsets by \eqn{Z_i} level and then estimating the
 #' copula correction terms separately within each subset.
 #'
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @template template_param_numboots
 #' @template template_param_cdf
@@ -100,21 +101,18 @@
 #'
 #' @template template_text_details_bootsdegenerates
 #'
-#' @references
-#' Liengaard, B. D., Becker, J.-M., Bennedsen, M., Heiler, P., Taylor, L. N.,
-#' and Ringle, C. M. (2025). Dealing with regression models' endogeneity by means
-#' of an adjusted estimator for the Gaussian copula approach.
-#' \emph{Journal of the Academy of Marketing Science}, 53, 279--299.
-#'  \doi{10.1007/s11747-024-01055-4}
-#'
 #' @template template_param_cdf_references
 #'
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.jams", extra.items = doc_rendocopulajams_return_extra_items())
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
+#'
+#' @seealso \code{\link[REndo:dataCopJAMS]{dataCopJAMS}} for detailed
+#' information about the simulated dataset
 #'
 #' @examples
-#'
+#' \donttest{
 #' #------------------------------------------------------------------------
 #' # Example 1: Two endogenous regressors, continuous and binary exogenous,
 #' # interactions, and varying copula structure by Z
@@ -142,7 +140,7 @@
 #'   num.boots = 1000
 #' )
 #' summary(res)
-#'
+#' }
 #'
 #' @md
 #'
