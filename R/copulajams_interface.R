@@ -170,10 +170,7 @@ copulaJAMS <- function(
 
   #fitting the original data
   if (verbose) {
-    labels.endo <- copula_labels_endo_exo(
-      F.formula = F.formula,
-      data = data
-    )$labels.endo
+    labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
     message(
       "Fitting JAMS copula model for ",
       length(labels.endo),

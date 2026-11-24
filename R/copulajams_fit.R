@@ -62,9 +62,9 @@ copulajams_fit <- function(F.formula, data, cdf, verbose) {
 
 # Dont inline in fit but separate method for better testability
 copulajams_build_model_parts <- function(F.formula, data) {
-  l.labels <- copula_labels_endo_exo(F.formula = F.formula, data = data)
-  labels.endo <- l.labels$labels.endo
-  labels.exo <- l.labels$labels.exo
+  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
+  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
+  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   # TODO: Blanket exclude all interactions?? What about interactions in endo or purely exos like W1:W2?
   labels.exo <- labels.exo[!grepl(":", labels.exo, fixed = TRUE)]
