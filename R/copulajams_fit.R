@@ -7,13 +7,10 @@ copulajams_fit <- function(F.formula, data, cdf, verbose) {
   W <- l.parts$X.exo.cont
   df.Z <- l.parts$df.Z
 
-  # if (nrow(X.endo) < length(labels.endo)) {
-  #   stop(
-  #     "Bootstrap sample dropped at least one endogenous regressor.",
-  #     "This can happen when a regressor becomes constant in a resample.",
-  #     call. = FALSE
-  #   )
-  # }
+  # Check for constant regressors as may happen in bootstrap sample.
+  # Fail with a clear reason instead of a singular cov matrix in solve() later
+  copula2stage_stop_if_constant(P)
+  copula2stage_stop_if_constant(W)
 
   # Checking if there is any factor variables among exogenous regressors
   # if the factor Z is present, then it requires stratified correction per level (see equation 20 and 21)
