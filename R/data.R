@@ -543,9 +543,8 @@
 #'   `W` follows Beta(2,2) (slightly non-normal continuous exogenous regressor)
 #'   `Z` follows Bernoulli(0.5) (binary exogenous regressor).
 #'
-#'   Please note that `Z` has been converted to a factor before using the JAMS
-#'   method [copulaJAMS()]:
-#'   `data$Z <- as.factor(data$Z)`.
+#'   Please note that `Z` is stored as a factor, as required by the JAMS
+#'   method [copulaJAMS()].
 #'
 #'   The true parameter values are `mu = 1` (intercept),
 #'   `alpha1 = -1` (`P1`), `alpha2 = 1` (`P2`),
@@ -568,9 +567,8 @@
 #'   a Beta(2,2) distribution. Correlated with `P1` and `P2`
 #'   but uncorrelated with the structural error. `W` enters the
 #'   variance-covariance matrix computation.
-#' - `Z`: an integer vector (0 or 1) binary exogenous regressor.
-#'   Must be converted to a factor before calling [copulaJAMS()]
-#'   via `data$Z <- as.factor(data$Z)`. This activated the stratified copula
+#' - `Z`: a factor with levels 0 and 1, binary exogenous regressor.
+#'   This activates the stratified copula
 #'   correction (eq. 20-21): \eqn{\rho = 0.4} for `Z = 0` and
 #'   \eqn{\rho = 0.6} for `Z = 1`.
 #'

@@ -21,9 +21,8 @@ when \code{Z = 0} and \eqn{\rho = 0.6} when \code{Z = 1}.
 a Beta(2,2) distribution. Correlated with \code{P1} and \code{P2}
 but uncorrelated with the structural error. \code{W} enters the
 variance-covariance matrix computation.
-\item \code{Z}: an integer vector (0 or 1) binary exogenous regressor.
-Must be converted to a factor before calling \code{\link[=copulaJAMS]{copulaJAMS()}}
-via \code{data$Z <- as.factor(data$Z)}. This activated the stratified copula
+\item \code{Z}: a factor with levels 0 and 1, binary exogenous regressor.
+This activates the stratified copula
 correction (eq. 20-21): \eqn{\rho = 0.4} for \code{Z = 0} and
 \eqn{\rho = 0.6} for \code{Z = 1}.
 }
@@ -50,9 +49,8 @@ The marginal distributions are:
 \code{W} follows Beta(2,2) (slightly non-normal continuous exogenous regressor)
 \code{Z} follows Bernoulli(0.5) (binary exogenous regressor).
 
-Please note that \code{Z} has been converted to a factor before using the JAMS
-method \code{\link[=copulaJAMS]{copulaJAMS()}}:
-\code{data$Z <- as.factor(data$Z)}.
+Please note that \code{Z} is stored as a factor, as required by the JAMS
+method \code{\link[=copulaJAMS]{copulaJAMS()}}.
 
 The true parameter values are \code{mu = 1} (intercept),
 \code{alpha1 = -1} (\code{P1}), \code{alpha2 = 1} (\code{P2}),
