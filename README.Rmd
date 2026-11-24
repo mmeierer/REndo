@@ -125,9 +125,9 @@ Here **y** is the response variable, **X + P**  represents the model to be estim
 
 ### **Adjusted Gaussian Copula Estimator**
 ```
-copulaJAMS(y ~ W + Z + P + P:W | continuous(P), data, cdf = "adj.ecdf", num.boots)
+copulaJAMS(y ~ W + Z + P + P:W | P, data, cdf = "adj.ecdf", num.boots)
 ```
-Here **y** is the response variable, the first part of the formula represents the structural model and may include interaction terms and transformations. The second part identifies the continuous endogenous regressors via **continuous()**. The argument **cdf** specifies the CDF estimator (options are **"adj.ecdf"**, **"resc.ecdf"**, **"ecdf"**, and **"kde"**,  default **"adj.ecdf"** is recommended). The JAMS method handles **discrete exogenous regressors Z** by stratifying the data by **Z** level and estimating copula correction
+Here **y** is the response variable, the first part of the formula represents the structural model and may include interaction terms and transformations. The second part identifies the continuous endogenous regressors. The argument **cdf** specifies the CDF estimator (options are **"adj.ecdf"**, **"resc.ecdf"**, **"ecdf"**, and **"kde"**,  default **"adj.ecdf"** is recommended). The JAMS method handles **discrete exogenous regressors Z** by stratifying the data by **Z** level and estimating copula correction
 terms separately within each group. This allows the endogeneity structure to vary across groups of the discrete variable. Discrete exogenous regressors must be stored as 'factor' in the data to activate the stratification.
 
 
