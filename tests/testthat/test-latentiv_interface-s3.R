@@ -1,7 +1,6 @@
 # Required data -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 data("dataLatentIV")
 
-context("S3methods - latentIV - S3methods")
 
 # Run once to get result
 latentiv.input.form <- y ~ P # needed as var to compare against
@@ -46,20 +45,20 @@ test_that("AIC/BIC", {
 
 test_that("latentIV summary() object structure", {
   expect_silent(res.sum <- summary(res.latent))
-  expect_is(res.sum, "summary.rendo.latent.IV")
+  expect_s3_class(res.sum, "summary.rendo.latent.IV")
   expect_true(is.list(res.sum))
   expect_named(res.sum, c("call", "start.params", "KKT1", "KKT2", "AIC", "BIC","conv.code",
                           "log.likelihood", "coefficients", "vcov",
                           "names.main.coefs"),
                ignore.order = TRUE)
-  expect_is(res.sum$call, "call")
-  expect_is(res.sum$start.params, "numeric")
-  expect_is(res.sum$KKT1, "logical")
-  expect_is(res.sum$KKT2, "logical")
-  expect_is(res.sum$AIC, "numeric")
-  expect_is(res.sum$BIC, "numeric")
-  expect_is(res.sum$log.likelihood, "numeric")
-  expect_is(res.sum$conv.code, "numeric")
+  expect_true(is.call(res.sum$call))
+  expect_type(res.sum$start.params, "double")
+  expect_type(res.sum$KKT1, "logical")
+  expect_type(res.sum$KKT2, "logical")
+  expect_type(res.sum$AIC, "double")
+  expect_type(res.sum$BIC, "double")
+  expect_type(res.sum$log.likelihood, "double")
+  expect_type(res.sum$conv.code, "double")
   expect_true(length(res.sum$start.params) == nrow(res.sum$coefficients))
 })
 

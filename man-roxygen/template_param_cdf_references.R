@@ -10,12 +10,10 @@
 #' \emph{Journal of the Academy of Marketing Science}, 53(1), 279-299
 #' \doi{10.1007/s11747-024-01055-4}
 #'
-#' Breitung, J., Mayer, A., & Wied, D. (2024) Asymptotic properties of endogeneity
-#' corrections using nonlinear transformations. \emph{Econometrics Journal}, 27,
-#' 362--383
-#' \doi{10.1093/ectj/utae002}
-#'
 #' Silverman, B.W. (1986). Density Estimation for Statistics and Data Analysis
 #' \doi{10.1201/9781315140919}
 #'
+#' Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+#' Joint Estimation Using Copulas",
+#' Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 #'

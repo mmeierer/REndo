@@ -1,6 +1,4 @@
-## code to prepare `generate_data_2sCOPEnp` dataset goes here
-
-## Dataset 1: dataCopula2sCOPEnpCont - based on case 3 of Hu et al. 2025, continuous P
+## Dataset 1: dataCop2sCOPEnpCont - based on case 3 of Hu et al. 2025, continuous P
 
 library(MASS)
 library(truncnorm)
@@ -51,8 +49,8 @@ Xi <- Xistar
 
 y <- mu + alpha * P + beta * X + Xi
 
-dataCopula2sCOPEnpCont <- data.frame(y = y, P = P, X = X)
-usethis::use_data(dataCopula2sCOPEnpCont, overwrite = TRUE)
+dataCop2sCOPEnpCont <- data.frame(y = y, P = P, X = X)
+usethis::use_data(dataCop2sCOPEnpCont, overwrite = TRUE)
 
 # Dataset 2: Binary endogenous regressor (from case 5)
 # P ~ Bernoulli (binary treatment), X ~ t(3)
@@ -99,10 +97,10 @@ Xi <- Xistar
 
 y <-  mu + alpha * P + beta * X + Xi
 
-dataCopula2sCOPEnpBi <- data.frame(y = y, P = P, X = X)
-usethis::use_data(dataCopula2sCOPEnpBi, overwrite = TRUE)
+dataCop2sCOPEnpBi <- data.frame(y = y, P = P, X = X)
+usethis::use_data(dataCop2sCOPEnpBi, overwrite = TRUE)
 
-# Dataset 3: dataCopula2sCOPEnpMulti
+# Dataset 3: dataCop2sCOPEnpMulti
 # The following dataset is made up of different types of variable.
 
 #P1 is lognormal (continuous endogenous)
@@ -173,9 +171,9 @@ P2_n <- as.numeric(P2) # 1=low, 2=medium, 3=high, 4=very_high
 #outcome equation: Y_i = mu + alpha1*P1_i + alpha2*P2_i + beta1*X1_i + beta2*X2 + beta3 * X3_n
 y <- mu + alpha1 * P1 + alpha2 * P2_n + beta1 * X1 + beta2 * X2 +  beta3 * X3_n + epsilon
 
-dataCopula2sCOPEnpMulti <- data.frame(y = y, P1 = P1, P2 = P2, X1 = X1, X2 = X2, X3 = X3)
+dataCop2sCOPEnpMulti <- data.frame(y = y, P1 = P1, P2 = P2, X1 = X1, X2 = X2, X3 = X3)
 
-usethis::use_data(dataCopula2sCOPEnpMulti, overwrite = TRUE)
+usethis::use_data(dataCop2sCOPEnpMulti, overwrite = TRUE)
 
 
 

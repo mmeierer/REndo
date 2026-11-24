@@ -9,8 +9,10 @@
 #' and the endogenous regressor error. The method also allows conditional
 #' heteroskedasticity of the structural error.
 #'
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @templateVar resc.ecdf.addition The theoretical recommendation of Breitung et al. (2024), Eq 2.3.
+#' @templateVar resc.ecdf.details.addition Breitung et al. (2024) adopts this as their theoretical recommendation. For their method (\code{copulaBMW()}), the point estimates may vary significantly when the sample size is small (e.g., n < 1000) because the boundary observations exert high leverage in the augmented OLS regression. They explain this finite-sample bias through their tail decay condition (copulaBMW's Assumption A5).
 #' @template template_param_cdf
 #' @template template_param_numboots
 #'
@@ -50,7 +52,7 @@
 #' }
 #'
 #' This method requires at least one exogenous regressor for the first-stage
-#' regression and supports only continuous regressors.
+#' regression and supports only continuous endogenous regressors.
 #'
 #' ## Important assumptions
 #' The method requires the following assumptions (Assumption A, Breitung et al. 2024):
@@ -82,16 +84,14 @@
 #'
 #' @template template_text_details_bootsdegenerates
 #'
-#' @references
-#' Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
-#' corrections using nonlinear transformations. \emph{The Econometrics Journal},
-#' 27, 362--383/ \doi{10.1093/ectj/utae002}
+#' @template template_references_breitung2024
 #'
 #' @template template_param_cdf_references
 #'
-#' @eval doc_rendocopulabmw_return()
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.bmw")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
 #'
 #' @seealso \code{\link[REndo:dataCopBMW]{dataCopBMW},
 #' \link[REndo:dataCopBMWMultiEndo]{dataCopBMWMultiEndo}} for detailed
@@ -102,10 +102,10 @@
 #' #------------------------------------------------------------------------
 #' # Example 1: Single endogenous regressor, correlated with
 #' # exogenous regressor (Breitung, Meyer, Wied 2024, Section 4,
-#' # Inspired by DGP1 with delta = 1 (correlation between x and P), rho = 0.5 (endogeneity),
+#' # Inspired by DGP1 with delta = 1 (correlation between x and P), rho = 0.9 (endogeneity),
 #' # x ~ Gamma(1,1), e ~ lognormal(0,1) first stage error)
 #' # n = 1000
-#' # True Paramaters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
+#' # True Parameters: mu = 1 (intercept), beta = -1 (X), alpha = 1 (P).
 #' #------------------------------------------------------------------------
 #' data("dataCopBMW")
 #' res_bmw <- copulaBMW(
@@ -152,13 +152,31 @@ copulaBMW <- function(
 ) {
   cl <- match.call()
 
-  #Input checks
+  # Input checks -----------------------------------------------------------------------
   allowed.cdfs <- c("resc.ecdf", "adj.ecdf", "ecdf", "kde")
-  check_err_msg(checkinput_copulashared_data_basics(data))
-  check_err_msg(checkinput_copulabmw_formula_data(formula = formula, data = data))
-  check_err_msg(checkinput_copulashared_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
+  check_err_msg(checkinput_copula2stage_data_basics(data))
+
+  # - >= 1 endogenous regressor
+  # - >= 1 exogenous regressor (equation 2.2 & assumption A4)
+  # - endogenous: numeric
+  # - exogenous: any class
+  check_err_msg(checkinput_copula2stage_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 1,
+    msg.min.num.exo = "At least one exogenous regressor is required for the first-stage regression of each endogenous regressor P on X.",
+    allow.interactions = TRUE,
+    allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
+    allowed.classes.endo = "numeric",
+    allowed.classes.exo = NULL # allows any
+  ))
+
+  check_err_msg(checkinput_copula2stage_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
+
+  # Fit original data ------------------------------------------------------------------
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
 
@@ -193,37 +211,28 @@ copulaBMW <- function(
       labels.exo = labels.exo,
       cdf = cdf
     )
-    return(fit.b$res.augmented)
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit$res.augmented)),
+    coef.names = names(coef(fit$res.lm.augmented)),
     verbose = verbose
-  )
-
-  # Structural residuals --------------------------------------------------------------
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit$res.augmented,
-    names.aux.regs = fit$labels.pcop
   )
 
   # Return object ----------------------------------------------------------------------
 
-  return(new_rendo_copulabmw(
+  return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    res.lm.augmented = fit$res.augmented,
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
-    boots.params = res.boots$boots.params,
-    n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed,
+    res.lm.augmented = fit$res.lm.augmented,
+    res.boots = res.boots,
     cdf = cdf,
     labels.endo = labels.endo,
     labels.exo = labels.exo,
-    labels.pcop = fit$labels.pcop
+    labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.bmw"
   ))
 }

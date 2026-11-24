@@ -4,7 +4,6 @@ data("dataMultilevelIV")
 f.multilevel <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15)
 
 # formula --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - multilevelIV - Parameter formula")
 
 test_that("Fail if no formula object is passed",  {
   expect_error(multilevelIV(formula = data.frame(1:3), data = dataMultilevelIV), regexp = "The above errors were encountered!")
@@ -165,7 +164,6 @@ test_that("Fail if slope intercept not in model",{
 
 
 # data ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("Inputchecks - multilevelIV - Parameter data")
 test_that("Fail if not data.frame", {
   expect_error(multilevelIV(formula = f.multilevel, data =     ),                regexp = "The above errors were encountered!")
   expect_error(multilevelIV(formula = f.multilevel, data = NULL),                regexp = "The above errors were encountered!")
@@ -210,7 +208,6 @@ test_that("Fail if wrong data type in any of the formula parts", {
 
 
 # lmer.control -----------------------------------------------------------------
-context("Inputchecks - multilevelIV - Parameter lmer.control")
 test_that("lmer.control fails for NULL and NA", {
   expect_error(multilevelIV(formula = f.multilevel, data = dataMultilevelIV, lmer.control = NULL), regexp = "The above errors were encountered!")
   expect_error(multilevelIV(formula = f.multilevel, data = dataMultilevelIV, lmer.control = NA), regexp = "The above errors were encountered!")
@@ -224,13 +221,11 @@ test_that("lmer.control fails for other input than from lmerControl", {
 
 
 # verbose ----------------------------------------------------------------------
-context("Inputchecks - multilevelIV - Parameter verbose")
 test.single.logical(function.to.test = multilevelIV, parameter.name="verbose",
                     formula=f.multilevel, function.std.data=dataMultilevelIV)
 
 
 # summary model parameter ------------------------------------------------------
-context("Inputchecks - multilevelIV summary - Parameter model")
 # Inputchecks for parameter model are all the same for all S3 methods
 
 expect_silent(res.ml <- multilevelIV(formula = f.multilevel, data = dataMultilevelIV, verbose = FALSE))

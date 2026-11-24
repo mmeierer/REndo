@@ -2,207 +2,174 @@ skip_on_cran()
 set.seed(42)
 
 # Required data ---------------------------------------------------------------------
-data("dataCopula2sCOPECase1")
-data("dataCopula2sCOPECase2")
-data("dataCopula2sCOPECase3")
+data("dataCop2sCOPECase1")
+data("dataCop2sCOPECase2")
+data("dataCop2sCOPECase3")
+data("dataCopCont")
+data("dataCopCont2")
 
-# Setup ----------------------------------------------------------------------------
-fit_copula2sCOPE_lowboots <- function(
-  formula,
-  data,
-  cdf = "adj.ecdf",
-  num.boots = 10,
-  verbose = FALSE
-) {
-  return(suppress_lowboots_warning(
-    copula2sCOPE(
-      formula = formula,
-      data = data,
-      cdf = cdf,
-      num.boots = num.boots,
-      verbose = verbose
-    )
-  ))
-}
+# Setup --------------------------------------------------------------------------------
+setup.correctness <- list(
+  method = copula2sCOPE,
+  fn = fit_2scope_fast,
+  data = dataCop2sCOPECase1,
+  formula = y ~ P + X | P,
+  label = "copula2sCOPE"
+)
 
-# Data sorting ----------------------------------------------------------------------
-test_that("Differently sorted data produces same results", {
-  data_sorted <- dataCopula2sCOPECase1[order(dataCopula2sCOPECase1$y), ]
-  data_rev <- dataCopula2sCOPECase1[rev(order(dataCopula2sCOPECase1$y)), ]
+# Invariance ---------------------------------------------------------------------------
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-  res_sorted <- copula2sCOPE(
-    formula = y ~ P + X | continuous(P),
-    data = data_sorted,
-    verbose = FALSE
-  )
-  res_rev <- copula2sCOPE(
-    formula = y ~ P + X | continuous(P),
-    data = data_rev,
-    verbose = FALSE
-  )
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ X + P | P
+)
 
-  expect_equal(object = coef(res_sorted), expected = coef(res_rev))
-})
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ P + X + X | P
+)
+
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . | P
+)
 
 # Formula specifications ------------------------------------------------------
-test_that("Intercept in formula is correctly respected", {
-  res_with <- fit_copula2sCOPE_lowboots(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase1
-  )
+test_correctness_formula_intercept(setup = setup.correctness)
 
-  res_without <- fit_copula2sCOPE_lowboots(
-    formula = y ~ P + X - 1 | continuous(P),
-    data = dataCopula2sCOPECase1
-  )
+test_correctness_formula_transformations_endo_exo(setup = setup.correctness)
 
-  expect_true("(Intercept)" %in% names(coef(res_with)))
-  expect_false("(Intercept)" %in% names(coef(res_without)))
-  expect_equal(
-    object = length(coef(res_with)),
-    expected = length(coef(res_without)) + 1L
-  )
-})
-
-test_that("Regressor order in formula does not affect results", {
-  res_px <- fit_copula2sCOPE_lowboots(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase1
-  )
-
-  res_xp <- fit_copula2sCOPE_lowboots(
-    formula = y ~ X + P | continuous(P),
-    data = dataCopula2sCOPECase1
-  )
-
-  expect_equal(
-    object = sort(coef(res_px)[names(coef(res_px))]),
-    expected = sort(coef(res_xp)[names(coef(res_xp))])
-  )
-})
-
-test_that("Duplicate regressors are handled correctly", {
-  res_normal <- fit_copula2sCOPE_lowboots(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase1
-  )
-
-  res_dup <- fit_copula2sCOPE_lowboots(
-    formula = y ~ P + X + X | continuous(P),
-    data = dataCopula2sCOPECase1
-  )
-
-  expect_equal(object = coef(res_dup), expected = coef(res_normal))
-})
+# Parameter cdf ------------------------------------------------------------------------
+test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 # Parameter recovery -------------------------------------------------------
 
-copula2sCOPE_param_recovery <- function(formula, data, true_vals) {
-  res <- copula2sCOPE(
-    formula = formula,
-    data = data,
-    cdf = "adj.ecdf",
-    num.boots = 1000,
-    verbose = FALSE
+test_that("Parameter recovery: dataCop2sCOPECase1", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ P + X | P,
+    data = dataCop2sCOPECase1
   )
-  check_param_recovery(res = res, true_vals = true_vals)
-}
-
-test_that("Parameter recovery: dataCopula2sCOPECase1", {
-  copula2sCOPE_param_recovery(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase1,
-    true_vals = c("(Intercept)" = 1, P = 1, X = -1)
-  )
+  check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = -1))
 })
 
-test_that("Parameter recovery: dataCopula2sCOPECase2", {
-  copula2sCOPE_param_recovery(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase2,
-    true_vals = c("(Intercept)" = 1, P = 1, X = -1)
+test_that("Parameter recovery: dataCop2sCOPECase2", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ P + X | P,
+    data = dataCop2sCOPECase2
   )
+  check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = -1))
 })
 
-test_that("Parameter recovery: dataCopula2sCOPECase3", {
-  copula2sCOPE_param_recovery(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase3,
-    true_vals = c("(Intercept)" = 1, P = 1, X = -1)
+test_that("Parameter recovery: dataCop2sCOPECase3", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ P + X | P,
+    data = dataCop2sCOPECase3
   )
+  check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = -1))
 })
 
 
-# Parameter transformations ----------------------------------------------------------
+# Internal consistency --------------------------------------------------------------
 
-test_that("Parameter transformations (exo): Recovery", {
-  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
-  dataCopula2sCOPECase1_trans$X <- exp(dataCopula2sCOPECase1_trans$X)
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_2scope_formula_edge_cases()
+)
 
-  copula2sCOPE_param_recovery(
-    formula = y ~ P + log(X) | continuous(P),
-    data = dataCopula2sCOPECase1_trans,
-    true_vals = c("(Intercept)" = 1, P = 1, "log(X)" = -1)
+# Consistent with Park and Gupta -------------------------------------------------------
+
+# . With exo: recovers true values ----------------------------------------------------
+# P&G continuous endo data: 2sCOPE contains PG, therefore can also recover its params
+test_that("Recovery on P&G (copulaCorrection) data: With exo, single endo (dataCopCont)", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ X1 + X2 + P | P,
+    data = dataCopCont
   )
-})
-
-
-test_that("Parameter transformations (endo): Recovery", {
-  dataCopula2sCOPECase1_trans <- dataCopula2sCOPECase1
-  dataCopula2sCOPECase1_trans$P <- exp(dataCopula2sCOPECase1_trans$P)
-
-  copula2sCOPE_param_recovery(
-    formula = y ~ log(P) + X | continuous(log(P)),
-    data = dataCopula2sCOPECase1_trans,
-    true_vals = c("(Intercept)" = 1, "log(P)" = 1, X = -1)
-  )
-})
-
-
-# Return values calculated correctly -------------------------------------------------
-
-test_that("structural residuals & fitted values are calculated correctly", {
-  res <- expect_warning(
-    fit_copula2sCOPE_lowboots(
-      formula = y ~ P + X | continuous(P, X),
-      data = dataCopula2sCOPECase1
-    ),
-    regexp = "No exogenous regressors"
-  )
-  check_struct_residuals(res = res, aux.names = c("P_cop", "X_cop"))
-})
-
-# Single endo + 0 exo: Collapses to copulaCorrection case 1 (continuous only) ---------
-# (equivalent according to the paper)
-# data case 3: need non-normally distributed exogenous
-
-run_2scope_parkgupta_equivalent <- function(data) {
-  # Need SE: With boots=1000
-  expect_warning(
-    res.2scope <- copula2sCOPE(
-      formula = y ~ P | continuous(P),
-      data = data,
-      verbose = FALSE,
-      num.boots = 1000
-    ),
-    regexp = "No exogenous regressors found"
-  )
-
-  res.cc <- fit_copulacorrection_fast(
-    formula = y ~ P | continuous(P),
-    data = data
-  )
-
   check_param_recovery(
-    res = res.2scope,
-    true_vals = coef(res.cc)[c("(Intercept)", "P")]
+    res = res,
+    true_vals = c("(Intercept)" = 2, X1 = 1.5, X2 = -3, P = -1)
   )
-}
-
-test_that("Single endo + NO exo: Same result as PG copulaCorrection (LL case 1) - data case 1", {
-  run_2scope_parkgupta_equivalent(dataCopula2sCOPECase1)
 })
 
-test_that("Single endo + NO exo: Same result as PG copulaCorrection (LL case 1) - data case 2", {
-  run_2scope_parkgupta_equivalent(dataCopula2sCOPECase2)
+test_that("Recovery on P&G (copulaCorrection) data: With exo, multi endo (dataCopCont2)", {
+  set.seed(42)
+  res <- fit_2scope_defaults(
+    formula = y ~ X1 + X2 + P1 + P2 | P1 + P2,
+    data = dataCopCont2
+  )
+  check_param_recovery(
+    res = res,
+    true_vals = c("(Intercept)" = 2, X1 = 1.5, X2 = -3, P1 = -1, P2 = 0.8)
+  )
+})
+
+# . No exo: Collapses to copulaCorrection --------------------------------------------------
+# Collapses to P&G according to the paper = same result as copulaCorrection!
+# Here is not about parameter recovery but to get same results through different
+# estimator
+# - single endo: compare vs MLE
+# - multiple endo: both are augmented OLS but
+#
+# Data:
+# - from copulaCorrection
+# - from 2sCOPE (but 3rd case not ok for PG)
+
+run_2scope_parkgupta_equivalent <- function(data, formula.2scope, formula.cc, params) {
+  set.seed(42)
+  # Need SE: With boots=1000
+  res.2scope <- fit_2scope_defaults(formula = formula.2scope, data = data)
+
+  res.cc <- fit_copulacorrection_fast(formula = formula.cc, data = data)
+
+  check_param_recovery(res = res.2scope, true_vals = coef(res.cc)[params])
+}
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCop2sCOPECase1)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCop2sCOPECase1,
+    formula.2scope = y ~ P | P,
+    formula.cc = y ~ P | continuous(P),
+    params = c("(Intercept)", "P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCop2sCOPECase2)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCop2sCOPECase2,
+    formula.2scope = y ~ P | P,
+    formula.cc = y ~ P | continuous(P),
+    params = c("(Intercept)", "P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo (dataCopCont)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopCont,
+    formula.2scope = y ~ P | P,
+    formula.cc = y ~ P | continuous(P),
+    params = c("(Intercept)", "P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - single endo, no intercept (dataCop2sCOPECase1)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCop2sCOPECase1,
+    formula.2scope = y ~ P - 1 | P,
+    formula.cc = y ~ P - 1 | continuous(P),
+    params = c("P")
+  )
+})
+
+test_that("No exo: Same result as P&G implementation (copulaCorrection) - multi endo (dataCopCont2)", {
+  run_2scope_parkgupta_equivalent(
+    data = dataCopCont2,
+    formula.2scope = y ~ P1 + P2 | P1 + P2,
+    formula.cc = y ~ P1 + P2 | continuous(P1, P2),
+    params = c("(Intercept)", "P1", "P2")
+  )
 })

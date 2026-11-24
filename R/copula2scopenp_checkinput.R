@@ -1,104 +1,3 @@
-# Check formula (which needs data) and data
-#
-# Bare terms in RHS2: y ~ X + P | P
-#
-# - >= 1 endogenous regressor
-# - >= 1 exogenous regressor
-# - exogenous: numeric, factor, ordered
-# - endogenous: numeric, ordered
-# - wrongly specified continuous()/discrete() specials
-# - Block interaction terms: Are only resolved in model.matrix() but only use model.frame()
-#    in this method. Specifying them would silently ignore them and NOT forward
-#    them into np conditional CDF
-#
-#' @importFrom Formula as.Formula
-#' @importFrom stats terms setNames
-checkinput_copula2scopenp_formula_data <- function(formula, data) {
-  err.msg <- checkinput_copulashared_formula_basics(formula = formula)
-  if (length(err.msg) > 0) {
-    return(err.msg)
-  }
-
-  F.formula <- as.Formula(formula)
-
-  err.msg <- checkinput_copulashared_vars_in_data(F.formula = F.formula, data = data)
-  if (length(err.msg) > 0) {
-    return(err.msg)
-  }
-
-  # Expand dot against data
-  # specials: check if user wrongly specified them
-  specials <- c("discrete", "continuous")
-  rhs1.terms <- terms(F.formula, lhs = 0, rhs = 1, data = data, specials = specials)
-  rhs2.terms <- terms(F.formula, lhs = 0, rhs = 2, data = data, specials = specials)
-
-  rhs1.labels <- labels(rhs1.terms)
-  endo.labels <- labels(rhs2.terms)
-  exo.labels <- rhs1.labels[!rhs1.labels %in% endo.labels]
-
-  # Check after expanding dot
-  err.msg <- checkinput_copulashared_response_not_in_rhs(
-    F.formula = F.formula,
-    rhs1.terms = rhs1.terms
-  )
-  if (length(err.msg) > 0) {
-    return(err.msg)
-  }
-
-  # Catch if wrongly specified specials
-  if (length(unlist(attr(rhs2.terms, "specials"))) > 0) {
-    err.msg <- c(err.msg, "discrete()/continuous() are not supported for this method.")
-  }
-
-  # No interactions allowed! Only model.matrix would do this but we pass model.frame()
-  # output into np:npcdistbw() already
-  if (any(attr(rhs1.terms, "order") > 1) || any(attr(rhs2.terms, "order") > 1)) {
-    err.msg <- c(err.msg, "Interaction terms are not supported for this method.")
-  }
-
-  # Need at least one of each: endogenous to model, exogenous for identification.
-  if (length(endo.labels) == 0) {
-    err.msg <- c(err.msg, "At least one endogenous regressor (rhs2) is required.")
-  }
-  if (length(exo.labels) == 0) {
-    err.msg <- c(
-      err.msg,
-      "copula2sCOPEnp requires at least one exogenous regressor for the nonparametric conditional CDF estimation."
-    )
-  }
-
-  # Endo terms (RHS2) must also be in structural model (RHS1)
-  not.in.rhs1 <- endo.labels[!endo.labels %in% rhs1.labels]
-  if (length(not.in.rhs1) > 0) {
-    # fmt: skip
-    err.msg <- c(err.msg, paste0(
-      "Endogenous regressor(s) not in structural model (rhs1): ",
-      toString(not.in.rhs1), "."))
-  }
-
-  if (length(err.msg) > 0) {
-    return(err.msg)
-  }
-
-  # endo: continuous or ordered factors
-  # exo: continuous or any factor
-  allowed.classes <- c(
-    setNames(rep(list(c("numeric", "ordered")), length(endo.labels)), endo.labels),
-    setNames(
-      rep(list(c("numeric", "factor", "ordered")), length(exo.labels)),
-      exo.labels
-    )
-  )
-
-  return(checkinput_copulashared_modelframe(
-    F.formula = F.formula,
-    data = data,
-    allowed.classes = allowed.classes,
-    labels.warn.low.card = NULL
-  ))
-}
-
-
 #' @importFrom utils getS3method
 checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
   # No checks if parameter default
@@ -110,7 +9,7 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
 
   # Plain list
   if (!identical(class(npcdistbw.args), "list")) {
-    return("Parameter `npcdistbw.args` must be a plain list.")
+    return("Parameter 'npcdistbw.args' must be a plain list.")
   }
 
   # Must be named
@@ -125,7 +24,7 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
     err.msg <- c(
       err.msg,
       paste0(
-        "`npcdistbw.args` may not contain reserved argument(s): ",
+        "'npcdistbw.args' may not contain reserved argument(s): ",
         toString(reserved.nms)
       )
     )
@@ -137,9 +36,9 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
   if (length(unknown.nms) > 0) {
     # only WARN because there is the `...` parameter in np::npcdistbw which may be used!
     warning(
-      "Unknown argument(s) in `npcdistbw.args`: ",
+      "Unknown argument(s) in 'npcdistbw.args': ",
       toString(unknown.nms),
-      ". Check docu `?np::npcdistbw` for accepted parameters.",
+      ". Check the documentation '?np::npcdistbw' for accepted parameters.",
       call. = FALSE,
       immediate. = TRUE
     )
@@ -148,9 +47,9 @@ checkinput_copula2scopenp_npcdistbwargs <- function(npcdistbw.args) {
   return(err.msg)
 }
 
-checkinput_copula2scopenp_bws <- function(bws, labels.endo) {
+checkinput_copula2scopenp_bws <- function(bws, labels.endo, labels.exo) {
   # NULL is default value
-  if(is.null(bws)){
+  if (is.null(bws)) {
     return(c())
   }
 
@@ -169,18 +68,91 @@ checkinput_copula2scopenp_bws <- function(bws, labels.endo) {
   }
 
   if (!setequal(names(bws), labels.endo)) {
-    return(paste0("Parameter 'bws' must be named after the endogenous variables: ",
-                  toString(labels.endo),"."))
+    return(paste0(
+      "Parameter 'bws' must be named after the endogenous variables: ",
+      toString(labels.endo),
+      "."
+    ))
   }
 
   for (name in names(bws)) {
     if (!is(bws[[name]], "condbandwidth")) {
-      err.msg <- c(err.msg,
-                   paste0("Element '", name, "' of parameter 'bws' must be of class 'condbandwidth', usually the output of 'np::npcdistbw(xdat=<all exo>, ydat=<single endo>)'."))
+      err.msg <- c(
+        err.msg,
+        paste0(
+          "Element '",
+          name,
+          "' of parameter 'bws' must be of class 'condbandwidth', usually the output of 'np::npcdistbw(xdat=<all exo>, ydat=<single endo>)'."
+        )
+      )
     }
   }
 
-  # check that fit with xday/ydat and not formula interface?
+  # TODO: check that fit with xday/ydat and not formula interface?
+
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # np applies the bandwidths by position - and not by name. Therefore, the
+  # variables must be exactly the same, incl ordering as the cols of the
+  # model frame (endo) ~ (all exo)
+  colnames.exo <- vapply(
+    labels.exo,
+    FUN = copula2stage_label_to_colname,
+    FUN.VALUE = character(1),
+    USE.NAMES = FALSE
+  )
+  for (name in names(bws)) {
+    colname.endo <- copula2stage_label_to_colname(name)
+    # single response
+    if (!identical(bws[[name]]$ynames, colname.endo)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Element '", name, "' of 'bws' was estimated for endogenous regressor '",
+        toString(bws[[name]]$ynames), "' but must be for '", colname.endo, "'."))
+    }
+    # many dep vars
+    if (!identical(bws[[name]]$xnames, colnames.exo)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Element '", name, "' of 'bws' was estimated for exogenous regressors '",
+        toString(bws[[name]]$xnames), "' but must be for '", toString(colnames.exo), "' (same order required)."))
+    }
+  }
+
+  return(err.msg)
+}
+
+# When bws are given, np::npcdistbw() takes the method from given `bws[[p]]$method`
+# and silently ignores `npcdistbw.args=list(bwmethod=...)`.
+# Therefore stop if they disagree.
+# Assumes bws and npcdistbw.args were checked before
+checkinput_copula2scopenp_bws_npcdistbwargs <- function(bws, npcdistbw.args) {
+  bwmethod <- npcdistbw.args$bwmethod
+
+  # Fitted bws is required, if dont want to compute
+  if (is.null(bws) && isFALSE(npcdistbw.args$bandwidth.compute)) {
+    return(
+      "Parameter 'bws' is required if 'npcdistbw.args=list(bandwidth.compute=FALSE)'."
+    )
+  }
+
+  # No `bws`, no `npcdistbw.args$bwmethod`, no compute = no problem
+  if (is.null(bws) || is.null(bwmethod) || isFALSE(npcdistbw.args$bandwidth.compute)) {
+    return(c())
+  }
+
+  err.msg <- c()
+  for (name in names(bws)) {
+    bws.method <- bws[[name]]$method
+    if (!identical(bws.method, bwmethod)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Element '", name, "' of parameter 'bws' was estimated with bwmethod '", bws.method, "' but 'npcdistbw.args' requires bwmethod '", bwmethod, "'. ",
+        "When 'bws' is given, np::npcdistbw() (silently) uses the method in 'bws' and ignores the specified 'bwmethod'. Pass npcdistbw.args = list(bwmethod = '", bws.method, "') or omit 'bws'."))
+    }
+  }
 
   return(err.msg)
 }

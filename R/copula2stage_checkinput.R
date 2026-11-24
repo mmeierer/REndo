@@ -1,0 +1,442 @@
+checkinput_copula2stage_cdf <- function(cdf, allowed.cdf) {
+  # Default value of the param is the full vector of allowed values (match.arg() then
+  # selects the first)
+  if (identical(cdf, allowed.cdf)) {
+    return(c())
+  }
+
+  if (!is.character(cdf) || length(cdf) != 1) {
+    return("Parameter 'cdf' must be a single character string.")
+  }
+
+  if (!(cdf %in% allowed.cdf)) {
+    return(paste0("Parameter 'cdf' must be one of: ", toString(allowed.cdf), "."))
+  }
+
+  return(c())
+}
+
+checkinput_copula2stage_numboots <- function(num.boots) {
+  return(checkinputhelper_numboots(num.boots))
+}
+
+checkinput_copula2stage_verbose <- function(verbose) {
+  return(checkinputhelper_single_logical(logical = verbose, param.name = "verbose"))
+}
+
+# Basic structure of data
+# - is data.frame
+# - has row & cols (>0)
+#
+checkinput_copula2stage_data_basics <- function(data) {
+  err.msg <- c()
+
+  if (!is.data.frame(data)) {
+    return("Parameter 'data' must be a data.frame.")
+  }
+
+  if (nrow(data) == 0) {
+    err.msg <- c(err.msg, "Parameter 'data' must have at least one row.")
+  }
+
+  if (ncol(data) == 0) {
+    err.msg <- c(err.msg, "Parameter 'data' must have at least one column.")
+  }
+
+  return(err.msg)
+}
+
+
+# Basic structure of the formula
+#  - formula
+#  - two part
+#  - single response
+#
+#' @importFrom Formula as.Formula
+#' @importFrom stats formula
+checkinput_copula2stage_formula_basics <- function(formula) {
+  if (!inherits(formula, "formula")) {
+    return("Parameter 'formula' must be a formula.")
+  }
+
+  # Report coercion error
+  F.formula <- tryCatch(as.Formula(formula), error = function(e) conditionMessage(e))
+  if (!inherits(F.formula, "Formula")) {
+    return(paste0(
+      "Parameter 'formula' could not be interpreted as a Formula: ",
+      F.formula
+    ))
+  }
+
+  parts <- length(F.formula)
+  if (parts[1] != 1 || parts[2] != 2) {
+    return(
+      "Parameter 'formula' must have one left-hand side and two right-hand parts (lhs ~ rhs1 | rhs2)."
+    )
+  }
+
+  # Check multiple responses (y1 + y2 ~ )
+  if (length(all.vars(formula(F.formula, lhs = 1, rhs = 0))) != 1) {
+    return("Parameter 'formula' must have exactly one response variable.")
+  }
+
+  return(c())
+}
+
+# All formula variables exist in the data
+checkinput_copula2stage_vars_in_data <- function(F.formula, data) {
+  # Use unexpanded formula and not terms object: Check what the user actually specified
+
+  # Also correct if there are non-syntactic names
+  # all.vars() returns pure strings without backticks, like they are in colnames
+  # (eg all.vars(~ `X space`) = "X space" = colnames("X space"))
+  #
+  # but have to support dot `.`: Put along colnames(). If passed expanded formula instead,
+  # the terms() call required for expansion would fail hard if cols are missing
+  missing.vars <- setdiff(all.vars(F.formula), c(colnames(data), "."))
+  if (length(missing.vars) > 0) {
+    return(paste0(
+      "Variable(s) in parameter 'formula' not found in parameter 'data': ",
+      toString(missing.vars),
+      "."
+    ))
+  }
+
+  return(c())
+}
+
+# Cols with same name as the generated regressor, eg '<endo>_cop' would conflict in 2nd stage
+checkinput_copula2stage_data_copnames <- function(data, labels.endo) {
+  copterm.names <- copula2stage_get_copterm_names(labels.endo)
+  clashing <- intersect(copterm.names, colnames(data))
+  if (length(clashing) > 0) {
+    # fmt: skip
+    return(paste0(
+      "Parameter 'data' may not contain column(s) named ", toString(paste0("'", clashing, "'")),
+      " because these names are used for the generated correction terms."))
+  }
+
+  return(c())
+}
+
+# LHS is not also in RHS1
+checkinput_copula2stage_response_not_in_rhs <- function(F.formula, rhs1.terms) {
+  # needs terms object of expanded terms object
+  # use all.vars() and not labels as its about the variable ( y ~ log(y) is illegal)
+  lhs.vars <- all.vars(formula(F.formula, lhs = 1, rhs = 0))
+  rhs.vars <- all.vars(rhs1.terms)
+
+  lhs.in.rhs <- intersect(lhs.vars, rhs.vars)
+  if (length(lhs.in.rhs) > 0) {
+    # fmt: skip
+    return(paste0(
+      "Response variable(s) in parameter 'formula' also appear on the right-hand side: ",
+      toString(lhs.in.rhs),"."
+    ))
+  }
+
+  return(c())
+}
+
+# Normalizes a term label to column names (as in model.frame())
+copula2stage_label_to_colname <- function(lab) {
+  # strips backticks from non-syntactic names
+  return(deparse1(parse(text = lab)[[1]]))
+}
+
+# Build model.frame and verify column classes
+# - build from lhs ~ rhs1
+# - expose failed builds to user
+# - na.fail to catch generated NAs
+# - no non-finite values
+# - no unused factor levels
+# - check for each (formula) label / term, if the resulting regressor (colum) is
+#    of an allowed class
+# - warn about low cardinality (<=10) numeric variables
+# - forbid.constant: error on constant data in any mf column
+#
+#' @importFrom stats model.frame na.fail .MFclass terms
+checkinput_copula2stage_modelframe <- function(
+  F.formula,
+  data,
+  allowed.classes,
+  labels.warn.low.card,
+  forbid.constant
+) {
+  # Expose build failures to user (bad transformations, generated NAs,...)
+  mf <- tryCatch(
+    # Making model.frame with rhs=1 also verifies that rhs=2 regressors are fine
+    model.frame(formula(F.formula, lhs = 1, rhs = 1), data = data, na.action = na.fail),
+    error = function(e) {
+      return(conditionMessage(e))
+    }
+  )
+  if (!is.data.frame(mf)) {
+    return(paste0(
+      "The model frame (response ~ structural regressors) could not be built: ",
+      mf
+    ))
+  }
+
+  err.msg <- c()
+  mf.cols <- colnames(mf)
+
+  # For each column: Check if is allowed class
+  for (lab in names(allowed.classes)) {
+    col <- copula2stage_label_to_colname(lab)
+
+    # Should not happen: Previous check should verify already that all formula labels
+    # are in data
+    stopifnot(col %in% mf.cols)
+
+    cls <- .MFclass(mf[[col]])
+
+    if (!cls %in% allowed.classes[[lab]]) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Regressor '", lab, "' has class '", cls,
+        "' but must be one of: ", toString(allowed.classes[[lab]]), "."))
+    }
+  }
+
+  # only finite values in numeric cols (n NA/NaN, +/-Inf)
+  is.nonfinite <- vapply(
+    mf,
+    function(x) {
+      return(is.numeric(x) && !all(is.finite(x)))
+    },
+    logical(1)
+  )
+  if (any(is.nonfinite)) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Variable(s) must contain only finite values: ",toString(names(mf)[is.nonfinite]), "."
+      ))
+  }
+
+  # No unused factor levels: Error instead of (silently) dropping them or cryptic failure later.
+  # Considered options:
+  # - drop.unused.levels=TRUE in model.frame(): per method fit only, easy to
+  #   miss in (new) methods. BMW & np only work with unused levels because lm() drops
+  #   them internally
+  # - droplevels(data) in every interface (+ warning): consistent, but the action has to
+  #   be repeated in each interface and modifies user-data which we otherwise hardly touch
+  # - error in input check: single place for all methods, explicit and the data is used
+  #   as given. But: Fails on data that lm() accepts, which is easy to fix for the user
+  unused.levels <- vapply(
+    mf,
+    function(x) {
+      if (!is.factor(x)) {
+        return("")
+      }
+      # levels that occur 0 times, quoted to also show empty "" levels
+      lvls.unused <- levels(x)[table(x) == 0]
+      if (length(lvls.unused) == 0) {
+        return("")
+      }
+      return(toString(paste0("'", lvls.unused, "'")))
+    },
+    character(1)
+  )
+  has.unused.levels <- nchar(unused.levels) > 0
+  if (any(has.unused.levels)) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Factor variable(s) with unused levels: ",
+      toString(paste0(colnames(mf)[has.unused.levels], " (", unused.levels[has.unused.levels], ")")),
+      ". Drop the unused levels first, eg with `data <- droplevels(data)`."))
+  }
+
+  # only for given labels: warn about low-cardinality numeric variable
+  if (length(labels.warn.low.card) > 0) {
+    colnames.low.card <- vapply(
+      labels.warn.low.card,
+      copula2stage_label_to_colname,
+      character(1)
+    )
+    stopifnot(all(colnames.low.card %in% mf.cols))
+
+    is.low.card <- vapply(
+      mf[colnames.low.card],
+      function(x) {
+        # no NAs at this point
+        return(is.numeric(x) && length(unique(x)) <= 10)
+      },
+      logical(1)
+    )
+
+    if (any(is.low.card)) {
+      low.card.vars <- labels.warn.low.card[is.low.card]
+      warning(
+        "The following numeric regressors have low cardinality (<= 10 distinct values) and may be non-continuous: ",
+        toString(low.card.vars),
+        ".",
+        call. = FALSE,
+        immediate. = TRUE
+      )
+    }
+  }
+
+  # no constant columns (also not response)
+  if (forbid.constant) {
+    is.const <- vapply(
+      mf,
+      function(x) {
+        return(length(unique(x)) == 1)
+      },
+      logical(1)
+    )
+    if (any(is.const)) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Variable(s) must not be constant: ",
+        toString(names(mf)[is.const]), "."))
+    }
+  }
+
+  return(err.msg)
+}
+
+
+# 2-part Formula of structure: (response) ~ (structural model) | (endo terms),
+# eg y ~ X + P | P
+#
+# Always:
+# - formula basics (formula, 1 lhs, 2 rhs parts, single response)
+# - all variables in data (dot allowed)
+# - response not in rhs1
+# - no continuous()/discrete() specials (if users are mistaking the interface)
+# - >= 1 endogenous regressor
+# - endogenous terms (rhs2) also in structural model (rhs1)
+#
+# Flag:
+# - warning if endo is low cardinality
+#
+# Exo terms are usually derived using setdiff(rhs1, rhs2), therefore there
+# is no overlap between them. But at the *variable*-level (eg log(P) -> P)
+# endo vars may be in the exogenous *terms*, eg:
+#   y ~ X + P + log(P) | P -> log(P) is allowed and exogenous - unless ofc
+# the method says otherwise
+#
+#' @importFrom Formula as.Formula
+#' @importFrom stats terms setNames
+checkinput_copula2stage_formula_data <- function(
+  formula,
+  data,
+  min.num.exo,
+  allow.interactions,
+  allow.constant.regressors,
+  warn.low.card.endo,
+  allowed.classes.endo,
+  allowed.classes.exo,
+  msg.min.num.exo = paste0(
+    "At least ",
+    min.num.exo,
+    " exogenous regressor(s) are required for this method."
+  ),
+  msg.interactions = "Interaction terms are not supported for this method."
+) {
+  # Formula only ----------------------------------------------------------------
+  err.msg <- checkinput_copula2stage_formula_basics(formula = formula)
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  F.formula <- as.Formula(formula)
+
+  # Formula vs data ------------------------------------------------------------
+  err.msg <- checkinput_copula2stage_vars_in_data(F.formula = F.formula, data = data)
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Expanded terms ------------------------------------------------------------
+  # Expand dot against data
+  # specials: check if user wrongly specified them
+  specials <- c("discrete", "continuous")
+  rhs1.terms <- terms(F.formula, lhs = 0, rhs = 1, data = data, specials = specials)
+  rhs2.terms <- terms(F.formula, lhs = 0, rhs = 2, data = data, specials = specials)
+
+  rhs1.labels <- labels(rhs1.terms)
+  endo.labels <- labels(rhs2.terms)
+  exo.labels <- rhs1.labels[!rhs1.labels %in% endo.labels]
+
+  err.msg <- checkinput_copula2stage_response_not_in_rhs(
+    F.formula = F.formula,
+    rhs1.terms = rhs1.terms
+  )
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Catch if wrongly specified specials
+  if (length(unlist(attr(rhs2.terms, "specials"))) > 0) {
+    err.msg <- c(err.msg, "discrete()/continuous() are not supported for this method.")
+  }
+
+  # Interactions: check both parts for a clearer message if given in rhs2
+  if (!allow.interactions) {
+    if (any(attr(rhs1.terms, "order") > 1) || any(attr(rhs2.terms, "order") > 1)) {
+      err.msg <- c(err.msg, msg.interactions)
+    }
+  }
+
+  if (length(endo.labels) == 0) {
+    err.msg <- c(err.msg, "At least one endogenous regressor (rhs2) is required.")
+  }
+
+  if (length(exo.labels) < min.num.exo) {
+    err.msg <- c(err.msg, msg.min.num.exo)
+  }
+
+  # Endo terms (RHS2) must also be in structural model (RHS1)
+  not.in.rhs1 <- endo.labels[!endo.labels %in% rhs1.labels]
+  if (length(not.in.rhs1) > 0) {
+    # fmt: skip
+    err.msg <- c(err.msg, paste0(
+      "Endogenous regressor(s) not in structural model (rhs1): ",
+      toString(not.in.rhs1), "."))
+  }
+
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Data has no column named same as generated regressors
+  # (after the checks above: at least one endo regressor guaranteed)
+  err.msg <- checkinput_copula2stage_data_copnames(
+    data = data,
+    labels.endo = endo.labels
+  )
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Model frame ---------------------------------------------------------------
+  # Only check classes where restricted (NULL = any class)
+  allowed.classes <- list()
+  if (!is.null(allowed.classes.endo)) {
+    allowed.classes <- c(
+      allowed.classes,
+      setNames(rep(list(allowed.classes.endo), length(endo.labels)), endo.labels)
+    )
+  }
+  if (!is.null(allowed.classes.exo)) {
+    allowed.classes <- c(
+      allowed.classes,
+      setNames(rep(list(allowed.classes.exo), length(exo.labels)), exo.labels)
+    )
+  }
+
+  return(checkinput_copula2stage_modelframe(
+    F.formula = F.formula,
+    data = data,
+    allowed.classes = allowed.classes,
+    labels.warn.low.card = if (warn.low.card.endo) {
+      endo.labels
+    } else {
+      NULL
+    },
+    forbid.constant = !allow.constant.regressors
+  ))
+}

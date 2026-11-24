@@ -1,15 +1,16 @@
+skip_on_cran()
 set.seed(42)
 
-data("dataCopula2sCOPEnpCont")
-data("dataCopula2sCOPEnpBi")
-data("dataCopula2sCOPEnpMulti")
+data("dataCop2sCOPEnpCont")
+data("dataCop2sCOPEnpBi")
+data("dataCop2sCOPEnpMulti")
 
 # data from copulaCorrection for tests vs P&G
 data("dataCopCont")
 
 
 data.cont.pos <- local({
-  df <- dataCopula2sCOPEnpCont
+  df <- dataCop2sCOPEnpCont
   df$P.pos <- abs(df$P) + 1
   df$X.pos <- abs(df$X) + 1
   return(df)
@@ -23,93 +24,48 @@ check_labelled_consistently_2scopenp <- function(res) {
 }
 
 
+# Setup --------------------------------------------------------------------------------
+setup.correctness <- list(
+  fn = fit_2scopenp_fast,
+  data = dataCop2sCOPEnpCont,
+  formula = y ~ P + X | P,
+  label = "copula2sCOPEnp"
+)
+
 # Invariance ---------------------------------------------------------------------------
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-test_that("Different sorted data produces same coefs", {
-  # uses heuristic which should produce the exact same number
-  res.sorted <- fit_2scopenp_fast(
-    formula = y ~ P + X | P,
-    data = data.cont.pos[order(data.cont.pos$y), ]
-  )
-  res.rev <- fit_2scopenp_fast(
-    formula = y ~ P + X | P,
-    data = data.cont.pos[rev(order(data.cont.pos$y)), ]
-  )
-  expect_equal(coef(res.sorted), coef(res.rev))
-})
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ X + P | P
+)
 
-test_that("Order in formula does not impact coefs", {
-  res.px <- fit_2scopenp_fast(formula = y ~ P + X | P, data = data.cont.pos)
-  res.xp <- fit_2scopenp_fast(formula = y ~ X + P | P, data = data.cont.pos)
-  expect_equal(sort(coef(res.px)), sort(coef(res.xp)))
-})
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ P + X + X | P
+)
 
-test_that("Dot yields same as explicitly specified regressors", {
-  res.dot <- fit_2scopenp_fast(
-    formula = y ~ . |
-      P,
-    data = dataCopula2sCOPEnpCont
-  )
-  res.explicit <- fit_2scopenp_fast(
-    formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont
-  )
-  expect_equal(coef(res.dot), coef(res.explicit))
-})
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . | P
+)
 
-test_that("Duplicate regressor has same result as single", {
-  res.normal <- fit_2scopenp_fast(formula = y ~ P + X | P, data = data.cont.pos)
-  res.dup <- fit_2scopenp_fast(formula = y ~ P + X + X | P, data = data.cont.pos)
-  expect_equal(coef(res.dup), coef(res.normal))
-})
+# Formula specifications ------------------------------------------------------
+test_correctness_formula_intercept(setup = setup.correctness)
 
-test_that("Correctly respect intercept", {
-  res.with <- fit_2scopenp_fast(formula = y ~ P + X | P, data = data.cont.pos)
-  res.without <- fit_2scopenp_fast(formula = y ~ P + X - 1 | P, data = data.cont.pos)
-  expect_true("(Intercept)" %in% names(coef(res.with)))
-  expect_false("(Intercept)" %in% names(coef(res.without)))
-  expect_equal(length(coef(res.with)), length(coef(res.without)) + 1)
-})
+test_correctness_formula_transformations_endo_exo(setup = setup.correctness)
 
 
 # Internal consistency --------------------------------------------------------------
 
-test_that("Formula edge cases: Label & residuals correct", {
-  df.bt <- data.cont.pos
-  df.bt$`P 1` <- df.bt$P
-
-  df.multi.bt <- dataCopula2sCOPEnpMulti
-  df.multi.bt$`P 1` <- df.multi.bt$P1
-
-  cases <- list(
-    "plain" = list(formula = y ~ P + X | P, data = data.cont.pos),
-    "dot in rhs1" = list(
-      formula = y ~ . |
-        P,
-      data = dataCopula2sCOPEnpCont
-    ),
-    "backticks in endo" = list(formula = y ~ `P 1` + X | `P 1`, data = df.bt),
-    "backticks in exo" = list(
-      formula = y ~ P + `X 1` | P,
-      data = transform(data.cont.pos, `X 1` = X, check.names = FALSE)
-    ),
-    "transformed endo" = list(
-      formula = y ~ log(P.pos) + X | log(P.pos),
-      data = data.cont.pos
-    ),
-    "multiple endo with backtick" = list(
-      # continuous variable only: X1,X2,P1 to run faster
-      formula = y ~ X1 + X2 + `P 1` | X2 + `P 1`,
-      data = df.multi.bt
-    )
-  )
-
-  for (nm in names(cases)) {
-    res <- fit_2scopenp_fast(formula = cases[[nm]]$formula, data = cases[[nm]]$data)
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_2scopenp_formula_edge_cases(),
+  check = function(res) {
     check_labelled_consistently_2scopenp(res)
-    check_struct_residuals(res = res, aux.names = res$labels.pcop)
+    check_struct_residuals(res = res)
   }
-})
+)
 
 
 test_that("Internals have correct shape", {
@@ -124,7 +80,7 @@ test_that("Internals have correct shape", {
 
 test_that("Ordered and factors in endo / exo", {
   # Also check if formula can make ordered and factor
-  df.small <- dataCopula2sCOPEnpMulti[1:250, ]
+  df.small <- dataCop2sCOPEnpMulti[1:250, ]
   df.small$P2.char <- as.character(df.small$P2)
   df.small$X3.char <- as.character(df.small$X3)
 
@@ -140,7 +96,7 @@ test_that("Ordered and factors in endo / exo", {
     data = df.small
   )
   check_labelled_consistently_2scopenp(res)
-  check_struct_residuals(res = res, aux.names = res$labels.pcop)
+  check_struct_residuals(res = res)
 
   # correct param names
   expect_named(
@@ -193,6 +149,38 @@ test_that("Parameter bws is used as-is", {
   expect_false(isTRUE(all.equal(coef(res.perturbed), coef(res1))))
 })
 
+# bws call ------------------------------------------------------------------------
+
+test_that("Call in bws has no data inlined and a small env", {
+  npcdistbw.args <- list(bwmethod = "normal-reference", nmulti = 2)
+  res <- fit_2scopenp_fast(
+    formula = y ~ P + X | P,
+    data = dataCop2sCOPEnpCont,
+    npcdistbw.args = npcdistbw.args
+  )
+  bw.call <- res$bws$P$call
+  expected.args <- c("xdat", "ydat", names(npcdistbw.args))
+
+  # all args passed as symbols, incl the ones which np collects in `...`
+  call.args <- as.list(bw.call)[-1]
+  call.args <- c(call.args[names(call.args) != "..."], as.list(call.args[["..."]]))
+  expect_setequal(names(call.args), expected.args)
+  for (nm in names(call.args)) {
+    expect_true(is.name(call.args[[nm]]), info = nm)
+  }
+
+  # env contains only the args, parent is np
+  env <- environment(bw.call)
+  expect_setequal(ls(env, all.names = TRUE), expected.args)
+  expect_identical(parent.env(env), asNamespace("np"))
+
+  # downstream usage in np without data still works
+  expect_no_error(predict(res$bws$P))
+  dist <- expect_no_error(np::npcdist(bws = res$bws$P))
+  expect_no_error(fitted(dist))
+  expect_no_error(predict(dist))
+})
+
 # Consistency with Park & Gupta ------------------------------------------------
 # According to Kimberly:
 # When the endogenous regressor \eqn{P} is independent of all exogenous regressors \eqn{X},
@@ -228,7 +216,7 @@ run_2scopenp_parkgupta_equivalent <- function(
 }
 
 test_that("Collapses to P&G - single continuous", {
-  skip_on_cran()
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
 
   run_2scopenp_parkgupta_equivalent(
     formula.np = y ~ X1 + P | P,
@@ -239,7 +227,7 @@ test_that("Collapses to P&G - single continuous", {
 })
 
 test_that("Collapses to P&G - single continuous, single discrete", {
-  skip_on_cran()
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
 
   run_2scopenp_parkgupta_equivalent(
     formula.np = y ~ X1 + X2 + P1 + P2 | P1 + P2,
@@ -252,11 +240,11 @@ test_that("Collapses to P&G - single continuous, single discrete", {
 
 # Params recovery ------------------------------------------------------------------
 
-test_that("Recovery: Continuous endo (dataCopula2sCOPEnpCont)", {
-  skip_on_cran()
+test_that("Recovery: Continuous endo (dataCop2sCOPEnpCont)", {
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont,
+    data = dataCop2sCOPEnpCont,
     npcdistbw.args = list(nmulti = 1, tol = 0.1, ftol = 0.1),
     num.boots = 100,
     verbose = FALSE
@@ -264,11 +252,11 @@ test_that("Recovery: Continuous endo (dataCopula2sCOPEnpCont)", {
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 1, P = 1, X = 2))
 })
 
-test_that("Recovery: Binary enod (dataCopula2sCOPEnpCont)", {
-  skip_on_cran()
+test_that("Recovery: Binary endo (dataCop2sCOPEnpBi)", {
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpBi,
+    data = dataCop2sCOPEnpBi,
     npcdistbw.args = list(nmulti = 1, tol = 0.1, ftol = 0.1),
     num.boots = 100,
     verbose = FALSE
@@ -276,11 +264,11 @@ test_that("Recovery: Binary enod (dataCopula2sCOPEnpCont)", {
   check_param_recovery(res = res, true_vals = c("(Intercept)" = 0, P = 1, X = 2))
 })
 
-test_that("Recovery: multiple endo (dataCopula2sCOPEnpMulti)", {
-  skip_on_cran()
+test_that("Recovery: multiple endo (dataCop2sCOPEnpMulti)", {
+  skip_on_os(c("windows", "mac")) # slow on Windows (np ca 6x slower) and macOS runners, still runs on linux
   res <- suppress_lowboots_warning(copula2sCOPEnp(
     formula = y ~ . | P1 + P2,
-    data = dataCopula2sCOPEnpMulti,
+    data = dataCop2sCOPEnpMulti,
     npcdistbw.args = list(nmulti = 1, tol = 0.5, ftol = 0.5),
     num.boots = 100,
     verbose = FALSE

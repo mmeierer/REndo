@@ -16,8 +16,8 @@ fct.helper.check.copula.correction.summary <- function(res.c){
     expect_true(is.list(res.sum))
     expect_true(all(c("names.vars.continuous", "names.vars.discrete") %in%
                       names(res.sum)))
-    expect_is(res.sum$names.vars.continuous, "character")
-    expect_is(res.sum$names.vars.discrete, "character")
+    expect_type(res.sum$names.vars.continuous, "character")
+    expect_type(res.sum$names.vars.discrete, "character")
   })
   # mainly for covr coverage
   test_that("copula correction summary prints", {
@@ -31,11 +31,9 @@ fct.helper.check.copula.correction.summary <- function(res.c){
 }
 
 # C1 optim LL case ----------------------------------------------------------------------------------------------------
-context("S3methods - copulaCorrection - 1 continuous")
 
 c1.input.form <- y ~ X1 + X2 + P|continuous(P) # needed as var to compare against
-expect_warning(res.c1 <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2),
-               regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
+expect_no_warning(res.c1 <- suppress_lowboots_warning(copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 2)))
 
 # Basic copulaCorrection specific correctness of object
 fct.helper.check.copula.correction.summary(res.c1)
@@ -45,8 +43,7 @@ test_that("Test S3 methods only off cran because needs 100bootstraps for confint
   # need to fit 100 boots for confint
   skip_on_cran()
 
-  expect_warning(res.c1.many <- copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 100),
-                 regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
+  expect_no_warning(res.c1.many <- suppress_lowboots_warning(copulaCorrection(formula = c1.input.form, data = dataCopCont, verbose=FALSE, num.boots = 100)))
 
   # Basic rendo.boots part
   test.s3methods.rendoboots(res.model=res.c1.many, input.form=c1.input.form, function.std.data=dataCopCont,
@@ -58,7 +55,7 @@ test_that("object structure is c1 specific",{
   expect_true(c("res.optimx") %in% names(res.c1))
   expect_true(c("start.params") %in% names(res.c1))
   expect_s3_class(res.c1$res.optimx, "optimx")
-  expect_is(res.c1$start.params, "numeric")
+  expect_type(res.c1$start.params, "double")
   expect_named(res.c1$start.params, expected = names(coef(res.c1)),
                ignore.order = FALSE, ignore.case = FALSE)
 
@@ -79,15 +76,15 @@ test_that("Case 1 summary has additional specific structure", {
   expect_silent(res.sum <- summary(res.c1))
   expect_true(all(c("start.params","KKT1", "KKT2", "AIC", "BIC", "log.likelihood", "conv.code") %in%
                     names(res.sum)))
-  expect_is(res.sum$start.params, "numeric")
+  expect_type(res.sum$start.params, "double")
   expect_named(object = res.sum$start.params, expected = names(coef(res.c1, complete = TRUE)),
                ignore.order = TRUE)
-  expect_is(res.sum$KKT1, "logical")
-  expect_is(res.sum$KKT2, "logical")
-  expect_is(res.sum$AIC, "numeric")
-  expect_is(res.sum$BIC, "numeric")
-  expect_is(res.sum$log.likelihood, "numeric")
-  expect_is(res.sum$conv.code, "numeric")
+  expect_type(res.sum$KKT1, "logical")
+  expect_type(res.sum$KKT2, "logical")
+  expect_type(res.sum$AIC, "double")
+  expect_type(res.sum$BIC, "double")
+  expect_type(res.sum$log.likelihood, "double")
+  expect_type(res.sum$conv.code, "double")
 })
 
 
@@ -120,11 +117,9 @@ fct.helper.check.copula.correction.lm.case <- function(res.c2){
 }
 
 
-context("S3methods - copulaCorrection - 2 continuous")
 
 c2.input.form <- y ~ X1 + X2 + P1+P2|continuous(P1, P2)
-expect_warning(res.c2 <- copulaCorrection(formula = c2.input.form, data = dataCopCont2, verbose=FALSE, num.boots=100),
-               regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
+expect_no_warning(res.c2 <- suppress_lowboots_warning(copulaCorrection(formula = c2.input.form, data = dataCopCont2, verbose=FALSE, num.boots=100)))
 
 test.s3methods.rendoboots(res.model=res.c2, input.form=c2.input.form, function.std.data=dataCopCont2,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
@@ -135,11 +130,9 @@ fct.helper.check.copula.correction.summary(res.c2)
 
 
 # C2 Discrete case --------------------------------------------------------------------------------------------------------------------------------------------------------------------
-context("S3methods - copulaCorrection - 2 discrete")
 
 d.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1, P2)
-expect_warning(res.d <- copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE, num.boots=100),
-               regexp = "It is recommended to run 1000 or more bootstraps.", all = TRUE)
+expect_no_warning(res.d <- suppress_lowboots_warning(copulaCorrection(formula = d.input.form, data = dataCopDis2, verbose=FALSE, num.boots=100)))
 
 test.s3methods.rendoboots(res.model =res.d, input.form=d.input.form, function.std.data=dataCopDis2,
                             full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
@@ -151,11 +144,9 @@ fct.helper.check.copula.correction.summary(res.d)
 
 
 # C2 Mixed case -------------------------------------------------------------------------------------------------------------
-context("S3methods - copulaCorrection - 1 continuous, 1 discrete")
 
 cd.input.form <- y ~ X1 + X2 + P1+P2|discrete(P1)+continuous(P2)
-expect_warning(res.cd <- copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE, num.boots = 100),
-               regexp = "It is recommended to run 1000 or more bootstraps.", all=TRUE)
+expect_no_warning(res.cd <- suppress_lowboots_warning(copulaCorrection(formula = cd.input.form, data = dataCopDisCont, verbose=FALSE, num.boots = 100)))
 test.s3methods.rendoboots(res.model =res.cd, input.form=cd.input.form, function.std.data=dataCopDisCont,
                           full.coefs=c("(Intercept)", "X1", "X2", "P1", "P2", "PStar.P1", "PStar.P2"))
 

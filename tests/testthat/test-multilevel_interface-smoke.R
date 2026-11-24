@@ -2,7 +2,6 @@
 data("dataMultilevelIV")
 
 # General runability -----------------------------------------------------------------------------------------------------------------
-context("Runability - multilevelIV - Runability")
 
 test_that("Works with 2 levels", {
   res.ml2 <- expect_silent(multilevelIV(formula = y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 +

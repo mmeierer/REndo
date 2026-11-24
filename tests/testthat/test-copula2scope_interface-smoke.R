@@ -2,150 +2,111 @@ skip_on_cran()
 set.seed(42)
 
 # Required data ---------------------------------------------------------------------
-data("dataCopula2sCOPECase1")
+data("dataCop2sCOPECase1")
+
+# Setup --------------------------------------------------------------------------------
+setup.smoke <- list(
+  method = copula2sCOPE,
+  fn = fit_2scope_fast,
+  data = dataCop2sCOPECase1,
+  formula = y ~ P + X | P,
+  label = "copula2sCOPE"
+)
 
 # Works out of the box --------------------------------------------------------------
-# also checks verbose=T
-test_that("Works out of the box", {
-  expect_no_error(capture_output(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = dataCopula2sCOPECase1
-    )
-  ))
-})
+test_smoke_out_of_the_box(setup = setup.smoke)
+
+test_smoke_verbose(setup = setup.smoke)
 
 
 # Specifications for smoke tests ----------------------------------------------------
-# Specs vary along three dimensions:
+# Specs vary along four dimensions:
 # - Intercept: w/ vs w/o
 # - Exo: present vs absent
 # - Endo: single vs multiple (X is not actually endo)
+# - Exo class: numeric vs factor vs ordered vs character vs logical vs numeric matrix
 # Each spec is crossed with all 4 cdf options
-#
-# warn:
-# - warn = NULL: no warning allowed
-# - warn = "regexp": warning must appear
+
+# exo factor, ordered and character with >2 levels (ordered: .L, .Q, .C columns)
+data.classes <- dataCop2sCOPECase1
+data.classes$x_fac <- factor(rep(c("a", "b", "c", "d"), length.out = nrow(data.classes)))
+data.classes$x_ord <- ordered(data.classes$x_fac)
+data.classes$x_char <- as.character(data.classes$x_fac)
+data.classes$x_lgl <- rep(c(TRUE, FALSE), length.out = nrow(data.classes))
 
 specs <- list(
   "with intercept, with exo, single endo" = list(
-    formula = y ~ P + X | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = NULL
+    formula = y ~ P + X | P,
+    data = dataCop2sCOPECase1
   ),
   "no intercept, with exo, single endo" = list(
-    formula = y ~ P + X - 1 | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = NULL
+    formula = y ~ P + X - 1 | P,
+    data = dataCop2sCOPECase1
   ),
   "with intercept, no exo, single endo" = list(
-    formula = y ~ P | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P | P,
+    data = dataCop2sCOPECase1
   ),
   "no intercept, no exo, single endo" = list(
-    formula = y ~ P - 1 | continuous(P),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P - 1 | P,
+    data = dataCop2sCOPECase1
   ),
   "with intercept, no exo, multiple endo" = list(
-    formula = y ~ P + X | continuous(P, X),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P + X | P + X,
+    data = dataCop2sCOPECase1
   ),
   "no intercept, no exo, multiple endo" = list(
-    formula = y ~ P + X - 1 | continuous(P, X),
-    data = dataCopula2sCOPECase1,
-    warn = "No exogenous regressors"
+    formula = y ~ P + X - 1 | P + X,
+    data = dataCop2sCOPECase1
   ),
   "with intercept, with exo, multiple endo" = list(
-    formula = y ~ P + X + X2 | continuous(P, X),
-    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1))),
-    warn = NULL
+    formula = y ~ P + X + X2 | P + X,
+    data = cbind(dataCop2sCOPECase1, X2 = rnorm(nrow(dataCop2sCOPECase1)))
   ),
   "no intercept, with exo, multiple endo" = list(
-    formula = y ~ P + X + X2 - 1 | continuous(P, X),
-    data = cbind(dataCopula2sCOPECase1, X2 = rnorm(nrow(dataCopula2sCOPECase1))),
-    warn = NULL
+    formula = y ~ P + X + X2 - 1 | P + X,
+    data = cbind(dataCop2sCOPECase1, X2 = rnorm(nrow(dataCop2sCOPECase1)))
+  ),
+  "with intercept, factor exo, single endo" = list(
+    formula = y ~ P + X + x_fac | P,
+    data = data.classes
+  ),
+  "with intercept, ordered exo, single endo" = list(
+    formula = y ~ P + X + x_ord | P,
+    data = data.classes
+  ),
+  "with intercept, character exo, single endo" = list(
+    formula = y ~ P + X + x_char | P,
+    data = data.classes
+  ),
+  "with intercept, logical exo, single endo" = list(
+    formula = y ~ P + X + x_lgl | P,
+    data = data.classes
+  ),
+  # model.frame class nmatrix.1
+  "with intercept, 1-col matrix exo, single endo" = list(
+    formula = y ~ P + scale(X) | P,
+    data = data.classes
+  ),
+  # model.frame class nmatrix.2
+  "with intercept, 2-col matrix exo, single endo" = list(
+    formula = y ~ P + poly(X, 2) | P,
+    data = data.classes
   )
 )
 
-cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
-
 
 # specs x cdf ----------------------------------------------------------------------
-test_that("copula2sCOPE runs across specs and cdf options", {
-  for (spec_name in names(specs)) {
-    for (cdf in cdfs) {
-      spec <- specs[[spec_name]]
-      call_expr <- quote(
-        copula2sCOPE(
-          formula = spec$formula,
-          data = spec$data,
-          cdf = cdf,
-          verbose = FALSE,
-          num.boots = 10
-        )
-      )
-
-      if (is.null(spec$warn)) {
-        res <- expect_no_warning(suppress_lowboots_warning(eval(call_expr)))
-      } else {
-        res <- expect_warning(suppress_lowboots_warning(eval(call_expr)), regexp = spec$warn)
-      }
-
-      expect_false(anyNA(fitted(res)))
-      expect_false(anyNA(residuals(res)))
-      expect_false(anyNA(coef(res)))
-      expect_false(anyNA(vcov(res)))
-      expect_false(anyNA(res$boots.params))
-    }
-  }
-})
+test_smoke_all_cdfs(setup = setup.smoke, specs = specs)
 
 # small sample ---------------------------------------------------------------------
-test_that("copula2sCOPE runs on small sample", {
-  small_data <- dataCopula2sCOPECase1[1:50, ]
-
-  expect_no_error(suppress_lowboots_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = small_data,
-      cdf = "adj.ecdf",
-      verbose = FALSE,
-      num.boots = 10
-    )
-  ))
-})
+test_smoke_small_sample(setup = setup.smoke)
 
 
-test_that("copula2sCOPE allows NA in non-relevant column", {
-  bad_data <- dataCopula2sCOPECase1
-  bad_data$Q <- rnorm(nrow(dataCopula2sCOPECase1))
-  bad_data$Q[1] <- NA
-  expect_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = bad_data,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "to run 1000"
-  )
-})
+test_smoke_na_irrelevant_col(setup = setup.smoke)
 
-# S3 methods ----------------------------------------------------------
-test_that("S3 run without error", {
-  res <- expect_warning(
-    copula2sCOPE(
-      formula = y ~ P + X | continuous(P),
-      data = dataCopula2sCOPECase1,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
-  )
-
-  expect_no_error(capture_output(print(res)))
-  expect_no_error(capture_output(print(summary(res))))
-})
+# Formula -------------------------------------------------------------------------
+test_smoke_formula_edge_cases(
+  setup = setup.smoke,
+  cases = fixture_2scope_formula_edge_cases()
+)

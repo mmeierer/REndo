@@ -1,111 +1,77 @@
-#' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame model.matrix model.response
-copulaIMA_fit <- function(f.main, data, cdf, names.endo.regs) {
+#' @importFrom stats formula lm model.frame model.matrix na.exclude na.fail qnorm reformulate residuals
+copulaima_fit <- function(F.formula, data, labels.endo, labels.exo, cdf) {
+  # 1st stage ------------------------------------------------------------------
 
-  # Prepare additional regressors -----------------------------------------------------
-
+  # . Create Pstar -------------------------------------------------------------
+  # Applying CDF to all regressors (both endo and exo), excluding the intercept.
+  # Haschka IMA 2024, section 3.2 step 1
   # Haschka 2025 page 164 eq. 3.1
-  mf <- model.frame(f.main, data = data)
-  X.main <- model.matrix(f.main, data = mf)
 
-  # Continuous endogenous var
-  endogenous.columns <- colnames(X.main)[colnames(X.main) %in% names.endo.regs]
-
-  if (length(endogenous.columns) == 0) {
-    stop("No continuous endogenous regressors found in design matrix.")
-  }
-  if (length(endogenous.columns) < length(names.endo.regs)) {
-    stop(
-      "Bootstrap sample dropped at least one endogenous regressor. This happened when a regressor becomes constant in the resampling."
-    )
-  }
-
-  # Create Pstar
-  #Applying CDF to all regressors (both endo and exo), excluding the intercept. Haschka IMA 2024, section 3.2 step 1
-  X.no.intercept <- X.main[, colnames(X.main) != "(Intercept)", drop = FALSE]
-  P.star <- copula_pstar(P = X.no.intercept, cdf = cdf) # (constructing P star, from Haschka 2025, page 164)
-
-  # Haschka 2025 section 3.2 step 2: regressing each P*_l on exo X* only, without intercept
-  cop.terms <- copulaIMA_residuals(P.star, endo.cols = endogenous.columns)
-
-
-  # Fit final model -------------------------------------------------------------------
-
-  # Fit:
-  #   - formula: Main model as given by the user + additional Pcop regressors
-  #   - data: As given by the user (or bootstrapped) + Pcop regressor data
-  #
-  # Extending the formula with the additional regressors will ensure all coefficients
-  # names etc are preserved as the user gave them. This will just let `lm()` do the magic.
-  #
-  # Build final formula: Main model + Pcop regressors
-  # Build by updating the original formula (adding regressors):
-  #   update(y ~ X + P,  ~ . + Pcop1 + Pcop2)
-
-  # main formula has to be expanded to replace dot '.' with actual columns first.
-  # Take the already expanded formula from the model frame
-  f.main <- formula(mf)
-
-  # Build copula terms (~ . + Pcop1 + Pcop2)
-  has_intercept <- attr(terms(f.main), "intercept") == 1 #to ensure that intercept is handled
-  #consistently across all stages
-
-  # colnames(cop.terms) may contain chars illegal for formula labels
-  colnames(cop.terms) <- make.names(colnames(cop.terms))
-
-  f.pcop <- reformulate(
-    termlabels = c(".", colnames(cop.terms)),
-    response = NULL, # empty response (lhs)
-    intercept = has_intercept
+  mf.all <- model.frame(
+    formula(F.formula, lhs = 1, rhs = 1),
+    data = data,
+    na.action = na.fail
   )
 
-  # Add copula regressors to existing formula
-  f.final <- update(old = f.main, new = f.pcop)
+  # model.matrix() matches the terms by name to the mf columns and does not evalute.
+  # Therefore, the env of reformulate() does not matter
+  f.endo <- reformulate(termlabels = labels.endo, response = NULL, intercept = FALSE)
+  X.endo <- model.matrix(f.endo, data = mf.all)
+  copula2stage_stop_if_constant(X.endo)
 
-  # Alternative: Build final formula from scratch using the "names" of each regressor
-  # f.combined <- reformulate(
-  #   c(labels(terms(mf)), colnames(cop.terms)),
-  #   response = all.vars(f.main)[1]
-  # )
+  # (constructing P star, from Haschka 2025, page 164)
+  # copula2stage_pstar is applied column-wise
+  P.star.endo <- copula2stage_pstar(P = X.endo, cdf = cdf)
 
-  return(lm(
-    formula = f.final,
-    data = cbind(data, cop.terms)
-  ))
-}
+  # NOTE: Having no intercept makes model.matrix() code first factor with k dummies
+  # instead of the regular k-1 dummies! This is different from Haschkas
+  # implementation which uses the whole formula.
+  # But: All this doesnt matter as long as exo vars are only numeric.
+  f.exo <- reformulate(termlabels = labels.exo, response = NULL, intercept = FALSE)
+  X.exo <- model.matrix(f.exo, data = mf.all)
+  copula2stage_stop_if_constant(X.exo)
+  P.star.exo <- copula2stage_pstar(P = X.exo, cdf = cdf)
 
+  # . Create copula terms ------------------------------------------------------
+  # Haschka 2025 section 3.2 step 2: regressing each P*_l on exo X* only, without intercept
 
-#' @importFrom stats qnorm lm residuals
-copulaIMA_residuals <- function(P.star, endo.cols) {
-  Z <- qnorm(P.star)
-
-  if (!is.matrix(Z)) {
-    Z <- as.matrix(Z)
-  }
-
-  P.names <- colnames(Z)
-  if (is.null(P.names)) {
-    stop("P.star must have column names")
-  }
+  Z.endo <- qnorm(P.star.endo)
+  Z.exo <- qnorm(P.star.exo)
 
   # Exogenous normal scores: all the columns that are not endo
   # chapter 3.2 step 2: regressing P*l on X1*, ..., XK* (exogenous only)
-  exo.cols <- colnames(Z)[!colnames(Z) %in% endo.cols]
 
-  res <- matrix(NA, nrow = nrow(Z), ncol = length(endo.cols))
-  colnames(res) <- paste0(endo.cols, "_cop")
+  cop.terms <- copula2stage_get_1ststage_copterms(
+    nrow = nrow(X.endo),
+    labels.endo = labels.endo
+  )
 
-  for (j in seq_along(endo.cols)) {
-    Z.j <- Z[, endo.cols[j], drop = TRUE]
+  for (j in seq_len(ncol(Z.endo))) {
+    # There are always exo regressors
+    Z.j <- Z.endo[, j, drop = TRUE]
+    # Use na.exclude: keep rows with NA/NaN in Z and residuals so the input
+    # checks of the 2nd stage report them clearly. Dropping them would break
+    # assignment to `cop.terms[]<-`
+    lm.j <- lm(Z.j ~ Z.exo - 1, na.action = na.exclude)
+    cop.terms[, j] <- residuals(lm.j)
 
-    if (length(exo.cols) ==0){
-      res[, j] <- Z.j # no exo regressors
-    } else{
-      Z.exo <- Z[, exo.cols, drop = FALSE]
-      lm.j <- lm(Z.j ~ Z.exo - 1)
-      res[, j] <- residuals(lm.j)
-    }
+    # if (has.exo) {
+    #   lm.j <- lm(Z.j ~ Z.exo - 1)
+    #   cop.terms[, j] <- residuals(lm.j)
+    # } else {
+    #   cop.terms[, j] <- Z.j # no exo regressors
+    # }
   }
-  return(res)
-}
 
+  # 2nd stage ------------------------------------------------------------------
+  l.2nd.stage <- copula2stage_fit_2ndstage(
+    F.formula = F.formula,
+    data = data,
+    cop.terms = cop.terms
+  )
+
+  return(list(
+    res.lm.augmented = l.2nd.stage$res.lm.augmented,
+    labels.pcop = l.2nd.stage$labels.pcop
+  ))
+}

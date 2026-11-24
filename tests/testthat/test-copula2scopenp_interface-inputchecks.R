@@ -3,11 +3,11 @@
 
 skip_on_cran()
 set.seed(42)
-data("dataCopula2sCOPEnpCont")
+data("dataCop2sCOPEnpCont")
 
 
 test_that("interface has methods wired in", {
-  df.na <- dataCopula2sCOPEnpCont
+  df.na <- dataCop2sCOPEnpCont
   df.na$P[1] <- NA
 
   cases <- list(
@@ -16,26 +16,41 @@ test_that("interface has methods wired in", {
     "modelframe" = list(data = df.na),
     "npcdistbwargs" = list(npcdistbw.args = list(xdat = 1)),
     "bws" = list(bws = list(P = 1)),
+    # variables differ from the model frame columns (labels.exo passed)
+    "bws (variables)" = list(
+      bws = list(
+        P = structure(
+          list(method = "normal-reference", ynames = "P", xnames = "Z"),
+          class = "condbandwidth"
+        )
+      )
+    ),
+    # conflicts with bwmethod in base.args
+    "bws_npcdistbwargs" = list(
+      bws = list(
+        P = structure(
+          list(method = "cv.ls", ynames = "P", xnames = "X"),
+          class = "condbandwidth"
+        )
+      )
+    ),
     "num.boots" = list(num.boots = -1),
     "verbose" = list(verbose = NULL)
   )
 
   base.args <- list(
     formula = y ~ P + X | P,
-    data = dataCopula2sCOPEnpCont,
+    data = dataCop2sCOPEnpCont,
     npcdistbw.args = list(bwmethod = "normal-reference"),
     bws = NULL,
     num.boots = 1000,
     verbose = FALSE
   )
 
-  for (nm in names(cases)) {
-    # all from base.args except the one being tested
-    args <- c(cases[[nm]], base.args[!names(base.args) %in% names(cases[[nm]])])
-    expect_error(
-      object = do.call(what = copula2sCOPEnp, args = args),
-      regexp = "The above errors",
-      info = nm
-    )
-  }
+  run_cases_error(
+    fn = copula2sCOPEnp,
+    base.args = base.args,
+    cases = cases,
+    regexp = "The above errors"
+  )
 })

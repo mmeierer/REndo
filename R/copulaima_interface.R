@@ -24,14 +24,17 @@
 #' require that the exogenous regressors \eqn{X_i} be independent of the endogenous
 #' regressors \eqn{P_{i,k}} or to satisfy any distributional requirement, i.e., \eqn{X_i}
 #' may be binary or non-continuously distributed. This method supports only continuous
-#' endogenous regressors.
+#' endogenous regressors. At least one exogenous regressor is required. Without
+#' exogenous regressors, IMA is equivalent to Park and Gupta (2012)
+#' (\code{\link{copulaCorrection}}).
 #'
+#' @templateVar data.addition Endogenous and exogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @template template_param_numboots
 #' @template template_param_cdf
 #'
 #' @details
-#' \subsection{Model}{
+#' ## Model
 #'
 #' Consider the structural regression model with \eqn{K} endogenous regressors:
 #'
@@ -70,37 +73,42 @@
 #' However, the bias decreases rapidly as sample size increases and become
 #' negligible for moderate sample sizes (around n >= 600). The estimator appears
 #' asymptotically unbiased.
-#' }
-#'
-#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_text_details_cdfmethods
 #'
 #' @details
-#' \subsection{Formula interface}{
+#' ## Parameter \code{formula}
+#' The \code{formula} argument follows a two part notation separated by \code{|}.
+#' The first part specifies the structural model (e.g. \code{y ~ X + P}).
+#' The second part identifies the continuous endogenous regressors:
 #'
-#' The \code{formula} argument follows a two-part notation separated by
-#' \code{|}. The first part specifies the structural model. The second part
-#' identifies the continuous endogenous regressors using \code{continuous()}:
-#'
-#' \preformatted{y ~ X + P | continuous(P)                          # typical use: with intercept}
-#' \preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endogenous regressors}
-#' \preformatted{y ~ X + P - 1 | continuous(P)                      # no intercept (in simulation settings)}
+#' \preformatted{y ~ X + P | P                       # endogenous P}
+#' \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endogenous regressors}
+#' \preformatted{y ~ X + P - 1 | P                   # no intercept (in simulation settings)}
 #'
 #' In typical applied settings the model includes an intercept. The
 #' no-intercept specification (\code{-1}) is primarily used in simulation
-#' studies following the design of (Haschka (2025)  Section 4.1)
+#' studies following the design of (Haschka (2025) Section 4.1)
 #' and is unlikely to be appropriate for real datasets.
-#' }
 #'
+#' The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+#' in either part.
+#'
+#'
+#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_haschka2025ima
-#' @template template_references_parkgupta2012
 #' @template template_param_cdf_references
 #'
-#' @eval doc_rendocopulaima_return()
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.ima")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
+#'
+#' @seealso \code{\link[REndo:dataCopIMABinExo]{dataCopIMABinExo},
+#' \link[REndo:dataCopIMAContExo]{dataCopIMAContExo},
+#' \link[REndo:dataCopIMAMultiEndo]{dataCopIMAMultiEndo}} for detailed
+#' information about the simulated datasets
 #'
 #' @examples
 #' #------------------------------------------------------------------------
@@ -110,7 +118,7 @@
 #' #------------------------------------------------------------------------
 #' data(dataCopIMAContExo)
 #' res <- copulaIMA(
-#'   y ~ X + P - 1 | continuous(P),
+#'   y ~ X + P - 1 | P,
 #'   data = dataCopIMAContExo,
 #'   cdf = "adj.ecdf",
 #'   num.boots = 1000
@@ -119,14 +127,13 @@
 #'
 #' \donttest{
 #' #------------------------------------------------------------------------
-#' # Example 2: Two endogenous regressors with intercept and no exogenous regressor
-#' # True values: mu=10, alpha1 = 1 (P1), alpha2 = 1 (P2)
+#' # Example 2: Two endogenous regressors with intercept and one exogenous regressor
 #' # Extension of the first example
+#' # True values: mu=10, alpha1 = 1 (P1), alpha2 = -1 (P2), beta = 1 (X)
 #' #------------------------------------------------------------------------
 #' data("dataCopIMAMultiEndo")
 #' res2 <- copulaIMA(
-#'   # Alternative: y ~ P1 + P2 | continuous(P1, P2)
-#'   y ~ P1 + P2 | continuous(P1) + continuous(P2),
+#'   y ~ X + P1 + P2 | P1 + P2,
 #'   data = dataCopIMAMultiEndo,
 #'   cdf = "adj.ecdf",
 #'   num.boots = 1000
@@ -136,15 +143,15 @@
 #' #------------------------------------------------------------------------
 #' # Example 3: Single endogenous regressor with binary exogenous regressor
 #' # (Haschka 2025, section 4.1 scenario 2)
-#'
-#' # This example shows one of the key example of IMA method, i.e., the exogenous
+#' #
+#' # This example shows one of the key examples of IMA method, i.e., the exogenous
 #' # regressor does not need to be continuous or normally distributed.
 #' # X the exogenous regressor is binary (0 or 1).
 #' # True values: alpha = 1 (P), beta = 1 (X), no intercept.
 #' #------------------------------------------------------------------------
 #' data("dataCopIMABinExo")
 #' res3 <- copulaIMA(
-#'    y ~ X + P - 1 | continuous(P),
+#'    y ~ X + P - 1 | P,
 #'    data = dataCopIMABinExo,
 #'    cdf = "adj.ecdf",
 #'    num.boots = 1000
@@ -152,10 +159,11 @@
 #' summary(res3)
 #' }
 #'
-#'
+#' @md
 #' @export
-#' @importFrom stats coef
-#' @importFrom utils txtProgressBar setTxtProgressBar
+#'
+#' @importFrom stats coef terms
+#' @importFrom Formula as.Formula
 copulaIMA <- function(
   formula,
   data,
@@ -165,86 +173,91 @@ copulaIMA <- function(
 ) {
   cl <- match.call()
 
-  # Input checks  -------------------------------------------------------------------
+  # Input checks -----------------------------------------------------------------------
+  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  check_err_msg(checkinput_copula2stage_data_basics(data))
 
-  check_err_msg(checkinput_copulashared_formula(formula))
-  check_err_msg(checkinput_copulashared_data(data))
-  check_err_msg(checkinput_copulashared_dataVSformula(data = data, formula = formula))
-  check_err_msg(checkinput_copulashared_cdf(
-    cdf,
-    allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  # - >= 1 endogenous regressor
+  # - >= 1 exogenous regressor
+  # - no interactions
+  # - endogenous: numeric
+  # - exogenous: numeric
+  # - no constant regressors
+  check_err_msg(checkinput_copula2stage_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 1,
+    msg.min.num.exo = paste0(
+      "At least one exogenous regressor is required for the first-stage regression. ",
+      "Without exogenous regressors, IMA is equivalent to Park and Gupta (2012): ",
+      "Use copulaCorrection() instead."
+    ),
+    allow.interactions = FALSE,
+    allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
+    allowed.classes.endo = "numeric",
+    allowed.classes.exo = "numeric"
   ))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
 
-  # Fit original data ---------------------------------------------------------------
+  check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
 
-  cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
+  # Fit original data ------------------------------------------------------------------
 
-  F.formula <- Formula::as.Formula(formula)
-  f.main <- formula(F.formula, lhs = 1, rhs = 1)
-  names.endo.regs <- formula_readout_special(
-    F.formula = F.formula,
-    name.special = "continuous",
-    from.rhs = 2,
-    params.as.chars.only = TRUE
-  )
+  cdf <- match.arg(cdf, choices = allowed.cdfs)
 
-  # Fitting with copula IMA model
+  F.formula <- as.Formula(formula)
+  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
+  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
+  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
+
   if (verbose) {
     message(
-      "Fitting Haschka's copula-based IMA model for ",
-      length(names.endo.regs),
+      "Fitting Haschka's copula-based IMA model with ",
+      length(labels.endo),
       " continuous endogenous regressor(s)."
     )
   }
-  fit <- copulaIMA_fit(
-    f.main = f.main,
+  fit <- copulaima_fit(
+    F.formula = F.formula,
     data = data,
-    cdf = cdf,
-    names.endo.regs = names.endo.regs
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    cdf = cdf
   )
 
-  # Bootstrapping -------------------------------------------------------------------
+  # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    return(
-      copulaIMA_fit(
-        f.main = f.main,
-        data = data.b,
-        cdf = cdf,
-        names.endo.regs = names.endo.regs
-      )
+    fit.b <- copulaima_fit(
+      F.formula = F.formula,
+      data = data.b,
+      labels.endo = labels.endo,
+      labels.exo = labels.exo,
+      cdf = cdf
     )
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit)),
+    coef.names = names(coef(fit$res.lm.augmented)),
     verbose = verbose
   )
 
-  # Structural residuals --------------------------------------------------------------
-
-  # TODO: Do not read names with grep but pass names back from fitting method
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit,
-    names.aux.regs = grep("_cop$", names(coef(fit)), value = TRUE)
-  )
-
-  # Return value ----------------------------------------------------------------------
-  return(new_rendo_copula_ima(
+  # Return object ----------------------------------------------------------------------
+  return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
-    boots = res.boots$boots.params,
-    n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed,
-    res.lm.augmented = fit,
+    res.lm.augmented = fit$res.lm.augmented,
+    res.boots = res.boots,
     cdf = cdf,
-    names.endo.regs = names.endo.regs
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.ima"
   ))
 }

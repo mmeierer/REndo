@@ -171,21 +171,20 @@ regressors to normal scores (default is **“adj.ecdf”**; alternatives are
 
 ### **Two-Stage Copula Endogeneity Correction**
 
-    copula2sCOPE(y ~ X + P | continuous(P), data, num.boots, cdf)
+    copula2sCOPE(y ~ X + P | P, data, cdf, num.boots)
 
 Here **y** is the response variable, **X + P** represents the model to
-be estimated; the second part identifies the endogenous regressors via
-**continuous()**. The second argument is the name of the dataset.
-**num.boots** sets the number of bootstrap replications used to compute
-standard errors (default 1000). The argument **cdf** specifies the
-estimator used to transform regressors to normal scores (options are
-**“ecdf”**, **“adj.ecdf”**, **“resc.ecdf”**, and **“kde”**) and is
-applied to all regressors. For each endogenous normal score, a
-regression on the exogenous normal scores is estimated with an
-intercept, and the residuals is the correction terms in an augmented
-OLS. When no exogenous regressors are present the method reduces to Park
-and Gupta (2012). This method can be used for multiple endogenous
-regressors.
+be estimated; the second part lists the endogenous regressors. The
+second argument is the name of the dataset. **num.boots** sets the
+number of bootstrap replications used to compute standard errors
+(default 1000). The argument **cdf** specifies the estimator used to
+transform regressors to normal scores (options are **“ecdf”**,
+**“adj.ecdf”**, **“resc.ecdf”**, and **“kde”**) and is applied to all
+regressors. For each endogenous normal score, a regression on the
+exogenous normal scores is estimated with an intercept, and the
+residuals is the correction terms in an augmented OLS. When no exogenous
+regressors are present the method reduces to Park and Gupta (2012). This
+method can be used for multiple endogenous regressors.
 
 ### **Adjusted Gaussian Copula Estimator**
 
@@ -232,7 +231,7 @@ are valid.
 
 ### **Two-Stage Nonparametric Copula Endogeneity Correction**
 
-    copula2sCOPEnp(y ~ X + P | P, data, num.boots, npcdistbw.args)
+    copula2sCOPEnp(y ~ X + P | P, data, npcdistbw.args, bws, num.boots)
 
 Here **y** is the response variable, **X + P** represents the model to
 be estimated; the second part lists the endogenous regressors . The
@@ -243,11 +242,38 @@ of arguments passed to the kernel bandwidth selector **npcdistbw** from
 the **np** package, allowing the user to control bandwidth selection.
 The method estimates the conditional CDF of each endogenous regressor
 given the exogenous regressors nonparametrically, using the
-Nadaraya-Warson kernel regression. This relaxes the Gaussian copula
+Nadaraya-Watson kernel regression. This relaxes the Gaussian copula
 assumption. The method supports both continuous and discrete endogenous
 regressors. Bandwidths are computed once on the original data and reused
 across all bootstrap resamples. Multiple endogenous and exogenous
 regressors are also supported.
+
+### **Nonparametric Control Function (BMW method)**
+
+    copulaBMW(y ~ X + P | P, data, cdf, num.boots)
+
+Here **y** is the response variable, **X+P** represents the model to be
+estimated; the second part lists the endogenous regressors. The second
+argument is the name of the dataset. **num.boots** sets the number of
+bootstrap replications used to compute standard errors (default 1000).
+The argument **cdf** specifies the estimator used to transform
+regressors to normal scores (options are **“ecdf”**, **“adj.ecdf”**,
+**“resc.ecdf”**, and **“kde”**) and is applied to all regressors. The
+method regresses each endogenous regressor
+![P_k](https://latex.codecogs.com/png.latex?P_k "P_k") on the exogenous
+regressors ![X](https://latex.codecogs.com/png.latex?X "X") directly in
+the **original space**, then applies the CDF to the first-stage
+residuals. The method does not require a Gaussian copula assumption on
+the distribution of the structural error and the endogenous regressor
+error. The method only assumes
+![f(e) \sim N(0,1)](https://latex.codecogs.com/png.latex?f%28e%29%20%5Csim%20N%280%2C1%29 "f(e) \sim N(0,1)").
+It also allows conditional heteroskedasticity of the structural error.
+The BMW estimator is a copula-based method in REndo with formal
+asymptotic theory. BMW comes with mathematical proofs that the estimates
+are consistent (converge to true values as
+![n \to \infty](https://latex.codecogs.com/png.latex?n%20%5Cto%20%5Cinfty "n \to \infty")),
+asymptotically normally distributed, and that bootstrap standard errors
+are valid.
 
 ### **Multilevel GMM**
 

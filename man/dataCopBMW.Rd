@@ -6,12 +6,11 @@
 \title{Simulated Dataset for the BMW Nonparametric Control Function Approach}
 \format{
 A data frame with 1000 observations on 3 variables:
-\describe{
-  \item{\code{y}}{a numeric vector representing the dependent variable.}
-  \item{\code{X}}{a numeric vector, Gamma(1,1) distributed and exogenous.}
-  \item{\code{P}}{a numeric vector, continuous and endogenous, constructed
-    as \code{P = X + e} where \code{e ~ lognormal(0,1)} is independent of
-    \code{X}.}
+\itemize{
+\item \code{y}: a numeric vector representing the dependent variable.
+\item \code{X}: a numeric vector, Gamma(1,1) distributed and exogenous.
+\item \code{P}: a numeric vector, continuous and endogenous, constructed
+as \code{P = X + e} where \code{e ~ lognormal(0,1)} is independent of \code{X}.
 }
 }
 \usage{
@@ -19,12 +18,17 @@ data("dataCopBMW")
 }
 \description{
 A dataset with one exogenous regressor \code{X} and one
-  continuous endogenous regressor \code{P}, generated and inspired by DGP1
-  of Breitung, Meyer, and Wied (2024), Section 4, with correlated regressors
-  (\code{delta = 1}) and endogeneity (\code{rho = 0.9}).
-  The dependent variable is \code{y}.
-  The true parameter values are: \code{mu = 1} (intercept),
-  \code{beta = -1} (\code{X}), and \code{alpha = 1} (\code{P}).
+continuous endogenous regressor \code{P}, generated and inspired by DGP1
+of Breitung, Meyer, and Wied (2024), Section 4, with correlated regressors
+(\code{delta = 1}) and endogeneity (\code{rho = 0.9}).
+The dependent variable is \code{y}.
+The true parameter values are: \code{mu = 1} (intercept),
+\code{beta = -1} (\code{X}), and \code{alpha = 1} (\code{P}).
+}
+\references{
+Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
+corrections using nonlinear transformations. \emph{The Econometrics Journal},
+27, 362--383. \doi{10.1093/ectj/utae002}
 }
 \author{
 Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}

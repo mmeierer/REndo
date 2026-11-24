@@ -15,7 +15,7 @@ copula2sCOPE(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all parts specified in the formula parameter.}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Endogenous regressors must be \code{numeric}.}
 
 \item{cdf}{Character string specifying the method used to estimate the
   marginal distribution functions of the endogenous regressors.
@@ -33,7 +33,7 @@ used for standard error estimation. A minimum of 1000 is recommended.}
 \item{verbose}{Show details about the running of the function.}
 }
 \value{
-An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
+An object of class \code{rendo.copula.2scope} which is a list that contains:
 \item{\code{formula}}{The formula given to specify the fitted model.}
 \item{\code{model}}{The model.frame used for model fitting.}
 \item{\code{terms}}{The terms object used for model fitting.}
@@ -43,10 +43,12 @@ An object of class \code{rendo.copula.2sCOPE} which is a list that contains:
 \item{\code{residuals}}{The structural residuals.}
 \item{\code{boots.params}}{The bootstrapped coefficients.}
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
-\item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
+\item{\code{n.boots.failed}}{The number of bootstrap samples discarded as degenerate (failed fit, non-finite coefs, or coefs of different length or names than original).}
 \item{\code{cdf}}{The used cdf function.}
-\item{\code{names.endo.regs}}{The names of the continuous endogenous regressors.}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
+\item{\code{labels.endo}}{The term labels of the endogenous regressors.}
+\item{\code{labels.exo}}{The term labels of the exogenous regressors.}
+\item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}
 }
 \description{
 Fitting the two-stage copula generator regressor approach (2sCOPE) estimator of
@@ -62,7 +64,7 @@ that at least one exogenous regressor is non-normally distributed. In that case,
 would then come from the non-normal exogenous regressor instead of the endogenous regressor itself.
 }
 \details{
-\strong{Model}
+\subsection{Model}{
 
 Consider the structural regression model with \eqn{K} endogenous regressors:
 
@@ -74,41 +76,34 @@ where \eqn{i = 1, \ldots, n} is the number of observations,
 structural error \eqn{\varepsilon_i} and the exogenous regressors \eqn{X_i},
 \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
 \eqn{\mu, \alpha_k, \beta} are the structural model parameters.
+}
 
-\strong{Methodology}
+\subsection{Methodology}{
 
 2sCOPE is an augmented OLS estimator which can be described in the following 3 steps
 (Yang et al., 2025):
 
 \enumerate{
-  \item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
+\item For every explanatory variable \eqn{W \in \{X_1, \ldots, X_J,
         P_1, \ldots, P_K\}}, compute the normal score
-        \eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
-        the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
-        standard normal quantile function.
-  \item For each endogenous regressor \eqn{P_k^*}, regress it on the normal
-        scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
-        with intercept and keep the residuals
-        \eqn{\hat{\varepsilon}_k} as the copula correction terms. This
-        first-stage regression exploits the informational content of the
-        exogenous regressors in a similar way to instrumental variable
-        identification.
-  \item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
+\eqn{W^* = \Phi^{-1}(\hat{F}_W(W))}, where \eqn{\hat{F}_W} is
+the estimated marginal CDF of \eqn{W} and \eqn{\Phi^{-1}} is the
+standard normal quantile function.
+\item For each endogenous regressor \eqn{P_k^*}, regress it on the normal
+scores of the exogenous regressors \eqn{X_1^*, \ldots, X_J^*}
+with intercept and keep the residuals
+\eqn{\hat{\varepsilon}_k} as the copula correction terms. This
+first-stage regression exploits the informational content of the
+exogenous regressors in a similar way to instrumental variable
+identification.
+\item Augment the structural model with \eqn{\hat{\varepsilon}_1, \ldots,
         \hat{\varepsilon}_K} as additional regressors and estimate the following using OLS:
-        \deqn{Y_i = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k + X_i' \beta
+\deqn{Y_i = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k + X_i' \beta
               + \sum_{k=1}^{K} \hat{\varepsilon}_{i,k} \gamma_k + \xi_i}
-        where \eqn{\gamma_k} is the coefficient of the copula correction
-        term \eqn{\hat{\varepsilon}_{i,k}} and \eqn{\xi_i} is the new
-        error term.
+where \eqn{\gamma_k} is the coefficient of the copula correction
+term \eqn{\hat{\varepsilon}_{i,k}} and \eqn{\xi_i} is the new
+error term.
 }
-
-\subsection{Bootstrap inference}{
-Bootstrap inference is performed by resampling the data with replacement.
-Degenerate bootstrap samples (e.g. singular design matrices or failed
-model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
 }
 
 \subsection{CDF Methods}{
@@ -124,14 +119,9 @@ using only successful bootstrap replications.
 
 \item{cdf="resc.ecdf"}{Rescaled empirical cdf \deqn{\hat{F}(x_i) = \frac{\text{rank}(x_i)}{n + 1}}.
    Keeps values strictly inside \eqn{(0,1)} without an arbitrary boundary constant.
-   Breitung et al. (2024) adopts this as their theoretical recommendation.
    Compared to "ecdf", the maximum value is  \eqn{\Phi^{-1}(n/(n+1))},
    which is considerably smaller in small samples (e.g., \eqn{\pm 2.8} for \eqn{n=400}).
-   For their method (\code{copulaBMW()}), the point estimates may
-   vary significantly when the sample size is small (e.g., n < 1000) because the
-   boundary observations exert high leverage in the augmented OLS regression.
-   They explain this finite-sample bias through their tail decay condition
-   (copulaBMW's Assumption A5).
+   
    }
 
 \item{cdf="ecdf"}{Standard empirical CDF with an endpoint adjustment. The minimum
@@ -155,19 +145,34 @@ It is recommended to use \code{cdf = "adj.ecdf"} for the best finite-sample
 performance (Liengaard et al. 2025).
 }
 
-\strong{Formula interface}
+\subsection{Parameter \code{formula}}{
 
-The \code{formula} argument follows a two-part notation separated by
-\code{|}. The first part specifies the structural model. The second part
-identifies the continuous endogenous regressors using \code{continuous()}:
+The \code{formula} argument follows a two part notation separated by \code{|}.
+The first part specifies the structural model (e.g. \code{y ~ X + P}).
+The second part identifies the continuous endogenous regressors:
 
-\preformatted{y ~ X + P | continuous(P)                          # one endo}
-\preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endo}
+\preformatted{y ~ X + P | P                       # one}
+\preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endo}
 
-At least one exogenous regressor should be present in the model.
 When no exogenous regressor is present, the correction terms reduce to
 the normal scores of each endogenous regressor directly, equivalent to
 the approach of Park and Gupta (2012).
+
+The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+in either part.
+}
+
+\subsection{Bootstrap inference}{
+Bootstrap inference is performed by resampling the data with replacement.
+Degenerate bootstrap samples (e.g. singular design matrices or failed
+model estimation) are discarded and resampled until the requested number
+of valid bootstrap replications is obtained.
+If the requested number cannot
+be obtained within 2 x \code{num.boots} attempts, bootstrapping stops with an
+error. The percentage of discarded
+samples is reported as a warning. Standard errors and confidence intervals
+are computed using only successful bootstrap replications.
+}
 }
 \examples{
 # -------------------------------------------------------------------
@@ -179,10 +184,10 @@ the approach of Park and Gupta (2012).
 # are correlated.
 # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 # -------------------------------------------------------------------
-data("dataCopula2sCOPECase1")
+data("dataCop2sCOPECase1")
 res1 <- copula2sCOPE(
-  y ~ P + X | continuous(P),
-  data      = dataCopula2sCOPECase1,
+  y ~ P + X | P,
+  data      = dataCop2sCOPECase1,
   cdf       = "adj.ecdf",
   num.boots = 1000
 )
@@ -197,10 +202,10 @@ summary(res1)
 # regressor X is normally distributed.
 # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 # -------------------------------------------------------------------
-data("dataCopula2sCOPECase2")
+data("dataCop2sCOPECase2")
 res2 <- copula2sCOPE(
-  y ~ P + X | continuous(P),
-  data      = dataCopula2sCOPECase2,
+  y ~ P + X | P,
+  data      = dataCop2sCOPECase2,
   cdf       = "adj.ecdf",
   num.boots = 1000
 )
@@ -216,10 +221,10 @@ summary(res2)
 # identification comes from the nonnormal exogenous regressor X.
 # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 # -------------------------------------------------------------------
-data("dataCopula2sCOPECase3")
+data("dataCop2sCOPECase3")
 res3 <- copula2sCOPE(
-  y ~ P + X | continuous(P),
-  data      = dataCopula2sCOPECase3,
+  y ~ P + X | P,
+  data      = dataCop2sCOPECase3,
   cdf       = "adj.ecdf",
   num.boots = 1000
 )
@@ -233,10 +238,6 @@ Two-Stage Copula Generated Regressor Approach. \emph{Journal of
 Marketing Research}, 62(4), 601-623.
 \doi{10.1177/00222437241296453}
 
-Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
-  Joint Estimation Using Copulas",
-  Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
-
 Becker, JM., Proksch, D., & Ringle, C.M. (2022) Revisiting Gaussian
 copulas to handle endogenous regressors. \emph{Journal of the Academy of
 Marketing Science}, 50, 46--66.
@@ -248,15 +249,23 @@ means of an adjusted estimator for the Gaussian copula approach.
 \emph{Journal of the Academy of Marketing Science}, 53(1), 279-299
 \doi{10.1007/s11747-024-01055-4}
 
-Breitung, J., Mayer, A., & Wied, D. (2024) Asymptotic properties of endogeneity
-corrections using nonlinear transformations. \emph{Econometrics Journal}, 27,
-362--383
-\doi{10.1093/ectj/utae002}
-
 Silverman, B.W. (1986). Density Estimation for Statistics and Data Analysis
 \doi{10.1201/9781315140919}
+
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+Joint Estimation Using Copulas",
+Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 }
 \seealso{
+[`vcov()`][vcov.rendo.boots()] for how the variance-covariance matrix is derived
+
+[`confint()`][confint.rendo.boots()] for how confidence intervals are derived
+
+\code{\link[REndo:dataCop2sCOPECase1]{dataCop2sCOPECase1},
+\link[REndo:dataCop2sCOPECase2]{dataCop2sCOPECase2},
+\link[REndo:dataCop2sCOPECase3]{dataCop2sCOPECase3}} for detailed
+information about the simulated datasets
+
 Other copula-based methods:
 \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}},
 \code{\link[=copulaBMW]{copulaBMW()}},

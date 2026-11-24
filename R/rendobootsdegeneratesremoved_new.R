@@ -2,7 +2,7 @@ doc_rendobootsdegeneratesremoved_return_list <- function() {
   doc_boots <- doc_rendoboots_return_list()
   doc_boots_removed <- c(
     n.boots.attempted = "\\item{\\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}",
-    n.boots.failed = "\\item{\\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}"
+    n.boots.failed = "\\item{\\code{n.boots.failed}}{The number of bootstrap samples discarded as degenerate (failed fit, non-finite coefs, or coefs of different length or names than original).}"
   )
 
   return(c(doc_boots, doc_boots_removed))
@@ -54,6 +54,8 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
   if (verbose) {
     message("Running ", num.boots, " bootstraps.")
     pb <- txtProgressBar(initial = 0, max = num.boots, style = 3)
+    # always close: regular exist & cancel (ctrl+c)
+    on.exit(close(pb), add = TRUE)
   }
 
   n <- nrow(data)
@@ -69,11 +71,22 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
   b <- 1 # the number of successful bootstrap replications
   failed <- 0 # the number of failed attempts
   attempt <- 0 # the number of total attempts
+  # prevent infinite sampling: at most 2x num.boots attempts (50% degenerates)
+  max.attempts <- 2 * num.boots
+  last.fail.reason <- NULL # why the last sample failed
 
   repeat {
     # stop repeating if successful B bootstrap have been drawn
     if (b > num.boots) {
       break
+    }
+
+    if (attempt >= max.attempts) {
+      # fmt: skip
+      stop(paste0(
+        "Bootstrapping stopped after reaching the maximum of ", max.attempts, " attempts (2 x num.boots): ",
+        failed, " samples were degenerate. Error of the last degenerate sample: ", last.fail.reason),
+        call. = FALSE)
     }
 
     attempt <- attempt + 1
@@ -85,21 +98,34 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
     # estimating
     fit.b <- try(fn.fit(data.b = data.b), silent = TRUE)
 
-    # taking into account only adequate draws
-    if (!inherits(fit.b, "try-error")) {
+    # taking into account only adequate draws (fail.reason is NULL if adequate)
+    # - did not throw any error
+    # - coefs: equal length and names (incl order)
+    # - coefs: no non-finite (NA/NaN/+-Inf etc from linear combinations)
+    fail.reason <- NULL
+    if (inherits(fit.b, "try-error")) {
+      fail.reason <- conditionMessage(attr(fit.b, "condition"))
+    } else if (length(coef(fit.b)) != length(coef.names)) {
+      fail.reason <- "Number of coefficients differs from the original fit (eg dropped factor level)."
+    } else if (!identical(names(coef(fit.b)), coef.names)) {
+      fail.reason <- "Coefficient names or their order differ from the original fit."
+    } else if (!all(is.finite(coef(fit.b)))) {
+      fail.reason <- "Coefficients are not finite."
+    }
+
+    if (is.null(fail.reason)) {
       boots[, b] <- coef(fit.b)
       b <- b + 1
 
       if (verbose) {
-        setTxtProgressBar(pb = pb, value = b)
+        # b-1: minus 1 because b has already been increased (b+1)
+        setTxtProgressBar(pb = pb, value = b - 1)
       }
     } else {
       failed <- failed + 1
+      # store failure reason here to use in max.attempts check
+      last.fail.reason <- fail.reason
     }
-  }
-
-  if (verbose) {
-    close(pb)
   }
 
   if (failed > 0) {
@@ -107,7 +133,9 @@ bootstrap_skip_degenerates <- function(fn.fit, data, num.boots, coef.names, verb
 
     warning(
       round(100 * fail.rate, 2),
-      "% of bootstrap samples were degenerate and discarded",
+      "% of bootstrap samples were degenerate and discarded. ",
+      "Error of the last degenerate sample: ",
+      last.fail.reason,
       call. = FALSE
     )
   }

@@ -7,31 +7,31 @@
 \method{summary}{rendo.copula.2scope.np}(object, ...)
 }
 \arguments{
-\item{object}{an object of class \code{rendo.copula.2scope.np}, a result of a call to \code{copula2sCOPEnp}.}
+\item{object}{an object of class \code{rendo.copula.2scope.np}, a result of a call to
+\code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}}.}
 
 \item{...}{ignored}
 }
 \description{
 \code{summary} method for a model of class \code{rendo.copula.2scope.np} resulting
-from fitting \code{copula2sCOPEnp()}.
+from fitting \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}}.
 }
 \details{
-In the first stage, \code{np::npcdistbw()} computes bandwidths for each endogenous
+In the first stage, \code{\link[np:npcdistbw]{np::npcdistbw()}} computes bandwidths for each endogenous
 regressor (which later feed the conditional CDF estimation). The summary reports one
 block per endo regressor, each a table of the selected bandwidths with the following
 columns:
-
-\describe{
-\item{Role}{Whether the variable is the dependent variable in the conditional CDF
-(endogenous) or an explanatory variable (exogenous)}
-\item{Type}{Type detected by \code{np::npcdistbw()}: One of \code{continuous},
-\code{ordered}, or \code{unordered}.}
-\item{Scale factor}{Continuous variables only: The bandwidth scale factor.}
-\item{Bandwidth}{Continuous variables only: The bandwidth in original units.}
-\item{Lambda}{Discrete variables only (\code{ordered}/\code{unordered}): The estimated bandwidth.}
-\item{Lambda Max}{Discrete variables only: The maximum possible value of \code{Lambda}.}
+\itemize{
+\item \strong{Role}: Whether the variable is the dependent variable in the conditional CDF
+(endogenous) or an explanatory variable (exogenous).
+\item \strong{Type}: Type detected by \code{\link[np:npcdistbw]{np::npcdistbw()}}: One of \code{continuous}, \code{ordered}, or
+\code{unordered}.
+\item \strong{Scale factor}: Continuous variables only: The bandwidth scale factor.
+\item \strong{Bandwidth}: Continuous variables only: The bandwidth in original units.
+\item \strong{Lambda}: Discrete variables only (\code{ordered}/\code{unordered}): The estimated bandwidth.
+\item \strong{Lambda Max}: Discrete variables only: The maximum possible value of \code{Lambda}.
 }
 }
 \seealso{
-\code{\link[np:npcdistbw]{np::npcdistbw}, \link{copula2sCOPEnp}}
+\code{\link[np:npcdistbw]{np::npcdistbw()}}, \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}}
 }

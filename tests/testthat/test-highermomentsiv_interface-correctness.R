@@ -2,11 +2,9 @@
 data("dataHigherMoments")
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Correctness - higherMomentsIV - Formula transformations")
 
 
 # Data sorting -----------------------------------------------------------------------------------------------------------------------
-context("Correctness - higherMomentsIV - Data sorting")
 
 test_that("Differently sorted data produces same results", {
   data.altered    <- dataHigherMoments
@@ -20,7 +18,6 @@ test_that("Differently sorted data produces same results", {
 })
 
 # Predict ----------------------------------------------------------------------------------------------------------------------------
-context("Correctness - higherMomentsIV - Predict")
 test_that("No newdata results in fitted values", {
   expect_silent(higher.1 <- higherMomentsIV(y~X1+X2+P|P|IIV(iiv=gp, g=x2, X1), data=dataHigherMoments, verbose=FALSE))
   expect_equal(predict(higher.1), fitted(higher.1))

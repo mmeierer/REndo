@@ -16,10 +16,7 @@ copula2sCOPEnp(
 \arguments{
 \item{formula}{A symbolic description of the model to be fitted. See the "Details" section for the exact notation.}
 
-\item{data}{A data.frame containing the data of all variables specified in the \code{formula}
-parameter. Variables classes must be set correctly before calling the function.
-Endogenous regressors must be \code{numeric} or \code{factor}. Exogenous regressors
-must be (\code{numeric}, \code{factor}, or \code{ordered}). Otherwise it will silently yield wrong results!}
+\item{data}{A data.frame containing the data of all parts specified in the formula parameter. Variable classes must be set correctly before calling the function. Endogenous regressors must be \code{numeric} or \code{ordered}. Exogenous regressors must be \code{numeric}, \code{factor}, or \code{ordered}.}
 
 \item{npcdistbw.args}{A named list of arguments which are passed to
 \code{\link[np]{npcdistbw}}. To tweak the bandwidth selection for the kernel
@@ -46,15 +43,16 @@ An object of class \code{rendo.copula.2scope.np} which is a list that contains:
 \item{\code{residuals}}{The structural residuals.}
 \item{\code{boots.params}}{The bootstrapped coefficients.}
 \item{\code{n.boots.attempted}}{The number of bootstrap iterations that were attempted.}
-\item{\code{n.boots.failed}}{The number of bootstrap iterations resulting in a failed fit.}
-\item{\code{bws}}{A named list with one \code{np::condbandwidth} object per endogenous
-    regressor (named accordingly), each used to estimate the conditional CDF
-    \eqn{\hat{F}(P_k \mid X)}.}
+\item{\code{n.boots.failed}}{The number of bootstrap samples discarded as degenerate (failed fit, non-finite coefs, or coefs of different length or names than original).}
+\item{\code{cdf}}{Always \code{NULL}: The conditional CDFs are estimated nonparametrically (see \code{condists}).}
+\item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{labels.endo}}{The term labels of the endogenous regressors.}
 \item{\code{labels.exo}}{The term labels of the exogenous regressors.}
 \item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}
+\item{\code{bws}}{A named list with one \code{np::condbandwidth} object per endogenous
+    regressor (named accordingly), each used to estimate the conditional CDF
+    \eqn{\hat{F}(P_k \mid X)} (shown in \code{summary()}).}
 \item{\code{first.stage.frames}}{List of first-stage model frames, one per endogenous regressor (named after the respective endo regressor).}
-\item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{condists}}{A named list with one \code{np::condistribution}
     object per endogenous regressor (named accordingly).
     Each item is the output of \code{np::npcdist()}: An estimate of the conditional CDF \eqn{\hat{F}(P_k \mid X)}.}
@@ -74,7 +72,7 @@ the Gaussian copula assumption on the regressor-error dependence structure.
 the exogenous control variables to smooth the discrete conditional CDF.
 
 When the endogenous regressor \eqn{P} is independent of all exogenous regressors \eqn{X},
-the conditional CDF collapses to the marginal CDF, \eqn{\hat{F})(P|X) = \hat{F}(P)} and the
+the conditional CDF collapses to the marginal CDF, \eqn{\hat{F}(P|X) = \hat{F}(P)} and the
 method then reduces to the Park and Gupta (2012) copula correction.
 }
 \details{
@@ -89,7 +87,7 @@ where \eqn{i=1, \ldots, n } indexes observations,
 \eqn{P_{i,k}} are endogenous regressors (continuous or discrete) that may be correlated
 with the structural error \eqn{\varepsilon_i},
 \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
-\eqn{\mu, \alpha_k, \beta} are structural model paramters.
+\eqn{\mu, \alpha_k, \beta} are structural model parameters.
 }
 
 \subsection{Methodology}{
@@ -125,41 +123,52 @@ It does not indicate misspecification.
 
 \subsection{Bandwidth Selection}{
 
-The accuracy of the copula correction terms depend on the quality of the nonparametric
+The accuracy of the copula correction terms depends on the quality of the nonparametric
 conditional CDF estimate, which depends on the choice of the bandwidth. If a bandwidth is
 too small, this could lead to overfitting of the conditional CDF. Likewise, if it is too large,
 this could result in oversmoothing and introducing bias, leading to underfitting (Hu et al. 2025).
-However, no closed-form rule-of-thumb bandwidth exists for conditional CDF estimator because these rules
+However, no closed-form rule-of-thumb bandwidth exists for the conditional CDF estimator because these rules
 assume a known marginal distribution, yet this is an assumption that the 2sCOPEnp method relaxes. The default
-bandwidth is therefore selected through least-squares cross-validation (Li and Racine 2013) which is
+bandwidth is therefore selected through least-squares cross-validation (Li, Lin and Racine 2013) which is
 data-driven and distribution-free.
 
 The bandwidth is estimated using \link[np:npcdistbw]{\code{np::npcdistbw()}} with its
 default settings. To customize this, you may pass your own arguments via
 \code{npcdistbw.args}. Together with the \code{bws} parameter, this can be used to
 iteratively refine the bandwidth. See examples.
+
+The selected bandwidths are reported by \code{summary()}, see
+\code{\link[=summary.rendo.copula.2scope.np]{summary.rendo.copula.2scope.np()}} for what the reported columns mean.
 }
 
 \subsection{Parameter \code{bws}}{
 
 If given, the items in \code{bws} will serve as the starting points for the bandwidth
 estimation of the respective endogenous regressor, by passing them into
-\code{np::npcdistbw(bws=bws[[p]])}. This allows to iteratively refine the bandwidth
+\code{np::npcdistbw(bws=bws[[p]])}. This allows iteratively refining the bandwidth
 search by passing the result of a previous fit. See examples.
+
+If both \code{bws} and \code{bwmethod} in \code{npcdistbw.args} are given,
+\code{bwmethod} must match the method used to estimate \code{bws}. Otherwise an
+error is raised, because \code{np::npcdistbw()} would silently keep the method of
+\code{bws}.
+
+If \code{npcdistbw.args} contains \code{bandwidth.compute = FALSE}, \code{bws} is
+required and used as-is, without further estimation.
 
 For each endogenous term, \code{bws} must contain a
 \code{condbandwidth} object for the conditional CDF \code{(single endo) ~ (all exo)}.
-\code{bws} must be a named list, with each each element named after the corresponding
+\code{bws} must be a named list, with each element named after the corresponding
 endogenous terms.
-The bandwidths must be estimated using the default \code{np::npcdistbw(xdat=,ydat=)}
-interface, not the formula interface because this will break downstream usage in
-\code{np::npcdist()}.
+Each element must be estimated for exactly this endogenous term and with the exogenous
+regressors in the same order as in the formula because the bandwidths are applied by
+position.
 }
 
 \subsection{Parameter \code{formula}}{
 
 The \code{formula} argument follows a two part notation separated by \code{|}.
-The first part specifies the structural model (e.g \code{y ~ X + P}).
+The first part specifies the structural model (e.g. \code{y ~ X + P}).
 The second part lists the endogenous regressors:
 
 \preformatted{y ~ X + P | P                       # endogenous P}
@@ -167,7 +176,7 @@ The second part lists the endogenous regressors:
 
 At least one exogenous regressor must be present in the model for the
 nonparametric conditional CDF estimation to be feasible.
-The formula may not contain interaction term (\code{A:B}) in either part because these
+The formula may not contain interaction terms (\code{A:B}) in either part because these
 are only expanded by \code{model.matrix()} but the method uses \code{model.frame()}
 output to preserve factor structure for the kernel.
 }
@@ -176,9 +185,12 @@ output to preserve factor structure for the kernel.
 Bootstrap inference is performed by resampling the data with replacement.
 Degenerate bootstrap samples (e.g. singular design matrices or failed
 model estimation) are discarded and resampled until the requested number
-of valid bootstrap replications is obtained. The percentage of discarded
-samples is reported as a warning. Confidence intervals are computed
-using only successful bootstrap replications.
+of valid bootstrap replications is obtained.
+If the requested number cannot
+be obtained within 2 x \code{num.boots} attempts, bootstrapping stops with an
+error. The percentage of discarded
+samples is reported as a warning. Standard errors and confidence intervals
+are computed using only successful bootstrap replications.
 }
 
 Note that the bandwidth is fit on the full \code{data} and then re-used across
@@ -192,7 +204,7 @@ as conditional on the estimated bandwidths.
 If the bootstrap standard errors of the endogenous regressor coefficients are more
 than 6 times larger than the corresponding OLS standard errors, this may indicate
 near-multicollinearity between the copula correction term and the original regressors,
-which may suggest a potential identification issue. (Hu et al. 2025, section 3.5)
+which may suggest a potential identification issue (Hu et al. 2025, section 3.5).
 }
 \examples{
 
@@ -209,10 +221,12 @@ which may suggest a potential identification issue. (Hu et al. 2025, section 3.5
 # the mean-dependence assumption holds.
 # True values: mu = 1, alpha = 1 (P), beta = 2 (X).
 #--------------------------------------------------------------
-data("dataCopula2sCOPEnpCont")
+data("dataCop2sCOPEnpCont")
 res1 <- copula2sCOPEnp(
  y ~ P + X | P,
-  data = dataCopula2sCOPEnpCont)
+  data = dataCop2sCOPEnpCont)
+# also shows the selected bandwidths, see ?summary.rendo.copula.2scope.np
+summary(res1)
 
 #--------------------------------------------------------------
 # Example 2: Binary endogenous regressor
@@ -223,10 +237,10 @@ res1 <- copula2sCOPEnp(
 # the smooth conditional CDF.
 # True values: mu = 0, alpha = 1 (P), beta = 2 (X).
 #--------------------------------------------------------------
-data("dataCopula2sCOPEnpBi")
+data("dataCop2sCOPEnpBi")
 res2 <- copula2sCOPEnp(
   y ~ P + X | P,
-  data = dataCopula2sCOPEnpBi
+  data = dataCop2sCOPEnpBi
 )
 summary(res2)
 
@@ -239,16 +253,16 @@ summary(res2)
 #X3 is ordered factor exogenous (3 levels)
 
 # True values: mu = 1, alpha1 = -1 (P1), alpha2 = 1 (P2),
-#              beta1 = 2 (X1), beta2 = 0.5, beta3 = 1 (X3)
+#              beta1 = 2 (X1), beta2 = 0.5 (X2), beta3 = 1 (X3)
 # note that P2.Q may have small significant coefficient. This is expected
-#when there is stronger endogeneity with discreted ordered regressors.
+#when there is stronger endogeneity with discrete ordered regressors.
 
 #--------------------------------------------------------------
 
-data("dataCopula2sCOPEnpMulti")
+data("dataCop2sCOPEnpMulti")
 res3 <- copula2sCOPEnp(
   y ~ P1 + P2 + X1 + X2 + X3 | P1 + P2,
-  data = dataCopula2sCOPEnpMulti
+  data = dataCop2sCOPEnpMulti
 )
 summary(res3)
 
@@ -275,7 +289,7 @@ res4 <- copula2sCOPEnp(
   nmulti = 25,
   itmax = 50000
  ),
- data = dataCopula2sCOPEnpCont)
+ data = dataCop2sCOPEnpCont)
 
 
 #--------------------------------------------------------------
@@ -289,13 +303,9 @@ res4 <- copula2sCOPEnp(
 res.loosely <- copula2sCOPEnp(
  y ~ X + P | P,
  npcdistbw.args = list(
-   # alternative: Directly calculate 'rule-of-thumb’ bandwidth.
-   # Performs no search (other params irrelevant)
-   # bwmethod = "normal-reference",
-
    # depending on data:
    #  Get close quickly (low 'nmulti')
-   #  Avoid local minimas (high 'nmulti')
+   #  Avoid local minima (high 'nmulti')
    # np::npcdistbw() still recommends multiple restarts
    # for exploratory search
    nmulti = 3,
@@ -304,7 +314,7 @@ res.loosely <- copula2sCOPEnp(
    ftol=.01,
    tol=.01
  ),
- data = dataCopula2sCOPEnpCont,
+ data = dataCop2sCOPEnpCont,
  num.boots = 2
 )
 
@@ -323,7 +333,7 @@ res.final <- copula2sCOPEnp(
    # low as starting close to optimum
    nmulti = 2
  ),
- data = dataCopula2sCOPEnpCont
+ data = dataCop2sCOPEnpCont
 )
 
 #--------------------------------------------------------------
@@ -336,6 +346,10 @@ Hu, X., Qian, Y., and Xie, H. (2025). Correcting endogeneity via
 instrument-free two-stage nonparametric copula control functions.
 NBER Working Paper No. 33607.
 \url{http://www.nber.org/papers/w33607}
+
+Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
+  Joint Estimation Using Copulas",
+  Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
 
 Li, Q. and Racine, J. S. (2008). Nonparametric estimation of conditional CDF and
 quantile functions with mixed categorical and continuous data.
@@ -351,14 +365,19 @@ Hayfield, T. and Racine, J. S. (2008). Nonparametric econometrics: The np packag
 \doi{10.18637/jss.v027.i05}
 }
 \seealso{
-\code{\link[REndo:summary.rendo.copula.2scope.np]{summary}}
+[`vcov()`][vcov.rendo.boots()] for how the variance-covariance matrix is derived
+
+[`confint()`][confint.rendo.boots()] for how confidence intervals are derived
+
+\code{\link[=summary.rendo.copula.2scope.np]{summary()}} for the summary, incl. the
+table of the selected bandwidths
 
 \code{\link[np:npcdistbw]{npcdistbw}} for possible elements of parameter
 \code{npcdistbw.args}.
 
-\code{\link[REndo:dataCopula2sCOPEnpCont]{dataCopula2sCOPEnpCont},
-\link[REndo:dataCopula2sCOPEnpBi]{dataCopula2sCOPEnpBi},
-\link[REndo:dataCopula2sCOPEnpMulti]{dataCopula2sCOPEnpMulti}} for detailed
+\code{\link[REndo:dataCop2sCOPEnpCont]{dataCop2sCOPEnpCont},
+\link[REndo:dataCop2sCOPEnpBi]{dataCop2sCOPEnpBi},
+\link[REndo:dataCop2sCOPEnpMulti]{dataCop2sCOPEnpMulti}} for detailed
 information about the simulated datasets
 
 Other copula-based methods:

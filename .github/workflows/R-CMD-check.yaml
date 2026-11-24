@@ -2,7 +2,13 @@
 
 name: R-CMD-check
 
-on: push
+on:
+  # dont run on push, otherwise the build cache cannot be used on the feature branch
+  push:
+    branches:
+      - development
+      - master
+  pull_request:
 
 permissions: read-all
 
@@ -19,7 +25,7 @@ jobs:
           - {os: macos-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-          - {os: macos-latest,   r: 'devel'}
+          # - {os: macos-latest,   r: 'devel'} # no binaries, builds fail (like r-lib templates)
           - {os: windows-latest, r: 'devel'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
 
@@ -27,9 +33,13 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      # parallel tests only on CI (not in DESCRIPTION, so CRAN stays sequential)
+      TESTTHAT_PARALLEL: true
+      TESTTHAT_CPUS: 4
+      OPENBLAS_NUM_THREADS: 1 # avoid BLAS threads oversubscription
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -48,18 +58,3 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-
-        # - name: Check
-        #   env:
-        #     _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        #   run: |
-        #     options(crayon.enabled = TRUE)
-        #     rcmdcheck::rcmdcheck(args = c("--no-tests", "--as-cran", "--no-manual"), error_on = "warning", check_dir = "check")
-        #   shell: Rscript {0}
-
-        # - name: Upload check results
-        #   if: failure()
-        #   uses: actions/upload-artifact@main
-        #   with:
-        #     name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-        #     path: check

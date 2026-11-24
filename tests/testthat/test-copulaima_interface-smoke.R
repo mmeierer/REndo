@@ -5,107 +5,59 @@ data("dataCopIMAContExo")
 data("dataCopIMAMultiEndo")
 data("dataCopIMABinExo")
 
-# Works out of the box --------------------------------------------------------------
-# this also checks running with verbose=T
-test_that("Works out of the box", {
-  expect_no_error(capture_output(
-    copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
-      data = dataCopIMAContExo
-    )
-  ))
-})
+# Setup --------------------------------------------------------------------------------
+setup.smoke <- list(
+  method = copulaIMA,
+  fn = fit_ima_fast,
+  data = dataCopIMAContExo,
+  formula = y ~ X + P - 1 | P,
+  label = "copulaIMA"
+)
 
+# Defaults -----------------------------------------------------------------------------
+test_smoke_out_of_the_box(setup = setup.smoke)
+
+test_smoke_verbose(setup = setup.smoke)
 
 # Specifications for smoke tests ----------------------------------------------------
 # Specs vary along three dimensions:
-# - Intercept: with vs without (including minimal no-intercept-no-exo model)
-# - Exogenous regressors: continuous, binary, or none
+# - Intercept: with vs without
+# - Exogenous regressors: continuous, or binary
 # - Endogenous regressors: single vs multiple
 # Each spec is crossed with all 4 cdf options
 
 specs <- list(
   "no intercept, continuous exo, single endo" = list(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMAContExo
   ),
   "with intercept, continuous exo, single endo" = list(
-    formula = y ~ X + P | continuous(P),
+    formula = y ~ X + P | P,
     data = dataCopIMAContExo
   ),
   "no intercept, binary exo, single endo" = list(
-    formula = y ~ X + P - 1 | continuous(P),
+    formula = y ~ X + P - 1 | P,
     data = dataCopIMABinExo
   ),
-  "with intercept, no exo, multiple endo" = list(
-    formula = y ~ P1 + P2 | continuous(P1, P2),
+  "with intercept, continuous exo, multiple endo" = list(
+    formula = y ~ X + P1 + P2 | P1 + P2,
     data = dataCopIMAMultiEndo
   ),
-  "with intercept, no exo, single endo" = list(
-    formula = y ~ P1 | continuous(P1),
-    data = dataCopIMAMultiEndo
-  ),
-  "no intercept, no exo, single endo (minimal)" = list(
-    formula = y ~ P1 - 1 | continuous(P1),
+  "no intercept, continuous exo, multiple endo" = list(
+    formula = y ~ X + P1 + P2 - 1 | P1 + P2,
     data = dataCopIMAMultiEndo
   )
 )
 
-cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+test_smoke_all_cdfs(setup = setup.smoke, specs = specs)
 
-expect_no_error_ignore_boot_warn <- function(expr) {
-  expect_no_error(suppress_lowboots_warning(expr))
-}
+# Formula ------------------------------------------------------------------------------
+test_smoke_formula_edge_cases(
+  setup = setup.smoke,
+  cases = fixture_ima_formula_edge_cases()
+)
 
-# specs x cdf ----------------------------------------------------------------------
-test_that("copulaIMA runs across specs and cdf options", {
-  for (spec_name in names(specs)) {
-    for (cdf in cdfs) {
-      res <- expect_no_error_ignore_boot_warn(
-        copulaIMA(
-          formula = specs[[spec_name]]$formula,
-          data = specs[[spec_name]]$data,
-          cdf = cdf,
-          verbose = FALSE,
-          num.boots = 10
-        )
-      )
-      expect_false(anyNA(fitted(res)))
-      expect_false(anyNA(residuals(res)))
-      expect_false(anyNA(coef(res)))
-      expect_false(anyNA(vcov(res)))
-      expect_false(anyNA(res$boots.params))
-    }
-  }
-})
+# Data ---------------------------------------------------------------------------------
+test_smoke_na_irrelevant_col(setup = setup.smoke)
 
-# small sample ---------------------------------------------------------------------
-test_that("copulaIMA runs on small sample", {
-  small_data <- dataCopIMAContExo[1:50, ]
-  expect_no_error_ignore_boot_warn(
-    copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
-      data = small_data,
-      cdf = "adj.ecdf",
-      verbose = FALSE,
-      num.boots = 10
-    )
-  )
-})
-
-
-# S3 methods -----------------------------------------------------------------------
-test_that("S3 methods print and summary run without error", {
-  res <- expect_warning(
-    copulaIMA(
-      formula = y ~ X + P - 1 | continuous(P),
-      data = dataCopIMAContExo,
-      verbose = FALSE,
-      num.boots = 10
-    ),
-    regexp = "recommended to run 1000"
-  )
-
-  expect_no_error(capture_output(print(res)))
-  expect_no_error(capture_output(print(summary(res))))
-})
+test_smoke_small_sample(setup = setup.smoke)

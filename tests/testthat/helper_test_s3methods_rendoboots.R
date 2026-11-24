@@ -34,7 +34,7 @@ test.s3methods.rendoboots <- function(res.model, input.form, function.std.data, 
 
 
   test_that("rendo.boots object structure", {
-    expect_is(res.model, "rendo.boots")
+    expect_s3_class(res.model, "rendo.boots")
     expect_true(is.list(res.model))
     expect_true("boots.params" %in% names(res.model))
   })
@@ -42,15 +42,15 @@ test.s3methods.rendoboots <- function(res.model, input.form, function.std.data, 
 
   test_that("summary() object structure, boots part", {
     expect_silent(res.sum <- summary(res.model))
-    expect_is(res.sum, "summary.rendo.boots")
+    expect_s3_class(res.sum, "summary.rendo.boots")
     expect_true(is.list(res.sum))
     expect_true(all(c("call", "names.main.coefs", "coefficients", "num.boots", "vcov") %in%
                       names(res.sum)))
-    expect_is(res.sum$call, "call")
-    expect_is(res.sum$names.main.coefs, "character")
-    expect_is(res.sum$num.boots, "integer")
-    expect_is(res.sum$coefficients, "matrix")
-    expect_is(res.sum$vcov, "matrix")
+    expect_true(is.call(res.sum$call))
+    expect_type(res.sum$names.main.coefs, "character")
+    expect_type(res.sum$num.boots, "integer")
+    expect_true(is.matrix(res.sum$coefficients))
+    expect_true(is.matrix(res.sum$vcov))
   })
 
 

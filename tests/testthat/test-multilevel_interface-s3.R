@@ -3,7 +3,6 @@ data("dataMultilevelIV")
 f.multilevel.L3 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 | CID) + (1 | SID) | endo(X15)
 f.multilevel.L2 <- y ~ X11 + X12 + X13 + X14 + X15 + X21 + X22 + X23 + X24 + X31 + X32 + X33 + (1 | SID) | endo(X15)
 
-context("S3methods - multilevelIV - S3methods")
 expect_silent(res.ml.L3 <- multilevelIV(formula = f.multilevel.L3, data = dataMultilevelIV, verbose = FALSE))
 expect_silent(res.ml.L2 <- multilevelIV(formula = f.multilevel.L2, data = dataMultilevelIV, verbose = FALSE))
 
@@ -100,7 +99,7 @@ names.coef <- c("(Intercept)","X11","X12","X13","X14","X15","X21","X22","X23","X
 
 test_that("nobs", {
   expect_silent(res.nobs <- nobs(res.ml.L3))
-  expect_is(res.nobs, "integer")
+  expect_type(res.nobs, "integer")
   expect_equal(res.nobs, nrow(dataMultilevelIV))
 })
 

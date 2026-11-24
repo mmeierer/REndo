@@ -13,12 +13,13 @@
 #' that at least one exogenous regressor is non-normally distributed. In that case, the identification
 #' would then come from the non-normal exogenous regressor instead of the endogenous regressor itself.
 #'
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}.
 #' @template template_param_formuladataverbose
 #' @template template_param_cdf
 #' @template template_param_numboots
 #'
 #' @details
-#' \strong{Model}
+#' ## Model
 #'
 #' Consider the structural regression model with \eqn{K} endogenous regressors:
 #'
@@ -31,7 +32,7 @@
 #' \eqn{X_i} is a vector of exogenous regressors uncorrelated with \eqn{\varepsilon_i}, and
 #' \eqn{\mu, \alpha_k, \beta} are the structural model parameters.
 #'
-#' \strong{Methodology}
+#' ## Methodology
 #'
 #' 2sCOPE is an augmented OLS estimator which can be described in the following 3 steps
 #' (Yang et al., 2025):
@@ -58,33 +59,38 @@
 #'         error term.
 #' }
 #'
-#' @template template_text_details_bootsdegenerates
-#'
 #' @template template_text_details_cdfmethods
 #'
 #' @details
-#' \strong{Formula interface}
+#' ## Parameter \code{formula}
+#' The \code{formula} argument follows a two part notation separated by \code{|}.
+#' The first part specifies the structural model (e.g. \code{y ~ X + P}).
+#' The second part identifies the continuous endogenous regressors:
 #'
-#' The \code{formula} argument follows a two-part notation separated by
-#' \code{|}. The first part specifies the structural model. The second part
-#' identifies the continuous endogenous regressors using \code{continuous()}:
+#' \preformatted{y ~ X + P | P                       # one}
+#' \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2) # multiple endo}
 #'
-#' \preformatted{y ~ X + P | continuous(P)                          # one endo}
-#' \preformatted{y ~ X + P1 + P2 | continuous(P1) + continuous(P2)  # two endo}
-#'
-#' At least one exogenous regressor should be present in the model.
 #' When no exogenous regressor is present, the correction terms reduce to
 #' the normal scores of each endogenous regressor directly, equivalent to
 #' the approach of Park and Gupta (2012).
 #'
+#' The formula may not contain interaction terms (e.g. \code{X:P} or \code{X*P})
+#' in either part.
+#'
+#' @template template_text_details_bootsdegenerates
 #'
 #' @template template_references_yang2025
-#' @template template_references_parkgupta2012
 #' @template template_param_cdf_references
 #'
-#' @eval doc_rendocopula2scope_return()
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.2scope")
 #'
 #' @family copula-based methods
+#' @template template_seealso_copula2stage
+#'
+#' @seealso \code{\link[REndo:dataCop2sCOPECase1]{dataCop2sCOPECase1},
+#' \link[REndo:dataCop2sCOPECase2]{dataCop2sCOPECase2},
+#' \link[REndo:dataCop2sCOPECase3]{dataCop2sCOPECase3}} for detailed
+#' information about the simulated datasets
 #'
 #' @examples
 #' # -------------------------------------------------------------------
@@ -96,10 +102,10 @@
 #' # are correlated.
 #' # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 #' # -------------------------------------------------------------------
-#' data("dataCopula2sCOPECase1")
+#' data("dataCop2sCOPECase1")
 #' res1 <- copula2sCOPE(
-#'   y ~ P + X | continuous(P),
-#'   data      = dataCopula2sCOPECase1,
+#'   y ~ P + X | P,
+#'   data      = dataCop2sCOPECase1,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
 #' )
@@ -114,10 +120,10 @@
 #' # regressor X is normally distributed.
 #' # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 #' # -------------------------------------------------------------------
-#' data("dataCopula2sCOPECase2")
+#' data("dataCop2sCOPECase2")
 #' res2 <- copula2sCOPE(
-#'   y ~ P + X | continuous(P),
-#'   data      = dataCopula2sCOPECase2,
+#'   y ~ P + X | P,
+#'   data      = dataCop2sCOPECase2,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
 #' )
@@ -133,16 +139,17 @@
 #' # identification comes from the nonnormal exogenous regressor X.
 #' # True values: mu = 1, alpha = 1 (P), beta = -1 (X).
 #' # -------------------------------------------------------------------
-#' data("dataCopula2sCOPECase3")
+#' data("dataCop2sCOPECase3")
 #' res3 <- copula2sCOPE(
-#'   y ~ P + X | continuous(P),
-#'   data      = dataCopula2sCOPECase3,
+#'   y ~ P + X | P,
+#'   data      = dataCop2sCOPECase3,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
 #' )
 #' summary(res3)
 #' }
 #'
+#' @md
 #' @export
 #' @importFrom stats coef terms
 #' @importFrom Formula as.Formula
@@ -155,38 +162,45 @@ copula2sCOPE <- function(
 ) {
   cl <- match.call()
 
-  # input checks
-  check_err_msg(checkinput_copulashared_formula(formula))
-  check_err_msg(checkinput_copulashared_data(data))
-  check_err_msg(checkinput_copulashared_dataVSformula(data = data, formula = formula))
-  check_err_msg(checkinput_copulashared_cdf(
-    cdf,
-    allowed.cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  # Input checks -----------------------------------------------------------------------
+  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  check_err_msg(checkinput_copula2stage_data_basics(data))
+
+  # - >= 1 endogenous regressor
+  # - >= 0 exogenous regressor
+  # - no interactions
+  # - endogenous: numeric
+  # - exogenous: any
+  check_err_msg(checkinput_copula2stage_formula_data(
+    formula = formula,
+    data = data,
+    min.num.exo = 0, # may have no exo regressor, resulting in warning
+    allow.interactions = FALSE,
+    allow.constant.regressors = FALSE,
+    warn.low.card.endo = TRUE,
+    allowed.classes.endo = "numeric",
+    allowed.classes.exo = NULL # allows any
   ))
-  check_err_msg(checkinput_copulashared_numboots(num.boots))
-  check_err_msg(checkinput_copulashared_verbose(verbose))
 
-  cdf <- match.arg(cdf, choices = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"))
+  check_err_msg(checkinput_copula2stage_cdf(cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
 
-  F.formula <- Formula::as.Formula(formula)
-  names.endo.regs <- formula_readout_special(
-    F.formula = F.formula,
-    name.special = "continuous",
-    from.rhs = 2,
-    params.as.chars.only = TRUE
-  )
+  # Fit original data ------------------------------------------------------------------
+
+  cdf <- match.arg(cdf, choices = allowed.cdfs)
+
+  F.formula <- as.Formula(formula)
+  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
+  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
+  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   # Warning the user to use copulaCorrection() (Park and Gupta 2012)
   # if there is no exo regressors. 2sCOPE method is designed for correlated
   # endo and exo regressors. Without an exo regressor, the correction term
   # is just equivalent to the copulaCorrection() approach
 
-  # Use labels(terms()) to also trigger when exogenous regs are transformed (like ~a+log(b) | log(b))
-  # because names.endo.regs="log(b)" but all.vars(formula)="b"
-  rhs1.vars <- labels(terms(F.formula, rhs = 1, lhs = 0))
-  exo.vars <- rhs1.vars[!rhs1.vars %in% names.endo.regs]
-
-  if (length(exo.vars) == 0) {
+  if (length(labels.exo) == 0) {
     warning(
       "No exogenous regressors found. The 2sCOPE method is designed for ",
       "settings with correlated endogenous and exogenous regressors. ",
@@ -198,49 +212,53 @@ copula2sCOPE <- function(
     )
   }
 
-  # Fitting with 2sCOPE
   if (verbose) {
     message(
       "Fitting 2sCOPE model with ",
-      length(names.endo.regs),
+      length(labels.endo),
       " endogenous regressors."
     )
   }
-  fit <- copula2sCOPE_fit(F.formula = F.formula, data = data, cdf = cdf)
+  fit <- copula2scope_fit(
+    F.formula = F.formula,
+    data = data,
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    cdf = cdf
+  )
 
   # Bootstrapping ----------------------------------------------------------------------
 
   fn.fit.boots <- function(data.b) {
-    return(copula2sCOPE_fit(F.formula = F.formula, data = data.b, cdf = cdf))
+    fit.b <- copula2scope_fit(
+      F.formula = F.formula,
+      data = data.b,
+      labels.endo = labels.endo,
+      labels.exo = labels.exo,
+      cdf = cdf
+    )
+    return(fit.b$res.lm.augmented)
   }
 
   res.boots <- bootstrap_skip_degenerates(
     fn.fit = fn.fit.boots,
     data = data,
     num.boots = num.boots,
-    coef.names = names(coef(fit)),
+    coef.names = names(coef(fit$res.lm.augmented)),
     verbose = verbose
-  )
-
-  # Structural residuals --------------------------------------------------------------
-
-  l.fitted.resid <- copula_compute_structural_fitted_residuals(
-    res.lm.aug = fit,
-    names.aux.regs = grep("_cop$", names(coef(fit)), value = TRUE)
   )
 
   # Return object ----------------------------------------------------------------------
 
-  return(new_rendo_copula2sCOPE(
+  return(new_rendo_copula2stage(
     call = cl,
     F.formula = F.formula,
-    res.lm.augmented = fit,
-    fitted.values = l.fitted.resid$fitted.values,
-    residuals = l.fitted.resid$residuals,
-    boots.params = res.boots$boots.params,
-    n.boots.attempted = res.boots$n.attempted,
-    n.boots.failed = res.boots$n.failed,
+    res.lm.augmented = fit$res.lm.augmented,
+    res.boots = res.boots,
     cdf = cdf,
-    names.endo.regs = names.endo.regs
+    labels.endo = labels.endo,
+    labels.exo = labels.exo,
+    labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.2scope"
   ))
 }

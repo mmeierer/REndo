@@ -1,4 +1,3 @@
-## code to prepare dataCopIMABinExo dataset
 ## Generate dataCopIMABinExo ( Section 4.1, eq. 4.4 - binary exogenous regressors)
 set.seed(123)
 n <- 1000
@@ -15,16 +14,16 @@ Sigma <- matrix(c(1,   0.5, 0.5,
 latent <- MASS::mvrnorm(n = n, mu = c(0, 0, 0), Sigma = Sigma)
 Pstar  <- latent[, 1]
 Xstar  <- latent[, 2]
-xistar <- latent[, 3]
+epsstar <- latent[, 3]
 # Endogenous regressor (non-normal)
 # P_t = Psi(P*_t) + 0.5
 P <- pnorm(Pstar) + 0.5
 # Scenario 2: binary exogenous regressors from eq. 4.4
 X <- as.numeric(Xstar >= 0)
-xi <- xistar #normal
-#From eq. 4.1 the outcome Y_t = X_t beta + P_t alpha + Xi_t, t = 1,..., T.
+eps <- epsstar #normal
+#From eq. 4.1 the outcome Y_t = X_t beta + P_t alpha + eps_t, t = 1,..., T.
 #no intercept
-y <- beta * X + alpha * P + xi
+y <- beta * X + alpha * P + eps
 # Final dataset
 dataCopIMABinExo <- data.frame( y = y,
                                 X = X,

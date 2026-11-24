@@ -1,3 +1,4 @@
+skip_on_cran()
 set.seed(42)
 
 # Required data ---------------------------------------------------------------------
@@ -8,76 +9,44 @@ data("dataCopBMWMultiEndo")
 data("dataCopCont")
 
 
+# Setup --------------------------------------------------------------------------------
+setup.correctness <- list(
+  method = copulaBMW,
+  fn = fit_bmw_fast,
+  data = dataCopBMW,
+  formula = y ~ X + P | P,
+  label = "copulaBMW"
+)
+
 # Invariance ---------------------------------------------------------------------------
-test_that("Differently sorted data produces same coefs", {
-  res.sorted <- fit_bmw_fast(
-    formula = y ~ X + P | P,
-    data = dataCopBMW[order(dataCopBMW$y), ]
-  )
-  res.rev <- fit_bmw_fast(
-    formula = y ~ X + P | P,
-    data = dataCopBMW[rev(order(dataCopBMW$y)), ]
-  )
-  expect_equal(coef(res.sorted), coef(res.rev))
-})
+test_correctness_invariance_row_order(setup = setup.correctness)
 
-test_that("Formula order does not impact coefs", {
-  res.px <- fit_bmw_fast(formula = y ~ P + X | P, data = dataCopBMW)
-  res.xp <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  expect_equal(sort(coef(res.px)), sort(coef(res.xp)))
-})
+test_correctness_invariance_regressor_order(
+  setup = setup.correctness,
+  formula.reordered = y ~ P + X | P
+)
 
-test_that("Dot yields same result as explicit", {
-  res.dot <- fit_bmw_fast(formula = y ~ . | P, data = dataCopBMW)
-  res.explicit <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  expect_equal(coef(res.dot), coef(res.explicit))
-})
+test_correctness_invariance_duplicate_regressor(
+  setup = setup.correctness,
+  formula.duplicate = y ~ X + X + P | P
+)
 
-test_that("Duplicate regressor yields same result as single", {
-  res.normal <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  res.dup <- fit_bmw_fast(formula = y ~ X + X + P | P, data = dataCopBMW)
-  expect_equal(coef(res.dup), coef(res.normal))
-})
+test_correctness_invariance_dot(
+  setup = setup.correctness,
+  formula.dot = y ~ . | P
+)
 
-test_that("Intercept is respected", {
-  res.with <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW)
-  res.without <- fit_bmw_fast(formula = y ~ X + P - 1 | P, data = dataCopBMW)
-  expect_true("(Intercept)" %in% names(coef(res.with)))
-  expect_false("(Intercept)" %in% names(coef(res.without)))
-  expect_equal(length(coef(res.with)), length(coef(res.without)) + 1)
-})
+# Formula specifications ------------------------------------------------------
+test_correctness_formula_intercept(setup = setup.correctness)
+
+test_correctness_formula_transformations_endo_exo(setup = setup.correctness)
 
 
 # Internal consistency --------------------------------------------------------------
-test_that("Formula edge cases", {
-  df.bt <- dataCopBMW
-  df.bt$`P 1` <- df.bt$P
-  df.bt$`X 1` <- df.bt$X
-
-  df.multi.bt <- dataCopBMWMultiEndo
-  df.multi.bt$`P 1` <- df.multi.bt$P1
-
-  cases <- list(
-    "plain" = list(formula = y ~ X + P | P, data = dataCopBMW),
-    "dot in rhs1" = list(formula = y ~ . | P, data = dataCopBMW),
-    "backticks in endo" = list(formula = y ~ `P 1` + X | `P 1`, data = df.bt),
-    "backticks in exo" = list(formula = y ~ P + `X 1` | P, data = df.bt),
-    "transformed endo" = list(
-      formula = y ~ log(P) + X | log(P),
-      data = dataCopBMW
-    ),
-    "multiple endo with backtick" = list(
-      formula = y ~ X + `P 1` + P2 | `P 1` + P2,
-      data = df.multi.bt
-    )
-  )
-
-  for (nm in names(cases)) {
-    res <- fit_bmw_fast(formula = cases[[nm]]$formula, data = cases[[nm]]$data)
-    check_labelled_consistently(res)
-    check_struct_residuals(res = res, aux.names = res$labels.pcop)
-  }
-})
+test_correctness_formula_edge_cases(
+  setup = setup.correctness,
+  cases = fixture_bmw_formula_edge_cases()
+)
 
 test_that("Internals have correct shape", {
   res <- fit_bmw_fast(formula = y ~ X + P | P, data = dataCopBMW, num.boots = 10)
@@ -92,26 +61,12 @@ test_that("Internals have correct shape", {
 
 
 # Parameter cdf ----------------------------------------------------------------------
-test_that("Different cdf produce different result", {
-  skip_on_cran()
-  f.all <- y ~ X + P1 + P2 | P1 + P2
-  res.adj <- fit_bmw_fast(formula = f.all, data = dataCopBMWMultiEndo, cdf = "adj.ecdf")
-  res.ecdf <- fit_bmw_fast(formula = f.all, data = dataCopBMWMultiEndo, cdf = "ecdf")
-  res.resc <- fit_bmw_fast(
-    formula = f.all,
-    data = dataCopBMWMultiEndo,
-    cdf = "resc.ecdf"
-  )
-  res.kde <- fit_bmw_fast(formula = f.all, data = dataCopBMWMultiEndo, cdf = "kde")
-  expect_false(isTRUE(all.equal(coef(res.adj), coef(res.ecdf))))
-  expect_false(isTRUE(all.equal(coef(res.ecdf), coef(res.resc))))
-  expect_false(isTRUE(all.equal(coef(res.resc), coef(res.kde))))
-})
+test_correctness_all_cdfs_different_result(setup = setup.correctness)
 
 
 # Parameter recovery -------------------------------------------------------------------
 test_that("Recovery: single endo (dataCopBMW)", {
-  skip_on_cran()
+  set.seed(42)
   res <- fit_bmw_defaults(formula = y ~ X + P | P, data = dataCopBMW)
   check_param_recovery(
     res = res,
@@ -120,7 +75,7 @@ test_that("Recovery: single endo (dataCopBMW)", {
 })
 
 test_that("Recovery: multiple endo (dataCopBMWMultiEndo)", {
-  skip_on_cran()
+  set.seed(42)
   res <- fit_bmw_defaults(
     formula = y ~ X + P1 + P2 | P1 + P2,
     data = dataCopBMWMultiEndo
@@ -132,35 +87,9 @@ test_that("Recovery: multiple endo (dataCopBMWMultiEndo)", {
 })
 
 
-# Parameter transformations ------------------------------------------------------------
-test_that("Recovery: Parameter transformations in endo", {
-  skip_on_cran()
-  df.trans <- dataCopBMW
-  df.trans$P <- exp(df.trans$P)
-
-  res <- fit_bmw_defaults(formula = y ~ X + log(P) | log(P), data = df.trans)
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, X = -1, "log(P)" = 1)
-  )
-})
-
-test_that("Recovery: Parameter transformations in exo", {
-  skip_on_cran()
-  df.trans <- dataCopBMW
-  df.trans$X <- exp(df.trans$X)
-
-  res <- fit_bmw_defaults(formula = y ~ log(X) + P | P, data = df.trans)
-  check_param_recovery(
-    res = res,
-    true_vals = c("(Intercept)" = 1, "log(X)" = -1, P = 1)
-  )
-})
-
-
 # Consistent with Park and Gupta -------------------------------------------------------
 test_that("Collapses to P&G (when P independent of X)", {
-  skip_on_cran()
+  set.seed(42)
 
   res <- fit_bmw_defaults(formula = y ~ X1 + X2 + P | P, data = dataCopCont)
 

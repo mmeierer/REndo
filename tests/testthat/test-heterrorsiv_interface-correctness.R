@@ -2,7 +2,6 @@
 data("dataHetIV")
 
 # Formula transformations ------------------------------------------------------------------------------------------------------------
-context("Correctness - hetErrorsIV - Formula transformations")
 
 test_that("Transformations are correct", {
   expect_silent(correct.res <- hetErrorsIV(y~X1+X2+P  |P|IIV(X2), data=dataHetIV, verbose=FALSE))
@@ -17,26 +16,25 @@ test_that("Transformations are correct", {
   data.altered    <- dataHetIV
   data.altered$P <- exp(data.altered$P)
   expect_silent(res.trans.endo  <- hetErrorsIV(formula = y~X1+X2+log(P)|log(P)|IIV(X2), data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.endo), coef(correct.res), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.endo)), coef(summary(correct.res)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.endo), coef(correct.res), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.endo)), coef(summary(correct.res)), ignore_attr=TRUE)
 
   # Can handle transformations in nonIIV exo
   data.altered    <- dataHetIV
   data.altered$X1 <- exp(data.altered$X1)
   expect_silent(res.trans.exo  <- hetErrorsIV(formula = y~log(X1)+X2+P|P|IIV(X2), data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.exo), coef(correct.res), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.exo)), coef(summary(correct.res)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.exo), coef(correct.res), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.exo)), coef(summary(correct.res)), ignore_attr=TRUE)
 
   # Can handle transformations in IIV exo
   data.altered    <- dataHetIV
   data.altered$X2 <- exp(data.altered$X2)
   expect_silent(res.trans.iiv.exo  <- hetErrorsIV(formula = y~X1+log(X2)+P|P|IIV(log(X2)), data = data.altered, verbose = FALSE))
-  expect_equal(coef(res.trans.iiv.exo), coef(correct.res), check.attributes=FALSE)
-  expect_equal(coef(summary(res.trans.iiv.exo)), coef(summary(correct.res)), check.attributes=FALSE)
+  expect_equal(coef(res.trans.iiv.exo), coef(correct.res), ignore_attr=TRUE)
+  expect_equal(coef(summary(res.trans.iiv.exo)), coef(summary(correct.res)), ignore_attr=TRUE)
 })
 
 # Data sorting ------------------------------------------------------------------------------------------------
-context("Correctness - hetErrorsIV - Data sorting")
 
 test_that("Differently sorted data produces same results", {
   data.altered    <- dataHetIV
@@ -51,7 +49,6 @@ test_that("Differently sorted data produces same results", {
 
 
 # Predict ------------------------------------------------------------------------------------------------
-context("Correctness - hetErrorsIV - Predict")
 
 test_that("No newdata results in fitted values", {
   expect_silent(het.1 <- hetErrorsIV(y~X1+X2+P|P|IIV(X2), data=dataHetIV, verbose=FALSE))
