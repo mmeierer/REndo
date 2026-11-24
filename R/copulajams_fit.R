@@ -42,14 +42,14 @@ copulajams_fit <- function(F.formula, data, cdf, verbose) {
 
   # 2nd stage: OLS ---------------------------------------------------------------------
 
-  res.2nd.stage <- copula_fit_2ndstage(
+  res.2nd.stage <- copula2stage_fit_2ndstage(
     F.formula = F.formula,
     data = data,
     cop.terms = cop.terms
   )
 
   return(list(
-    res.augmented = res.2nd.stage$res.augmented,
+    res.augmented = res.2nd.stage$res.lm.augmented,
     labels.pcop = res.2nd.stage$labels.pcop,
     labels.exo = l.parts$labels.exo,
     labels.endo = l.parts$labels.endo,
@@ -87,7 +87,7 @@ copulajams_build_model_parts <- function(F.formula, data) {
     labels.exo,
     FUN = function(lbl.exo) {
       dc <- attr(tr.main, "dataClasses")
-      return(dc[label_to_colname(lbl.exo)] %in% c("factor", "ordered"))
+      return(dc[copula2stage_label_to_colname(lbl.exo)] %in% c("factor", "ordered"))
     },
     FUN.VALUE = logical(1)
   )
@@ -111,7 +111,7 @@ copulajams_build_model_parts <- function(F.formula, data) {
   } else {
     colnames.exo.factors <- vapply(
       labels.exo.factor,
-      FUN = label_to_colname,
+      FUN = copula2stage_label_to_colname,
       FUN.VALUE = character(1)
     )
     df.Z <- mf.main[, colnames.exo.factors, drop = FALSE]
@@ -148,7 +148,7 @@ copulajams_correction_continuous <- function(P, W, cdf) {
   PW <- cbind(P, W)
 
   #step 1: applying CDF to all regressors (P&W)
-  P.star <- copula_pstar(P = PW, cdf = cdf)
+  P.star <- copula2stage_pstar(P = PW, cdf = cdf)
 
   #step 2: applying qnorm to obtain normal scores C(P) and C(W)
   C.PW <- apply(P.star, 2, qnorm) #using equation C(P_i) = Phi^{-1}(F_hat(P_i)) for each regressor
