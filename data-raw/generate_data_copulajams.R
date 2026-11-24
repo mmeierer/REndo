@@ -1,4 +1,4 @@
-## code to prepare `generate_data_JAMS` dataset goes here
+## Generate dataCopJAMS (Liengaard et al. 2025, Simulation Study 2)
 library(MASS)
 
 ## dataset 1: dataCopJAMS
