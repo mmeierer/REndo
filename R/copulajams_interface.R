@@ -101,6 +101,8 @@
 #'
 #' @template template_text_details_bootsdegenerates
 #'
+# Not using the liengaard template here: It is already part of cdf references template
+# (template_param_cdf_references) and would be printed twice
 #' @template template_param_cdf_references
 #'
 #' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.jams", extra.items = doc_rendocopulajams_return_extra_items())

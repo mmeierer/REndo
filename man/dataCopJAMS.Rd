@@ -58,6 +58,13 @@ The true parameter values are \code{mu = 1} (intercept),
 \code{delta1 = -1} (\code{P1:P2}), \code{delta2 = -1} (\code{P1:W}),
 and \code{delta3 = -2} (\code{P2:Z}).
 }
+\references{
+Liengaard, B. D., Becker, J.-M., Bennedsen, M., Heiler, P., Taylor, L. N.,
+and Ringle, C. M. (2025). Dealing with regression models' endogeneity by means
+of an adjusted estimator for the Gaussian copula approach.
+\emph{Journal of the Academy of Marketing Science}, 53, 279--299.
+ \doi{10.1007/s11747-024-01055-4}
+}
 \author{
 Kimberly-Anne Lew Chuk Wai \email{kimberlylew12@gmail.com}
 }

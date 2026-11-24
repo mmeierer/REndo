@@ -572,6 +572,7 @@
 #'   correction (eq. 20-21): \eqn{\rho = 0.4} for `Z = 0` and
 #'   \eqn{\rho = 0.6} for `Z = 1`.
 #'
+#' @template template_references_liengaard2025
 #' @template template_author_kimberlylew
 #' @md
 "dataCopJAMS"
