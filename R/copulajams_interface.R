@@ -5,7 +5,7 @@
 #' CDF estimator is the dominant factor of finite-sample bias in the Gaussian copula
 #' approach. Hence, an adjusted ECDF estimator \code{adj.ecdf} was introduced to
 #' reduce bias in models with an intercept. The method also extends the copula
-#' framework to handle multiple continuous endogenous regressors, both contiuous and
+#' framework to handle multiple continuous endogenous regressors, both continuous and
 #' discrete exogenous regressors, nonlinearities and interaction terms and
 #' a copula structure that can change across categories of discrete exogenous variables.
 #'
@@ -22,7 +22,7 @@
 #'
 #' ## Model
 #'
-#' let's consider the following structural regression model (Liengaard et al. 2024)
+#' let's consider the following structural regression model (Liengaard et al. 2025)
 #' \deqn{Y_i = g(P_i, W_i, Z_i) + \varepsilon_i}
 #'
 #' where
@@ -71,7 +71,7 @@
 #'    where \eqn{Z_i = z}.
 #'
 #' 3. Third step: The structural model is then augmented with the estimated
-#'    correction tersm and estimated using the ordinary least-squares.
+#'    correction terms and estimated using the ordinary least-squares.
 #'    If there is \eqn{Z_i} the equation is:
 #'    \deqn{Y_i = g(P_i, W_i, Z_i) + \sum_{z=z_1}^{z_J} \sum_{k=1}^{d_P}
 #'       \gamma_k^z \hat{C}_k^z(P_i, W_i) \mathbf{1}(Z_i = z) + u_i}
@@ -79,7 +79,7 @@
 #'    \deqn{Y_i = g(P_i, W_i) + \sum_{k=1}^{d_P} \gamma_k \hat{C}_k(P_i, W_i) + u_i}
 #'
 #' ## Note on the choice of the \code{cdf}
-#' The \code{adj.ecdf} is the recommended default of Liengaard et al. (2024). It
+#' The \code{adj.ecdf} is the recommended default of Liengaard et al. (2025). It
 #' helps to reduce finite-sample bias, especially in models with an intercept.
 #'
 #' @template template_text_details_cdfmethods
@@ -118,7 +118,7 @@
 #' #------------------------------------------------------------------------
 #' # Example 1: Two endogenous regressors, continuous and binary exogenous,
 #' # interactions, and varying copula structure by Z
-#' # (Liengaard et al. 2024, Simulation Study 2)
+#' # (Liengaard et al. 2025, Simulation Study 2)
 #' #
 #' # This example shows the following:
 #' # 1) Multiple correlated endogenous regressors P1, P2
@@ -147,7 +147,8 @@
 #' @md
 #'
 #' @export
-#' @importFrom stats coef
+#' @importFrom stats coef terms
+#' @importFrom Formula as.Formula
 copulaJAMS <- function(
   formula,
   data,
