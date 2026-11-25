@@ -394,6 +394,54 @@ test_that("_modelframe works for valid data", {
 })
 
 
+# checkinput_copula2stage_modelframe_columns -----------------------------------------
+# Tested on its own because it is also called without
+# checkinput_copula2stage_modelframe(), on an already built model.frame
+
+test_that("_modelframe_columns reports the problems of the given model.frame", {
+  df <- fixture_copula_df()
+  df$x_inf <- df$x_num
+  df$x_inf[1] <- Inf
+  df$x_const <- 1
+  df$x_unused <- factor(df$x_fac, levels = c("a", "b", "c"))
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_modelframe_columns,
+    base.args = list(
+      allowed.classes = list(),
+      labels.warn.low.card = NULL,
+      forbid.constant = FALSE
+    ),
+    cases = list(
+      "wrong class" = list(
+        mf = model.frame(~x_fac, data = df),
+        allowed.classes = list(x_fac = "numeric")
+      ),
+      "non-finite" = list(mf = model.frame(~x_inf, data = df)),
+      "unused level" = list(mf = model.frame(~x_unused, data = df)),
+      "constant" = list(mf = model.frame(~x_const, data = df), forbid.constant = TRUE)
+    ),
+    regexp = c(
+      "has class",
+      "finite values.*x_inf",
+      "unused levels: x_unused \\('c'\\)",
+      "must not be constant: x_const"
+    )
+  )
+
+  # low cardinality is a warning and not a returned error message
+  expect_warning(
+    checkinput_copula2stage_modelframe_columns(
+      mf = model.frame(~x_lowcard, data = df),
+      allowed.classes = list(x_lowcard = "numeric"),
+      labels.warn.low.card = "x_lowcard",
+      forbid.constant = FALSE
+    ),
+    regexp = "low cardinality"
+  )
+})
+
+
 # checkinput_copula2stage_formula_data -----------------------------------------
 # check only its intrinsic parts + that building blocks are wired in
 
