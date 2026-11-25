@@ -156,3 +156,73 @@ fixture_2scopenp_formula_edge_cases <- function() {
     )
   ))
 }
+
+
+# copulaJAMS formula edge cases --------------------------------------------------------
+# - formula has 3 or 4 parts: y ~ model | P | W | Z
+# Returns named list of list(formula, data), as used by run_cases()
+fixture_jams_formula_edge_cases <- function() {
+  data("dataCopJAMS", envir = environment())
+
+  df <- dataCopJAMS
+  # non-syntactic names
+  df$`P 1` <- df$P1
+  df$`W 1` <- df$W
+  # second discrete exo
+  df$Z2 <- factor(rep(c("a", "b", "c"), length.out = nrow(df)))
+  # Z as numeric and not factor
+  df$Z_num <- as.numeric(as.character(df$Z))
+  # ordered factor
+  df$Z_ord <- ordered(df$Z2, levels = c("a", "b", "c"))
+
+  return(list(
+    "no W" = list(formula = y ~ P1 + Z | P1 | 0 | Z, data = df),
+    "no Z" = list(formula = y ~ P1 + W | P1 | W, data = df),
+    "W and Z are 0" = list(formula = y ~ P1 | P1 | 0 | 0, data = df),
+    # dot: only on data without additional cols
+    "dot in rhs1" = list(formula = y ~ . | P1 + P2 | W | Z, data = dataCopJAMS),
+    "transformed in rhs1, plain in rhs2" = list(
+      formula = y ~ log(P1) + W | P1 | W,
+      data = df
+    ),
+    "only in interaction in rhs1" = list(formula = y ~ P1 + P1:W | P1 | W, data = df),
+    "factor() in rhs4" = list(
+      formula = y ~ P1 + W + Z_num | P1 | W | factor(Z_num),
+      data = df
+    ),
+    "multiple strata" = list(
+      formula = y ~ P1 + W + Z + Z2 | P1 | W | Z + Z2,
+      data = df
+    ),
+    # Z2 is only in the structural model
+    "plain control" = list(formula = y ~ P1 + W + Z + Z2 | P1 | W | Z, data = df),
+    "backticks" = list(
+      formula = y ~ `P 1` + `W 1` + Z | `P 1` | `W 1` | Z,
+      data = df
+    ),
+    # intercepts are not used in parts 2-4
+    "intercept notation in rhs2-4" = list(
+      formula = y ~ P1 + W + Z | P1 - 1 | W + 0 | Z + 0,
+      data = df
+    ),
+    "no intercept in rhs1" = list(formula = y ~ P1 + W - 1 | P1 | W, data = df),
+    "interactions of endo and strata in rhs1" = list(
+      formula = y ~ P1 * P2 + P2:Z + W + Z | P1 + P2 | W | Z,
+      data = df
+    ),
+    "power of endo in rhs1" = list(
+      formula = y ~ P1 + I(P1^2) + W | P1 | W,
+      data = df
+    ),
+    "transformed in rhs2 and rhs3" = list(
+      formula = y ~ log(P1) + log(W) | log(P1) | log(W),
+      data = df
+    ),
+    "Z is 0" = list(formula = y ~ P1 + W | P1 | W | 0, data = df),
+    "W is 0, no Z" = list(formula = y ~ P1 | P1 | 0, data = df),
+    "ordered factor in rhs4" = list(
+      formula = y ~ P1 + W + Z_ord | P1 | W | Z_ord,
+      data = df
+    )
+  ))
+}

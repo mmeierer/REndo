@@ -115,3 +115,12 @@ test_that("_modelframe_single_part rejects invalid data of a part", {
     )
   )
 })
+
+
+# checkinput_copulajams_formula_data -------------------------------------------------
+test_that("_formula_data works with all kinds of formula edge cases", {
+  run_cases_errmsg_empty(
+    fn = checkinput_copulajams_formula_data,
+    cases = fixture_jams_formula_edge_cases()
+  )
+})
