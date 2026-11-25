@@ -1,6 +1,8 @@
 # Fixtures used in tests
 
 # copula methods  ----------------------------------------------------------------------
+# Contains cols that are broken on purpose (x_na, x_inf, x_const, x_unused): a formula
+# with a dot on the whole fixture therefore needs a col subset
 fixture_copula_df <- function(n = 100) {
   return(data.frame(
     y = rnorm(n),
@@ -11,6 +13,10 @@ fixture_copula_df <- function(n = 100) {
     x_ord = ordered(rep(c("lo", "hi"), length.out = n), levels = c("lo", "hi")),
     x_lowcard = rep(1:2, length.out = n),
     x_na = c(NA, rnorm(n - 1)),
+    # deterministic: no draws to not shift the random number stream
+    x_inf = c(Inf, seq_len(n - 1)),
+    x_const = rep(1, n),
+    x_unused = factor(rep(c("a", "b"), length.out = n), levels = c("a", "b", "c")),
     check.names = FALSE, # dont need to be syntactically valid
     stringsAsFactors = FALSE
   ))

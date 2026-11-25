@@ -272,10 +272,6 @@ test_that("_modelframe works for valid data", {
 # checkinput_copula2stage_modelframe(), on an already built model.frame
 
 test_that("_modelframe_columns fails on non-finite values, illegal classes", {
-  df.inf <- fixture_copula_df()
-  df.inf$x_inf <- df.inf$x_num
-  df.inf$x_inf[1] <- Inf
-
   df.inf.response <- fixture_copula_df()
   df.inf.response$y[1] <- Inf
 
@@ -289,7 +285,7 @@ test_that("_modelframe_columns fails on non-finite values, illegal classes", {
         forbid.constant = FALSE
       ),
       "Inf already in data" = list(
-        mf = model.frame(y ~ x_inf, data = df.inf),
+        mf = model.frame(y ~ x_inf, data = fixture_copula_df()),
         allowed.classes = list(x_inf = "numeric"),
         labels.warn.low.card = NULL,
         forbid.constant = FALSE
@@ -318,9 +314,8 @@ test_that("_modelframe_columns fails on non-finite values, illegal classes", {
 
 test_that("_modelframe_columns fails on unused factor levels, works after droplevels()", {
   df <- fixture_copula_df()
-  df$x_fac <- factor(df$x_fac, levels = c("a", "b", "c"))
   base.args <- list(
-    allowed.classes = list(x_num = "numeric", x_fac = "factor"),
+    allowed.classes = list(x_num = "numeric", x_unused = "factor"),
     labels.warn.low.card = NULL,
     forbid.constant = FALSE
   )
@@ -329,16 +324,16 @@ test_that("_modelframe_columns fails on unused factor levels, works after drople
     fn = checkinput_copula2stage_modelframe_columns,
     base.args = base.args,
     cases = list(
-      "unused level" = list(mf = model.frame(y ~ x_num + x_fac, data = df))
+      "unused level" = list(mf = model.frame(y ~ x_num + x_unused, data = df))
     ),
-    regexp = "unused levels: x_fac \\('c'\\)"
+    regexp = "unused levels: x_unused \\('c'\\)"
   )
   run_cases_errmsg_empty(
     fn = checkinput_copula2stage_modelframe_columns,
     base.args = base.args,
     cases = list(
       "after droplevels()" = list(
-        mf = model.frame(y ~ x_num + x_fac, data = droplevels(df))
+        mf = model.frame(y ~ x_num + x_unused, data = droplevels(df))
       )
     )
   )
@@ -391,7 +386,6 @@ test_that("_modelframe_columns warns for low-cardinality numerics", {
 
 test_that("_modelframe_columns fails on constant cols", {
   df <- fixture_copula_df()
-  df$x_const <- 1
   base.args <- list(
     mf = model.frame(y ~ x_num + x_const, data = df),
     allowed.classes = list(),
