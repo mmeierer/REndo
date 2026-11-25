@@ -275,3 +275,92 @@ checkinput_copulajams_modelframe_single_part <- function(
     forbid.constant = TRUE
   ))
 }
+
+# 3 or 4 part Formula of structure:
+#   (response) ~ (structural model) | (P: endogenous) | (W: continuous exogenous) | (Z: strata)
+#   eg y ~ W + Z + P | P | W | Z
+#
+# Returns after each stage that has errors because the next ones rely on it
+#
+# - formula basics (formula, 1 lhs, 3 or 4 rhs parts, single response)
+# - parts 2-4 are valid, all variables are in data
+# - response not in part 1, all variables of parts 2-4 are also in part 1
+# - mf of every part: can be built, column classes, only finite values,
+#   no unused factor levels, not constant
+#
+#' @importFrom Formula as.Formula
+#' @importFrom stats terms
+checkinput_copulajams_formula_data <- function(formula, data) {
+  # Formula basics --------------------------------------------------------------------
+  # 3 or 4 rhs parts: The 4th part (strata) is optional
+  err.msg <- checkinput_copula2stage_formula_basics(
+    formula = formula,
+    allowed.num.rhs.parts = c(3, 4)
+  )
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  F.formula <- as.Formula(formula)
+
+  # Formula parts and variables in data -----------------------------------------------
+  # Independent of each other: Report together
+  err.msg <- c(
+    checkinput_copulajams_formula_parts(F.formula = F.formula),
+    checkinput_copula2stage_vars_in_data(F.formula = F.formula, data = data)
+  )
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Variables of the parts ------------------------------------------------------------
+  # Needs the variables to be in data: A dot in part 1 is expanded
+  rhs1.terms <- terms(F.formula, lhs = 0, rhs = 1, data = data)
+  err.msg <- c(
+    checkinput_copula2stage_response_not_in_rhs(
+      F.formula = F.formula,
+      rhs1.terms = rhs1.terms
+    ),
+    checkinput_copulajams_all_vars_in_rhs1(F.formula = F.formula, data = data)
+  )
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # model.frame of every part ---------------------------------------------------------
+  # Part 1 (with response): Any class
+  err.msg <- checkinput_copula2stage_modelframe(
+    F.formula = F.formula,
+    data = data,
+    allowed.classes = list(),
+    labels.warn.low.card = NULL,
+    forbid.constant = TRUE
+  )
+
+  # Parts 2 (P) and 3 (W): Continuous
+  for (rhs.part.i in c(2, 3)) {
+    err.msg.i <- checkinput_copulajams_modelframe_single_part(
+      F.formula = F.formula,
+      data = data,
+      rhs.part = rhs.part.i,
+      allowed.classes = "numeric",
+      warn.low.card = TRUE
+    )
+    err.msg <- c(err.msg, err.msg.i)
+  }
+
+  # Part 4 (Z), if given : Discrete
+  if (length(F.formula)[2] == 4) {
+    err.msg.4 <- checkinput_copulajams_modelframe_single_part(
+      F.formula = F.formula,
+      data = data,
+      rhs.part = 4,
+      allowed.classes = c("factor", "ordered"),
+      warn.low.card = FALSE
+    )
+    err.msg <- c(err.msg, err.msg.4)
+  }
+
+  # Multiple parts can generate the same error message
+  return(unique(err.msg))
+}
