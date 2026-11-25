@@ -49,12 +49,14 @@ checkinput_copula2stage_data_basics <- function(data) {
 
 # Basic structure of the formula
 #  - formula
-#  - two part
+#  - one lhs and `allowed.num.rhs.parts` rhs parts, eg lhs ~ rhs1 | rhs2.
+#   - allowed.num.rhs.parts: Can be a vector with more than 1 number to allow different
+#     num rhs, eg to make a part optional (`c(3,4)` makes the 4th part optional)
 #  - single response
 #
 #' @importFrom Formula as.Formula
 #' @importFrom stats formula
-checkinput_copula2stage_formula_basics <- function(formula) {
+checkinput_copula2stage_formula_basics <- function(formula, allowed.num.rhs.parts) {
   if (!inherits(formula, "formula")) {
     return("Parameter 'formula' must be a formula.")
   }
@@ -69,10 +71,16 @@ checkinput_copula2stage_formula_basics <- function(formula) {
   }
 
   parts <- length(F.formula)
-  if (parts[1] != 1 || parts[2] != 2) {
-    return(
-      "Parameter 'formula' must have one left-hand side and two right-hand parts (lhs ~ rhs1 | rhs2)."
-    )
+  if (parts[1] != 1 || !(parts[2] %in% allowed.num.rhs.parts)) {
+    # Example of longest allowed ("lhs ~ rhs1 | rhs2")
+    rhs.structure <- paste0("rhs", seq_len(max(allowed.num.rhs.parts)), collapse = " | ")
+
+    # fmt: skip
+    return(paste0(
+      "Parameter 'formula' must have one left-hand side and ",
+      paste(allowed.num.rhs.parts, collapse = " or "),
+      " right-hand parts (lhs ~ ", rhs.structure, ")."
+    ))
   }
 
   # Check multiple responses (y1 + y2 ~ )
@@ -337,7 +345,11 @@ checkinput_copula2stage_formula_data <- function(
   msg.interactions = "Interaction terms are not supported for this method."
 ) {
   # Formula only ----------------------------------------------------------------
-  err.msg <- checkinput_copula2stage_formula_basics(formula = formula)
+  # 2 rhs parts: (structural model) | (endo terms)
+  err.msg <- checkinput_copula2stage_formula_basics(
+    formula = formula,
+    allowed.num.rhs.parts = 2
+  )
   if (length(err.msg) > 0) {
     return(err.msg)
   }
