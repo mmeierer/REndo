@@ -35,6 +35,7 @@ test_that("data_basics accepts valid data", {
 test_that("_formula_basics rejects invalid formulas", {
   run_cases_errmsg(
     fn = checkinput_copula2stage_formula_basics,
+    base.args = list(allowed.num.rhs.parts = 2),
     cases = list(
       "not a formula" = list(formula = "y ~ x | z"),
       "NULL" = list(formula = NULL),
@@ -48,8 +49,8 @@ test_that("_formula_basics rejects invalid formulas", {
       "must be a formula",
       "must be a formula",
       "must be a formula",
-      "two right",
-      "two right",
+      "2 right-hand parts",
+      "2 right-hand parts",
       "exactly one response",
       "one left-hand side"
     )
@@ -66,7 +67,11 @@ test_that("_formula_basics accepts valid formulas incl all kinds of edge cases",
     "inline function" = list(formula = y ~ I(x^2) | z),
     "multi term" = list(formula = y ~ x1 + x2 | z1 + z2)
   )
-  run_cases_errmsg_empty(fn = checkinput_copula2stage_formula_basics, cases = cases)
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_formula_basics,
+    base.args = list(allowed.num.rhs.parts = 2),
+    cases = cases
+  )
 })
 # checkinput_copula2stage_vars_in_data -------------------------------------------
 test_that("_vars_in_data reports missing variables", {
