@@ -152,18 +152,13 @@ copula2stage_label_to_colname <- function(lab) {
   return(deparse1(parse(text = lab)[[1]]))
 }
 
-# Build model.frame and verify column classes
+# Build model.frame and verify its columns
 # - build from lhs ~ rhs1
 # - expose failed builds to user
 # - na.fail to catch generated NAs
-# - no non-finite values
-# - no unused factor levels
-# - check for each (formula) label / term, if the resulting regressor (colum) is
-#    of an allowed class
-# - warn about low cardinality (<=10) numeric variables
-# - forbid.constant: error on constant data in any mf column
+# - verify the columns with checkinput_copula2stage_modelframe_columns()
 #
-#' @importFrom stats model.frame na.fail .MFclass terms
+#' @importFrom stats model.frame na.fail terms
 checkinput_copula2stage_modelframe <- function(
   F.formula,
   data,
@@ -186,6 +181,30 @@ checkinput_copula2stage_modelframe <- function(
     ))
   }
 
+  return(checkinput_copula2stage_modelframe_columns(
+    mf = mf,
+    allowed.classes = allowed.classes,
+    labels.warn.low.card = labels.warn.low.card,
+    forbid.constant = forbid.constant
+  ))
+}
+
+# Verify the columns of an already built model.frame
+# - mf: the model.frame to verify. Doesnt matter from which formula part it was built
+# - check for each (formula) label / term, if the resulting regressor (colum) is
+#    of an allowed class
+# - no non-finite values
+# - no unused factor levels
+# - warn about low cardinality (<=10) numeric variables
+# - forbid.constant: error on constant data in any mf column
+#
+#' @importFrom stats .MFclass
+checkinput_copula2stage_modelframe_columns <- function(
+  mf,
+  allowed.classes,
+  labels.warn.low.card,
+  forbid.constant
+) {
   err.msg <- c()
   mf.cols <- colnames(mf)
 
