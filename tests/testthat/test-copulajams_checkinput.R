@@ -72,3 +72,46 @@ test_that("_all_vars_in_rhs1 rejects variables that are not in part 1", {
     )
   )
 })
+
+
+# checkinput_copulajams_modelframe_single_part ---------------------------------------
+test_that("_modelframe_single_part rejects invalid data of a part", {
+  run_cases_errmsg(
+    fn = checkinput_copulajams_modelframe_single_part,
+    base.args = list(
+      data = fixture_copula_df(),
+      allowed.classes = "numeric",
+      warn.low.card = FALSE
+    ),
+    cases = list(
+      "wrong class in part 2" = list(
+        F.formula = as.Formula(y ~ x_fac + x_num | x_fac | x_num),
+        rhs.part = 2
+      ),
+      "wrong class in part 3" = list(
+        F.formula = as.Formula(y ~ x_num + x_string | x_num | x_string),
+        rhs.part = 3
+      ),
+      "wrong class in part 4" = list(
+        F.formula = as.Formula(y ~ x_num + x_lowcard | x_num | 0 | x_lowcard),
+        rhs.part = 4,
+        allowed.classes = c("factor", "ordered")
+      ),
+      "cannot be built" = list(
+        F.formula = as.Formula(y ~ x_num + x_na | x_num | x_na),
+        rhs.part = 3
+      ),
+      "non-finite from transformation" = list(
+        F.formula = as.Formula(y ~ x_num + x_lowcard | x_num | log(x_lowcard - 1)),
+        rhs.part = 3
+      )
+    ),
+    regexp = c(
+      "'x_fac' has class 'factor' but must be one of: numeric",
+      "'x_string' has class 'character' but must be one of: numeric",
+      "'x_lowcard' has class 'numeric' but must be one of: factor, ordered",
+      "model frame of right-hand part 3 .* could not be built: .*missing values",
+      "finite values: log\\(x_lowcard - 1\\)"
+    )
+  )
+})
