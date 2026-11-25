@@ -124,3 +124,43 @@ test_that("_formula_data works with all kinds of formula edge cases", {
     cases = fixture_jams_formula_edge_cases()
   )
 })
+
+# Each case fails in another method: Shows that it is called
+test_that("_formula_data has every check method wired in", {
+  run_cases_errmsg(
+    fn = checkinput_copulajams_formula_data,
+    base.args = list(data = fixture_copula_df()),
+    cases = list(
+      # checkinput_copula2stage_formula_basics
+      "2 parts" = list(formula = y ~ x_num | x_num),
+      # checkinput_copulajams_formula_parts
+      "dot in part 2" = list(formula = y ~ x_num | . | 0),
+      # checkinput_copula2stage_vars_in_data
+      "variable not in data" = list(
+        formula = y ~ x_num + x_missing | x_num | x_missing
+      ),
+      # checkinput_copula2stage_response_not_in_rhs
+      "response in part 1" = list(formula = y ~ y + x_num | x_num | 0),
+      # checkinput_copulajams_all_vars_in_rhs1
+      "variable only in part 3" = list(formula = y ~ x_num | x_num | `x space`),
+      # checkinput_copula2stage_modelframe: Part 1
+      "constant in part 1" = list(formula = y ~ x_num + x_const | x_num | 0),
+      # checkinput_copulajams_modelframe_single_part: Parts 2 and 3
+      "factor in part 2" = list(formula = y ~ x_fac + x_num | x_fac | x_num),
+      # checkinput_copulajams_modelframe_single_part: Part 4
+      "numeric in part 4" = list(
+        formula = y ~ x_num + x_lowcard | x_num | 0 | x_lowcard
+      )
+    ),
+    regexp = c(
+      "3 or 4 right-hand parts",
+      "part 2 .* may not have a dot",
+      "not found in parameter 'data': x_missing",
+      "also appear on the right-hand side: y",
+      "part 3 .* but these are not: x space",
+      "must not be constant: x_const",
+      "'x_fac' has class 'factor' but must be one of: numeric",
+      "'x_lowcard' has class 'numeric' but must be one of: factor, ordered"
+    )
+  )
+})
