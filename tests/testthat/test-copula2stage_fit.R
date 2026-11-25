@@ -1,3 +1,45 @@
+# copula2stage_build_mf_part ---------------------------------------------------------
+# Thin wrapper around model.frame(): Only test what is specific to it and not what
+# model.frame() does
+
+test_that("copula2stage_build_mf_part builds an empty model.frame for a 0 part", {
+  df <- fixture_copula_df()
+
+  run_cases(
+    fn = copula2stage_build_mf_part,
+    base.args = list(data = df, include.response = FALSE),
+    cases = list(
+      "0 is last part" = list(
+        F.formula = as.Formula(y ~ x_num | x_num | 0),
+        rhs.part = 3
+      ),
+      "0 is between parts" = list(
+        F.formula = as.Formula(y ~ x_num | 0 | x_fac),
+        rhs.part = 2
+      )
+    ),
+    check = function(res) {
+      # no columns but all rows
+      expect_equal(ncol(res), 0)
+      expect_identical(nrow(res), nrow(df))
+    }
+  )
+})
+
+test_that("copula2stage_build_mf_part fails if more than one part is requested", {
+  run_cases_error(
+    fn = copula2stage_build_mf_part,
+    base.args = list(
+      F.formula = as.Formula(y ~ x_num | x_num | x_fac),
+      data = fixture_copula_df(),
+      include.response = FALSE
+    ),
+    cases = list("two parts" = list(rhs.part = c(1, 2))),
+    regexp = "length\\(rhs.part\\) == 1"
+  )
+})
+
+
 # copula2stage_stop_if_constant ------------------------------------------------------
 
 test_that("copula2stage_stop_if_constant requires a matrix or data.frame", {
