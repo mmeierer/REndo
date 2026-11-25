@@ -155,10 +155,8 @@ copula2stage_label_to_colname <- function(lab) {
 # Build model.frame and verify its columns
 # - build from lhs ~ rhs1
 # - expose failed builds to user
-# - na.fail to catch generated NAs
 # - verify the columns with checkinput_copula2stage_modelframe_columns()
 #
-#' @importFrom stats model.frame na.fail terms
 checkinput_copula2stage_modelframe <- function(
   F.formula,
   data,
@@ -169,7 +167,12 @@ checkinput_copula2stage_modelframe <- function(
   # Expose build failures to user (bad transformations, generated NAs,...)
   mf <- tryCatch(
     # Making model.frame with rhs=1 also verifies that rhs=2 regressors are fine
-    model.frame(formula(F.formula, lhs = 1, rhs = 1), data = data, na.action = na.fail),
+    copula2stage_build_mf_part(
+      F.formula = F.formula,
+      data = data,
+      rhs.part = 1,
+      include.response = TRUE
+    ),
     error = function(e) {
       return(conditionMessage(e))
     }

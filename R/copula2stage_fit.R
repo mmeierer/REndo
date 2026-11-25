@@ -51,6 +51,38 @@ copula2stage_pstar <- function(P, cdf) {
   return(P.star)
 }
 
+# Standardized and central place to build the model.frame of a single part (rhs)
+# (+ response of a formula)
+#
+# - rhs.part: Number of rhs part to build
+# - include.response: Whether to include the response in the model.frame
+# - built from the formula part exactly as it is given, nothing is added or removed
+# - na.fail: never silently drop rows
+# - fails with an error if the model.frame cannot be built (bad transformations,
+#    generated NAs, ...)
+#
+#' @importFrom stats formula model.frame na.fail
+copula2stage_build_mf_part <- function(
+  F.formula,
+  data,
+  rhs.part,
+  include.response
+) {
+  stopifnot(length(rhs.part) == 1)
+
+  if (include.response) {
+    lhs.part <- 1
+  } else {
+    lhs.part <- 0
+  }
+
+  return(model.frame(
+    formula(F.formula, lhs = lhs.part, rhs = rhs.part),
+    data = data,
+    na.action = na.fail
+  ))
+}
+
 # Stops if any column of is constant
 copula2stage_stop_if_constant <- function(X) {
   stopifnot(is.matrix(X) || is.data.frame(X))
