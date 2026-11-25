@@ -179,3 +179,39 @@ checkinput_copulajams_formula_parts <- function(F.formula) {
 
   return(c())
 }
+
+# All variables of RHS parts 2-4 are also in part 1
+# - compares variables (data cols) and not labels: `log(P)` in part 1 and `P` in
+#   part 2 is fine
+# - also reports the response in parts 2-4 because it is never in part 1
+# Needs data to expand a dot in part 1
+# All variables have to exist in data and there may be no dot in parts 2-4
+#
+#' @importFrom stats terms
+checkinput_copulajams_all_vars_in_rhs1 <- function(F.formula, data) {
+  num.rhs.parts <- length(F.formula)[2]
+  # 3 or 4 parts: Verified before by the basic formula check
+  stopifnot(num.rhs.parts %in% c(3, 4))
+  rhs.parts <- seq(from = 2, to = num.rhs.parts)
+
+  vars.rhs1 <- all.vars(terms(F.formula, lhs = 0, rhs = 1, data = data))
+
+  err.msg <- c()
+  for (rhs.part.i in rhs.parts) {
+    l.vars.i <- copulajams_get_vars_per_term(
+      F.formula = F.formula,
+      rhs.part = rhs.part.i
+    )
+    vars.missing.i <- setdiff(unlist(l.vars.i), vars.rhs1)
+
+    if (length(vars.missing.i) > 0) {
+      # fmt: skip
+      err.msg <- c(err.msg, paste0(
+        "Right-hand part ", rhs.part.i, " of parameter 'formula' may only use ",
+        "variables that are also in the 1st part but these are not: ",
+        toString(vars.missing.i), "."))
+    }
+  }
+
+  return(err.msg)
+}

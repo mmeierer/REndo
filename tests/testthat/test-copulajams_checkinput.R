@@ -50,3 +50,25 @@ test_that("_formula_parts rejects invalid parts", {
     )
   )
 })
+
+
+# checkinput_copulajams_all_vars_in_rhs1 ---------------------------------------------
+test_that("_all_vars_in_rhs1 rejects variables that are not in part 1", {
+  run_cases_errmsg(
+    fn = checkinput_copulajams_all_vars_in_rhs1,
+    base.args = list(data = fixture_copula_df()),
+    cases = list(
+      "only in part 3" = list(F.formula = as.Formula(y ~ x_num | x_num | x_lowcard)),
+      "only in part 4" = list(
+        F.formula = as.Formula(y ~ x_num + x_lowcard | x_num | x_lowcard | x_fac)
+      ),
+      # the dot does not expand to the response
+      "response in part 2" = list(F.formula = as.Formula(y ~ . | y | 0))
+    ),
+    regexp = c(
+      "part 3 .* but these are not: x_lowcard",
+      "part 4 .* but these are not: x_fac",
+      "part 2 .* but these are not: y"
+    )
+  )
+})
