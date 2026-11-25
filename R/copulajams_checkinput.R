@@ -215,3 +215,63 @@ checkinput_copulajams_all_vars_in_rhs1 <- function(F.formula, data) {
 
   return(err.msg)
 }
+
+# Checks the data of a single RHS part (2, 3, or 4)
+# - allowed.classes: Classes that every term of the part may have
+# - warn.low.card: Whether to warn about low cardinality numeric terms
+# - the model.frame of the part can be built (without response)
+# - its columns: allowed classes, only finite values, no unused factor levels, not
+#   constant
+# There may be no dot in the part
+#
+#' @importFrom stats setNames terms
+checkinput_copulajams_modelframe_single_part <- function(
+  F.formula,
+  data,
+  rhs.part,
+  allowed.classes,
+  warn.low.card
+) {
+  # The part has to exist
+  stopifnot(rhs.part <= length(F.formula)[2])
+
+  labels.part <- labels(terms(F.formula, lhs = 0, rhs = rhs.part))
+
+  # Expose build failures to user (bad transformations, generated NAs,...)
+  mf <- tryCatch(
+    copula2stage_build_mf_part(
+      F.formula = F.formula,
+      data = data,
+      rhs.part = rhs.part,
+      include.response = FALSE
+    ),
+    error = function(e) {
+      return(conditionMessage(e))
+    }
+  )
+  if (!is.data.frame(mf)) {
+    # fmt: skip
+    return(paste0(
+      "The model frame of right-hand part ", rhs.part,
+      " of parameter 'formula' could not be built: ", mf))
+  }
+
+  # Every term of the part may have the same classes
+  l.allowed.classes <- setNames(
+    rep(list(allowed.classes), length(labels.part)),
+    labels.part
+  )
+
+  if (warn.low.card) {
+    labels.warn.low.card <- labels.part
+  } else {
+    labels.warn.low.card <- NULL
+  }
+
+  return(checkinput_copula2stage_modelframe_columns(
+    mf = mf,
+    allowed.classes = l.allowed.classes,
+    labels.warn.low.card = labels.warn.low.card,
+    forbid.constant = TRUE
+  ))
+}
