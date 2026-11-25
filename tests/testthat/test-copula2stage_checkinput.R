@@ -42,6 +42,10 @@ test_that("_formula_basics rejects invalid formulas", {
       "number" = list(formula = 1),
       "one part" = list(formula = y ~ x),
       "more than 2" = list(formula = y ~ x | z | w),
+      "2 parts but 3 or 4 allowed" = list(
+        formula = y ~ x | z,
+        allowed.num.rhs.parts = c(3, 4)
+      ),
       "multiple responses" = list(formula = y1 + y2 ~ x | z),
       "no response" = list(formula = ~ x | z)
     ),
@@ -51,6 +55,7 @@ test_that("_formula_basics rejects invalid formulas", {
       "must be a formula",
       "2 right-hand parts",
       "2 right-hand parts",
+      "3 or 4 right-hand parts",
       "exactly one response",
       "one left-hand side"
     )
