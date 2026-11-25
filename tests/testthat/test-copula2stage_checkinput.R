@@ -203,7 +203,7 @@ test_that("copula2stage_label_to_colname normalizes labels to col names", {
 
 
 # checkinput_copula2stage_modelframe ---------------------------------------------------
-test_that("_modelframe fails on NA/non-finite values, illegal classes", {
+test_that("_modelframe fails on NA values", {
   # NAs from transformation (also produces warning)
   expect_warning(
     res <- checkinput_copula2stage_modelframe(
@@ -218,13 +218,6 @@ test_that("_modelframe fails on NA/non-finite values, illegal classes", {
 
   df.na.response <- fixture_copula_df()
   df.na.response$y[1] <- NA
-
-  df.inf <- fixture_copula_df()
-  df.inf$x_inf <- df.inf$x_num
-  df.inf$x_inf[1] <- Inf
-
-  df.inf.response <- fixture_copula_df()
-  df.inf.response$y[1] <- Inf
 
   run_cases_errmsg(
     fn = checkinput_copula2stage_modelframe,
@@ -241,137 +234,12 @@ test_that("_modelframe fails on NA/non-finite values, illegal classes", {
         data = df.na.response,
         allowed.classes = list(x_num = "numeric"),
         labels.warn.low.card = NULL
-      ),
-      "given wrong class" = list(
-        F.formula = as.Formula(y ~ x_fac),
-        allowed.classes = list(x_fac = "numeric"),
-        labels.warn.low.card = NULL,
-        forbid.constant = FALSE
-      ),
-      "Inf already in data" = list(
-        F.formula = as.Formula(y ~ x_inf),
-        data = df.inf,
-        allowed.classes = list(x_inf = "numeric"),
-        labels.warn.low.card = NULL,
-        forbid.constant = FALSE
-      ),
-      "-Inf from transformation" = list(
-        F.formula = as.Formula(y ~ log(x_lowcard - 1)),
-        allowed.classes = list("log(x_lowcard - 1)" = "numeric"),
-        labels.warn.low.card = NULL,
-        forbid.constant = FALSE
-      ),
-      "Inf in response" = list(
-        F.formula = as.Formula(y ~ x_num),
-        data = df.inf.response,
-        allowed.classes = list(x_num = "numeric"),
-        labels.warn.low.card = NULL,
-        forbid.constant = FALSE
       )
     ),
     regexp = c(
       "missing values",
-      "missing values",
-      "has class",
-      "finite values.*x_inf",
-      "finite values.*log\\(x_lowcard - 1\\)",
-      "finite values.*y"
+      "missing values"
     )
-  )
-})
-
-test_that("_modelframe fails on unused factor levels, works after droplevels()", {
-  df <- fixture_copula_df()
-  df$x_fac <- factor(df$x_fac, levels = c("a", "b", "c"))
-  base.args <- list(
-    F.formula = as.Formula(y ~ x_num + x_fac),
-    allowed.classes = list(x_num = "numeric", x_fac = "factor"),
-    labels.warn.low.card = NULL,
-    forbid.constant = FALSE
-  )
-
-  run_cases_errmsg(
-    fn = checkinput_copula2stage_modelframe,
-    base.args = base.args,
-    cases = list("unused level" = list(data = df)),
-    regexp = "unused levels: x_fac \\('c'\\)"
-  )
-  run_cases_errmsg_empty(
-    fn = checkinput_copula2stage_modelframe,
-    base.args = base.args,
-    cases = list("after droplevels()" = list(data = droplevels(df)))
-  )
-})
-
-test_that("_modelframe warns for low-cardinality numerics", {
-  df <- fixture_copula_df()
-
-  # warns for given labels
-  expect_warning(
-    checkinput_copula2stage_modelframe(
-      F.formula = as.Formula(y ~ x_lowcard + x_num),
-      data = df,
-      allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
-      labels.warn.low.card = "x_lowcard",
-      forbid.constant = FALSE
-    ),
-    regexp = "low cardinality"
-  )
-
-  # dont warn if col is not numeric (factors are low card)
-  expect_no_warning(
-    checkinput_copula2stage_modelframe(
-      F.formula = as.Formula(y ~ x_fac),
-      data = df,
-      allowed.classes = list(x_fac = "factor"),
-      labels.warn.low.card = "x_fac",
-      forbid.constant = FALSE
-    )
-  )
-
-  # dont warn if another column is low cardinality (not all columns in mf!)
-  expect_no_warning(
-    checkinput_copula2stage_modelframe(
-      F.formula = as.Formula(y ~ x_lowcard + x_num),
-      data = df,
-      allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
-      labels.warn.low.card = "x_num",
-      forbid.constant = FALSE
-    )
-  )
-
-  # works if no low card cols are specified
-  expect_no_warning(
-    checkinput_copula2stage_modelframe(
-      F.formula = as.Formula(y ~ x_lowcard),
-      data = df,
-      allowed.classes = list(x_lowcard = "numeric"),
-      labels.warn.low.card = NULL,
-      forbid.constant = FALSE
-    )
-  )
-})
-
-test_that("_modelframe fails on constant cols", {
-  df <- fixture_copula_df()
-  df$x_const <- 1
-  base.args <- list(
-    F.formula = as.Formula(y ~ x_num + x_const),
-    data = df,
-    allowed.classes = list(),
-    labels.warn.low.card = NULL
-  )
-
-  run_cases_errmsg(
-    fn = checkinput_copula2stage_modelframe,
-    base.args = base.args,
-    cases = list("forbidden" = list(forbid.constant = TRUE)),
-    regexp = "must not be constant: x_const"
-  )
-  run_cases_errmsg_empty(
-    fn = checkinput_copula2stage_modelframe,
-    base.args = base.args,
-    cases = list("allowed" = list(forbid.constant = FALSE))
   )
 })
 
@@ -398,46 +266,143 @@ test_that("_modelframe works for valid data", {
 # Tested on its own because it is also called without
 # checkinput_copula2stage_modelframe(), on an already built model.frame
 
-test_that("_modelframe_columns reports the problems of the given model.frame", {
-  df <- fixture_copula_df()
-  df$x_inf <- df$x_num
-  df$x_inf[1] <- Inf
-  df$x_const <- 1
-  df$x_unused <- factor(df$x_fac, levels = c("a", "b", "c"))
+test_that("_modelframe_columns fails on non-finite values, illegal classes", {
+  df.inf <- fixture_copula_df()
+  df.inf$x_inf <- df.inf$x_num
+  df.inf$x_inf[1] <- Inf
+
+  df.inf.response <- fixture_copula_df()
+  df.inf.response$y[1] <- Inf
 
   run_cases_errmsg(
     fn = checkinput_copula2stage_modelframe_columns,
-    base.args = list(
-      allowed.classes = list(),
-      labels.warn.low.card = NULL,
-      forbid.constant = FALSE
-    ),
     cases = list(
-      "wrong class" = list(
-        mf = model.frame(~x_fac, data = df),
-        allowed.classes = list(x_fac = "numeric")
+      "given wrong class" = list(
+        mf = model.frame(y ~ x_fac, data = fixture_copula_df()),
+        allowed.classes = list(x_fac = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
       ),
-      "non-finite" = list(mf = model.frame(~x_inf, data = df)),
-      "unused level" = list(mf = model.frame(~x_unused, data = df)),
-      "constant" = list(mf = model.frame(~x_const, data = df), forbid.constant = TRUE)
+      "Inf already in data" = list(
+        mf = model.frame(y ~ x_inf, data = df.inf),
+        allowed.classes = list(x_inf = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
+      ),
+      "-Inf from transformation" = list(
+        mf = model.frame(y ~ log(x_lowcard - 1), data = fixture_copula_df()),
+        allowed.classes = list("log(x_lowcard - 1)" = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
+      ),
+      "Inf in response" = list(
+        mf = model.frame(y ~ x_num, data = df.inf.response),
+        allowed.classes = list(x_num = "numeric"),
+        labels.warn.low.card = NULL,
+        forbid.constant = FALSE
+      )
     ),
     regexp = c(
       "has class",
       "finite values.*x_inf",
-      "unused levels: x_unused \\('c'\\)",
-      "must not be constant: x_const"
+      "finite values.*log\\(x_lowcard - 1\\)",
+      "finite values.*y"
     )
   )
+})
 
-  # low cardinality is a warning and not a returned error message
+test_that("_modelframe_columns fails on unused factor levels, works after droplevels()", {
+  df <- fixture_copula_df()
+  df$x_fac <- factor(df$x_fac, levels = c("a", "b", "c"))
+  base.args <- list(
+    allowed.classes = list(x_num = "numeric", x_fac = "factor"),
+    labels.warn.low.card = NULL,
+    forbid.constant = FALSE
+  )
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_modelframe_columns,
+    base.args = base.args,
+    cases = list(
+      "unused level" = list(mf = model.frame(y ~ x_num + x_fac, data = df))
+    ),
+    regexp = "unused levels: x_fac \\('c'\\)"
+  )
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_modelframe_columns,
+    base.args = base.args,
+    cases = list(
+      "after droplevels()" = list(
+        mf = model.frame(y ~ x_num + x_fac, data = droplevels(df))
+      )
+    )
+  )
+})
+
+test_that("_modelframe_columns warns for low-cardinality numerics", {
+  df <- fixture_copula_df()
+
+  # warns for given labels
   expect_warning(
     checkinput_copula2stage_modelframe_columns(
-      mf = model.frame(~x_lowcard, data = df),
-      allowed.classes = list(x_lowcard = "numeric"),
+      mf = model.frame(y ~ x_lowcard + x_num, data = df),
+      allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
       labels.warn.low.card = "x_lowcard",
       forbid.constant = FALSE
     ),
     regexp = "low cardinality"
+  )
+
+  # dont warn if col is not numeric (factors are low card)
+  expect_no_warning(
+    checkinput_copula2stage_modelframe_columns(
+      mf = model.frame(y ~ x_fac, data = df),
+      allowed.classes = list(x_fac = "factor"),
+      labels.warn.low.card = "x_fac",
+      forbid.constant = FALSE
+    )
+  )
+
+  # dont warn if another column is low cardinality (not all columns in mf!)
+  expect_no_warning(
+    checkinput_copula2stage_modelframe_columns(
+      mf = model.frame(y ~ x_lowcard + x_num, data = df),
+      allowed.classes = list(x_lowcard = "numeric", x_num = "numeric"),
+      labels.warn.low.card = "x_num",
+      forbid.constant = FALSE
+    )
+  )
+
+  # works if no low card cols are specified
+  expect_no_warning(
+    checkinput_copula2stage_modelframe_columns(
+      mf = model.frame(y ~ x_lowcard, data = df),
+      allowed.classes = list(x_lowcard = "numeric"),
+      labels.warn.low.card = NULL,
+      forbid.constant = FALSE
+    )
+  )
+})
+
+test_that("_modelframe_columns fails on constant cols", {
+  df <- fixture_copula_df()
+  df$x_const <- 1
+  base.args <- list(
+    mf = model.frame(y ~ x_num + x_const, data = df),
+    allowed.classes = list(),
+    labels.warn.low.card = NULL
+  )
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_modelframe_columns,
+    base.args = base.args,
+    cases = list("forbidden" = list(forbid.constant = TRUE)),
+    regexp = "must not be constant: x_const"
+  )
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_modelframe_columns,
+    base.args = base.args,
+    cases = list("allowed" = list(forbid.constant = FALSE))
   )
 })
 
