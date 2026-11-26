@@ -119,7 +119,7 @@ test_that("_data_copnames fails if data has cols named like the correction terms
 
   run_cases_errmsg(
     fn = checkinput_copula2stage_data_copnames,
-    base.args = list(data = df),
+    base.args = list(data = df, regex.forbidden.colnames = "^<copterm>$"),
     cases = list(
       "single endo" = list(labels.endo = "x_num"),
       "multi endo, one clashes" = list(labels.endo = c("x_pos", "x_num")),
@@ -142,12 +142,42 @@ test_that("_data_copnames works if col is named similar but different from the c
 
   run_cases_errmsg_empty(
     fn = checkinput_copula2stage_data_copnames,
-    base.args = list(),
+    base.args = list(regex.forbidden.colnames = "^<copterm>$"),
     cases = list(
       "similar but different names" = list(
         labels.endo = "x_num",
         data = cbind(df, x_numcop = 1, x_num_cop2 = 1, cop_x_num = 1)
       )
+    )
+  )
+})
+
+test_that("_data_copnames forbids the col names that the regex describes", {
+  df <- fixture_copula_df()
+  # As used by copulaJAMS: also the names of the stratified correction terms
+  base.args <- list(
+    labels.endo = "x_num",
+    regex.forbidden.colnames = "^<copterm>($|\\[)"
+  )
+
+  run_cases_errmsg(
+    fn = checkinput_copula2stage_data_copnames,
+    base.args = base.args,
+    cases = list(
+      "exact name" = list(data = cbind(df, x_num_cop = 1)),
+      "stratified name" = list(data = cbind(df, "x_num_cop[x_fac=a]" = 1))
+    ),
+    regexp = c(
+      "named 'x_num_cop' because",
+      "named 'x_num_cop\\[x_fac=a\\]' because"
+    )
+  )
+
+  run_cases_errmsg_empty(
+    fn = checkinput_copula2stage_data_copnames,
+    base.args = base.args,
+    cases = list(
+      "other suffix" = list(data = cbind(df, x_num_cop2 = 1))
     )
   )
 })

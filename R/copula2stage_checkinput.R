@@ -114,9 +114,34 @@ checkinput_copula2stage_vars_in_data <- function(F.formula, data) {
 }
 
 # Cols with same name as the generated regressor, eg '<endo>_cop' would conflict in 2nd stage
-checkinput_copula2stage_data_copnames <- function(data, labels.endo) {
+# - regex.forbidden.colnames: Regex of the col names that data may not have.
+#   `<copterm>` in it stands for the name of a generated regressor
+#   Example: "^<copterm>$" forbids exactly the names of the generated regressors
+checkinput_copula2stage_data_copnames <- function(
+  data,
+  labels.endo,
+  regex.forbidden.colnames
+) {
+  # regex needs to contain <copterm>
+  stopifnot(grepl("<copterm>", regex.forbidden.colnames, fixed = TRUE))
+
   copterm.names <- copula2stage_get_copterm_names(labels.endo)
-  clashing <- intersect(copterm.names, colnames(data))
+
+  # One separate regex per generated regressor
+  # \Q..\E: The name is taken literally, its not interpreted as regex chars ("log(P)_cop")
+  l.clashing <- lapply(copterm.names, function(copterm.name.i) {
+    # fill the placeholder
+    regex.i <- sub(
+      pattern = "<copterm>",
+      replacement = paste0("\\Q", copterm.name.i, "\\E"),
+      x = regex.forbidden.colnames,
+      fixed = TRUE
+    )
+    # apply, search for matches in colnames
+    return(grep(pattern = regex.i, x = colnames(data), perl = TRUE, value = TRUE))
+  })
+  clashing <- unique(unlist(l.clashing))
+
   if (length(clashing) > 0) {
     # fmt: skip
     return(paste0(
@@ -440,7 +465,8 @@ checkinput_copula2stage_formula_data <- function(
   # (after the checks above: at least one endo regressor guaranteed)
   err.msg <- checkinput_copula2stage_data_copnames(
     data = data,
-    labels.endo = endo.labels
+    labels.endo = endo.labels,
+    regex.forbidden.colnames = "^<copterm>$"
   )
   if (length(err.msg) > 0) {
     return(err.msg)
