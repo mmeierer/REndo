@@ -319,7 +319,8 @@ checkinput_copulajams_min_obs_per_stratum <- function(F.formula, data) {
 #
 # - formula basics (formula, 1 lhs, 3 or 4 rhs parts, single response)
 # - parts 2-4 are valid, all variables are in data
-# - response not in part 1, all variables of parts 2-4 are also in part 1
+# - response not in part 1, all variables of parts 2-4 are also in part 1,
+#   no column of data is named like a correction term
 # - mf of every part: can be built, column classes, only finite values,
 #   no unused factor levels, not constant
 # - every stratum has enough observations
@@ -355,12 +356,20 @@ checkinput_copulajams_formula_data <- function(formula, data) {
   # Variables of the parts ------------------------------------------------------------
   # Needs the variables to be in data: A dot in part 1 is expanded
   rhs1.terms <- terms(F.formula, lhs = 0, rhs = 1, data = data)
+  labels.rhs2 <- labels(terms(F.formula, lhs = 0, rhs = 2))
   err.msg <- c(
     checkinput_copula2stage_response_not_in_rhs(
       F.formula = F.formula,
       rhs1.terms = rhs1.terms
     ),
-    checkinput_copulajams_all_vars_in_rhs1(F.formula = F.formula, data = data)
+    checkinput_copulajams_all_vars_in_rhs1(F.formula = F.formula, data = data),
+    checkinput_copula2stage_data_copnames(
+      data = data,
+      labels.endo = labels.rhs2,
+      # Names of the correction terms, also when followed by a stratum
+      # Example: "P1_cop" and "P1_cop[Z=0]"
+      regex.forbidden.colnames = "^<copterm>($|\\[)"
+    )
   )
   if (length(err.msg) > 0) {
     return(err.msg)

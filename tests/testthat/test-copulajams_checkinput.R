@@ -160,6 +160,8 @@ test_that("_formula_data has every check method wired in", {
   # Stratum with a single observation
   df.rare <- fixture_copula_df()
   df.rare$x_rare <- factor(c("rare", rep("common", nrow(df.rare) - 1)))
+  # Column named like a stratified correction term
+  df.copname <- cbind(fixture_copula_df(), "x_num_cop[x_fac=a]" = 1)
 
   run_cases_errmsg(
     fn = checkinput_copulajams_formula_data,
@@ -177,6 +179,11 @@ test_that("_formula_data has every check method wired in", {
       "response in part 1" = list(formula = y ~ y + x_num | x_num | 0),
       # checkinput_copulajams_all_vars_in_rhs1
       "variable only in part 3" = list(formula = y ~ x_num | x_num | `x space`),
+      # checkinput_copula2stage_data_copnames
+      "column named like a correction term" = list(
+        formula = y ~ x_num | x_num | 0,
+        data = df.copname
+      ),
       # checkinput_copula2stage_modelframe: Part 1
       "constant in part 1" = list(formula = y ~ x_num + x_const | x_num | 0),
       # checkinput_copulajams_modelframe_single_part: Parts 2 and 3
@@ -197,6 +204,7 @@ test_that("_formula_data has every check method wired in", {
       "not found in parameter 'data': x_missing",
       "also appear on the right-hand side: y",
       "part 3 .* but these are not: x space",
+      "named 'x_num_cop\\[x_fac=a\\]' because",
       "must not be constant: x_const",
       "'x_fac' has class 'factor' but must be one of: numeric",
       "'x_lowcard' has class 'numeric' but must be one of: factor, ordered",
