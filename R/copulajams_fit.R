@@ -193,131 +193,122 @@ copulajams_get_stratum_copterm_names <- function(copterm.names, stratum.level) {
 copulajams_correction_discrete <- function(
   P,
   W,
-  df.Z, # has to be factors, not dummies
+  z, # single factor: the stratum of every obs
   cdf
 ) {
   # str(df.Z)
   # str(W)
   # str(P)
-  stopifnot(!is.null(colnames(df.Z)))
+  stopifnot(is.factor(z))
+  stopifnot(length(z) == nrow(P))
   l.results <- list()
 
-  # For each factor separately: For each level: Process data
-  for (label.Z.i in colnames(df.Z)) {
-    # Data of single factor (drop: need vector not df to read with levels())
-    Z.i <- df.Z[, label.Z.i, drop = TRUE]
+  # Foreach stratum (level of z):
+  for (lvl.i in levels(z)) {
+    # find where data with this level is
+    idx.rows <- z == lvl.i
 
-    # levels() also applies for ordered factors
-    for (lvl.i in levels(Z.i)) {
-      # find where data with this level is
-      idx.rows <- Z.i == lvl.i
+    # skip if too few observations or no variation in endogenous regressors
+    # More than p observations are strictly required to estimate a non-singular
+    # p x p sample covariance matrix, especially where p = ncol(PW) = endogenous regressors +
+    # continuous exogenous regressors.
 
-      # skip if too few observations or no variation in endogenous regressors
-      # More than p observations are strictly required to estimate a non-singular
-      # p x p sample covariance matrix, especially where p = ncol(PW) = endogenous regressors +
-      # continuous exogenous regressors.
+    # Sample covariance matrix (1/(n-1))* X'X has rank min (n-1, p).
+    #if n <= p, it is rank deficient.
 
-      # Sample covariance matrix (1/(n-1))* X'X has rank min (n-1, p).
-      #if n <= p, it is rank deficient.
-
-      fn.warn.skip <- function(not.enough) {
-        warning(
-          "Skipping: The factor level `",
-          lvl.i,
-          "` of variable `",
-          label.Z.i,
-          "` does not have enough ",
-          not.enough,
-          " for a reliable covariance estimation.",
-          call. = FALSE
-        )
-      }
-
-      # check num obs before doing expensive data subset
-      p.cov <- ncol(P) + ncol(W)
-      if (sum(idx.rows) <= p.cov) {
-        #p.cov = K + L which is the dim of the covariance matrix.
-        fn.warn.skip(paste0("observations (need >", p.cov, ")")) #needs to be strictly more than p.cov obs. for non-singular
-        next
-      }
-
-      P.sub <- P[idx.rows, , drop = FALSE]
-      W.sub <- W[idx.rows, , drop = FALSE]
-
-      # message("P")
-      # str(P)
-      # message("W")
-      # str(W)
-      # message("P.sub")
-      # str(P.sub)
-      # message("W.sub")
-      # str(W.sub)
-      # message("has variation")
-      # str(apply(P.sub, 2, function(col) length(unique(col)) > 1))
-
-      #Checking for variation in endogenous regressors per group
-      # if endo regressors are constant in a Z group, CDF have same
-      #probabiity for all obs. Cov matrix may have a zero row or column. solve()
-      #will fail
-
-      has.variation <- any(apply(P.sub, 2, function(col) length(unique(col)) > 1))
-      if (!has.variation) {
-        fn.warn.skip("variation")
-        next
-      }
-
-      # now use non-factor columns only for the CDF transformation.
-      # factor variables cannot enter the CDF transformation as they are discrete with
-      # no meaningful continuous CDF
-
-      # Other than for the continuous-only case, we do not want an error (like
-      # non-invertible matrix) in a single strata to derail the whole pcop generation
-      # process.
-      #
-      # So far, continue with all 0 only for errors related to matrix inversion.
-      # Let all other errors & warnings go through
-      # TODO: maybe wrap solve() itself + throw custom error to identify more robustly
-      cop.terms.sub <- tryCatch(
-        copulajams_correction_continuous(P = P.sub, W = W.sub, cdf = cdf),
-        error = function(e) {
-          # non-invertible signals an error containing "singular"
-          if (grepl("singular", conditionMessage(e), ignore.case = TRUE)) {
-            # print(e)
-            return(NULL)
-          }
-          # fail / "re-throw" any other error
-          stop(e)
-        }
+    fn.warn.skip <- function(not.enough) {
+      warning(
+        "Skipping: The stratum `",
+        lvl.i,
+        "` does not have enough ",
+        not.enough,
+        " for a reliable covariance estimation.",
+        call. = FALSE
       )
-
-      # there was an issue with inverting the matrix
-      if (is.null(cop.terms.sub)) {
-        warning(
-          "Skipping: Matrix inversion failed for the factor level `",
-          lvl.i,
-          "` of variable `",
-          label.Z.i,
-          "`",
-          call. = FALSE
-        )
-        next
-      }
-
-      # Expanding back to a full dataset
-      # I(Z_i = z) from eq. 20. zero attributed for observations not in this level
-      # As many rows as full data (P) but only as many cols as correction applied
-      cop.terms.full <- matrix(0, nrow = nrow(P), ncol = ncol(cop.terms.sub))
-      cop.terms.full[idx.rows, ] <- cop.terms.sub
-
-      # name columns according to strata (name) and factor level info
-      name.strata <- paste(label.Z.i, lvl.i, sep = "_")
-      colnames(cop.terms.full) <- make.names(paste0(
-        name.strata,
-        "_",
-        colnames(cop.terms.sub)
-      ))
-      l.results[[name.strata]] <- cop.terms.full
     }
+
+    # check num obs before doing expensive data subset
+    p.cov <- ncol(P) + ncol(W)
+    if (sum(idx.rows) <= p.cov) {
+      #p.cov = K + L which is the dim of the covariance matrix.
+      fn.warn.skip(paste0("observations (need >", p.cov, ")")) #needs to be strictly more than p.cov obs. for non-singular
+      next
+    }
+
+    P.sub <- P[idx.rows, , drop = FALSE]
+    W.sub <- W[idx.rows, , drop = FALSE]
+
+    # message("P")
+    # str(P)
+    # message("W")
+    # str(W)
+    # message("P.sub")
+    # str(P.sub)
+    # message("W.sub")
+    # str(W.sub)
+    # message("has variation")
+    # str(apply(P.sub, 2, function(col) length(unique(col)) > 1))
+
+    #Checking for variation in endogenous regressors per group
+    # if endo regressors are constant in a Z group, CDF have same
+    #probabiity for all obs. Cov matrix may have a zero row or column. solve()
+    #will fail
+
+    has.variation <- any(apply(P.sub, 2, function(col) length(unique(col)) > 1))
+    if (!has.variation) {
+      fn.warn.skip("variation")
+      next
+    }
+
+    # now use non-factor columns only for the CDF transformation.
+    # factor variables cannot enter the CDF transformation as they are discrete with
+    # no meaningful continuous CDF
+
+    # Other than for the continuous-only case, we do not want an error (like
+    # non-invertible matrix) in a single strata to derail the whole pcop generation
+    # process.
+    #
+    # So far, continue with all 0 only for errors related to matrix inversion.
+    # Let all other errors & warnings go through
+    # TODO: maybe wrap solve() itself + throw custom error to identify more robustly
+    cop.terms.sub <- tryCatch(
+      copulajams_correction_continuous(P = P.sub, W = W.sub, cdf = cdf),
+      error = function(e) {
+        # non-invertible signals an error containing "singular"
+        if (grepl("singular", conditionMessage(e), ignore.case = TRUE)) {
+          # print(e)
+          return(NULL)
+        }
+        # fail / "re-throw" any other error
+        stop(e)
+      }
+    )
+
+    # there was an issue with inverting the matrix
+    if (is.null(cop.terms.sub)) {
+      warning(
+        "Skipping: Matrix inversion failed for the stratum `",
+        lvl.i,
+        "`",
+        call. = FALSE
+      )
+      next
+    }
+
+    # Expanding back to a full dataset
+    # I(Z_i = z) from eq. 20. zero attributed for observations not in this level
+    # As many rows as full data (P) but only as many cols as correction applied
+    cop.terms.full <- matrix(0, nrow = nrow(P), ncol = ncol(cop.terms.sub))
+    cop.terms.full[idx.rows, ] <- cop.terms.sub
+
+    # name columns according to strata (name) and factor level info
+    name.strata <- lvl.i
+    colnames(cop.terms.full) <- make.names(paste0(
+      name.strata,
+      "_",
+      colnames(cop.terms.sub)
+    ))
+    l.results[[name.strata]] <- cop.terms.full
   }
 
   # str(l.results)
