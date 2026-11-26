@@ -1,40 +1,34 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats lm model.frame model.matrix terms formula update reformulate
+#' @importFrom stats terms
 copulajams_fit <- function(F.formula, data, cdf, verbose) {
-  l.parts <- copulajams_build_model_parts(F.formula = F.formula, data = data)
-
-  P <- l.parts$X.endo
-  W <- l.parts$X.exo.cont
-  df.Z <- l.parts$df.Z
+  # P & W: 1 col per term. If part 3 is `0`, W has no cols (but all rows)
+  P <- copulajams_build_matrix_from_part(
+    F.formula = F.formula,
+    data = data,
+    rhs.part = 2
+  )
+  W <- copulajams_build_matrix_from_part(
+    F.formula = F.formula,
+    data = data,
+    rhs.part = 3
+  )
+  # Strata (part 4): Single factor, NULL if none (part 4 is `0`)
+  z <- copulajams_build_strata(F.formula = F.formula, data = data)
 
   # Check for constant regressors as may happen in bootstrap sample.
   # Fail with a clear reason instead of a singular cov matrix in solve() later
   copula2stage_stop_if_constant(P)
   copula2stage_stop_if_constant(W)
 
-  # Checking if there is any factor variables among exogenous regressors
-  # if the factor Z is present, then it requires stratified correction per level (see equation 20 and 21)
-  # if there is no factor Z, variance-covariance correction (eq. 17 to 19)
-  if (is.null(df.Z)) {
-    # case no Z
-    if (verbose) {
-      message(
-        "No discrete (`factor`) exogenous variable(s) present: Estimating on full data."
-      )
-    }
+  # Calculate: Depends whether strata present
+  # w/ strata: then it requires stratified correction per stratum (see equation 20 and 21)
+  # w/o strata: variance-covariance correction (eq. 17 to 19)
+  if (is.null(z)) {
+    # case no strata
     cop.terms <- copulajams_correction_continuous(P = P, W = W, cdf = cdf)
   } else {
-    # case where Z is present
-
-    if (verbose) {
-      message(
-        "Discrete (`factor`) exogenous variable(s) present: ",
-        toString(l.parts$labels.exo.factor),
-        ". Estimating separately within each subset."
-      )
-    }
-
-    cop.terms <- copulajams_correction_discrete(P = P, W = W, df.Z = df.Z, cdf = cdf)
+    # case where strata are present
+    cop.terms <- copulajams_correction_discrete(P = P, W = W, z = z, cdf = cdf)
   }
 
   # 2nd stage: OLS ---------------------------------------------------------------------
@@ -45,85 +39,16 @@ copulajams_fit <- function(F.formula, data, cdf, verbose) {
     cop.terms = cop.terms
   )
 
+  labels.endo <- labels(terms(F.formula, lhs = 0, rhs = 2))
+
   return(list(
     res.lm.augmented = res.2nd.stage$res.lm.augmented,
     labels.pcop = res.2nd.stage$labels.pcop,
-    labels.exo = l.parts$labels.exo,
-    labels.endo = l.parts$labels.endo,
+    labels.exo = NULL,
+    labels.endo = labels.endo,
     P = P,
     W = W,
-    df.Z = df.Z
-  ))
-}
-
-# Dont inline in fit but separate method for better testability
-copulajams_build_model_parts <- function(F.formula, data) {
-  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
-  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
-  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
-
-  # TODO: Blanket exclude all interactions?? What about interactions in endo or purely exos like W1:W2?
-  labels.exo <- labels.exo[!grepl(":", labels.exo, fixed = TRUE)]
-
-  # Build a single model.frame/matrix from which all parts (W,P,Z) are read from to
-  # guarantee they share row and col order
-  mf.main <- model.frame(F.formula, lhs = 1, rhs = 1, data = data, na.action = na.fail)
-  # get terms from mf to also contain dataClasses
-  tr.main <- terms(mf.main)
-  X.main <- model.matrix(tr.main, data = mf.main)
-
-  # get term labels in correct order for the "assign" mapping of the model.matrix
-  # (cannot use labels.main or union(labels.endo, labels.exo))
-  term.labels <- labels(tr.main)
-  # for each column in model matrix: Index of the term.label that generated it
-  mm.assign <- attr(X.main, "assign")
-
-  # find exo labels which are factors or not
-  is.exo.factor <- vapply(
-    labels.exo,
-    FUN = function(lbl.exo) {
-      dc <- attr(tr.main, "dataClasses")
-      return(dc[copula2stage_label_to_colname(lbl.exo)] %in% c("factor", "ordered"))
-    },
-    FUN.VALUE = logical(1)
-  )
-
-  labels.exo.factor <- labels.exo[is.exo.factor]
-  labels.exo.cont <- labels.exo[!is.exo.factor]
-
-  X.endo <- X.main[,
-    mm.assign %in% match(labels.endo, table = term.labels),
-    drop = FALSE
-  ]
-  X.exo.cont <- X.main[,
-    mm.assign %in% match(labels.exo.cont, table = term.labels),
-    drop = FALSE
-  ]
-
-  # return Z already for testability
-  # Z is only used to apply-by-factor: Has to remain factors and not made to dummies
-  if (length(labels.exo.factor) == 0) {
-    df.Z <- NULL
-  } else {
-    colnames.exo.factors <- vapply(
-      labels.exo.factor,
-      FUN = copula2stage_label_to_colname,
-      FUN.VALUE = character(1)
-    )
-    df.Z <- mf.main[, colnames.exo.factors, drop = FALSE]
-    colnames(df.Z) <- labels.exo.factor
-  }
-
-  return(list(
-    mf.main = mf.main,
-    X.main = X.main,
-    X.endo = X.endo,
-    X.exo.cont = X.exo.cont,
-    df.Z = df.Z,
-    labels.endo = labels.endo,
-    labels.exo = labels.exo,
-    labels.exo.cont = labels.exo.cont,
-    labels.exo.factor = labels.exo.factor
+    z = z
   ))
 }
 
