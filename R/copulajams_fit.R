@@ -169,6 +169,15 @@ copulajams_correction_continuous <- function(P, W, cdf) {
   return(P.cop)
 }
 
+# Names of the correction terms of a single stratum: '<copterm name>[<stratum level>]'
+# Example: "P1_cop" in the stratum "Z=0, Z2=a" is "P1_cop[Z=0, Z2=a]"
+copulajams_get_stratum_copterm_names <- function(copterm.names, stratum.level) {
+  stopifnot(length(copterm.names) > 0)
+  stopifnot(length(stratum.level) == 1)
+
+  return(paste0(copterm.names, "[", stratum.level, "]"))
+}
+
 
 #' @importFrom stats cov qnorm
 copulajams_correction_discrete <- function(
