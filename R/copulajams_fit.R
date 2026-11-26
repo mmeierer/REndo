@@ -201,6 +201,9 @@ copulajams_correction_discrete <- function(
   # str(P)
   stopifnot(is.factor(z))
   stopifnot(length(z) == nrow(P))
+  # At least 1 stratum. Should always be the case: Input checks verify + same number
+  # in bootstrap samples
+  stopifnot(nlevels(z) > 0)
   l.results <- list()
 
   # Foreach stratum (level of z):
@@ -208,7 +211,7 @@ copulajams_correction_discrete <- function(
     # find where data with this level is
     idx.rows <- z == lvl.i
 
-    # skip if too few observations or no variation in endogenous regressors
+    # stop if too few observations or no variation in the regressors
     # More than p observations are strictly required to estimate a non-singular
     # p x p sample covariance matrix, especially where p = ncol(PW) = endogenous regressors +
     # continuous exogenous regressors.
@@ -216,23 +219,17 @@ copulajams_correction_discrete <- function(
     # Sample covariance matrix (1/(n-1))* X'X has rank min (n-1, p).
     #if n <= p, it is rank deficient.
 
-    fn.warn.skip <- function(not.enough) {
-      warning(
-        "Skipping: The stratum `",
-        lvl.i,
-        "` does not have enough ",
-        not.enough,
-        " for a reliable covariance estimation.",
-        call. = FALSE
-      )
-    }
+    # The reason of every error in this stratum starts with the stratum
+    msg.stratum <- paste0("Stratum '", lvl.i, "': ")
 
     # check num obs before doing expensive data subset
     p.cov <- ncol(P) + ncol(W)
     if (sum(idx.rows) <= p.cov) {
       #p.cov = K + L which is the dim of the covariance matrix.
-      fn.warn.skip(paste0("observations (need >", p.cov, ")")) #needs to be strictly more than p.cov obs. for non-singular
-      next
+      #needs to be strictly more than p.cov obs. for non-singular
+      # fmt: skip
+      stop(msg.stratum, "has ", sum(idx.rows), " observations but needs more than ",
+           p.cov, " (the number of columns of P and W).", call. = FALSE)
     }
 
     P.sub <- P[idx.rows, , drop = FALSE]
@@ -249,51 +246,31 @@ copulajams_correction_discrete <- function(
     # message("has variation")
     # str(apply(P.sub, 2, function(col) length(unique(col)) > 1))
 
-    #Checking for variation in endogenous regressors per group
-    # if endo regressors are constant in a Z group, CDF have same
-    #probabiity for all obs. Cov matrix may have a zero row or column. solve()
-    #will fail
-
-    has.variation <- any(apply(P.sub, 2, function(col) length(unique(col)) > 1))
-    if (!has.variation) {
-      fn.warn.skip("variation")
-      next
-    }
+    #
 
     # now use non-factor columns only for the CDF transformation.
     # factor variables cannot enter the CDF transformation as they are discrete with
     # no meaningful continuous CDF
 
-    # Other than for the continuous-only case, we do not want an error (like
-    # non-invertible matrix) in a single strata to derail the whole pcop generation
-    # process.
-    #
-    # So far, continue with all 0 only for errors related to matrix inversion.
-    # Let all other errors & warnings go through
-    # TODO: maybe wrap solve() itself + throw custom error to identify more robustly
+    # Any error in this stratum stop()s with a message identifying the stratum.
+    # - constants
+    # - anything else in the math (copulajams_correction_continuous)
     cop.terms.sub <- tryCatch(
-      copulajams_correction_continuous(P = P.sub, W = W.sub, cdf = cdf),
+      {
+        #Checking for variation in endogenous regressors per group
+        # if endo regressors are constant in a Z group, CDF have same
+        #probabiity for all obs. Cov matrix may have a zero row or column. solve()
+        #will fail
+        copula2stage_stop_if_constant(P.sub)
+        copula2stage_stop_if_constant(W.sub)
+
+        # Run the math per stratum
+        copulajams_correction_continuous(P = P.sub, W = W.sub, cdf = cdf)
+      },
       error = function(e) {
-        # non-invertible signals an error containing "singular"
-        if (grepl("singular", conditionMessage(e), ignore.case = TRUE)) {
-          # print(e)
-          return(NULL)
-        }
-        # fail / "re-throw" any other error
-        stop(e)
+        stop(msg.stratum, conditionMessage(e), call. = FALSE)
       }
     )
-
-    # there was an issue with inverting the matrix
-    if (is.null(cop.terms.sub)) {
-      warning(
-        "Skipping: Matrix inversion failed for the stratum `",
-        lvl.i,
-        "`",
-        call. = FALSE
-      )
-      next
-    }
 
     # Expanding back to a full dataset
     # I(Z_i = z) from eq. 20. zero attributed for observations not in this level
@@ -311,16 +288,9 @@ copulajams_correction_discrete <- function(
 
   # str(l.results)
 
-  if (length(l.results) == 0) {
-    stop(
-      "No valid factor-level subsets found for correction term estimation. ",
-      "Check that factor exogenous regressors have sufficient observations ",
-      "per level (>",
-      p.cov,
-      ") and variation in the endogenous regressors.",
-      call. = FALSE
-    )
-  }
+  # Check whether there are any results at all no longer required. Fails as soon as
+  # any stratum has no result
+  # if (length(l.results) == 0) {}
 
   cop.terms.results <- do.call(cbind, l.results)
   # message("cop.terms.results")
