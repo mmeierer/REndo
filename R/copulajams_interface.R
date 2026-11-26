@@ -161,23 +161,7 @@ copulaJAMS <- function(
   #Input checks
   allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
   check_err_msg(checkinput_copula2stage_data_basics(data))
-
-  # - >= 1 endogenous regressor
-  # - >= 1 exogenous regressor
-  # - endogenous: numeric
-  # - exogenous: any class (factors use stratification)
-  # - interactions allowed
-  check_err_msg(checkinput_copula2stage_formula_data(
-    formula = formula,
-    data = data,
-    min.num.exo = 1,
-    msg.min.num.exo = "At least one exogenous regressor is required.",
-    allow.interactions = TRUE,
-    allow.constant.regressors = FALSE,
-    warn.low.card.endo = TRUE,
-    allowed.classes.endo = "numeric",
-    allowed.classes.exo = NULL # allows any
-  ))
+  check_err_msg(checkinput_copulajams_formula_data(formula = formula, data = data))
 
   check_err_msg(checkinput_copula2stage_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
   check_err_msg(checkinput_copula2stage_numboots(num.boots))
@@ -185,9 +169,6 @@ copulaJAMS <- function(
 
   cdf <- match.arg(cdf, choices = allowed.cdfs)
   F.formula <- as.Formula(formula)
-  labels.main <- labels(terms(F.formula, data = data, rhs = 1))
-  labels.endo <- labels(terms(F.formula, data = data, rhs = 2))
-  labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   #fitting the original data
   fit <- copulajams_fit(
@@ -232,7 +213,7 @@ copulaJAMS <- function(
     # JAMS-specific
     P = fit$P,
     W = fit$W,
-    df.Z = fit$df.Z
+    z = fit$z
   ))
 }
 
