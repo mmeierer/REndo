@@ -301,14 +301,12 @@ copulajams_correction_discrete <- function(
     cop.terms.full <- matrix(0, nrow = nrow(P), ncol = ncol(cop.terms.sub))
     cop.terms.full[idx.rows, ] <- cop.terms.sub
 
-    # name columns according to strata (name) and factor level info
-    name.strata <- lvl.i
-    colnames(cop.terms.full) <- make.names(paste0(
-      name.strata,
-      "_",
-      colnames(cop.terms.sub)
-    ))
-    l.results[[name.strata]] <- cop.terms.full
+    # Names for per-stratum correction terms like "P1_cop[Z=0]"
+    colnames(cop.terms.full) <- copulajams_get_stratum_copterm_names(
+      copterm.names = colnames(cop.terms.sub),
+      stratum.level = lvl.i
+    )
+    l.results[[lvl.i]] <- cop.terms.full
   }
 
   # str(l.results)
