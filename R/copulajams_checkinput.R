@@ -293,6 +293,9 @@ checkinput_copulajams_modelframe_single_part <- function(
 checkinput_copulajams_formula_data <- function(formula, data) {
   # Formula basics --------------------------------------------------------------------
   # 3 or 4 rhs parts: The 4th part (strata) is optional
+  # The 3rd part (W) is mandatory (or `0` if there is no W): A 2-part formula as in
+  # the other copula methods would silently not use X for the correction, misleading
+  # many users
   err.msg <- checkinput_copula2stage_formula_basics(
     formula = formula,
     allowed.num.rhs.parts = c(3, 4)
