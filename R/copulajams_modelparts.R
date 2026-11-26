@@ -101,3 +101,30 @@ copulajams_combine_factors_to_strata <- function(df) {
   z <- factor(x = key, levels = key[first.rows.observed], labels = labels.strata)
   return(z)
 }
+
+# The strata of part 4 as a single factor
+# - NULL if the formula has no part 4 or if part 4 is a single `0`
+# - otherwise the terms of part 4 combined to 1 factor
+# The part may only have factor terms (verified by the input checks)
+copulajams_build_strata <- function(F.formula, data) {
+  num.rhs.parts <- length(F.formula)[2]
+  stopifnot(num.rhs.parts %in% c(3, 4))
+
+  if (num.rhs.parts == 3) {
+    return(NULL)
+  }
+
+  if (copulajams_is_rhs_part_lone_zero(F.formula = F.formula, rhs.part = 4)) {
+    return(NULL)
+  }
+
+  mf <- copula2stage_build_mf_part(
+    F.formula = F.formula,
+    data = data,
+    rhs.part = 4,
+    include.response = FALSE
+  )
+
+  z <- copulajams_combine_factors_to_strata(df = mf)
+  return(z)
+}

@@ -56,3 +56,30 @@ test_that("copulajams_combine_factors_to_strata combines factors to strata", {
     regexp = "same stratum level \\('name'\\): 'Z=0, Z2=a, Z2=b'"
   )
 })
+
+
+# copulajams_build_strata ------------------------------------------------------------
+test_that("copulajams_build_strata builds the strata of part 4", {
+  df <- fixture_jams_formula_edge_cases()[["multiple strata"]]$data
+
+  # no part 4
+  expect_null(copulajams_build_strata(
+    F.formula = as.Formula(y ~ P1 + W | P1 | W),
+    data = df
+  ))
+
+  # part 4 is 0
+  expect_null(copulajams_build_strata(
+    F.formula = as.Formula(y ~ P1 + W | P1 | W | 0),
+    data = df
+  ))
+
+  # 2 terms, 1 of them converted: levels use the terms as written
+  z <- copulajams_build_strata(
+    F.formula = as.Formula(y ~ P1 + W + Z + Z_num | P1 | W | Z + factor(Z_num)),
+    data = df
+  )
+  expect_true(is.factor(z))
+  expect_equal(length(z), nrow(df))
+  expect_match(levels(z), "^Z=.*, factor\\(Z_num\\)=")
+})
