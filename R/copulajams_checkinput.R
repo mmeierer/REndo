@@ -276,6 +276,41 @@ checkinput_copulajams_modelframe_single_part <- function(
   ))
 }
 
+# Every stratum needs to have more obs than P (part 2) and W (part 3) have cols
+# - this is the same check that also is done in the math
+# - required for cov matrix inversion
+# - better to fail here already with more understandable message, but should still be
+#   also checked in the code because bootstrap samples do not pass the input checks
+#
+# Nothing to check if there are no strata
+# Parts 2-4 have to be valid, check before
+#
+#' @importFrom stats terms
+checkinput_copulajams_min_obs_per_stratum <- function(F.formula, data) {
+  z <- copulajams_build_strata(F.formula = F.formula, data = data)
+  if (is.null(z)) {
+    return(c())
+  }
+
+  # P and W have 1 col per term (because 1 var per term), none if the part is `0`
+  num.terms.P <- length(labels(terms(F.formula, lhs = 0, rhs = 2)))
+  num.terms.W <- length(labels(terms(F.formula, lhs = 0, rhs = 3)))
+  num.terms.PW <- num.terms.P + num.terms.W
+
+  num.obs.per.stratum <- table(z)
+  strata.too.small <- names(num.obs.per.stratum)[num.obs.per.stratum <= num.terms.PW]
+
+  if (length(strata.too.small) > 0) {
+    # fmt: skip
+    return(paste0(
+      "Every stratum built by part 4 in 'formula' needs to have more than ",
+      num.terms.PW, " observations (the number of terms in parts 2 and 3) but these ",
+      "do not: ", toString(paste0("'", strata.too.small, "'")), "."))
+  }
+
+  return(c())
+}
+
 # 3 or 4 part Formula of structure:
 #   (response) ~ (structural model) | (P: endogenous) | (W: continuous exogenous) | (Z: strata)
 #   eg y ~ W + Z + P | P | W | Z
@@ -287,6 +322,7 @@ checkinput_copulajams_modelframe_single_part <- function(
 # - response not in part 1, all variables of parts 2-4 are also in part 1
 # - mf of every part: can be built, column classes, only finite values,
 #   no unused factor levels, not constant
+# - every stratum has enough observations
 #
 #' @importFrom Formula as.Formula
 #' @importFrom stats terms
@@ -365,5 +401,12 @@ checkinput_copulajams_formula_data <- function(formula, data) {
   }
 
   # Multiple parts can generate the same error message
-  return(unique(err.msg))
+  err.msg <- unique(err.msg)
+  if (length(err.msg) > 0) {
+    return(err.msg)
+  }
+
+  # Observations per stratum ----------------------------------------------------------
+  # Needs the model.frames of parts 2-4 to be valid
+  return(checkinput_copulajams_min_obs_per_stratum(F.formula = F.formula, data = data))
 }

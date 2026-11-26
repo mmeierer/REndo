@@ -117,6 +117,36 @@ test_that("_modelframe_single_part rejects invalid data of a part", {
 })
 
 
+# checkinput_copulajams_min_obs_per_stratum ------------------------------------------
+test_that("_min_obs_per_stratum rejects strata with too few observations", {
+  df <- fixture_jams_formula_edge_cases()[["multiple strata"]]$data
+  # Level with as many observations as parts 2 and 3 have terms: 1 too few
+  df$Z_rare <- factor(c("rare", "rare", rep("common", nrow(df) - 2)))
+
+  run_cases_errmsg_empty(
+    fn = checkinput_copulajams_min_obs_per_stratum,
+    base.args = list(data = df),
+    cases = list(
+      "no part 4" = list(F.formula = as.Formula(y ~ P1 + W | P1 | W)),
+      "all strata large enough" = list(
+        F.formula = as.Formula(y ~ P1 + W + Z | P1 | W | Z)
+      )
+    )
+  )
+
+  run_cases_errmsg(
+    fn = checkinput_copulajams_min_obs_per_stratum,
+    base.args = list(data = df),
+    cases = list(
+      "stratum at the limit" = list(
+        F.formula = as.Formula(y ~ P1 + W + Z_rare | P1 | W | Z_rare)
+      )
+    ),
+    regexp = "more than 2 observations .* but these do not: 'Z_rare=rare'\\."
+  )
+})
+
+
 # checkinput_copulajams_formula_data -------------------------------------------------
 test_that("_formula_data works with all kinds of formula edge cases", {
   run_cases_errmsg_empty(
@@ -127,6 +157,10 @@ test_that("_formula_data works with all kinds of formula edge cases", {
 
 # Each case fails in another method: Shows that it is called
 test_that("_formula_data has every check method wired in", {
+  # Stratum with a single observation
+  df.rare <- fixture_copula_df()
+  df.rare$x_rare <- factor(c("rare", rep("common", nrow(df.rare) - 1)))
+
   run_cases_errmsg(
     fn = checkinput_copulajams_formula_data,
     base.args = list(data = fixture_copula_df()),
@@ -150,6 +184,11 @@ test_that("_formula_data has every check method wired in", {
       # checkinput_copulajams_modelframe_single_part: Part 4
       "numeric in part 4" = list(
         formula = y ~ x_num + x_lowcard | x_num | 0 | x_lowcard
+      ),
+      # checkinput_copulajams_min_obs_per_stratum
+      "stratum too small" = list(
+        formula = y ~ x_num + x_rare | x_num | 0 | x_rare,
+        data = df.rare
       )
     ),
     regexp = c(
@@ -160,7 +199,8 @@ test_that("_formula_data has every check method wired in", {
       "part 3 .* but these are not: x space",
       "must not be constant: x_const",
       "'x_fac' has class 'factor' but must be one of: numeric",
-      "'x_lowcard' has class 'numeric' but must be one of: factor, ordered"
+      "'x_lowcard' has class 'numeric' but must be one of: factor, ordered",
+      "more than 1 observations .* but these do not: 'x_rare=rare'"
     )
   )
 })
