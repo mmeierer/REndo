@@ -190,14 +190,6 @@ copulaJAMS <- function(
   labels.exo <- labels.main[!(labels.main %in% labels.endo)]
 
   #fitting the original data
-  if (verbose) {
-    message(
-      "Fitting JAMS copula model for ",
-      length(labels.endo),
-      " continuous endogenous regressor(s)."
-    )
-  }
-
   fit <- copulajams_fit(
     F.formula = F.formula,
     data = data,

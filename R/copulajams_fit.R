@@ -1,6 +1,7 @@
 #' @importFrom Formula as.Formula
-#' @importFrom stats terms
+#' @importFrom stats terms formula
 copulajams_fit <- function(F.formula, data, cdf, verbose) {
+  # Model parts ------------------------------------------------------------------------
   # P & W: 1 col per term. If part 3 is `0`, W has no cols (but all rows)
   P <- copulajams_build_matrix_from_part(
     F.formula = F.formula,
@@ -15,6 +16,37 @@ copulajams_fit <- function(F.formula, data, cdf, verbose) {
   # Strata (part 4): Single factor, NULL if none (part 4 is `0`)
   z <- copulajams_build_strata(F.formula = F.formula, data = data)
 
+  # Single message about everything ----------------------------------------------------
+  # Print what was identified for every role
+  # - read from the data that is used
+  # - before the calculations run
+  if (verbose) {
+    fn.list.or.none <- function(x) if (length(x) == 0) "none" else toString(x)
+
+    # fmt: skip
+    if (is.null(z)) {
+        msg.strata <- paste0("none, the correction is estimated on all ", nrow(P), " observations together")
+      } else {
+        num.obs <- table(z)
+        msg.strata <- paste0(nlevels(z), ", smallest with ", min(num.obs), " and largest with ",max(num.obs), " observations")
+      }
+
+    # Not in P, W, z: Vars of the structural model (part 1) in no other part
+    vars.rhs1 <- all.vars(terms(F.formula, lhs = 0, rhs = 1, data = data))
+    rhs.parts.other <- seq(from = 2, to = length(F.formula)[2])
+    vars.other.parts <- all.vars(formula(F.formula, lhs = 0, rhs = rhs.parts.other))
+    vars.no.other.part <- setdiff(vars.rhs1, vars.other.parts)
+
+    # fmt: skip
+    message(
+          "Fitting JAMS copula model\n",
+          "  Endogenous regressors: ", fn.list.or.none(colnames(P)), "\n",
+          "  Exogenous regressors used for the correction: ", fn.list.or.none(colnames(W)), "\n",
+          "  Strata: ", msg.strata, "\n",
+          "  Other variables, not used for the correction: ", fn.list.or.none(vars.no.other.part))
+  }
+
+  # Correction terms -------------------------------------------------------------------
   # Check for constant regressors as may happen in bootstrap sample.
   # Fail with a clear reason instead of a singular cov matrix in solve() later
   copula2stage_stop_if_constant(P)
