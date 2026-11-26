@@ -117,14 +117,14 @@ test_that("_modelframe_single_part rejects invalid data of a part", {
 })
 
 
-# checkinput_copulajams_min_obs_per_stratum ------------------------------------------
-test_that("_min_obs_per_stratum rejects strata with too few observations", {
+# checkinput_copulajams_min_obs ------------------------------------------------------
+test_that("_min_obs rejects too few observations, per stratum or in all of data", {
   df <- fixture_jams_formula_edge_cases()[["multiple strata"]]$data
   # Level with as many observations as parts 2 and 3 have terms: 1 too few
   df$Z_rare <- factor(c("rare", "rare", rep("common", nrow(df) - 2)))
 
   run_cases_errmsg_empty(
-    fn = checkinput_copulajams_min_obs_per_stratum,
+    fn = checkinput_copulajams_min_obs,
     base.args = list(data = df),
     cases = list(
       "no part 4" = list(F.formula = as.Formula(y ~ P1 + W | P1 | W)),
@@ -135,14 +135,21 @@ test_that("_min_obs_per_stratum rejects strata with too few observations", {
   )
 
   run_cases_errmsg(
-    fn = checkinput_copulajams_min_obs_per_stratum,
+    fn = checkinput_copulajams_min_obs,
     base.args = list(data = df),
     cases = list(
       "stratum at the limit" = list(
         F.formula = as.Formula(y ~ P1 + W + Z_rare | P1 | W | Z_rare)
+      ),
+      "no strata, data at the limit" = list(
+        F.formula = as.Formula(y ~ P1 + W | P1 | W),
+        data = df[c(1, 2), ]
       )
     ),
-    regexp = "more than 2 observations .* but these do not: 'Z_rare=rare'\\."
+    regexp = c(
+      "more than 2 observations .* but these do not: 'Z_rare=rare'\\.",
+      "'data' needs to have more than 2 observations .* but has 2\\."
+    )
   )
 })
 
@@ -192,7 +199,7 @@ test_that("_formula_data has every check method wired in", {
       "numeric in part 4" = list(
         formula = y ~ x_num + x_lowcard | x_num | 0 | x_lowcard
       ),
-      # checkinput_copulajams_min_obs_per_stratum
+      # checkinput_copulajams_min_obs
       "stratum too small" = list(
         formula = y ~ x_num + x_rare | x_num | 0 | x_rare,
         data = df.rare

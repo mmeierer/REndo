@@ -131,9 +131,19 @@ copulajams_build_model_parts <- function(F.formula, data) {
 copulajams_correction_continuous <- function(P, W, cdf) {
   # cols must be named and may not contain intercept
   stopifnot(!is.null(colnames(P)) & !("" %in% colnames(P)))
-  stopifnot(!is.null(colnames(W)) & !("" %in% colnames(W)))
+  # No names to check if there are no exo regressors (no W, no cols)
+  if (ncol(W) > 0) {
+    stopifnot(!is.null(colnames(W)) & !("" %in% colnames(W)))
+  }
   stopifnot(!"(Intercept)" %in% colnames(P))
   stopifnot(!"(Intercept)" %in% colnames(W))
+
+  # solve() fails as singular if matrix has fewer obs than cols (ncol(P)+ncol(W)).
+  # Original data is verified in input checks. Here is only for bootstrapped samples.
+  # Bootstrap sample in the continuous case should always have as many obs as the
+  # original data. Also for the stratified case, it should be checked before reaching here.
+  # Hence this should never fire.
+  stopifnot(nrow(P) > ncol(P) + ncol(W))
 
   #computing the copula correction terms - continuous exogenous case
   # equation 17 : C(P_i, W_i), sigma_(C(P), C(W)} is the variance-covariance matrix

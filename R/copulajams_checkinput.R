@@ -282,20 +282,29 @@ checkinput_copulajams_modelframe_single_part <- function(
 # - better to fail here already with more understandable message, but should still be
 #   also checked in the code because bootstrap samples do not pass the input checks
 #
-# Nothing to check if there are no strata
+# Without strata, all obs of data together need to be more
 # Parts 2-4 have to be valid, check before
 #
 #' @importFrom stats terms
-checkinput_copulajams_min_obs_per_stratum <- function(F.formula, data) {
-  z <- copulajams_build_strata(F.formula = F.formula, data = data)
-  if (is.null(z)) {
-    return(c())
-  }
-
+checkinput_copulajams_min_obs <- function(F.formula, data) {
   # P and W have 1 col per term (because 1 var per term), none if the part is `0`
   num.terms.P <- length(labels(terms(F.formula, lhs = 0, rhs = 2)))
   num.terms.W <- length(labels(terms(F.formula, lhs = 0, rhs = 3)))
   num.terms.PW <- num.terms.P + num.terms.W
+
+  z <- copulajams_build_strata(F.formula = F.formula, data = data)
+
+  # No strata: All obs are used together
+  if (is.null(z)) {
+    if (nrow(data) <= num.terms.PW) {
+      # fmt: skip
+      return(paste0(
+        "Parameter 'data' needs to have more than ", num.terms.PW,
+        " observations (the number of terms in parts 2 and 3 of 'formula') but has ",
+        nrow(data), "."))
+    }
+    return(c())
+  }
 
   num.obs.per.stratum <- table(z)
   strata.too.small <- names(num.obs.per.stratum)[num.obs.per.stratum <= num.terms.PW]
@@ -417,5 +426,5 @@ checkinput_copulajams_formula_data <- function(formula, data) {
 
   # Observations per stratum ----------------------------------------------------------
   # Needs the model.frames of parts 2-4 to be valid
-  return(checkinput_copulajams_min_obs_per_stratum(F.formula = F.formula, data = data))
+  return(checkinput_copulajams_min_obs(F.formula = F.formula, data = data))
 }
