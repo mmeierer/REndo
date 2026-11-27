@@ -25,10 +25,10 @@ copulajams_fit <- function(F.formula, data, cdf, verbose) {
 
     # fmt: skip
     if (is.null(z)) {
-        msg.strata <- paste0("none, the correction is estimated on all ", nrow(P), " observations together")
+        msg.strata <- paste0("none (n = ", nrow(P), ")")
       } else {
         num.obs <- table(z)
-        msg.strata <- paste0(nlevels(z), ", smallest with ", min(num.obs), " and largest with ",max(num.obs), " observations")
+        msg.strata <- paste0(nlevels(z), " (n = ", min(num.obs), " to n = ", max(num.obs), ")")
       }
 
     # Not in P, W, z: Vars of the structural model (part 1) in no other part
