@@ -47,11 +47,11 @@ An object of class \code{rendo.copula.jams} which is a list that contains:
 \item{\code{cdf}}{The used cdf function.}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{labels.endo}}{The term labels of the endogenous regressors.}
-\item{\code{labels.exo}}{The term labels of the exogenous regressors.}
+\item{\code{labels.exo}}{Always \code{NULL}. The exogenous regressors are specified in the 3rd and 4th part of the formula.}
 \item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}
 \item{\code{P}}{The matrix of (continuous) endogenous regressors.}
-\item{\code{W}}{The matrix of continuous exogenous regressors. Only main effects: Discrete (\code{factor}) regressors and interaction terms are excluded.}
-\item{\code{df.Z}}{\code{data.frame} of discrete (\code{factor}) exogenous regressors used to stratify. \code{NULL} if there are none.}
+\item{\code{W}}{The matrix of the continuous exogenous regressors used for the correction, as specified in the 3rd part of the formula. It exists but has 0 columns if there are none.}
+\item{\code{z}}{A \code{factor} defining the stratum of every observation. Its levels are the combinations of the factors specified in the 4th part of the formula. \code{NULL} if there is no stratification.}
 }
 \description{
 Fitting adjusted Gaussian copula estimator to address endogeneity

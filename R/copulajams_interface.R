@@ -221,7 +221,9 @@ copulaJAMS <- function(
 doc_rendocopulajams_return_extra_items <- function() {
   return(c(
     P = "\\item{\\code{P}}{The matrix of (continuous) endogenous regressors.}",
-    W = "\\item{\\code{W}}{The matrix of continuous exogenous regressors. Only main effects: Discrete (\\code{factor}) regressors and interaction terms are excluded.}",
-    df.Z = "\\item{\\code{df.Z}}{\\code{data.frame} of discrete (\\code{factor}) exogenous regressors used to stratify. \\code{NULL} if there are none.}"
+    W = "\\item{\\code{W}}{The matrix of the continuous exogenous regressors used for the correction, as specified in the 3rd right-hand part of the formula. It exists but has 0 columns if there are none.}",
+    z = "\\item{\\code{z}}{A \\code{factor} defining the stratum of every observation. Its levels are the combinations of the factors specified in the 4th right-hand part of the formula. \\code{NULL} if there is no stratification.}",
+    # Replaces the entry of the shared return docs
+    labels.exo = "\\item{\\code{labels.exo}}{Always \\code{NULL}. The exogenous regressors are specified in the 3rd and 4th right-hand part of the formula.}"
   ))
 }
