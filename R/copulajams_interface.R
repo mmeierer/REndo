@@ -1,0 +1,230 @@
+#' Adjusted Gaussian Copula Estimator (JAMS)
+#'
+#' @description Fitting adjusted Gaussian copula estimator to address endogeneity
+#' without external instruments. This method shows analytically that the quality of
+#' CDF estimator is the dominant factor of finite-sample bias in the Gaussian copula
+#' approach. Hence, an adjusted ECDF estimator \code{adj.ecdf} was introduced to
+#' reduce bias in models with an intercept. The method also extends the copula
+#' framework to handle multiple continuous endogenous regressors, both continuous and
+#' discrete exogenous regressors, nonlinearities and interaction terms and
+#' a copula structure that can change across categories of discrete exogenous variables.
+#'
+#' The method handles discrete or categorical exogenous regressors \eqn{Z_i} by
+#' stratifying the data into subsets by \eqn{Z_i} level and then estimating the
+#' copula correction terms separately within each subset.
+#'
+#' @templateVar data.addition Endogenous regressors must be \code{numeric}.
+#' @template template_param_formuladataverbose
+#' @template template_param_numboots
+#' @template template_param_cdf
+#'
+#' @details
+#'
+#' ## Model
+#'
+#' let's consider the following structural regression model (Liengaard et al. 2025)
+#' \deqn{Y_i = g(P_i, W_i, Z_i) + \varepsilon_i}
+#'
+#' where
+#' \eqn{P_i \in \mathbb{R}^{d_P}} are continuous endogenous
+#' regressors
+#' \eqn{W_i \in \mathbb{R}^{d_W}} are continuous exogenous
+#' regressors
+#' \eqn{Z_i} are discrete exogenous regressors, and
+#' \eqn{g(\cdot)} is the structural function which may include
+#' interactions and nonlinear transformations:
+#'
+#' \deqn{g(P_i, W_i, Z_i) = \mu + \sum_{k=1}^{K} P_{i,k} \alpha_k +
+#'       W_i' \beta_W + Z_i' \beta_Z + \text{interactions}}
+#'
+#' where
+#' \eqn{i = 1, \ldots, n} indexes observations
+#' \eqn{Y_i} is the dependent variable
+#' \eqn{P_{i,k}} are continuous endogenous regressors correlated with
+#' \eqn{\varepsilon_i}
+#' \eqn{W_i} is a vector of continuous exogenous regressors,
+#' \eqn{Z_i} is a vector of discrete exogenous regressors, and
+#' \eqn{\mu, \alpha_k, \beta_W, \beta_Z} are the structural model
+#' parameters.
+#'
+#' ## Methodology
+#' The JAMS method is an augmented ordinary least-squares estimator in three steps:
+#'
+#' 1. First step: For each value \eqn{z} of the discrete exogenous
+#'    \eqn{Z_i} (or unconditionally if no \eqn{Z_i} is present), the CDF estimator
+#'    is applied to all continuous regressors \eqn{P_i} and \eqn{W_i}
+#'    to obtain normal scores: \deqn{C(P_i) = \Phi^{-1}(\hat{F}_P(P_i)),
+#'    \quad C(W_i) = \Phi^{-1}(\hat{F}_W(W_i))}
+#'
+#' 2. Second step: The copula correction terms are constructed through the
+#'    inverse variance-covariance matrix transformation:
+#'    \deqn{\hat{C}^z(P_i, W_i) = (\hat{C}^z(P_i)', \hat{C}^z(W_i)')
+#'       \hat{\Sigma}^{-1}_{\hat{C}^z(P), \hat{C}^z(W)}
+#'       \begin{pmatrix} I_{d_P} \\ 0_{d_W \times d_P} \end{pmatrix}}
+#'    where
+#'    \eqn{\hat{\Sigma}} is the estimated variance-covariance matrix
+#'    of the normal scores \eqn{(\hat{C}(P), \hat{C}(W))} and the projection
+#'    \eqn{(I_{d_P}, 0_{d_W \times d_P})'} only keeps the \eqn{d_P} columns
+#'    corresponding to the endogenous regressors which provides  one correction term
+#'    per endogenous regressor.
+#'    If there is discrete \eqn{Z_i}, it is estimated separately within each subset
+#'    where \eqn{Z_i = z}.
+#'
+#' 3. Third step: The structural model is then augmented with the estimated
+#'    correction terms and estimated using the ordinary least-squares.
+#'    If there is \eqn{Z_i} the equation is:
+#'    \deqn{Y_i = g(P_i, W_i, Z_i) + \sum_{z=z_1}^{z_J} \sum_{k=1}^{d_P}
+#'       \gamma_k^z \hat{C}_k^z(P_i, W_i) \mathbf{1}(Z_i = z) + u_i}
+#'    If there is no \eqn{Z_i}:
+#'    \deqn{Y_i = g(P_i, W_i) + \sum_{k=1}^{d_P} \gamma_k \hat{C}_k(P_i, W_i) + u_i}
+#'
+#' ## Note on the choice of the \code{cdf}
+#' The \code{adj.ecdf} is the recommended default of Liengaard et al. (2025). It
+#' helps to reduce finite-sample bias, especially in models with an intercept.
+#'
+#' @template template_text_details_cdfmethods
+#'
+#' @details
+#' ## Formula interface
+#' The \code{formula} argument follows a two part notation separated by \code{|}.
+#' The first part specifies the structural model (e.g \code{y ~ X + P}).
+#' The second part identifies the continuous endogenous regressors:
+#'
+#' \preformatted{y ~ X + P | P                          # one endo}
+#' \preformatted{y ~ X + P1 + log(P2) | P1 + log(P2)    # two endo}
+#' \preformatted{y ~ W + Z + P + P:W | P                # interaction}
+#'
+#' Continuous exogenous regressors \eqn{W} enter the variance-covariance matrix
+#' computation. The discrete exogenous regressors \eqn{Z} activate stratification
+#' and must be of class \code{factor}. If  \eqn{Z} is numeric, it first needs to be
+#' converted to factor: \code{data$Z <- as.factor(data$Z)}.
+#'
+#' @template template_text_details_bootsdegenerates
+#'
+# Not using the liengaard template here: It is already part of cdf references template
+# (template_param_cdf_references) and would be printed twice
+#' @template template_param_cdf_references
+#'
+#' @eval doc_rendocopula2stage_return(subclass = "rendo.copula.jams", extra.items = doc_rendocopulajams_return_extra_items())
+#'
+#' @family copula-based methods
+#' @template template_seealso_copula2stage
+#'
+#' @seealso \code{\link[REndo:dataCopJAMS]{dataCopJAMS}} for detailed
+#' information about the simulated dataset
+#'
+#' @examples
+#' \donttest{
+#' #------------------------------------------------------------------------
+#' # Example 1: Two endogenous regressors, continuous and binary exogenous,
+#' # interactions, and varying copula structure by Z
+#' # (Liengaard et al. 2025, Simulation Study 2)
+#' #
+#' # This example shows the following:
+#' # 1) Multiple correlated endogenous regressors P1, P2
+#' # 2) Continuous exogenous W enters variance-covariance matrix (eq. 17)
+#' # 3) Binary exogenous Z is used for stratification (eq. 20-21)
+#' # 4) Interaction terms P1:P2, P1:W, P2:Z in structural model (eq. 16)
+#' # 5) Copula structure varies by Z: rho=0.4 (Z=0), rho=0.6 (Z=1)
+#' #
+#' # True values: mu=1, alpha1=-1 (P1), alpha2=1 (P2),
+#' #              beta1=-1 (W), beta2=-2 (Z),
+#' #              delta1=-1 (P1:P2), delta2=-1 (P1:W), delta3=-2 (P2:Z).
+#' #------------------------------------------------------------------------
+#' data("dataCopJAMS")
+#'
+#' # Right-hand parts of the formula:
+#' # (structural model) | (endogenous) | (continuous exogenous) | (stratifying factors)
+#' # Z has to be a factor to be used for stratification
+#' res <- copulaJAMS(
+#'   y ~ P1 + P2 + W + Z + P1:P2 + P1:W + P2:Z | P1 + P2 | W | Z,
+#'   data      = dataCopJAMS,
+#'   cdf       = "adj.ecdf",
+#'   num.boots = 1000
+#' )
+#' summary(res)
+#' }
+#'
+#' @md
+#'
+#' @export
+#' @importFrom stats coef terms
+#' @importFrom Formula as.Formula
+copulaJAMS <- function(
+  formula,
+  data,
+  cdf = c("adj.ecdf", "resc.ecdf", "ecdf", "kde"),
+  num.boots = 1000,
+  verbose = TRUE
+) {
+  cl <- match.call()
+
+  #Input checks
+  allowed.cdfs <- c("adj.ecdf", "resc.ecdf", "ecdf", "kde")
+  check_err_msg(checkinput_copula2stage_data_basics(data))
+  check_err_msg(checkinput_copulajams_formula_data(formula = formula, data = data))
+
+  check_err_msg(checkinput_copula2stage_cdf(cdf = cdf, allowed.cdf = allowed.cdfs))
+  check_err_msg(checkinput_copula2stage_numboots(num.boots))
+  check_err_msg(checkinput_copula2stage_verbose(verbose))
+
+  cdf <- match.arg(cdf, choices = allowed.cdfs)
+  F.formula <- as.Formula(formula)
+
+  #fitting the original data
+  fit <- copulajams_fit(
+    F.formula = F.formula,
+    data = data,
+    cdf = cdf,
+    verbose = verbose
+  )
+
+  # Bootstrapping ----------------------------------------------------------------------
+
+  fn.fit.boots <- function(data.b) {
+    fit.b <- copulajams_fit(
+      F.formula = F.formula,
+      data = data.b,
+      cdf = cdf,
+      verbose = FALSE
+    )
+    return(fit.b$res.lm.augmented)
+  }
+
+  res.boots <- bootstrap_skip_degenerates(
+    fn.fit = fn.fit.boots,
+    data = data,
+    num.boots = num.boots,
+    coef.names = names(coef(fit$res.lm.augmented)),
+    verbose = verbose
+  )
+
+  # Return object ----------------------------------------------------------------------
+
+  return(new_rendo_copula2stage(
+    call = cl,
+    F.formula = F.formula,
+    res.lm.augmented = fit$res.lm.augmented,
+    res.boots = res.boots,
+    cdf = cdf,
+    labels.endo = fit$labels.endo,
+    labels.exo = fit$labels.exo,
+    labels.pcop = fit$labels.pcop,
+    subclass = "rendo.copula.jams",
+    # JAMS-specific
+    P = fit$P,
+    W = fit$W,
+    z = fit$z
+  ))
+}
+
+
+doc_rendocopulajams_return_extra_items <- function() {
+  return(c(
+    P = "\\item{\\code{P}}{The matrix of (continuous) endogenous regressors.}",
+    W = "\\item{\\code{W}}{The matrix of the continuous exogenous regressors used for the correction, as specified in the 3rd right-hand part of the formula. It exists but has 0 columns if there are none.}",
+    z = "\\item{\\code{z}}{A \\code{factor} defining the stratum of every observation. Its levels are the combinations of the factors specified in the 4th right-hand part of the formula. \\code{NULL} if there is no stratification.}",
+    # Replaces the entry of the shared return docs
+    labels.exo = "\\item{\\code{labels.exo}}{Always \\code{NULL}. The exogenous regressors are specified in the 3rd and 4th right-hand part of the formula.}"
+  ))
+}

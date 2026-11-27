@@ -137,11 +137,20 @@ residuals.
    Breitung et al. (2024) adopts this as their theoretical recommendation. For their method (\code{copulaBMW()}), the point estimates may vary significantly when the sample size is small (e.g., n < 1000) because the boundary observations exert high leverage in the augmented OLS regression. They explain this finite-sample bias through their tail decay condition (copulaBMW's Assumption A5).
    }
 
-\item{cdf="ecdf"}{Standard empirical CDF with \eqn{10^{-7}} boundary replacement,
-   giving \eqn{\Phi^{-1}(10^{-7}) = \pm 5.2} for the boundary observations.
+\item{cdf="ecdf"}{Standard empirical CDF with an endpoint adjustment. The minimum
+     value is replaced by \eqn{10^{-7}} boundary and the maximum by \eqn{1 - 10^{-7}}
+     in order to avoid to avoid \eqn{\Phi^{-1}(0) = -\infty} and \eqn{\Phi^{-1}(1) = +\infty}.
+     The boundary replacement produces \eqn{\Phi^{-1}(10^{-7}) = \pm 5.2}. Note:
+     (Becker et al. 2022) use this adjustment to show that Gaussian copula's performance worsen
+     when intercept are included.
    }
 
-\item{cdf="kde"}{Integral of a density estimator via \code{ks::kcde} used in (Park and Gupta, 2012).}
+\item{cdf="kde"}{Integral of a density estimator via \code{ks::kcde} used in (Park and Gupta, 2012).
+      \deqn{ \hat{h}(p) = \frac{1}{T \cdot b} \sum_{t=1}^{T} K\!\left(\frac{p - P_t}{b}\right)}
+      The CDF is obtained by integrating a Kernel density estimator with and Epanechnikov kernel
+      \eqn{K(x) = 0.75 \cdot (1 - x^2) \cdot \mathbb{1} (|x| \leq 1)} and a Silverman (1986) bandwidth
+      \eqn{b = 0.9 \cdot T ^{-1/5} \cdot \min(s, \text{IQR}/1.34)} where IQR is the interquantile range,
+      \eqn{s} is the data sample standard deviation and \eqn{T} is the number of tme periods observed in the data.}
 
 }
 
@@ -185,7 +194,7 @@ data("dataCopBMW")
 res_bmw <- copulaBMW(
   y ~ X + P | P,
   data      = dataCopBMW,
-  cdf       = "ecdf",
+  cdf       = "resc.ecdf",
   num.boots = 1000
 )
 summary(res_bmw)
@@ -203,7 +212,7 @@ data("dataCopBMWMultiEndo")
 res_bmw_multi <- copulaBMW(
   y ~ X + P1 + P2 | P1 + P2,
   data      = dataCopBMWMultiEndo,
-  cdf       = "ecdf",
+  cdf       = "resc.ecdf",
   num.boots = 1000
 )
 summary(res_bmw_multi)
@@ -215,9 +224,9 @@ Breitung, J., Meyer, M., Wied, D. (2024). Asymptotic properties of endogeneity
 corrections using nonlinear transformations. \emph{The Econometrics Journal},
 27, 362--383. \doi{10.1093/ectj/utae002}
 
-Becker, JM., Proksch, D., & Ringle, C.M. Revisiting Gaussian
+Becker, JM., Proksch, D., & Ringle, C.M. (2022) Revisiting Gaussian
 copulas to handle endogenous regressors. \emph{Journal of the Academy of
-Marketing Science}, 50, 46--66 (2022).
+Marketing Science}, 50, 46--66.
 \doi{10.1007/s11747-021-00805-y}
 
 Liengaard, B. D., Becker, J.-M., Bennedsen, M., Heiler, P., Taylor, L. N.,
@@ -226,13 +235,12 @@ means of an adjusted estimator for the Gaussian copula approach.
 \emph{Journal of the Academy of Marketing Science}, 53(1), 279-299
 \doi{10.1007/s11747-024-01055-4}
 
+Silverman, B.W. (1986). Density Estimation for Statistics and Data Analysis
+\doi{10.1201/9781315140919}
+
 Park, S. and Gupta, S., (2012), "Handling Endogenous Regressors by
 Joint Estimation Using Copulas",
 Marketing Science, 31(4), 567-86. \doi{10.1287/mksc.1120.0718}
-
-Qian, Y., Koschmann, A., and Xie, H. (2024). A practical guide to
-endogeneity correction using copulas. NBER Working Paper No. w32231.
-\doi{10.2139/ssrn.4754776}
 }
 \seealso{
 [`vcov()`][vcov.rendo.boots()] for how the variance-covariance matrix is derived
@@ -247,6 +255,7 @@ Other copula-based methods:
 \code{\link[=copula2sCOPE]{copula2sCOPE()}},
 \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}},
 \code{\link[=copulaCorrection]{copulaCorrection()}},
-\code{\link[=copulaIMA]{copulaIMA()}}
+\code{\link[=copulaIMA]{copulaIMA()}},
+\code{\link[=copulaJAMS]{copulaJAMS()}}
 }
 \concept{copula-based methods}

@@ -111,7 +111,7 @@
 #' res_bmw <- copulaBMW(
 #'   y ~ X + P | P,
 #'   data      = dataCopBMW,
-#'   cdf       = "ecdf",
+#'   cdf       = "resc.ecdf",
 #'   num.boots = 1000
 #' )
 #' summary(res_bmw)
@@ -129,7 +129,7 @@
 #' res_bmw_multi <- copulaBMW(
 #'   y ~ X + P1 + P2 | P1 + P2,
 #'   data      = dataCopBMWMultiEndo,
-#'   cdf       = "ecdf",
+#'   cdf       = "resc.ecdf",
 #'   num.boots = 1000
 #' )
 #' summary(res_bmw_multi)

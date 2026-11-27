@@ -235,6 +235,7 @@ Other copula-based methods:
 \code{\link[=copula2sCOPE]{copula2sCOPE()}},
 \code{\link[=copula2sCOPEnp]{copula2sCOPEnp()}},
 \code{\link[=copulaBMW]{copulaBMW()}},
-\code{\link[=copulaIMA]{copulaIMA()}}
+\code{\link[=copulaIMA]{copulaIMA()}},
+\code{\link[=copulaJAMS]{copulaJAMS()}}
 }
 \concept{copula-based methods}

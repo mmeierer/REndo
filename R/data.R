@@ -521,3 +521,58 @@
 #' @template template_author_kimberlylew
 #' @md
 "dataCopIMAMultiEndo"
+
+
+#' @title Simulated Dataset for copulaJAMS — Multiple Endogenous Regressors,
+#'   Mixed Exogenous Regressors, Interactions, and Varying Copula Structure
+#' @description A dataset simulated following the DGP of Simulation Study 2
+#'   in Liengaard et al. (2024), Equations (23)-(24). The structural model
+#'   includes two continuous endogenous regressors `P1` and `P2`,
+#'   a continuous exogenous regressor `W`, a binary exogenous regressor
+#'   `Z`, and interaction terms between regressors:
+#'   \deqn{y_i = \mu + \alpha_1 P_{1,i} + \alpha_2 P_{2,i} + \beta_1 W_i +
+#'         \beta_2 Z_i + \delta_1 P_{1,i} P_{2,i} + \delta_2 P_{1,i} W_i +
+#'         \delta_3 P_{2,i} Z_i + \varepsilon_i}
+#'
+#'   The copula structure varies by `Z`:
+#'   the endogeneity correlation is \eqn{\rho = 0.4} for `Z = 0` and
+#'   \eqn{\rho = 0.6} for `Z = 1`.
+#'
+#'   The marginal distributions are:
+#'   `P1` and `P2` which follow Gamma(2,1) (non-normal endogenous regressors)
+#'   `W` follows Beta(2,2) (slightly non-normal continuous exogenous regressor)
+#'   `Z` follows Bernoulli(0.5) (binary exogenous regressor).
+#'
+#'   Please note that `Z` is stored as a factor, as required by the JAMS
+#'   method [copulaJAMS()].
+#'
+#'   The true parameter values are `mu = 1` (intercept),
+#'   `alpha1 = -1` (`P1`), `alpha2 = 1` (`P2`),
+#'   `beta1 = -1` (`W`), `beta2 = -2` (`Z`),
+#'   `delta1 = -1` (`P1:P2`), `delta2 = -1` (`P1:W`),
+#'   and `delta3 = -2` (`P2:Z`).
+#'
+#' @usage data("dataCopJAMS")
+#' @format A data frame with 2000 observations on 5 variables:
+#' - `y`: a numeric vector representing the dependent variable
+#' - `P1`: a numeric vector continuous and endogenous which follows
+#'   a Gamma(2,1) distribution. Correlated with `P2`, `W` and
+#'   the structural error \eqn{\varepsilon} with \eqn{\rho = 0.4}
+#'   when `Z = 0` and \eqn{\rho = 0.6} when `Z = 1`.
+#' - `P2`: a numeric vector continuous and endogenous which follows
+#'   a Gamma(2,1) distribution. Correlated with `P1`, `W`, and
+#'   the structural error \eqn{\varepsilon} with \eqn{\rho = 0.4}
+#'   when `Z = 0` and \eqn{\rho = 0.6} when `Z = 1`.
+#' - `W`: a numeric vector continuous and exogenous that follows
+#'   a Beta(2,2) distribution. Correlated with `P1` and `P2`
+#'   but uncorrelated with the structural error. `W` enters the
+#'   variance-covariance matrix computation.
+#' - `Z`: a factor with levels 0 and 1, binary exogenous regressor.
+#'   This activates the stratified copula
+#'   correction (eq. 20-21): \eqn{\rho = 0.4} for `Z = 0` and
+#'   \eqn{\rho = 0.6} for `Z = 1`.
+#'
+#' @template template_references_liengaard2025
+#' @template template_author_kimberlylew
+#' @md
+"dataCopJAMS"

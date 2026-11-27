@@ -49,12 +49,14 @@ checkinput_copula2stage_data_basics <- function(data) {
 
 # Basic structure of the formula
 #  - formula
-#  - two part
+#  - one lhs and `allowed.num.rhs.parts` rhs parts, eg lhs ~ rhs1 | rhs2.
+#   - allowed.num.rhs.parts: Can be a vector with more than 1 number to allow different
+#     num rhs, eg to make a part optional (`c(3,4)` makes the 4th part optional)
 #  - single response
 #
 #' @importFrom Formula as.Formula
 #' @importFrom stats formula
-checkinput_copula2stage_formula_basics <- function(formula) {
+checkinput_copula2stage_formula_basics <- function(formula, allowed.num.rhs.parts) {
   if (!inherits(formula, "formula")) {
     return("Parameter 'formula' must be a formula.")
   }
@@ -69,10 +71,16 @@ checkinput_copula2stage_formula_basics <- function(formula) {
   }
 
   parts <- length(F.formula)
-  if (parts[1] != 1 || parts[2] != 2) {
-    return(
-      "Parameter 'formula' must have one left-hand side and two right-hand parts (lhs ~ rhs1 | rhs2)."
-    )
+  if (parts[1] != 1 || !(parts[2] %in% allowed.num.rhs.parts)) {
+    # Example of longest allowed ("lhs ~ rhs1 | rhs2")
+    rhs.structure <- paste0("rhs", seq_len(max(allowed.num.rhs.parts)), collapse = " | ")
+
+    # fmt: skip
+    return(paste0(
+      "Parameter 'formula' must have one left-hand side and ",
+      paste(allowed.num.rhs.parts, collapse = " or "),
+      " right-hand parts (lhs ~ ", rhs.structure, ")."
+    ))
   }
 
   # Check multiple responses (y1 + y2 ~ )
@@ -106,9 +114,34 @@ checkinput_copula2stage_vars_in_data <- function(F.formula, data) {
 }
 
 # Cols with same name as the generated regressor, eg '<endo>_cop' would conflict in 2nd stage
-checkinput_copula2stage_data_copnames <- function(data, labels.endo) {
+# - regex.forbidden.colnames: Regex of the col names that data may not have.
+#   `<copterm>` in it stands for the name of a generated regressor
+#   Example: "^<copterm>$" forbids exactly the names of the generated regressors
+checkinput_copula2stage_data_copnames <- function(
+  data,
+  labels.endo,
+  regex.forbidden.colnames
+) {
+  # regex needs to contain <copterm>
+  stopifnot(grepl("<copterm>", regex.forbidden.colnames, fixed = TRUE))
+
   copterm.names <- copula2stage_get_copterm_names(labels.endo)
-  clashing <- intersect(copterm.names, colnames(data))
+
+  # One separate regex per generated regressor
+  # \Q..\E: The name is taken literally, its not interpreted as regex chars ("log(P)_cop")
+  l.clashing <- lapply(copterm.names, function(copterm.name.i) {
+    # fill the placeholder
+    regex.i <- sub(
+      pattern = "<copterm>",
+      replacement = paste0("\\Q", copterm.name.i, "\\E"),
+      x = regex.forbidden.colnames,
+      fixed = TRUE
+    )
+    # apply, search for matches in colnames
+    return(grep(pattern = regex.i, x = colnames(data), perl = TRUE, value = TRUE))
+  })
+  clashing <- unique(unlist(l.clashing))
+
   if (length(clashing) > 0) {
     # fmt: skip
     return(paste0(
@@ -144,18 +177,11 @@ copula2stage_label_to_colname <- function(lab) {
   return(deparse1(parse(text = lab)[[1]]))
 }
 
-# Build model.frame and verify column classes
+# Build model.frame and verify its columns
 # - build from lhs ~ rhs1
 # - expose failed builds to user
-# - na.fail to catch generated NAs
-# - no non-finite values
-# - no unused factor levels
-# - check for each (formula) label / term, if the resulting regressor (colum) is
-#    of an allowed class
-# - warn about low cardinality (<=10) numeric variables
-# - forbid.constant: error on constant data in any mf column
+# - verify the columns with checkinput_copula2stage_modelframe_columns()
 #
-#' @importFrom stats model.frame na.fail .MFclass terms
 checkinput_copula2stage_modelframe <- function(
   F.formula,
   data,
@@ -166,7 +192,12 @@ checkinput_copula2stage_modelframe <- function(
   # Expose build failures to user (bad transformations, generated NAs,...)
   mf <- tryCatch(
     # Making model.frame with rhs=1 also verifies that rhs=2 regressors are fine
-    model.frame(formula(F.formula, lhs = 1, rhs = 1), data = data, na.action = na.fail),
+    copula2stage_build_mf_part(
+      F.formula = F.formula,
+      data = data,
+      rhs.part = 1,
+      include.response = TRUE
+    ),
     error = function(e) {
       return(conditionMessage(e))
     }
@@ -178,6 +209,30 @@ checkinput_copula2stage_modelframe <- function(
     ))
   }
 
+  return(checkinput_copula2stage_modelframe_columns(
+    mf = mf,
+    allowed.classes = allowed.classes,
+    labels.warn.low.card = labels.warn.low.card,
+    forbid.constant = forbid.constant
+  ))
+}
+
+# Verify the columns of an already built model.frame
+# - mf: the model.frame to verify. Doesnt matter from which formula part it was built
+# - check for each (formula) label / term, if the resulting regressor (colum) is
+#    of an allowed class
+# - no non-finite values
+# - no unused factor levels
+# - warn about low cardinality (<=10) numeric variables
+# - forbid.constant: error on constant data in any mf column
+#
+#' @importFrom stats .MFclass
+checkinput_copula2stage_modelframe_columns <- function(
+  mf,
+  allowed.classes,
+  labels.warn.low.card,
+  forbid.constant
+) {
   err.msg <- c()
   mf.cols <- colnames(mf)
 
@@ -337,7 +392,11 @@ checkinput_copula2stage_formula_data <- function(
   msg.interactions = "Interaction terms are not supported for this method."
 ) {
   # Formula only ----------------------------------------------------------------
-  err.msg <- checkinput_copula2stage_formula_basics(formula = formula)
+  # 2 rhs parts: (structural model) | (endo terms)
+  err.msg <- checkinput_copula2stage_formula_basics(
+    formula = formula,
+    allowed.num.rhs.parts = 2
+  )
   if (length(err.msg) > 0) {
     return(err.msg)
   }
@@ -406,7 +465,8 @@ checkinput_copula2stage_formula_data <- function(
   # (after the checks above: at least one endo regressor guaranteed)
   err.msg <- checkinput_copula2stage_data_copnames(
     data = data,
-    labels.endo = endo.labels
+    labels.endo = endo.labels,
+    regex.forbidden.colnames = "^<copterm>$"
   )
   if (length(err.msg) > 0) {
     return(err.msg)
