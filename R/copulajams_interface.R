@@ -123,7 +123,7 @@
 #' # This example shows the following:
 #' # 1) Multiple correlated endogenous regressors P1, P2
 #' # 2) Continuous exogenous W enters variance-covariance matrix (eq. 17)
-#' # 3) Binary exogenous Z triggers stratification (eq. 20-21)
+#' # 3) Binary exogenous Z is used for stratification (eq. 20-21)
 #' # 4) Interaction terms P1:P2, P1:W, P2:Z in structural model (eq. 16)
 #' # 5) Copula structure varies by Z: rho=0.4 (Z=0), rho=0.6 (Z=1)
 #' #
@@ -132,12 +132,13 @@
 #' #              delta1=-1 (P1:P2), delta2=-1 (P1:W), delta3=-2 (P2:Z).
 #' #------------------------------------------------------------------------
 #' data("dataCopJAMS")
-#' dat        <- dataCopJAMS
-#' dat$Z      <- as.factor(dat$Z)  # Z must be factor for stratification
 #'
+#' # Right-hand parts of the formula:
+#' # (structural model) | (endogenous) | (continuous exogenous) | (stratifying factors)
+#' # Z has to be a factor to be used for stratification
 #' res <- copulaJAMS(
-#'   y ~ P1 + P2 + W + Z + P1:P2 + P1:W + P2:Z | P1 + P2,
-#'   data      = dat,
+#'   y ~ P1 + P2 + W + Z + P1:P2 + P1:W + P2:Z | P1 + P2 | W | Z,
+#'   data      = dataCopJAMS,
 #'   cdf       = "adj.ecdf",
 #'   num.boots = 1000
 #' )

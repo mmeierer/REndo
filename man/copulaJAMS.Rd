@@ -47,11 +47,11 @@ An object of class \code{rendo.copula.jams} which is a list that contains:
 \item{\code{cdf}}{The used cdf function.}
 \item{\code{res.lm.augmented}}{The fitted augmented regression model, including the control function terms.}
 \item{\code{labels.endo}}{The term labels of the endogenous regressors.}
-\item{\code{labels.exo}}{Always \code{NULL}. The exogenous regressors are specified in the 3rd and 4th part of the formula.}
+\item{\code{labels.exo}}{Always \code{NULL}. The exogenous regressors are specified in the 3rd and 4th right-hand part of the formula.}
 \item{\code{labels.pcop}}{The term labels of the generated, auxiliary regressors.}
 \item{\code{P}}{The matrix of (continuous) endogenous regressors.}
-\item{\code{W}}{The matrix of the continuous exogenous regressors used for the correction, as specified in the 3rd part of the formula. It exists but has 0 columns if there are none.}
-\item{\code{z}}{A \code{factor} defining the stratum of every observation. Its levels are the combinations of the factors specified in the 4th part of the formula. \code{NULL} if there is no stratification.}
+\item{\code{W}}{The matrix of the continuous exogenous regressors used for the correction, as specified in the 3rd right-hand part of the formula. It exists but has 0 columns if there are none.}
+\item{\code{z}}{A \code{factor} defining the stratum of every observation. Its levels are the combinations of the factors specified in the 4th right-hand part of the formula. \code{NULL} if there is no stratification.}
 }
 \description{
 Fitting adjusted Gaussian copula estimator to address endogeneity
@@ -211,7 +211,7 @@ are computed using only successful bootstrap replications.
 # This example shows the following:
 # 1) Multiple correlated endogenous regressors P1, P2
 # 2) Continuous exogenous W enters variance-covariance matrix (eq. 17)
-# 3) Binary exogenous Z triggers stratification (eq. 20-21)
+# 3) Binary exogenous Z is used for stratification (eq. 20-21)
 # 4) Interaction terms P1:P2, P1:W, P2:Z in structural model (eq. 16)
 # 5) Copula structure varies by Z: rho=0.4 (Z=0), rho=0.6 (Z=1)
 #
@@ -220,12 +220,13 @@ are computed using only successful bootstrap replications.
 #              delta1=-1 (P1:P2), delta2=-1 (P1:W), delta3=-2 (P2:Z).
 #------------------------------------------------------------------------
 data("dataCopJAMS")
-dat        <- dataCopJAMS
-dat$Z      <- as.factor(dat$Z)  # Z must be factor for stratification
 
+# Right-hand parts of the formula:
+# (structural model) | (endogenous) | (continuous exogenous) | (stratifying factors)
+# Z has to be a factor to be used for stratification
 res <- copulaJAMS(
-  y ~ P1 + P2 + W + Z + P1:P2 + P1:W + P2:Z | P1 + P2,
-  data      = dat,
+  y ~ P1 + P2 + W + Z + P1:P2 + P1:W + P2:Z | P1 + P2 | W | Z,
+  data      = dataCopJAMS,
   cdf       = "adj.ecdf",
   num.boots = 1000
 )
